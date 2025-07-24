@@ -1,0 +1,1 @@
+export { default } from "@syner/ui/postcss.config";
