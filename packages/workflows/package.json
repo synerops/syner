@@ -1,0 +1,24 @@
+{
+  "name": "@syner/workflows",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@syner/actions": "workspace:*",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@syner/eslint-config": "workspace:*",
+    "@syner/typescript-config": "workspace:*",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  }
+}
