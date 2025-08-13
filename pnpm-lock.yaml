@@ -69,6 +69,9 @@ importers:
 
   apps/os:
     dependencies:
+      '@syner/actions':
+        specifier: workspace:*
+        version: link:../../packages/actions
       '@syner/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -106,6 +109,28 @@ importers:
       '@types/react-dom':
         specifier: ^19.1.6
         version: 19.1.6(@types/react@19.1.8)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/actions:
+    dependencies:
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
+    devDependencies:
+      '@syner/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@syner/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+      eslint:
+        specifier: ^9.32.0
+        version: 9.32.0(jiti@2.5.1)
       typescript:
         specifier: ^5.8.3
         version: 5.8.3

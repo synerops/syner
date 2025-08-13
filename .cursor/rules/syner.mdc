@@ -1,0 +1,206 @@
+---
+globs: *.ts,*.tsx
+alwaysApply: false
+---
+You are an expert in TypeScript, Node.js, Next.js App Router, React, shadcn/ui, Radix UI, and Tailwind CSS.
+
+Principles
+- Prefer functional, declarative code; avoid classes.
+- Optimize for readability, composition, and testability.
+- Prefer Server Components; keep client code minimal and focused on browser-only concerns.
+
+Project & DX
+- Monorepo (Turborepo) with clear package boundaries: `@syner/ui`, `@syner/workflows`, `@syner/actions`, `@syner/mcp`, `@syner/lib`. Keep consistency.
+- Absolute imports with path aliases (`@/app`, `@/components`, `@/lib`).
+- ESLint (typescript, react, jsx-a11y, tailwind), Prettier, commitlint, changesets, Husky pre-commit hooks.
+- `tsconfig` strict: `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`.
+
+Structure
+- `components/`: UI-first building blocks and composed components.
+  - Prefer self-contained UI modules when a component naturally includes Provider, compound parts, and a minimal internal hook (export them from the same module).
+  - Keep app-specific compositions as `components/app-*` that wrap reusable UI modules.
+  - Use named exports; avoid defaults in shared code.
+  - Keep state and hooks internal to the module if they are not generally reusable.
+- `hooks/`: Reusable state/effect hooks with no JSX and no app-specific assumptions. If a hook is only meaningful inside a single UI module, keep it internal to that module instead of exporting it here.
+- `lib/`: Pure utilities (formatters, mappers, clients). No React, no browser-only APIs. Safe to import from both server and client when applicable.
+- `schemas/`: Validation schemas (Zod or Valibot) and related parsers. Derive types from schemas where possible.
+- `types/`: Shared TypeScript types and utility types. Avoid `any`; prefer precise unions and literals.
+- `actions`/: Server-only helpers (server actions, auth, data access, cookie/header helpers). Never import from client code.
+- `app/`: Route tree (RSC by default), including `layout.tsx` for top-level providers/wrappers and `loading.tsx`, `error.tsx`, `not-found.tsx` per route segment as needed.
+- `features/<area>/`: Optional vertical slicing for larger domains, using the same internal layering (`components | hooks | lib | schemas`) without breaking the rules above.
+
+Dependency direction
+- `app` → `components` → `hooks` → `lib`.
+- `schemas`/`types` are leaf-safe; avoid circular deps.
+- Server-only code must not leak into client bundles.
+
+Naming & Exports
+- Directories and files: lowercase-kebab-case (e.g., `components/auth-wizard`).
+- Favor named exports; avoid default exports in shared packages.
+- Descriptive names with auxiliaries (`isLoading`, `hasError`, `canSubmit`).
+
+TypeScript
+- Prefer `type` for unions, transformations, and utility types.
+- Use `interface` only for extensible public object shapes (e.g., public component props in `@syner/ui`).
+- Avoid `enum`; use literal unions with `as const` and `Record<Union, Value>`.
+- Narrow types early and validate at boundaries.
+
+React & Next.js App Router
+- Data fetching in RSC (async components or server helpers), not in client components.
+- Use `use client` only when strictly required (Web APIs, interaction).
+- Wrap client components with `Suspense` and meaningful fallbacks.
+- Provide `loading.tsx`, `error.tsx`, and `not-found.tsx` for critical routes.
+
+Caching & Revalidation
+- Be explicit:
+  - Static: `revalidate = N` or `fetch(url, { cache: 'force-cache' })`.
+  - Dynamic: `export const dynamic = 'force-dynamic'` or `fetch(url, { cache: 'no-store' })`.
+- Document revalidation windows per route/segment.
+- Stream RSC for long-running tasks.
+
+State & URL
+- Prefer server state in RSC; keep client state minimal and local.
+- Use `nuqs` for URL search params and shareable filters.
+- If client fetching is truly needed, use React Query with `suspense` and cache boundaries.
+
+UI & Styling
+- shadcn/ui + Radix primitives; compose via slots; avoid deep prop drilling.
+- Tailwind mobile-first; use `cva`/`tailwind-variants` for variants.
+- Centralized design tokens; dark mode supported.
+- No inline styles unless necessary overrides.
+
+Performance
+- Optimize Web Vitals (LCP/CLS/FID):
+  - `next/image` with correct `sizes`; `priority` only for LCP.
+  - Font loading with `swap` and preloads when needed.
+  - Code-split non-critical components with `next/dynamic`.
+- Minimize `useEffect`/`setState`; derive UI from props and server data.
+
+Accessibility
+- Follow WAI-ARIA; manage focus (dialogs/menus).
+- AA contrast; full keyboard support (Tab/Shift+Tab/Escape/Enter/Space).
+- Announce critical changes with `aria-live` when appropriate.
+
+Security
+- Never expose secrets to the client; validate public env vars with explicit prefixes.
+- Cookies: `HttpOnly`, `Secure`, `SameSite=Lax|Strict` as appropriate.
+- Strict Content Security Policy and secure headers; sanitize inputs.
+- No uncontrolled dynamic code execution; review dependencies.
+
+Validation & Contracts
+- Validate inputs at boundaries (server actions/API routes) with Zod (or Valibot).
+- Derive types from schemas (`z.infer`).
+- Use discriminated unions for error handling and render explicit UI states.
+
+Testing & Quality
+- Unit: Vitest + React Testing Library.
+- E2E: Playwright.
+- Visual/UX: Storybook for `@syner/ui`.
+- Include basic a11y checks (axe) and tests for critical routes.
+
+Documentation
+- Each package ships a concise README (public API, usage, examples).
+- Public APIs documented with TSDoc.
+
+Follow Next.js docs for Data Fetching, Rendering, and Routing.
+You are an expert in TypeScript, Node.js, Next.js App Router, React, shadcn/ui, Radix UI, and Tailwind CSS.
+
+Principles
+- Prefer functional, declarative code; avoid classes.
+- Optimize for readability, composition, and testability.
+- Prefer Server Components; keep client code minimal and focused on browser-only concerns.
+
+Project & DX
+- Monorepo (Turborepo) with clear package boundaries: `@syner/ui`, `@syner/workflows`, `@syner/actions`, `@syner/mcp`, `@syner/lib`. Keep consistency.
+- Absolute imports with path aliases (`@/app`, `@/components`, `@/lib`).
+- ESLint (typescript, react, jsx-a11y, tailwind), Prettier, commitlint, changesets, Husky pre-commit hooks.
+- `tsconfig` strict: `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`.
+
+Structure
+- `components/`: UI-first building blocks and composed components.
+  - Prefer self-contained UI modules when a component naturally includes Provider, compound parts, and a minimal internal hook (export them from the same module).
+  - Keep app-specific compositions as `components/app-*` that wrap reusable UI modules.
+  - Use named exports; avoid defaults in shared code.
+  - Keep state and hooks internal to the module if they are not generally reusable.
+- `hooks/`: Reusable state/effect hooks with no JSX and no app-specific assumptions. If a hook is only meaningful inside a single UI module, keep it internal to that module instead of exporting it here.
+- `lib/`: Pure utilities (formatters, mappers, clients). No React, no browser-only APIs. Safe to import from both server and client when applicable.
+- `schemas/`: Validation schemas (Zod or Valibot) and related parsers. Derive types from schemas where possible.
+- `types/`: Shared TypeScript types and utility types. Avoid `any`; prefer precise unions and literals.
+- `actions`/: Server-only helpers (server actions, auth, data access, cookie/header helpers). Never import from client code.
+- `app/`: Route tree (RSC by default), including `layout.tsx` for top-level providers/wrappers and `loading.tsx`, `error.tsx`, `not-found.tsx` per route segment as needed.
+- `features/<area>/`: Optional vertical slicing for larger domains, using the same internal layering (`components | hooks | lib | schemas`) without breaking the rules above.
+
+Dependency direction
+- `app` → `components` → `hooks` → `lib`.
+- `schemas`/`types` are leaf-safe; avoid circular deps.
+- Server-only code must not leak into client bundles.
+
+Naming & Exports
+- Directories and files: lowercase-kebab-case (e.g., `components/auth-wizard`).
+- Favor named exports; avoid default exports in shared packages.
+- Descriptive names with auxiliaries (`isLoading`, `hasError`, `canSubmit`).
+
+TypeScript
+- Prefer `type` for unions, transformations, and utility types.
+- Use `interface` only for extensible public object shapes (e.g., public component props in `@syner/ui`).
+- Avoid `enum`; use literal unions with `as const` and `Record<Union, Value>`.
+- Narrow types early and validate at boundaries.
+
+React & Next.js App Router
+- Data fetching in RSC (async components or server helpers), not in client components.
+- Use `use client` only when strictly required (Web APIs, interaction).
+- Wrap client components with `Suspense` and meaningful fallbacks.
+- Provide `loading.tsx`, `error.tsx`, and `not-found.tsx` for critical routes.
+
+Caching & Revalidation
+- Be explicit:
+  - Static: `revalidate = N` or `fetch(url, { cache: 'force-cache' })`.
+  - Dynamic: `export const dynamic = 'force-dynamic'` or `fetch(url, { cache: 'no-store' })`.
+- Document revalidation windows per route/segment.
+- Stream RSC for long-running tasks.
+
+State & URL
+- Prefer server state in RSC; keep client state minimal and local.
+- Use `nuqs` for URL search params and shareable filters.
+- If client fetching is truly needed, use React Query with `suspense` and cache boundaries.
+
+UI & Styling
+- shadcn/ui + Radix primitives; compose via slots; avoid deep prop drilling.
+- Tailwind mobile-first; use `cva`/`tailwind-variants` for variants.
+- Centralized design tokens; dark mode supported.
+- No inline styles unless necessary overrides.
+
+Performance
+- Optimize Web Vitals (LCP/CLS/FID):
+  - `next/image` with correct `sizes`; `priority` only for LCP.
+  - Font loading with `swap` and preloads when needed.
+  - Code-split non-critical components with `next/dynamic`.
+- Minimize `useEffect`/`setState`; derive UI from props and server data.
+
+Accessibility
+- Follow WAI-ARIA; manage focus (dialogs/menus).
+- AA contrast; full keyboard support (Tab/Shift+Tab/Escape/Enter/Space).
+- Announce critical changes with `aria-live` when appropriate.
+
+Security
+- Never expose secrets to the client; validate public env vars with explicit prefixes.
+- Cookies: `HttpOnly`, `Secure`, `SameSite=Lax|Strict` as appropriate.
+- Strict Content Security Policy and secure headers; sanitize inputs.
+- No uncontrolled dynamic code execution; review dependencies.
+
+Validation & Contracts
+- Validate inputs at boundaries (server actions/API routes) with Zod (or Valibot).
+- Derive types from schemas (`z.infer`).
+- Use discriminated unions for error handling and render explicit UI states.
+
+Testing & Quality
+- Unit: Vitest + React Testing Library.
+- E2E: Playwright.
+- Visual/UX: Storybook for `@syner/ui`.
+- Include basic a11y checks (axe) and tests for critical routes.
+
+Documentation
+- Each package ships a concise README (public API, usage, examples).
+- Public APIs documented with TSDoc.
+
+Follow Next.js docs for Data Fetching, Rendering, and Routing.
