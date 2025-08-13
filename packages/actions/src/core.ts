@@ -1,9 +1,9 @@
 import type { Action, ActionInput, ActionOutput } from './types.js';
 
-// Global state (singleton pattern for performance)
+// Global state
 const actionsMap = new Map<string, Action[]>();
 
-// Registry functions (no classes = no overhead)
+// Registry functions
 export const registry = {
   register: (name: string, actions: Action[]) => {
     actionsMap.set(name, actions);
@@ -12,7 +12,7 @@ export const registry = {
   getActions: (app: string) => actionsMap.get(app) || []
 };
 
-// Actions system (no classes = no overhead)
+// Actions system
 export const actions = {
   run: async (input: ActionInput): Promise<ActionOutput> => {
     const startTime = Date.now();
@@ -20,31 +20,22 @@ export const actions = {
     try {
       const parts = input.action.split(':');
       if (parts.length !== 2) {
-        return {
-          success: false,
-          error: `Invalid action format: ${input.action}. Expected "namespace:verb"`,
-          metadata: { executionTime: Date.now() - startTime, timestamp: Date.now() }
-        };
+        throw new Error(`Invalid action format: ${input.action}. Expected "namespace:verb"`);
       }
       
-      const appName = parts[0]!;
-      const appActions = actionsMap.get(appName);
+      const appName = parts[0];
+      if (!appName) {
+        throw new Error(`Invalid action format: ${input.action}. Expected "namespace:verb"`);
+      }
       
+      const appActions = actionsMap.get(appName);
       if (!appActions) {
-        return {
-          success: false,
-          error: `App '${appName}' not found`,
-          metadata: { executionTime: Date.now() - startTime, timestamp: Date.now() }
-        };
+        throw new Error(`App '${appName}' not found`);
       }
       
       const action = appActions.find(a => a.id === input.action);
       if (!action) {
-        return {
-          success: false,
-          error: `Action '${input.action}' not found`,
-          metadata: { executionTime: Date.now() - startTime, timestamp: Date.now() }
-        };
+        throw new Error(`Action '${input.action}' not found`);
       }
       
       const result = await action.execute(input.params);

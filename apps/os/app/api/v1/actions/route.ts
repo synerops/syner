@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
 import { actions } from '@syner/actions';
 
 export async function POST(request: NextRequest) {
