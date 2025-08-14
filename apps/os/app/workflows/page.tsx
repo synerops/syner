@@ -16,11 +16,11 @@ export default async function WorkflowsPage() {
           <form action={async (formData: FormData) => {
             'use server';
             const id = formData.get('id') as string;
-            const variables = formData.get('variables') as string;
+            const inputs = formData.get('inputs') as string;
             
             if (id) {
-              const parsedVariables = variables ? JSON.parse(variables) : undefined;
-              await startWorkflow(id, parsedVariables);
+              const parsedInputs = inputs ? JSON.parse(inputs) : undefined;
+              await startWorkflow(id, parsedInputs);
             }
           }}>
             <div className="space-y-4">
@@ -32,20 +32,20 @@ export default async function WorkflowsPage() {
                   type="text"
                   id="id"
                   name="id"
-                  defaultValue="backup-files"
+                  defaultValue="sample-translate"
                   className="w-full p-2 border rounded-md"
                   required
                 />
               </div>
               
               <div>
-                <label htmlFor="variables" className="block text-sm font-medium mb-2">
-                  Variables (JSON)
+                <label htmlFor="inputs" className="block text-sm font-medium mb-2">
+                  Inputs (JSON)
                 </label>
                 <textarea
-                  id="variables"
-                  name="variables"
-                  defaultValue='{"sourcePath": "/documents", "destinationPath": "/backups"}'
+                  id="inputs"
+                  name="inputs"
+                  defaultValue='{"url": "https://sdk.vercel.ai/docs", "targetLanguage": "es"}'
                   className="w-full p-2 border rounded-md h-20"
                   placeholder='{"key": "value"}'
                 />

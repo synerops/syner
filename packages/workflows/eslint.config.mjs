@@ -1,3 +1,3 @@
-import baseConfig from "@syner/eslint-config/base.js";
+import { config } from "@syner/eslint-config/base";
 
-export default baseConfig;
+export default config;

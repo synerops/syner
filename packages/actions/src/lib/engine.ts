@@ -1,16 +1,5 @@
-import type { Action, ActionInput, ActionOutput } from './types.js';
-
-// Global state
-const actionsMap = new Map<string, Action[]>();
-
-// Registry functions
-export const registry = {
-  register: (name: string, actions: Action[]) => {
-    actionsMap.set(name, actions);
-  },
-  getApps: () => Array.from(actionsMap.keys()),
-  getActions: (app: string) => actionsMap.get(app) || []
-};
+import type { ActionInput, ActionOutput } from '../types';
+import { registry } from './registry';
 
 // Actions system
 export const actions = {
@@ -28,8 +17,8 @@ export const actions = {
         throw new Error(`Invalid action format: ${input.action}. Expected "namespace:verb"`);
       }
       
-      const appActions = actionsMap.get(appName);
-      if (!appActions) {
+      const appActions = registry.getActions(appName);
+      if (!appActions.length) {
         throw new Error(`App '${appName}' not found`);
       }
       
@@ -54,21 +43,8 @@ export const actions = {
     }
   },
   
-  list: () => Array.from(actionsMap.values()).flat().map(a => a.id)
-};
-
-// Helper function (minimal overhead)
-export const action = (config: Omit<Action, 'execute'> & { execute: Action['execute'] }): Action => {
-  return config as Action;
-};
-
-// Validation helpers (tree-shakeable)
-export const validateActionId = (id: string): boolean => {
-  return /^[a-z]+:[a-z]+$/.test(id);
-};
-
-export const parseActionId = (id: string): { namespace: string; verb: string } | null => {
-  if (!validateActionId(id)) return null;
-  const [namespace, verb] = id.split(':');
-  return { namespace: namespace!, verb: verb! };
+  list: () => {
+    const allActions = Array.from(registry.getApps()).flatMap(app => registry.getActions(app));
+    return allActions.map(a => a.id);
+  }
 };

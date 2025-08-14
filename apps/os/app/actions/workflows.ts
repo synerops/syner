@@ -5,13 +5,12 @@ import { actions } from '@syner/actions';
 // Import to register workflows actions
 import '@syner/workflows';
 
-export async function startWorkflow(id: string, variables?: Record<string, unknown>) {
+export async function startWorkflow(id: string, inputs?: Record<string, unknown>) {
   return await actions.run({
     action: 'workflows:start',
     params: { 
       id, 
-      trigger: 'manual',
-      variables 
+      inputs 
     },
     metadata: {
       app: 'os',
