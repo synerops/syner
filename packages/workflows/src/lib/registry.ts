@@ -2,7 +2,7 @@ import type { Workflow, Step, ActionStep, WaitStep, ParallelStep, ChoiceStep } f
 import { z } from 'zod';
 
 // Global workflow registry
-const workflowsRegistry = new Map<string, Workflow>();
+const workflows = new Map<string, Workflow>();
 
 // Helper function to create workflow definitions
 export const workflow = (definition: Workflow): Workflow => {
@@ -10,7 +10,7 @@ export const workflow = (definition: Workflow): Workflow => {
   validateWorkflowDefinition(definition);
   
   // Register workflow
-  workflowsRegistry.set(definition.id, definition);
+  workflows.set(definition.id, definition);
   
   return definition;
 };
@@ -118,19 +118,20 @@ const validateChoiceStep = (step: ChoiceStep, index: number) => {
 
 // Registry functions
 export const getWorkflow = (id: string): Workflow | undefined => {
-  return workflowsRegistry.get(id);
+  return workflows.get(id);
 };
 
 export const listWorkflows = (): Workflow[] => {
-  return Array.from(workflowsRegistry.values());
+  return Array.from(workflows.values());
 };
 
 export const hasWorkflow = (id: string): boolean => {
-  return workflowsRegistry.has(id);
+  return workflows.has(id);
 };
 
 // Sample workflow for testing
 export const registerSampleWorkflow = () => {
+  console.log('registerSampleWorkflow');
   const sampleWorkflow = workflow({
     id: 'sample-translate',
     description: 'Sample workflow that demonstrates all primitives',

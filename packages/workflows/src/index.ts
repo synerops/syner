@@ -2,8 +2,7 @@ import * as actions from './actions';
 import { registry } from '@syner/actions';
 
 // Register all workflow actions with the global registry
-console.log('Registering workflows actions', actions);
-registry.register('workflows', Object.values(actions));
+// registry.register('workflows', Object.values(actions));
 
 // Re-export core workflow functionality
 export * from './lib/registry';

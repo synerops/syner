@@ -1,9 +1,7 @@
 'use server';
 
 import { actions } from '@syner/actions';
-
-// Import to register workflows actions
-import '@syner/workflows';
+import type { Workflow } from '@syner/workflows';
 
 export async function startWorkflow(id: string, inputs?: Record<string, unknown>) {
   return await actions.run({
@@ -38,6 +36,17 @@ export async function listWorkflows(params?: {
   return await actions.run({
     action: 'workflows:list',
     params: params || {},
+    metadata: {
+      app: 'os',
+      timestamp: Date.now()
+    }
+  });
+}
+
+export async function createWorkflow(workflow: Workflow) {
+  return await actions.run({
+    action: 'workflows:create',
+    params: workflow,
     metadata: {
       app: 'os',
       timestamp: Date.now()
