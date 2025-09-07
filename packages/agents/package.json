@@ -12,8 +12,8 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.19",
-    "ai": "^5.0.22",
-    "zod": "^4.0.5"
+    "@ai-sdk/openai": "^2.0.22",
+    "ai": "^5.0.27",
+    "zod": "^4.1.5"
   }
 }

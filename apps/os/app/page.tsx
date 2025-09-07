@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@syner/ui/components/button"
-import { activateOS } from "@/lib/actions"
+// import { activateOS } from "@/lib/actions"
 
 export default function Page() {
   const [isActivating, setIsActivating] = useState(false)
@@ -13,7 +13,10 @@ export default function Page() {
     setActivationResult(null)
     
     try {
-      const result = await activateOS()
+      // const result = await activateOS()
+      const result = {
+        message: "Syner OS has been activated successfully!"
+      }
       setActivationResult(result.message)
     } catch (error) {
       setActivationResult("Error activating Syner OS. Please try again.")
