@@ -3,27 +3,36 @@
 // Example: A travel Agent that can find flights, suggest hotels, and organize an itinerary.
 // Here, the Agent uses its capabilities (finding, suggesting, organizing) to turn a request into a helpful result.
 
-import type { Schema } from "ai"
-import type { Capability } from "./capability"
+import type { Capability } from "./capabilities"
 import type { Task } from "./task"
+import type { JSONValue } from "ai"
 
 export interface AgentInput {
   id: string
   name: string
   capabilities: Capability[]
-  schema: Schema
 }
 
 export abstract class Agent {
-  protected capabilities: Capability[]
-  protected schema: Schema
+  public id: string
+  public name: string
+  public capabilities: Capability[]
 
   constructor(input: AgentInput) {
+    this.id = input.id
+    this.name = input.name
     this.capabilities = input.capabilities
-    this.schema = input.schema
   }
 
-  async execute(task: Task): Promise<Schema | Error> {
+  async execute(task: Task): Promise<JSONValue | Error> {
+    console.log("task", task)
     throw new Error("Not implemented")
+  }
+
+  can(capability: Capability | string): boolean {
+    if (typeof capability === 'string') {
+      return this.capabilities.some(c => c.name === capability)
+    }
+    return this.capabilities.some(c => c.name === capability.name)
   }
 }

@@ -1,4 +1,4 @@
-import type { Capability } from "@syner/agents/src/capability.js"
+import type { Capability } from "@syner/agents/src/capabilities/capability.js"
 
 export type Department = {
   name: string
