@@ -5,9 +5,9 @@
 // the resources required, and the context in which it is performed.
 
 import type { JSONValue } from "ai"
-import type { Capability } from "./capabilities"
+import type { Capability } from "./capability"
 
-type Status = "pending" | "active" | "done"
+export type Status = "pending" | "active" | "done"
 
 export type Task = {
   id: string
@@ -16,6 +16,6 @@ export type Task = {
   capability: Capability
   dependencies: Task[]
   status: Status
-  input: JSONValue
-  output: JSONValue
+  // input: JSONValue
+  // output: JSONValue
 }

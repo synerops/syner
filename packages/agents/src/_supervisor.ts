@@ -8,7 +8,7 @@ import type { GenerateObjectResult, JSONValue } from "ai"
 import { generateObject, jsonSchema, ModelMessage } from "ai"
 import { openai } from "@ai-sdk/openai"
 import type { Task } from "./task"
-import type { Capability } from "./capabilities"
+import type { Capability } from "./capability"
 import { Agent } from "./agent"
 
 export enum Capabilities {
@@ -42,8 +42,6 @@ export const capabilities: Capability[] = [
 ]
 
 interface SupervisorResponsibilities {
-  analyzeRequest(request: string): Promise<GenerateObjectResult<JSONValue> | Error>
-  createPlan(request: string): Promise<Task[]>
   delegateTask(task: Task, agent: Agent): Promise<JSONValue | Error>
 }
 
@@ -57,68 +55,35 @@ export class Supervisor extends Agent implements SupervisorResponsibilities {
   }
 
   // Analyze the request and return the intent
-  async analyzeRequest(request: string): Promise<GenerateObjectResult<JSONValue> | Error> {
+  protected async analyzeRequest(request: string): Promise<JSONValue | Error> {
     try {
-      const prompt: ModelMessage[] = [
-        { role: "system", content: "Supervisor, es importante que sepas que a partir de este momento, cualquier request que requiera compute debe ser aprobado por finanzas." },
-        { role: "system", content: "Puedes preguntar al usuario si no queda claro si el request requiere compute." },
-        { role: "user", content: request }
-      ]
 
-      return await generateObject({
-        model: openai("gpt-4o-mini"),
-        system: "You are a supervisor. You are responsible for analyzing the request and returning the intent that the user is trying to express.",
-        messages: prompt,
-        schema: jsonSchema({
-          type: "object",
-          properties: {
-            intent: { type: "string" },
-            requireFinanceApproval: { type: "boolean" },
-            questions: { type: "array", items: { type: "string" } },
-            indicationsToDelegate: { type: "array", items: { type: "string" } },
-            tasks: {
-              type: "object",
-              properties: {
-                id: { type: "string" },
-                name: { type: "string" },
-                goal: { type: "string" },
-                status: {
-                  type: "string",
-                  enum: ["pending", "active", "done"]
-                },
-                input: { type: "object" },
-                output: { type: "object" }
-              },
-              required: ["id", "name", "goal", "status"]
-            },
-          },
-          required: ["intent"],
-          additionalProperties: false,
-        }),
-      });
+      return this.generate(prompt);
     } catch (error) {
       console.error(error)
       return error as Error
     }
   }
 
-  async createPlan(request: string): Promise<Task[]> {
+  private async createPlan(request: string): Promise<Task[]> {
     try {
       // Analyze the request and return the intent
-      const intent = await this.analyzeRequest(request)
-
-      // Decompose the user's intent into tasks
-      if (intent instanceof Error) {
+      const intentResult = await this.analyzeRequest(request)
+      
+      if (intentResult instanceof Error) {
+        console.error("Error analyzing request:", intentResult)
         return []
       }
-      return this.decomposeIntentIntoTasks(intent.object)
+
+      // Decompose the user's intent into tasks
+      return this.decomposeIntentIntoTasks(intentResult.object)
     } catch (error) {
       console.error(error)
       return []
     }
   } 
 
-  async delegateTask(task: Task, agent: Agent): Promise<JSONValue | Error> {
+  private async delegateTask(task: Task, agent: Agent): Promise<JSONValue | Error> {
     try {
       if (!this.can(Capabilities.delegate)) {
         console.error(`Supervisor cannot delegate the task ${task.name}`)
@@ -141,5 +106,41 @@ export class Supervisor extends Agent implements SupervisorResponsibilities {
   private async decomposeIntentIntoTasks(intent: JSONValue): Promise<Task[]> {
     console.log("intent", intent)
     throw new Error("Not implemented")
+  }
+
+  async handle(prompt: string): Promise<JSONValue> {
+    const { object } = await generateObject({
+      model: openai("gpt-4o-mini"),
+      system: "You are a supervisor. You are responsible for analyzing the request and returning the intent that the user is trying to express.",
+      prompt,
+      schema: jsonSchema({
+        type: "object",
+        properties: {
+          intent: { type: "string" },
+          requireFinanceApproval: { type: "boolean" },
+          questions: { type: "array", items: { type: "string" } },
+          indicationsToDelegate: { type: "array", items: { type: "string" } },
+          tasks: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              name: { type: "string" },
+              goal: { type: "string" },
+              status: {
+                type: "string",
+                enum: ["pending", "active", "done"]
+              },
+              input: { type: "object" },
+              output: { type: "object" }
+            },
+            required: ["id", "name", "goal", "status"]
+          },
+        },
+        required: ["intent"],
+        additionalProperties: false,
+      }),
+    })
+
+    return object
   }
 }

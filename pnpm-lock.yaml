@@ -124,6 +124,9 @@ importers:
       ai:
         specifier: ^5.0.27
         version: 5.0.27(zod@4.1.5)
+      zod:
+        specifier: ^4.1.5
+        version: 4.1.5
     devDependencies:
       '@syner/eslint-config':
         specifier: workspace:*
