@@ -1,5 +1,5 @@
 {
-  "name": "assistant",
+  "name": "@syner/assistant",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -38,7 +38,8 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@syner/eslint-config": "workspace:^",
+    "@syner/tsconfig": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

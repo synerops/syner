@@ -151,9 +151,12 @@ importers:
         specifier: ^4.0.5
         version: 4.0.5
     devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3
-        version: 3.3.1
+      '@syner/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@syner/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.11
