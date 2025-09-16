@@ -1,6 +1,6 @@
 // Main exports for the @syner/agents package
 export { createAgent, execute, can } from "./agent"
-export { Supervisor } from "./_supervisor"
+export { Supervisor } from "./supervisor"
 export type { AgentInput } from "./agent"
 export type { Task } from "./task"
 export type { Capability } from "./capability"

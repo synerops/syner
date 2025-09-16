@@ -1,20 +1,27 @@
 {
   "extends": "@syner/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "target": "es2018",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "baseUrl": ".",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "paths": {
-      "@syner/agents/*": [
-        "./src/*"
+      "@/*": [
+        "./*"
       ]
     }
-},
+  },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
 }

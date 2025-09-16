@@ -1,5 +1,6 @@
-import { GenerateObjectResult } from "ai"
+import type { Agent } from "../src/agent"
 import { createAgent } from "../src/agent"
+import type { Capability } from "../src/capability"
 
 // class DevOpsSupervisor extends Supervisor {
 //   constructor() {
@@ -7,38 +8,50 @@ import { createAgent } from "../src/agent"
 //   }
 // }
 
-async function main() {
-  const iacEngineer = await createAgent({
-    id: "iac-engineer",
-    name: "IAC Engineer",
-    capabilities: [
-      {
-        name: "iac:plan",
-        description: "Plan the infrastructure changes",
-        tools: [],
-        input: {
-          application: {
-            type: "object",
-            properties: {
-              name: { type: "string" },
-              description: { type: "string" },
-            },
-          },
-        },
-        output: {
-          plan: {
-            type: "object",
-            properties: {
-              actions: { type: "array", items: { type: "string" } },
-            },
-          },
+const capabilities: Capability[] = [
+  {
+    name: "iac:plan",
+    description: "Plan the infrastructure changes",
+    tools: [],
+    input: {
+      application: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          description: { type: "string" },
         },
       },
-    ],
-  })
-  console.log("iacEngineer", iacEngineer)
-  // const intent = await iacEngineer.handle("Deploy a React app in production")
-  // console.log("intent", intent)
-}
+    },
+    output: {
+      type: "object",
+      properties: {
+      plan: {
+          actions: { type: "array", items: { type: "string" } },
+        },
+      },
+    },
+  },
+  // {
+  //   name: "iac:deploy",
+  //   description: "Deploy the infrastructure changes",
+  //   tools: [],
+  // },
+  
+]
 
-main()
+export async function POST(request: Request) {
+  const basicAgent = await createAgent({
+    id: "basic-agent",
+    name: "Basic Agent",
+    capabilities,
+  })
+  
+  const { stream } = await basicAgent.respond([
+    {
+      role: "user",
+      content: "What is the capital of France?",
+    }
+  ])
+
+  return new Response(stream.toDataStreamResponse())
+}

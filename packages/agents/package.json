@@ -6,7 +6,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
@@ -19,25 +20,37 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "keywords": [],
   "author": {
     "name": "Syner OS",
     "email": "support@synerops.com",
     "url": "https://synerops.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synerops/syner.git",
+    "directory": "packages/agents"
+  },
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.22",
-    "ai": "^5.0.27",
-    "zod": "^4.1.5"
+    "@ai-sdk/openai": "^2.0.30",
+    "ai": "^5.0.44",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@syner/eslint-config": "workspace:*",
     "@syner/typescript-config": "workspace:*",
-    "@types/node": "^20.0.0",
-    "eslint": "^9.0.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^20.19.15",
+    "eslint": "^9.35.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }

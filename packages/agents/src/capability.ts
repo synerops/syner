@@ -7,7 +7,7 @@ import type { Tool, JSONValue } from "ai"
 
 export type Capability = {
   name: string
-  description: string
+  description: string 
   tools: Tool[]
   input: JSONValue
   output: JSONValue

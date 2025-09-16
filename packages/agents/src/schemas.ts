@@ -2,7 +2,7 @@ import { z } from "zod"
 import { asSchema } from "ai"
 import type { Task, Status } from "./task"
 import type { Capability } from "./capability"
-import type { AgentInput } from "./agent"
+import type { CreateAgentProps } from "@/src/agent"
 
 /**
  * Schema for validating Agent capabilities
@@ -16,18 +16,18 @@ export const CapabilityZodSchema: z.ZodType<Capability> = z.object({
   output: z.object({}) // Schema type from AI SDK
 })
 export const CapabilitySchema = asSchema(CapabilityZodSchema)
-export type ValidatedCapability = z.infer<typeof CapabilitySchema>
+export type ValidatedCapability = z.infer<typeof CapabilityZodSchema>
 
 /**
  * Schema for validating Agent input when creating a new agent
  */
-export const AgentInputZodSchema: z.ZodType<AgentInput> = z.object({
+export const CreateAgentPropsZodSchema: z.ZodType<CreateAgentProps> = z.object({
   id: z.string().min(1, "Agent ID is required").max(100, "Agent ID too long"),
   name: z.string().min(1, "Agent name is required").max(100, "Agent name too long"),
   capabilities: z.array(CapabilityZodSchema).min(1, "At least one capability is required"),
 })
-export const AgentInputSchema = asSchema(AgentInputZodSchema)
-export type ValidatedAgentInput = z.infer<typeof AgentInputZodSchema>
+export const CreateAgentPropsSchema = asSchema(CreateAgentPropsZodSchema)
+export type ValidatedCreateAgentProps = z.infer<typeof CreateAgentPropsZodSchema>
 
 /**
  * Schema for validating Task status

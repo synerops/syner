@@ -7,9 +7,9 @@
 import type { GenerateObjectResult, JSONValue } from "ai"
 import { generateObject, jsonSchema, ModelMessage } from "ai"
 import { openai } from "@ai-sdk/openai"
-import type { Task } from "./task"
-import type { Capability } from "./capability"
-import { Agent } from "./agent"
+import type { Task } from "./task.js"
+import type { Capability } from "./capability.js"
+import { Agent } from "./agent.js"
 
 export enum Capabilities {
   plan = "plan",

@@ -1,16 +1,7 @@
-import { GenerateObjectResult } from "ai"
-import { Supervisor } from "../src/_supervisor"
+import { createSupervisor } from "@/src/supervisor"
 
-class DevOpsSupervisor extends Supervisor {
-  constructor() {
-    super()
-  }
+export async function POST(request: Request) {
+  const supervisor = await createSupervisor()
+  const plan = await supervisor.plan("Deploy a React app in production")
+  return Response.json({ plan })
 }
-
-async function main() {
-  const supervisor = new DevOpsSupervisor()
-  const intent = await supervisor.handle("Deploy a React app in production")
-  console.log("intent", intent)
-}
-
-main()
