@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { z } from "zod"
 import { asSchema } from "ai"
 import type { Task, Status } from "./task"
@@ -83,3 +84,5 @@ export class ValidationError extends Error {
     })
   }
 }
+=======
+>>>>>>> 572c19c (feat(agents): lint and build)

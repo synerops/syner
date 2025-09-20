@@ -3,12 +3,14 @@
 // Example: The company has the capability to produce 10,000 units per day.
 // Here, the "capability" depends on machinery(tools), workers, and know - how.
 
-import type { Tool, JSONValue } from "ai"
+import type { Tool } from "ai"
+import { z } from "zod"
 
 export type Capability = {
   name: string
   description: string 
-  tools: Tool[]
-  input: JSONValue
-  output: JSONValue
+  tools: Record<string, Tool>
+  input: z.ZodSchema
+  output: z.ZodSchema
+  dependencies?: string[]
 }

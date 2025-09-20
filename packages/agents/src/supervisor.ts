@@ -4,6 +4,7 @@
 // Here, the "supervisor" depends on planning/delegation/audit capabilities, the organizational structure (departments and heads),
 // and the system policies that govern how work is planned, assigned, and reported.
 
+<<<<<<< HEAD
 import type { GenerateObjectResult, JSONValue } from "ai"
 import { generateObject, jsonSchema, ModelMessage } from "ai"
 import { openai } from "@ai-sdk/openai"
@@ -14,6 +15,25 @@ import { Agent } from "./agent.js"
 export enum Capabilities {
   plan = "plan",
   delegate = "delegate",
+=======
+import { Experimental_Agent as Agent } from "ai";
+import { getSupervisorTools } from "@/tools/supervisor";
+
+// Combinar todos los tools de las capabilities del supervisor
+const tools = getSupervisorTools();
+const systemPrompt = `You are a supervisor agent that manages the other agents.
+You can use the other agents to help you with your tasks.`
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class Supervisor extends Agent<any, any, any> {
+  constructor({ system }: { system?: string }) {
+    super({
+      model: "openai/gpt-4o",
+      tools,
+      system: system ?? systemPrompt,
+    });
+  }
+>>>>>>> 572c19c (feat(agents): lint and build)
 }
 
 export const capabilities: Capability[] = [

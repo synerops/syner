@@ -4,7 +4,6 @@
 // Here, the "task" depends on who executes it (person, agent, or system), 
 // the resources required, and the context in which it is performed.
 
-import type { JSONValue } from "ai"
 import type { Capability } from "./capability"
 
 export type Status = "pending" | "active" | "done"
