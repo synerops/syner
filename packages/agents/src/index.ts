@@ -1,5 +1,5 @@
-// // Main exports for the @syner/agents package
-// export { Supervisor } from "./supervisor"
+// Main exports for the @syner/agents package
+export * from "./supervisor"
 // export type { Task } from "./task"
 // export type { Capability } from "./capability"
 
