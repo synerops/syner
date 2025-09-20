@@ -3,6 +3,12 @@ import { tool } from "ai";
 import type { Capability } from "@/src/capability";
 import { CommonSchemas } from "@/tools/types";
 
+/**
+ * SUPPORTING CAPABILITY for supervisors
+ * Executes plans created by planning capability - delegates and coordinates tasks
+ * Dependencies: planning (needs a plan to orchestrate)
+ * Dependents: monitoring
+ */
 export const orchestrationCapability: Capability = {
   name: "orchestration",
   description: "Coordinate and delegate tasks across departments and agents",

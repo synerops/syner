@@ -14,9 +14,8 @@
     "dev": "tsc --noEmit --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "example:agent": "tsx --watch example/iac-engineer.ts",
-    "example:supervisor": "tsx example/head-devops.ts",
-    "example:validation": "tsx example/validation-example.ts",
+    "example:worker": "tsx --watch example/iac-engineer.ts",
+    "example:supervisor": "tsx example/director-devops.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist"
   },

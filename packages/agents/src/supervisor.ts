@@ -32,6 +32,8 @@ export class Supervisor extends Agent<any, any, any> {
       tools,
       system: system ?? systemPrompt,
     });
+
+    return this;
   }
 >>>>>>> 572c19c (feat(agents): lint and build)
 }

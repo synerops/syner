@@ -19,5 +19,7 @@ export class Worker extends Agent<any, any, any> {
       tools,
       system: system ?? systemPrompt,
     });
+
+    return this;
   }
 }
