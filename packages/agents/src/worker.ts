@@ -4,7 +4,7 @@
 // Here, the "worker" depends on task execution, resource management, and reporting capabilities to efficiently complete assigned work.
 
 import { Experimental_Agent as Agent } from "ai";
-import { getWorkerTools } from "@/tools/worker";
+import { getWorkerTools } from "@/tools";
 
 // Combine all tools from worker capabilities
 const tools = getWorkerTools();
