@@ -3,7 +3,7 @@ import { tool } from "ai";
 import { CommonSchemas } from "../types";
 
 /**
- * CORE CAPABILITY for supervisors
+ * CORE CAPABILITY for orchestrators
  * Must analyze requests and create structured plans before any orchestration
  * Dependencies: none (this runs first)
  * Dependents: orchestration, monitoring

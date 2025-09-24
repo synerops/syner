@@ -4,7 +4,7 @@ import type { Capability } from "@/src/capability";
 import { CommonSchemas } from "@/tools/types";
 
 /**
- * SUPPORTING CAPABILITY for supervisors
+ * SUPPORTING CAPABILITY for orchestrators
  * Executes plans created by planning capability - delegates and coordinates tasks
  * Dependencies: planning (needs a plan to orchestrate)
  * Dependents: monitoring

@@ -4,8 +4,8 @@ import { CommonSchemas } from "../types";
 
 /**
  * CORE CAPABILITY for workers
- * Executes specific tasks assigned by supervisors with domain expertise
- * Dependencies: none (receives tasks from supervisors)
+ * Executes specific tasks assigned by orchestrators with domain expertise
+ * Dependencies: none (receives tasks from orchestrators)
  * Dependents: reporting
  */
 export const taskExecutionCapability = {

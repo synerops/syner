@@ -3,11 +3,15 @@ import { planningCapability } from "./supervisor/planning";
 import { orchestrationCapability } from "./supervisor/orchestration";
 import { taskExecutionCapability } from "./worker/task-execution";
 
+// Define tool types for type safety
+export type OrchestratorTools = Record<string, Tool>;
+export type WorkerTools = Record<string, Tool>;
+
 /**
- * Get all tools available for supervisor agents
+ * Get all tools available for orchestrator agents
  * Includes planning and orchestration capabilities
  */
-export function getSupervisorTools(): Record<string, Tool> {
+export function getOrchestratorTools(): Record<string, Tool> {
   return {
     ...planningCapability.tools,
     ...orchestrationCapability.tools,
@@ -34,7 +38,7 @@ export function getSharedTools(): Record<string, Tool> {
 
 // Registry of all tools
 export const registry: Record<string, Tool[]> = {
-  supervisor: Object.values(getSupervisorTools()),
+  orchestrator: Object.values(getOrchestratorTools()),
   worker: Object.values(getWorkerTools()),
   shared: Object.values(getSharedTools()),
 };

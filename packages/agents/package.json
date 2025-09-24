@@ -15,7 +15,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "example:worker": "tsx --watch example/iac-engineer.ts",
-    "example:supervisor": "tsx example/director-devops.ts",
+    "example:orchestrator": "tsx example/director-devops.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist"
   },

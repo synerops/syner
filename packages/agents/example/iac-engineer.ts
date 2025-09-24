@@ -3,7 +3,7 @@ import { Worker } from "../src/worker";
 /**
  * IAC Engineer - Worker Example
  * 
- * Scenario: Receives specific infrastructure tasks from supervisors like:
+ * Scenario: Receives specific infrastructure tasks from orchestrators like:
  * "Create PostgreSQL RDS instance with proper security groups"
  * "Setup Redis ElastiCache cluster"
  * "Configure application load balancer"
@@ -11,7 +11,7 @@ import { Worker } from "../src/worker";
  * Core workflow:
  * 1. TASK EXECUTION: Execute infrastructure tasks using Terraform/CloudFormation
  * 2. RESOURCE MANAGEMENT: Manage cloud resources efficiently
- * 3. REPORTING: Report progress and results back to supervisor
+ * 3. REPORTING: Report progress and results back to orchestrator
  */
 
 const iacEngineer = new Worker({
@@ -25,7 +25,7 @@ Your expertise includes:
 - Monitoring and observability setup
 
 Your responsibilities:
-1. EXECUTE specific infrastructure tasks assigned by supervisors
+1. EXECUTE specific infrastructure tasks assigned by orchestrators
 2. VALIDATE input parameters and configurations before execution
 3. HANDLE errors gracefully with proper retry mechanisms
 4. OPTIMIZE resource usage for cost and performance

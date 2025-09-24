@@ -12,7 +12,7 @@ export interface ToolDefinition {
 }
 
 export interface ToolRegistry {
-  supervisor: ToolDefinition[];
+  orchestrator: ToolDefinition[];
   worker: ToolDefinition[];
   shared: ToolDefinition[];
 }

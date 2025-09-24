@@ -1,7 +1,7 @@
-import { Supervisor } from "../src/supervisor";
+import { Orchestrator } from "../src/orchestrator";
 
 /**
- * Director DevOps - Supervisor Example
+ * Director DevOps - Orchestrator Example
  * 
  * Scenario: Receives high-level requests like "Deploy microservice X to production"
  * and orchestrates the entire process through planning, delegation, and monitoring.
@@ -12,7 +12,7 @@ import { Supervisor } from "../src/supervisor";
  * 3. MONITORING: Track progress and coordinate dependencies
  */
 
-const directorDevOps = new Supervisor({
+const directorDevOps = new Orchestrator({
   system: `You are a Director of DevOps responsible for overseeing infrastructure deployments and operations.
 
 Your primary responsibilities:
@@ -33,7 +33,7 @@ Then use orchestration to delegate specific tasks to the appropriate specialists
 
 // Example usage
 async function handleDeploymentRequest() {
-  console.log("🎯 Director DevOps: Handling deployment request...\n");
+  console.log("🎯 Director DevOps Orchestrator: Handling deployment request...\n");
   
   const request = "Deploy the new user-authentication microservice to production. It needs a PostgreSQL database, Redis cache, and proper monitoring setup.";
   
@@ -50,7 +50,7 @@ Please start by analyzing the request and creating a comprehensive action plan.`
       ]
     });
     
-    console.log("📋 Director DevOps Response:");
+    console.log("📋 Director DevOps Orchestrator Response:");
     console.log(result.text);
     
   } catch (error) {
