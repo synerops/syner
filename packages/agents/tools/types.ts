@@ -29,11 +29,18 @@ export const CommonSchemas = {
   TaskSchema: z.object({
     id: z.string(),
     name: z.string(),
-    description: z.string(),
-    capability: z.string(),
-    parameters: z.record(z.any()),
-    status: z.enum(["pending", "in_progress", "completed", "failed"]),
-    assignedAgent: z.string().optional(),
+    goal: z.string(),
+    capability: z.object({
+      name: z.string(),
+      description: z.string(),
+      tools: z.record(z.any()),
+      input: z.any(),
+      output: z.any(),
+    }),
+    dependencies: z.array(z.lazy(() => z.any())),
+    status: z.enum(["pending", "active", "done"]),
+    input: z.any(),
+    output: z.any(),
   }),
   
   ResponseSchema: z.object({

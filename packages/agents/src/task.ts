@@ -4,6 +4,7 @@
 // Here, the "task" depends on who executes it (person, agent, or system), 
 // the resources required, and the context in which it is performed.
 
+import { z } from "zod"
 import type { Capability } from "./capability"
 
 export type Status = "pending" | "active" | "done"
@@ -15,6 +16,6 @@ export type Task = {
   capability: Capability
   dependencies: Task[]
   status: Status
-  // input: JSONValue
-  // output: JSONValue
+  input: z.ZodSchema
+  output: z.ZodSchema
 }

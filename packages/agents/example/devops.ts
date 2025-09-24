@@ -13,34 +13,49 @@ export async function POST(request?: Request) {
   const databaseTask = {
     id: "task-1",
     name: "deploy-database",
-    description: "Deploy PostgreSQL database for the React app",
-    capability: "infrastructure",
-    parameters: { 
+    goal: "Deploy PostgreSQL database for the React app",
+    capability: {
+      name: "infrastructure",
+      description: "Infrastructure management capability",
+      tools: {},
+      input: {},
+      output: {}
+    },
+    dependencies: [],
+    status: "pending" as const,
+    input: { 
       environment: "production",
       instanceType: "db.t3.micro",
       storage: 20
     },
-    status: "pending" as const
+    output: {}
   }
   
   const appTask = {
     id: "task-2", 
     name: "deploy-app",
-    description: "Deploy React application to production",
-    capability: "deployment",
-    parameters: { 
+    goal: "Deploy React application to production",
+    capability: {
+      name: "deployment",
+      description: "Application deployment capability",
+      tools: {},
+      input: {},
+      output: {}
+    },
+    dependencies: [databaseTask],
+    status: "pending" as const,
+    input: { 
       environment: "production",
       buildCommand: "npm run build",
       port: 3000
     },
-    status: "pending" as const
+    output: {}
   }
   
   // Create plan with tasks and dependencies
   const plan = new PlanBuilder("deploy-react-app", "Deploy React App to Production", "Complete deployment of React application with database")
     .addTask(databaseTask)
     .addTask(appTask)
-    .addDependency("task-1", "task-2") // App depends on database
     .setPriority("high")
     .setEnvironment("production")
     .setEstimatedDuration("30 minutes")
