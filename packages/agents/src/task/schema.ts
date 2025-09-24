@@ -16,7 +16,7 @@ export const TaskSchema: z.ZodType<any> = z.object({
   ),
   metadata: z.record(z.any()),
   status: z.lazy(() => TaskStatusSchema).default("pending"),
-  input: z.any(),
-  output: z.any(),
+  input: z.record(z.unknown()),
+  output: z.record(z.unknown()),
 })
 
