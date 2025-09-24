@@ -4,5 +4,5 @@
 // Here, the "task" depends on who executes it (person, agent, or system), 
 // the resources required, and the context in which it is performed.
 
-export { TaskSchema } from "./schema";
-export type { Task, Status } from "./types";
+export * from "./schema";
+export type * from "./types";

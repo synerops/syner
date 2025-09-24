@@ -5,36 +5,29 @@
 // and the system policies that govern how work is planned, assigned, and reported.
 
 import { Experimental_Agent as Agent } from "ai";
+import { z } from "zod";
+import { PlanExecutionSchema, PlanSchema } from "@/src/plan";
 import { getOrchestratorTools, type OrchestratorTools } from "@/tools";
-import type { Plan } from "../plan/types";
-import { planningCapability } from "@/tools/supervisor/planning";
+import type { OrchestratorConfig } from "./types";
 
 export class Orchestrator extends Agent<OrchestratorTools> {
-  private planning: PlanningCapability;
-  private orchestration: OrchestrationCapability;
-  // private monitoring: MonitoringCapability;
-
   constructor(config: OrchestratorConfig) {
-    super();
-    this.planning = new PlanningCapability();
-    this.orchestration = new OrchestrationCapability();
-    // this.monitoring = new MonitoringCapability();
+    super({
+      model: "openai/gpt-4o",
+      tools: getOrchestratorTools(),
+      system: config.system ?? "You are an orchestrator agent that coordinates and manages other agents. You can analyze requests, create action plans, and delegate tasks to appropriate workers."
+    });
   }
 
-  async plan(request: string): Promise<Plan> {
+  async plan(request: string): Promise<z.infer<typeof PlanSchema>> {
     throw new Error("Not implemented");
   }
 
-  async coordinate(plan: Plan): Promise<Workflow> {
+  async coordinate(plan: z.infer<typeof PlanSchema>): Promise<z.infer<typeof PlanExecutionSchema>> {
     throw new Error("Not implemented");
   }
 
-  // plan and coordinate
-  async process(request: string): Promise<Workflow> {
+  async process(request: string): Promise<z.infer<typeof PlanExecutionSchema>> {
     throw new Error("Not implemented");
   }
-
-  // async monitor(plan: Plan): Promise<string> {
-  //   return this.monitoring.monitor(plan);
-  // }
 }

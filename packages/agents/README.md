@@ -1,243 +1,209 @@
-# Flujo Completo: Request → Plan de Acción
+# @syner/agents
 
-## Ejemplo: Deploy de App React en Desarrollo con ECS Clusters
+A toolkit to create and manage agents in the Syner OS ecosystem.
 
-### 1. Request del Usuario
+## Foundation
+
+### Core Philosophy
+This framework is built from the ground up with **native TypeScript support** and **ai-sdk integration** as first-class citizens. Unlike existing frameworks that add TypeScript as an afterthought, this framework is designed specifically for the modern TypeScript ecosystem.
+
+### Why Built from Scratch?
+- **Native TypeScript Support**: Built with TypeScript-first design, not adapted from Python/JavaScript
+- **ai-sdk Integration**: Deep integration with Vercel's ai-sdk for structured outputs and tool calling
+- **Modern Architecture**: Designed for the current ecosystem, not legacy patterns
+- **Performance**: Optimized for TypeScript and Node.js environments
+
+### Architecture Principles
+- **Orchestrator/Worker Pattern**: Clear separation of concerns between planning and execution
+- **Capability-Based Design**: Agents are defined by their capabilities, not rigid roles
+- **Structured Data Flow**: All inputs/outputs use structured schemas for type safety
+- **Reference-Based Dependencies**: Eliminates circular dependencies through ID-based references
+- **MVP-First Approach**: Start simple, grow incrementally
+
+### Technology Stack
+- **Runtime**: Node.js with TypeScript
+- **AI Integration**: Vercel ai-sdk with OpenAI GPT-4
+- **Validation**: Zod for runtime type safety
+- **Architecture**: Orchestrator/Worker with capability discovery
+
+## Framework Architecture
+
+### 1. Architecture Layers
+
+```
+┌─────────────────────────────────────────┐
+│           USER REQUEST                  │
+│    "Deploy React app to ECS"           │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│           ORCHESTRATOR                  │
+│    (Agent<OrchestratorTools>)          │
+│  • Planning Capability                 │
+│  • Orchestration Capability            │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│              PLAN                       │
+│    (Schema + Types)                    │
+│  • Task IDs + Dependencies             │
+│  • Metadata + Status                   │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│              TASKS                      │
+│    (Schema + Types)                    │
+│  • Goal + Required Capabilities        │
+│  • Input/Output + Status               │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│             WORKERS                     │
+│    (Agent<WorkerTools>)                │
+│  • Task Execution Capability           │
+│  • Domain-specific expertise           │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│           CAPABILITIES                  │
+│    (Schema + Types)                    │
+│  • Tools + Input/Output                │
+│  • Domain knowledge                    │
+└─────────────────────────────────────────┘
+```
+
+### 2. Data Flow
+
+**Request → Plan → Tasks → Execution → Results**
+
+1. **User Request** → Orchestrator
+2. **Orchestrator** uses `planningCapability` → creates **Plan**
+3. **Plan** contains **Task IDs** + dependencies
+4. **Orchestrator** uses `orchestrationCapability` → delegates **Tasks**
+5. **Workers** receive **Tasks** → execute using **Capabilities**
+6. **Results** flow back to Orchestrator
+
+### 3. Separation of Responsibilities
+
+**Data Primitives (Schemas):**
+- **Capability**: Defines what an agent can do
+- **Plan**: Work structure with dependencies
+- **Task**: Specific work unit
+
+**Agent Primitives (ai-sdk):**
+- **Orchestrator**: Plans and coordinates
+- **Worker**: Executes specific tasks
+
+### 4. Communication Pattern
+
+```
+Orchestrator ──(Task Schema)──> Worker
+     ↑                              │
+     └──(Results)───────────────────┘
+```
+
+- **Orchestrator → Worker**: Sends `Task` (schema)
+- **Worker → Orchestrator**: Sends structured results
+- **Communication**: Schema-based, not complex objects
+
+### 5. ai-sdk Integration
+
+- **Orchestrator**: `extends Agent<OrchestratorTools>`
+- **Worker**: `extends Agent<WorkerTools>`
+- **Tools**: Defined in capabilities, automatically integrated
+- **Type Safety**: TypeScript infers everything from schemas
+
+## Example Flow: Deploy React App to ECS
+
+### 1. User Request
 ```typescript
-// Usuario hace request
 const userRequest = "Deploy my React app to development environment using ECS clusters"
 ```
 
-### 2. Orchestrator Recibe el Request
+### 2. Orchestrator Processing
 ```typescript
 const orchestrator = new Orchestrator({
   system: "You are a DevOps orchestrator that manages deployments"
 });
 
-// El Orchestrator usa sus capabilities para procesar el request
+// Orchestrator uses planning capability
+const plan = await orchestrator.plan(userRequest);
 ```
 
-### 3. Planning Capability - Análisis del Request
-El Orchestrator usa su `planningCapability` con estos tools:
-
-**a) `analyzeRequest` tool:**
+### 3. Plan Creation
 ```typescript
-// Input al tool
-{
-  request: "Deploy my React app to development environment using ECS clusters",
-  context: { environment: "development", platform: "ECS" },
-  userPreferences: { autoScaling: true, monitoring: true }
-}
-
-// Output del tool
-{
-  intent: "Deploy React application to ECS development environment",
-  complexity: "moderate",
-  estimatedDuration: "15-20 minutes",
-  requiredCapabilities: ["infrastructure", "containerization", "deployment"]
-}
-```
-
-**b) `createActionPlan` tool:**
-```typescript
-// Input al tool
-{
-  requirements: {
-    intent: "Deploy React application to ECS development environment",
-    constraints: ["ECS clusters", "development environment"],
-    preferences: { autoScaling: true, monitoring: true }
-  },
-  availableCapabilities: ["infrastructure", "containerization", "deployment", "monitoring"]
-}
-
-// Output del tool - Plan estructurado
-{
+// Plan contains task IDs and dependencies
+const plan = {
   id: "plan-deploy-react-dev",
-  steps: [
-    {
-      id: "task-1",
-      name: "build-docker-image",
-      goal: "Build Docker image for React app",
-      capabilities: [{
-        name: "containerization",
-        description: "Container management capability",
-        tools: {},
-        input: {},
-        output: {}
-      }],
-      dependencies: [],
-      status: "pending",
-      input: { dockerfile: "./Dockerfile", tag: "react-app:dev" },
-      output: {}
-    },
-    {
-      id: "task-2", 
-      name: "create-ecs-service",
-      goal: "Create ECS service for React app",
-      capabilities: [{
-        name: "infrastructure",
-        description: "Infrastructure management capability",
-        tools: {},
-        input: {},
-        output: {}
-      }],
-      dependencies: [],
-      status: "pending",
-      input: { cluster: "dev-cluster", serviceName: "react-app-service" },
-      output: {}
-    },
-    {
-      id: "task-3",
-      name: "deploy-to-ecs",
-      goal: "Deploy React app to ECS cluster",
-      capabilities: [{
-        name: "deployment",
-        description: "Application deployment capability",
-        tools: {},
-        input: {},
-        output: {}
-      }],
-      dependencies: [],
-      status: "pending",
-      input: { image: "react-app:dev", replicas: 2 },
-      output: {}
-    }
-  ],
+  taskIds: ["task-1", "task-2", "task-3"],
   dependencies: [
-    { from: "task-1", to: "task-3" }, // Deploy depends on build
-    { from: "task-2", to: "task-3" }  // Deploy depends on service creation
-  ]
-}
+    { taskId: "task-3", dependsOn: "task-1", type: "sequential" },
+    { taskId: "task-3", dependsOn: "task-2", type: "sequential" }
+  ],
+  status: "draft"
+};
 ```
 
-### 4. Orchestration Capability - Delegación de Tasks
-El Orchestrator usa su `orchestrationCapability`:
-
-**a) `delegateTask` tool:**
+### 4. Task Delegation
 ```typescript
-// Para cada task, el Orchestrator delega a workers especializados
+// Orchestrator delegates tasks to workers
 await orchestrator.delegateTask({
-  task: {
-    id: "task-1",
-    name: "build-docker-image", 
-    goal: "Build Docker image for React app",
-    capabilities: [{
-      name: "containerization",
-      description: "Container management capability",
-      tools: {},
-      input: {},
-      output: {}
-    }],
-    dependencies: [],
-    status: "pending",
-    input: { dockerfile: "./Dockerfile", tag: "react-app:dev" },
-    output: {}
-  },
+  task: buildDockerImageTask,
   targetAgent: "container-worker",
   priority: "high"
 });
-
-await orchestrator.delegateTask({
-  task: {
-    id: "task-2",
-    name: "create-ecs-service",
-    goal: "Create ECS service for React app", 
-    capabilities: [{
-      name: "infrastructure",
-      description: "Infrastructure management capability",
-      tools: {},
-      input: {},
-      output: {}
-    }],
-    dependencies: [],
-    status: "pending",
-    input: { cluster: "dev-cluster", serviceName: "react-app-service" },
-    output: {}
-  },
-  targetAgent: "infrastructure-worker",
-  priority: "high"
-});
 ```
 
-### 5. Workers Ejecutan Tasks
-Los workers especializados reciben y ejecutan las tasks:
-
-**Container Worker:**
+### 5. Worker Execution
 ```typescript
 const containerWorker = new Worker({
   system: "You are a containerization specialist"
 });
 
-// Ejecuta task-1: build-docker-image
+// Worker executes task using capabilities
 await containerWorker.executeTask({
   task: buildDockerImageTask,
   executionContext: {
     environment: "development",
-    timeout: 300 // 5 minutes
+    timeout: 300
   }
 });
 ```
 
-**Infrastructure Worker:**
+### 6. Results Flow
 ```typescript
-const infrastructureWorker = new Worker({
-  system: "You are an infrastructure specialist"
-});
-
-// Ejecuta task-2: create-ecs-service  
-await infrastructureWorker.executeTask({
-  task: createEcsServiceTask,
-  executionContext: {
-    environment: "development",
-    resourceLimits: { cpu: 512, memory: 1024 }
-  }
-});
-```
-
-### 6. Flujo de Dependencias
-```typescript
-// El Orchestrator coordina las dependencias
-await orchestrator.coordinateWorkflow({
-  workflowId: "deploy-react-dev",
-  steps: [task1, task2, task3],
-  dependencies: [
-    { from: "task-1", to: "task-3" }, // Deploy waits for build
-    { from: "task-2", to: "task-3" }  // Deploy waits for service
-  ]
-});
-```
-
-### 7. Resultado Final
-```typescript
-// El Orchestrator recibe resultados y genera reporte
+// Results flow back to orchestrator
 const deploymentResult = {
   success: true,
   deployedServices: ["react-app-service"],
-  ecsCluster: "dev-cluster", 
-  endpoints: ["https://react-app-dev.example.com"],
-  monitoring: "CloudWatch enabled",
-  estimatedCost: "$15/month"
+  ecsCluster: "dev-cluster",
+  endpoints: ["https://react-app-dev.example.com"]
 };
 ```
 
-## Resumen del Flujo:
+## Technical Foundation
 
-```
-User Request 
-    ↓
-Orchestrator (Planning Capability)
-    ↓ 
-Analyze Request → Create Action Plan
-    ↓
-Orchestrator (Orchestration Capability)  
-    ↓
-Delegate Tasks → Coordinate Dependencies
-    ↓
-Workers (Task Execution)
-    ↓
-Container Worker (build-docker-image)
-Infrastructure Worker (create-ecs-service)  
-Deployment Worker (deploy-to-ecs)
-    ↓
-Deployment Complete
-```
+### Schema Design Decisions
+- **`z.record(z.unknown())` for Inputs/Outputs**: Provides structured data flow while maintaining flexibility for any domain
+- **ID-Based References**: Eliminates circular dependencies by using string IDs instead of nested objects
+- **Lazy Loading**: Uses `z.lazy()` for self-referencing schemas to prevent circular imports
+- **UUID Validation**: Ensures unique identifiers for plans and executions
+
+### Architecture Facts
+- **Orchestrator Tools**: `analyzeRequest`, `createActionPlan`, `delegateTask`, `coordinateWorkflow`, `monitorProgress`
+- **Worker Tools**: `executeTask`, `validateInput`, `handleExecutionError`, `optimizeExecution`
+- **Communication Pattern**: Schema-based communication for type safety
+- **State Management**: In-memory for MVP, designed for future persistence
+- **Error Handling**: Basic error propagation, designed for future retry mechanisms
+
+### Integration Points
+- **ai-sdk**: Uses `Experimental_Agent` for AI-powered decision making
+- **Zod**: Runtime validation and type safety for all schemas
+- **TypeScript**: Full type inference from Zod schemas
+- **Tool Calling**: Structured tool definitions with input/output schemas
+
+### Performance Characteristics
+- **Schema Validation**: O(1) for simple schemas, O(n) for complex nested structures
+- **Memory Usage**: Minimal overhead with ID-based references
+- **Execution Flow**: Linear progression with dependency coordination
+- **Scalability**: Designed for horizontal scaling through worker distribution

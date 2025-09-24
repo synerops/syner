@@ -26,8 +26,8 @@ export const PlanExecutionStatusSchema = z.enum(
   ["pending", "in-progress", "paused", "completed"]
 )
 
-// Plan execution result schema
-export const PlanExecutionResultSchema = z.object({
+// Plan execution schema
+export const PlanExecutionSchema = z.object({
   executionId: z.string().uuid(),
   planId: z.string(),
   status: z.lazy(() => PlanExecutionStatusSchema),

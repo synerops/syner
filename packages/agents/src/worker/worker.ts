@@ -5,20 +5,19 @@
 
 import { Experimental_Agent as Agent } from "ai";
 import { getWorkerTools, type WorkerTools } from "@/tools";
-
-// Combine all tools from worker capabilities
-const tools = getWorkerTools();
-const systemPrompt = `You are a worker agent that executes specific tasks assigned to you.
-You focus on completing tasks efficiently while managing resources and reporting progress.`
+import type { Task } from "@/src/task";
+import type { WorkerConfig } from "./types";
 
 export class Worker extends Agent<WorkerTools> {
-  constructor({ system }: { system?: string }) {
+  constructor(config: WorkerConfig) {
     super({
       model: "openai/gpt-4o",
-      tools,
-      system: system ?? systemPrompt,
+      tools: getWorkerTools(),
+      system: config.system ?? "You are a worker agent that executes specific tasks assigned to you. You focus on completing tasks efficiently while managing resources and reporting progress."
     });
+  }
 
-    return this;
+  async executeTask(task: Task): Promise<string> {
+    throw new Error("Not implemented");
   }
 }
