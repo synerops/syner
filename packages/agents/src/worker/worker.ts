@@ -1,23 +1,42 @@
-// In general usage, a worker is defined as an entity that executes specific tasks assigned by orchestrators or department heads.
-// This "work execution" includes task processing, resource management, and reporting capabilities to complete assigned work.
-// Example: The worker receives a task from an orchestrator, executes it using available resources, and reports progress and results.
-// Here, the "worker" depends on task execution, resource management, and reporting capabilities to efficiently complete assigned work.
-
-import { Experimental_Agent as Agent } from "ai";
-import { getWorkerTools, type WorkerTools } from "@/tools";
+import { Experimental_Agent as Agent, InferUITools, type ToolSet } from "ai";
+import { z } from "zod";
 import type { Task } from "@/src/task";
 import type { WorkerConfig } from "./types";
 
-export class Worker extends Agent<WorkerTools> {
+import { taskExecution } from "@/capabilities/worker";
+
+const tools = {
+  ...taskExecution.tools,
+} satisfies ToolSet;
+
+const SYSTEM_PROMPT = `
+You are a worker agent that executes specific tasks assigned to you. 
+You focus on completing tasks efficiently while managing resources and reporting progress.
+You use the following capabilities:
+- Task Execution: Execute specific tasks with domain expertise and tools
+- Input Validation: Validate task parameters before execution
+- Error Handling: Handle and recover from execution errors
+- Optimization: Optimize execution based on available resources
+`;
+
+export class Worker extends Agent<ToolSet> {
   constructor(config: WorkerConfig) {
     super({
       model: "openai/gpt-4o",
-      tools: getWorkerTools(),
-      system: config.system ?? "You are a worker agent that executes specific tasks assigned to you. You focus on completing tasks efficiently while managing resources and reporting progress."
+      tools,
+      system: config.system ?? SYSTEM_PROMPT
     });
   }
 
   async executeTask(task: Task): Promise<string> {
+    throw new Error("Not implemented");
+  }
+
+  async validateInput(task: Task): Promise<boolean> {
+    throw new Error("Not implemented");
+  }
+
+  async handleError(error: Error, task: Task): Promise<void> {
     throw new Error("Not implemented");
   }
 }

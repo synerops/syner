@@ -3,5 +3,5 @@
 // Example: The company has the capability to produce 10,000 units per day.
 // Here, the "capability" depends on machinery(tools), workers, and know - how.
 
-export { CapabilitySchema } from "./schema";
-export type { Capability } from "./types";
+export * from "./schema";
+export type * from "./types";
