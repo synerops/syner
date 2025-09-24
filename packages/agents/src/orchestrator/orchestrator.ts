@@ -7,27 +7,34 @@
 import { Experimental_Agent as Agent } from "ai";
 import { getOrchestratorTools, type OrchestratorTools } from "@/tools";
 import type { Plan } from "../plan/types";
-
-// Combinar todos los tools de las capabilities del orchestrator
-const tools = getOrchestratorTools();
-const systemPrompt = `You are an orchestrator agent that coordinates and manages other agents.
-You can use the other agents to help you with your tasks.`
+import { planningCapability } from "@/tools/supervisor/planning";
 
 export class Orchestrator extends Agent<OrchestratorTools> {
-  constructor({ system }: { system?: string }) {
-    super({
-      model: "openai/gpt-4o",
-      tools,
-      system: system ?? systemPrompt,
-    });
+  private planning: PlanningCapability;
+  private orchestration: OrchestrationCapability;
+  // private monitoring: MonitoringCapability;
 
-    return this;
+  constructor(config: OrchestratorConfig) {
+    super();
+    this.planning = new PlanningCapability();
+    this.orchestration = new OrchestrationCapability();
+    // this.monitoring = new MonitoringCapability();
   }
 
-  async plan(plan: Plan): Promise<string> {
-    const response = await this.generate({
-      prompt: `Execute this plan by decomposing it into tasks and delegating to appropriate workers: ${JSON.stringify(plan)}`,
-    })
-    return response.text
+  async plan(request: string): Promise<Plan> {
+    throw new Error("Not implemented");
   }
+
+  async coordinate(plan: Plan): Promise<Workflow> {
+    throw new Error("Not implemented");
+  }
+
+  // plan and coordinate
+  async process(request: string): Promise<Workflow> {
+    throw new Error("Not implemented");
+  }
+
+  // async monitor(plan: Plan): Promise<string> {
+  //   return this.monitoring.monitor(plan);
+  // }
 }

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { TaskSchema } from "./schema"
+import { TaskSchema, TaskStatusSchema } from "./schema"
 
 export type Task = z.infer<typeof TaskSchema>
-export type Status = "pending" | "active" | "done"
+export type TaskStatus = z.infer<typeof TaskStatusSchema>

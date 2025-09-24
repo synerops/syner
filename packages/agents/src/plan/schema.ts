@@ -1,99 +1,84 @@
-// In general usage, a plan is defined as a structured collection of tasks organized to achieve a specific goal.
-// This "organization" involves sequencing, dependencies, and coordination to ensure successful execution.
-// Example: The plan contains multiple tasks with defined dependencies, timelines, and resource requirements.
-// Here, the "plan" depends on task definitions, dependency management, and execution coordination
-// to ensure that complex workflows are executed in the correct order and with proper resource allocation.
-
 import { z } from "zod";
-import { TaskSchema } from "../task/schema";
+import { TaskSchema } from "@/src/task/schema";
+
+export const PlanStatusSchema = z.enum(
+  ["draft", "in-review", "approved", "rejected"]
+)
 
 // Plan schema following the same pattern as capabilities
 export const PlanSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+  id: z.string().uuid(),
+  title: z.string(),
   description: z.string(),
-  tasks: z.array(TaskSchema),
-  dependencies: z.array(z.object({
-    from: z.string(),
-    to: z.string(),
-    type: z.enum(["sequential", "parallel", "conditional"]).default("sequential"),
-  })),
-  metadata: z.object({
-    priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
-    estimatedDuration: z.string().optional(),
-    requiredCapabilities: z.array(z.string()).optional(),
-    environment: z.enum(["development", "staging", "production"]).default("development"),
-  }),
-  status: z.enum(["draft", "ready", "executing", "completed", "failed"]).default("draft"),
+  taskIds: z.array(z.string()),
+  dependencies: z.array(
+    z.object({
+      taskId: z.string(),
+      dependsOn: z.string(),
+      type: z.enum(["sequential", "parallel", "conditional"]).optional().default("sequential"),
+    })
+  ),
+  metadata: z.record(z.any()),
+  status: z.lazy(() => PlanStatusSchema).default("draft"),
 });
+
+export const PlanExecutionStatusSchema = z.enum(
+  ["pending", "in-progress", "paused", "completed"]
+)
 
 // Plan execution result schema
 export const PlanExecutionResultSchema = z.object({
+  executionId: z.string().uuid(),
   planId: z.string(),
-  status: z.enum(["success", "partial_success", "failed"]),
-  completedTasks: z.array(z.string()),
-  failedTasks: z.array(z.string()),
-  executionTime: z.number(), // milliseconds
-  results: z.array(z.object({
-    taskId: z.string(),
-    status: z.enum(["completed", "failed", "skipped"]),
-    output: z.any().optional(),
-    error: z.string().optional(),
-  })),
-  summary: z.string(),
+  status: z.lazy(() => PlanExecutionStatusSchema),
+  input: z.any(),
+  output: z.any(),
+  startedAt: z.string().datetime().optional(),
+  completedAt: z.string().datetime().optional(),
+  reason: z.enum(["cancelled", "failed", "success"]).optional(),
+  metadata: z.record(z.any()),
 });
 
 // Plan builder class for creating plans programmatically
-export class PlanBuilder {
+export class Planner {
   private plan: Partial<z.infer<typeof PlanSchema>>;
 
-  constructor(id: string, name: string, description: string) {
+  constructor({
+    id, title, description, taskIds, dependencies, metadata
+  }: {
+    id: string;
+    title: string;
+    description: string;
+    taskIds: string[];
+    dependencies?: z.infer<typeof PlanSchema>['dependencies'];
+    metadata?: z.infer<typeof PlanSchema>['metadata'];
+  }) {
     this.plan = {
       id,
-      name,
+      title,
       description,
-      tasks: [],
-      dependencies: [],
-      metadata: {
-        priority: "medium",
-        environment: "development",
-      },
-      status: "draft",
+      taskIds,
+      dependencies: dependencies || [],
+      metadata: metadata || {},
     };
   }
 
-  addTask(task: z.infer<typeof TaskSchema>): PlanBuilder {
-    this.plan.tasks!.push(task);
+  addTaskId(taskId: string): Planner {
+    this.plan.taskIds!.push(taskId);
     return this;
   }
 
-  addDependency(from: string, to: string, type: "sequential" | "parallel" | "conditional" = "sequential"): PlanBuilder {
-    this.plan.dependencies!.push({ from, to, type });
+  addDependency(taskId: string, dependsOn: string, type: "sequential" | "parallel" | "conditional" = "sequential"): Planner {
+    this.plan.dependencies!.push({ taskId, dependsOn, type });
     return this;
   }
 
-  setPriority(priority: "low" | "medium" | "high" | "urgent"): PlanBuilder {
-    this.plan.metadata!.priority = priority;
+  setMetadata(metadata: z.infer<typeof PlanSchema>['metadata']): Planner {
+    this.plan.metadata = metadata;
     return this;
   }
 
-  setEnvironment(environment: "development" | "staging" | "production"): PlanBuilder {
-    this.plan.metadata!.environment = environment;
-    return this;
-  }
-
-  setEstimatedDuration(duration: string): PlanBuilder {
-    this.plan.metadata!.estimatedDuration = duration;
-    return this;
-  }
-
-  setRequiredCapabilities(capabilities: string[]): PlanBuilder {
-    this.plan.metadata!.requiredCapabilities = capabilities;
-    return this;
-  }
-
-  build(): z.infer<typeof PlanSchema> {
-    const validatedPlan = PlanSchema.parse(this.plan);
-    return validatedPlan;
+  draft(): z.infer<typeof PlanSchema> {
+    return PlanSchema.parse(this.plan);
   }
 }

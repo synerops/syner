@@ -1,19 +1,21 @@
-// In general usage, a task is defined as a unit of work to be completed. 
-// This "work" is not limited to manual effort, it can involve human actions, automated processes, or AI-driven executions.
-// Example: The team has a task to update the customer dashboard by Friday.
-// Here, the "task" depends on who executes it (person, agent, or system), 
-// the resources required, and the context in which it is performed.
-
 import { z } from "zod"
-import { CapabilitySchema } from "../capability/schema"
+
+export const TaskStatusSchema = z.enum(["pending", "active", "done"])
 
 export const TaskSchema: z.ZodType<any> = z.object({
   id: z.string(),
-  name: z.string(),
+  title: z.string(),
   goal: z.string(),
-  capabilities: z.array(z.lazy(() => CapabilitySchema)),
-  dependencies: z.array(z.lazy(() => TaskSchema)),
-  status: z.enum(["pending", "active", "done"]),
+  requiredCapabilities: z.array(z.string()),
+  dependencies: z.array(
+    z.object({
+      taskId: z.string(),
+      dependsOn: z.string(),
+      type: z.enum(["sequential", "parallel", "conditional"]).default("sequential"),
+    })
+  ),
+  metadata: z.record(z.any()),
+  status: z.lazy(() => TaskStatusSchema).default("pending"),
   input: z.any(),
   output: z.any(),
 })
