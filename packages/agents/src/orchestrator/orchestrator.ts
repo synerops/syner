@@ -6,7 +6,7 @@
 
 import { Experimental_Agent as Agent } from "ai";
 import { getOrchestratorTools, type OrchestratorTools } from "@/tools";
-import type { Plan } from "./plan";
+import type { Plan } from "../plan/types";
 
 // Combinar todos los tools de las capabilities del orchestrator
 const tools = getOrchestratorTools();

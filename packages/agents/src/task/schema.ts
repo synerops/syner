@@ -5,19 +5,16 @@
 // the resources required, and the context in which it is performed.
 
 import { z } from "zod"
-import type { Capability } from "./capability"
-
-export type Status = "pending" | "active" | "done"
+import { CapabilitySchema } from "../capability/schema"
 
 export const TaskSchema: z.ZodType<any> = z.object({
   id: z.string(),
   name: z.string(),
   goal: z.string(),
-  capabilities: z.array(z.any()),
+  capabilities: z.array(z.lazy(() => CapabilitySchema)),
   dependencies: z.array(z.lazy(() => TaskSchema)),
   status: z.enum(["pending", "active", "done"]),
   input: z.any(),
   output: z.any(),
 })
 
-export type Task = z.infer<typeof TaskSchema>

@@ -6,13 +6,12 @@
 import { z } from "zod"
 import type { Tool } from "ai"
 
-export type Capability = {
-  name: string
-  description: string 
-  tools: Record<string, Tool>
-  input: z.ZodSchema
-  output: z.ZodSchema
-
+export const CapabilitySchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  tools: z.record(z.any()), // Tool type from ai package
+  input: z.any(), // z.ZodSchema
+  output: z.any(), // z.ZodSchema
   // TODO: support dependencies
-  // dependencies?: string[]
-}
+  // dependencies: z.array(z.string()).optional(),
+})

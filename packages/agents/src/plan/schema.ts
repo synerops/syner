@@ -5,14 +5,14 @@
 // to ensure that complex workflows are executed in the correct order and with proper resource allocation.
 
 import { z } from "zod";
-import { CommonSchemas } from "@/tools/types";
+import { TaskSchema } from "../task/schema";
 
 // Plan schema following the same pattern as capabilities
 export const PlanSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  tasks: z.array(CommonSchemas.TaskSchema),
+  tasks: z.array(TaskSchema),
   dependencies: z.array(z.object({
     from: z.string(),
     to: z.string(),
@@ -26,8 +26,6 @@ export const PlanSchema = z.object({
   }),
   status: z.enum(["draft", "ready", "executing", "completed", "failed"]).default("draft"),
 });
-
-export type Plan = z.infer<typeof PlanSchema>;
 
 // Plan execution result schema
 export const PlanExecutionResultSchema = z.object({
@@ -45,11 +43,9 @@ export const PlanExecutionResultSchema = z.object({
   summary: z.string(),
 });
 
-export type PlanExecutionResult = z.infer<typeof PlanExecutionResultSchema>;
-
 // Plan builder class for creating plans programmatically
 export class PlanBuilder {
-  private plan: Partial<Plan>;
+  private plan: Partial<z.infer<typeof PlanSchema>>;
 
   constructor(id: string, name: string, description: string) {
     this.plan = {
@@ -66,7 +62,7 @@ export class PlanBuilder {
     };
   }
 
-  addTask(task: z.infer<typeof CommonSchemas.TaskSchema>): PlanBuilder {
+  addTask(task: z.infer<typeof TaskSchema>): PlanBuilder {
     this.plan.tasks!.push(task);
     return this;
   }
@@ -96,7 +92,7 @@ export class PlanBuilder {
     return this;
   }
 
-  build(): Plan {
+  build(): z.infer<typeof PlanSchema> {
     const validatedPlan = PlanSchema.parse(this.plan);
     return validatedPlan;
   }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Tool } from "ai";
-import { TaskSchema } from "./task";
+import { TaskSchema } from "../task/schema";
 
 export interface ToolDefinition {
   name: string;

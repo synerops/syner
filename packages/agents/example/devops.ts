@@ -1,6 +1,6 @@
-import { Orchestrator } from "@/src/orchestrator"
-import { PlanBuilder } from "@/src/plan"
-import { CommonSchemas } from "@/src/schemas"
+import { Orchestrator } from "../src/orchestrator"
+import { PlanBuilder } from "../src/plan"
+import { CommonSchemas } from "../src/shared/schemas"
 
 const config = {
   system: `You are a DevOps Director that manages the other agents.`

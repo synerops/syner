@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { tool } from "ai";
-import type { Capability } from "@/src/capability";
-import { CommonSchemas } from "@/src/schemas";
+import type { Capability } from "../../src/capability/types";
+import { CommonSchemas } from "../../src/shared/schemas";
 
 /**
  * SUPPORTING CAPABILITY for orchestrators
