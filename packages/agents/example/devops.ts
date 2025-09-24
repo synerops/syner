@@ -1,6 +1,6 @@
 import { Orchestrator } from "@/src/orchestrator"
 import { PlanBuilder } from "@/src/plan"
-import { CommonSchemas } from "@/tools/types"
+import { CommonSchemas } from "@/src/schemas"
 
 const config = {
   system: `You are a DevOps Director that manages the other agents.`
@@ -14,13 +14,13 @@ export async function POST(request?: Request) {
     id: "task-1",
     name: "deploy-database",
     goal: "Deploy PostgreSQL database for the React app",
-    capability: {
+    capabilities: [{
       name: "infrastructure",
       description: "Infrastructure management capability",
       tools: {},
       input: {},
       output: {}
-    },
+    }],
     dependencies: [],
     status: "pending" as const,
     input: { 
@@ -35,13 +35,13 @@ export async function POST(request?: Request) {
     id: "task-2", 
     name: "deploy-app",
     goal: "Deploy React application to production",
-    capability: {
+    capabilities: [{
       name: "deployment",
       description: "Application deployment capability",
       tools: {},
       input: {},
       output: {}
-    },
+    }],
     dependencies: [databaseTask],
     status: "pending" as const,
     input: { 

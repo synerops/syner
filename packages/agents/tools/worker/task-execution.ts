@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { tool } from "ai";
-import { CommonSchemas } from "../types";
+import { CommonSchemas } from "@/src/schemas";
 
 /**
  * CORE CAPABILITY for workers

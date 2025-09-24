@@ -1,17 +1,7 @@
 // Main exports for the @syner/agents package
 export * from "./orchestrator"
+export * from "./worker"
 export * from "./plan"
-// export type { Task } from "./task"
-// export type { Capability } from "./capability"
-
-// // Validation exports
-// export { 
-//   TaskSchema, 
-//   CapabilitySchema, 
-//   TaskStatusSchema,
-//   TaskExecutionInputSchema,
-//   ValidationError,  
-//   type ValidatedTask,
-//   type ValidatedCapability,
-//   type ValidatedTaskExecutionInput
-// } from "./schemas"
+export * from "./task"
+export * from "./capability"
+export * from "./schemas"

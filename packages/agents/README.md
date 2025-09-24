@@ -58,13 +58,13 @@ El Orchestrator usa su `planningCapability` con estos tools:
       id: "task-1",
       name: "build-docker-image",
       goal: "Build Docker image for React app",
-      capability: {
+      capabilities: [{
         name: "containerization",
         description: "Container management capability",
         tools: {},
         input: {},
         output: {}
-      },
+      }],
       dependencies: [],
       status: "pending",
       input: { dockerfile: "./Dockerfile", tag: "react-app:dev" },
@@ -74,13 +74,13 @@ El Orchestrator usa su `planningCapability` con estos tools:
       id: "task-2", 
       name: "create-ecs-service",
       goal: "Create ECS service for React app",
-      capability: {
+      capabilities: [{
         name: "infrastructure",
         description: "Infrastructure management capability",
         tools: {},
         input: {},
         output: {}
-      },
+      }],
       dependencies: [],
       status: "pending",
       input: { cluster: "dev-cluster", serviceName: "react-app-service" },
@@ -90,13 +90,13 @@ El Orchestrator usa su `planningCapability` con estos tools:
       id: "task-3",
       name: "deploy-to-ecs",
       goal: "Deploy React app to ECS cluster",
-      capability: {
+      capabilities: [{
         name: "deployment",
         description: "Application deployment capability",
         tools: {},
         input: {},
         output: {}
-      },
+      }],
       dependencies: [],
       status: "pending",
       input: { image: "react-app:dev", replicas: 2 },
@@ -121,13 +121,13 @@ await orchestrator.delegateTask({
     id: "task-1",
     name: "build-docker-image", 
     goal: "Build Docker image for React app",
-    capability: {
+    capabilities: [{
       name: "containerization",
       description: "Container management capability",
       tools: {},
       input: {},
       output: {}
-    },
+    }],
     dependencies: [],
     status: "pending",
     input: { dockerfile: "./Dockerfile", tag: "react-app:dev" },
@@ -142,13 +142,13 @@ await orchestrator.delegateTask({
     id: "task-2",
     name: "create-ecs-service",
     goal: "Create ECS service for React app", 
-    capability: {
+    capabilities: [{
       name: "infrastructure",
       description: "Infrastructure management capability",
       tools: {},
       input: {},
       output: {}
-    },
+    }],
     dependencies: [],
     status: "pending",
     input: { cluster: "dev-cluster", serviceName: "react-app-service" },

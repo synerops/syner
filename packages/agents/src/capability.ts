@@ -12,5 +12,7 @@ export type Capability = {
   tools: Record<string, Tool>
   input: z.ZodSchema
   output: z.ZodSchema
+
+  // TODO: support dependencies
   // dependencies?: string[]
 }

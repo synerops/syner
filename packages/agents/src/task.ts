@@ -9,13 +9,15 @@ import type { Capability } from "./capability"
 
 export type Status = "pending" | "active" | "done"
 
-export type Task = {
-  id: string
-  name: string
-  goal: string
-  capability: Capability
-  dependencies: Task[]
-  status: Status
-  input: z.ZodSchema
-  output: z.ZodSchema
-}
+export const TaskSchema: z.ZodType<any> = z.object({
+  id: z.string(),
+  name: z.string(),
+  goal: z.string(),
+  capabilities: z.array(z.any()),
+  dependencies: z.array(z.lazy(() => TaskSchema)),
+  status: z.enum(["pending", "active", "done"]),
+  input: z.any(),
+  output: z.any(),
+})
+
+export type Task = z.infer<typeof TaskSchema>

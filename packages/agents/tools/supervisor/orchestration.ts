@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { tool } from "ai";
 import type { Capability } from "@/src/capability";
-import { CommonSchemas } from "@/tools/types";
+import { CommonSchemas } from "@/src/schemas";
 
 /**
  * SUPPORTING CAPABILITY for orchestrators
@@ -56,5 +56,4 @@ export const orchestrationCapability: Capability = {
       estimatedDuration: z.string(),
     }).optional(),
   }),
-  dependencies: ["planning", "monitoring"],
 };
