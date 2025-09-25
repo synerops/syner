@@ -31,18 +31,31 @@ export class Orchestrator extends Agent<ToolSet> {
   async plan(
     request: string,
   ): Promise<Plan> {
-    throw new Error("Not implemented");
+    throw new Error("Not implemented")
   }
 
   async coordinate(
     plan: z.infer<typeof PlanSchema>,
   ): Promise<z.infer<typeof PlanExecutionSchema>> {
-    throw new Error("Not implemented");
+    throw new Error("Not implemented")
   }
 
   async process(
     request: string,
   ): Promise<z.infer<typeof PlanExecutionSchema>> {
-    throw new Error("Not implemented");
+    throw new Error("Not implemented")
+  }
+
+  async monitor(
+    executionId: string,
+  ): Promise<void> {
+    throw new Error("Not implemented")
+  }
+
+  async cancel(
+    executionId: string,
+    reason?: string,
+  ): Promise<void> {
+    throw new Error("Not implemented")
   }
 }

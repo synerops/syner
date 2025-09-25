@@ -28,15 +28,7 @@ export class Worker extends Agent<ToolSet> {
     });
   }
 
-  async executeTask(task: Task): Promise<string> {
-    throw new Error("Not implemented");
-  }
-
-  async validateInput(task: Task): Promise<boolean> {
-    throw new Error("Not implemented");
-  }
-
-  async handleError(error: Error, task: Task): Promise<void> {
+  async executeTask(task: Task, metadata?: Record<string, any>): Promise<string> {
     throw new Error("Not implemented");
   }
 }

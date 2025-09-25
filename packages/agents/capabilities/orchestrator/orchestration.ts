@@ -33,22 +33,15 @@ export const capability: Capability = {
       description: "Monitor the progress of delegated tasks",
       inputSchema: z.object({
         taskIds: z.array(z.string()),
-        includeMetrics: z.boolean().default(false),
+      }),
+    }),
+    
+    cancelExecution: tool({
+      description: "Cancel a running plan execution",
+      inputSchema: z.object({
+        executionId: z.string(),
+        reason: z.string().optional(),
       }),
     }),
   },
-  // input: RequestSchema,
-  // output: z.object({
-  //   delegationResults: z.array(z.object({
-  //     taskId: z.string(),
-  //     assignedAgent: z.string(),
-  //     status: z.enum(["assigned", "failed"]),
-  //     estimatedCompletion: z.string().optional(),
-  //   })),
-  //   coordinationPlan: z.object({
-  //     workflowId: z.string(),
-  //     totalSteps: z.number(),
-  //     estimatedDuration: z.string(),
-  //   }).optional(),
-  // }),
 };
