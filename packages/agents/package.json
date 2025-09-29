@@ -14,8 +14,7 @@
     "dev": "tsc --noEmit --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "example:worker": "tsx --watch example/iac-engineer.ts",
-    "example:orchestrator": "tsx example/director-devops.ts",
+    "example:01": "tsx examples/01-hello-world/run.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist"
   },
