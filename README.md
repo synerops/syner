@@ -1,2 +1,2 @@
 # syner
-Agents OS - transforms how we interact with AI
+An agent OS for the modern web

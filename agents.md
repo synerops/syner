@@ -2,139 +2,171 @@
 
 ## What is Syner OS?
 
-Syner OS is an **Agent Operating System** - a revolutionary platform that transforms how we interact with AI by creating a hierarchical organization of specialized agents, each with distinct roles and capabilities. Think of it as having a personal AI organization at your command.
+Syner OS is an **Agent Operating System**—infrastructure for multi-agent systems.
+
+Traditional operating systems manage processes and hardware. Agent operating systems manage agents and capabilities.
+
+Syner OS provides the foundational services multi-agent systems need:
+- Route requests to specialized agents
+- Isolate context per component (apps, agents, system)
+- Enable agent collaboration through defined protocols
+- Allocate tools and capabilities efficiently
+
+Build applications that use AI agents as computational resources.
 
 ## Core Philosophy
 
 ### The Problem We're Solving
-Traditional AI assistants are monolithic - you interact with a single AI that tries to do everything. This approach has limitations:
-- **Context overload**: One AI trying to handle all tasks
+Traditional AI assistants are monolithic—you interact with a single AI that tries to do everything. This approach has limitations:
+- **Context overload**: One AI handling all tasks
 - **Lack of specialization**: General-purpose AI isn't optimal for specific domains
 - **No organizational structure**: No clear hierarchy or role separation
 - **Limited scalability**: Hard to extend capabilities without rebuilding
 
-### Our Solution: Agent Organization
-Syner OS creates a **supervisor-delegate architecture** where:
-- **You** interact only with your **Supervisor** (personal AI assistant)
-- **Supervisor** coordinates with **Heads** (department leaders)
-- **Heads** manage **Specialists** (domain experts)
-- Each agent has a specific role, tools, and capabilities
+### Our Solution: Proven Patterns
+Syner OS implements proven agent patterns from Anthropic's research:
 
-### Organizational Contract: Schema → Structure → Plan
-Every project or workflow in Syner OS follows a structured pipeline:
+- **Routing Pattern**: Router classifies requests and routes to appropriate departments
+- **Orchestrator-Workers Pattern**: Each Supervisor orchestrates their domain by delegating to workers
+- **Augmented LLM Building Block**: Workers execute tasks using domain-specific tools
 
-1. **Schema**: Formal project definition (roles, objectives, outcomes)
-2. **Structure**: Which departments/agents participate
-3. **Plan**: Execution milestones, deliverables, dependencies, and outcome examples
+**Reference**: [Building Effective Agents - Anthropic](https://www.anthropic.com/engineering/building-effective-agents)
 
-This transforms the hierarchical structure into a living, scalable organizational system where every task follows a clear organizational contract.
+### Design Principles
+
+Following Anthropic's core principles for agent systems:
+
+1. **Maintain Simplicity**: Use the simplest solution that works
+2. **Prioritize Transparency**: Make planning steps explicit
+3. **Craft Clear Interfaces**: Document tools and capabilities thoroughly
+
+We start simple and add complexity only when it demonstrably improves outcomes.
 
 ## Architecture Overview
 
 ### 1. Hierarchical Structure
+
 ```
-You (User)
-└── Supervisor (Your Personal AI Assistant)
-    ├── Orchestrator Role (Internal Coordination)
-    ├── Assistant Role (External Communication)
-    └── Heads (Dynamically Discovered Departments)
-        ├── [Department A] Head
-        │   ├── Specialist 1
-        │   ├── Specialist 2
-        │   └── Specialist N
-        ├── [Department B] Head
-        │   ├── Specialist 1
-        │   └── Specialist 2
-        └── [Department N] Head
-            └── Specialist 1
+User
+ └── Router (Routing Pattern)
+      ├── Engineering Supervisor (Orchestrator-Workers)
+      │    ├── Full Stack Engineer (Worker)
+      │    └── ... (Workers)
+      └── Product Supervisor (Orchestrator-Workers)
+           ├── Product Manager (Worker)
+           ├── UX Designer (Worker)
+           └── ... (Workers)
 ```
 
-> **Note**: Departments and their Heads are discovered dynamically at runtime. The Supervisor doesn't need to know the complete organizational structure in advance.
+**Pattern Composition**: Routing → Orchestrator-Workers → Augmented LLM
+
+**Dynamic Discovery**: Departments and Supervisors are discovered at runtime. The Router routes to departments based on capabilities, not predefined structure.
 
 ### 2. Core Components
 
-#### **Agent (Basic Unit)**
-- The fundamental building block of Syner OS
-- Executes specific tasks based on their capabilities
-- Uses tools assigned exclusively to those capabilities
-- Maintains local memory/context for execution
-- Can collaborate with other agents only when enabled by a superior role
-- Each agent has specialized knowledge and domain-specific tools
+#### **Router (Routing Pattern)**
 
-#### **Supervisor (OS Basic Unit)**
-- Supervises the hierarchical structure of the OS
-- Can adopt two distinct roles: **Orchestrator** (internal coordination) or **Assistant** (external communication)
-- Scope is limited to **departments and their Heads**, never directly to Specialists
-- Discovers and coordinates departments (understood as sets of capabilities)
-- Delegates **only to Heads**, without visibility of Specialists
-- Maintains organizational and hierarchical traceability
-- Alternates between Orchestrator and Assistant roles based on context
+Routes user requests to appropriate departments based on capabilities.
 
-> **Note**: The Supervisor **does not interpret projects**. Projects correspond to an OS app (Projects), and their relationship with the organizational structure is handled separately.
+**Responsibilities:**
+- Classify incoming requests
+- Route to one or more department Supervisors
+- Synthesize results from departments
+- Communicate with user
 
-#### **Head (Domain Unit in OS)**
-- Represents and organizes a department in the OS
-- Responsible for discovering all Specialists under their domain
-- Point of communication with Supervisor for receiving instructions and transmitting outcomes
-- Discovers Specialists in their department
-- Delegates tasks to Specialists based on their capabilities
-- Selects domain tools that correspond to each task
-- Validates internal outcomes before sending them to Supervisor
-- Reports blocks or risks upward (to Assistant via Supervisor)
+**Capabilities:**
+- Request classification
+- Department discovery
+- Result aggregation
+- User communication
 
-#### **Specialist (Granular Execution Unit)**
-- Executes concrete tasks within their domain
-- Uses tools specific to their capabilities
-- Reports direct outcomes to their Head
-- Specialized execution of assigned tasks
-- Expert handling of tools specific to their domain
-- Delivery of verifiable and traceable results
-- Adaptation to Head feedback
+**Anthropic Pattern**: [Routing](https://www.anthropic.com/engineering/building-effective-agents#workflow-routing)
 
-#### **Orchestrator (Supervisor Role)**
-- Coordinates workflow in the OS
-- Translates the **Schema → Structure → Action Plan** contract into delegation to Heads
-- Controls dependencies and inter-departmental priorities
-- Interprets and transforms contracts into coordinated actions
-- Delegates to Heads according to the defined structure
-- Adjusts plans in real-time based on feedback or HITL (Human in the Loop) decisions
-- Maintains global vision of active departments
+> **When to use**: Effective for complex tasks where distinct categories are better handled separately, and classification can be handled accurately.
 
-#### **Assistant (Supervisor Role)**
-- The **only voice to the user**
-- Receives response schemas (e.g., blocks, risks, scenarios) from Heads through Supervisor
-- Translates information into clear language, following communication rules defined by the user (custom scopes)
-- Direct and exclusive communication with the user
-- Translation of human feedback into instructions for the Orchestrator
-- Clear presentation of outcomes, risks, and scenarios
-- Application of language and tone rules according to business needs
-- Centralization of guardrails to protect internal information
+---
+
+#### **Supervisor (Orchestrator-Workers Pattern)**
+
+Orchestrates task execution within a specific domain (department level).
+
+**Responsibilities:**
+- Plan task execution with available workers
+- Delegate to specialized workers
+- Synthesize domain-specific results
+- Report to Router
+
+**Capabilities:**
+- Domain planning
+- Worker discovery
+- Task delegation
+- Result validation
+
+**Anthropic Pattern**: [Orchestrator-Workers](https://www.anthropic.com/engineering/building-effective-agents#workflow-orchestrator-workers)
+
+> **When to use**: Well-suited for complex tasks where you can't predict subtasks needed. Subtasks are determined dynamically based on the specific input.
+
+---
+
+#### **Worker (Augmented LLM Building Block)**
+
+Executes tasks using domain-specific tools.
+
+**Capabilities:**
+- **Tools**: Execute domain-specific actions (API calls, external functions)
+- **Memory**: Maintain context for task execution
+- **Retrieval**: Access domain knowledge when needed
+
+**Responsibilities:**
+- Execute assigned tasks
+- Use tools effectively
+- Report results to Head
+
+**Anthropic Pattern**: [Augmented LLM](https://www.anthropic.com/engineering/building-effective-agents#building-block-the-augmented-llm)
+
+> **Note**: Workers are the basic building block—LLMs enhanced with tools, memory, and retrieval. Models can actively use these capabilities.
 
 ### 3. Communication Flow
+
 ```
-User Request → Assistant (Supervisor Role) → Orchestrator (Supervisor Role) → Head → Specialist → Head → Orchestrator → Assistant → User Response
+User → Router → Supervisor → Worker → Supervisor → Router → User
 ```
 
-**Detailed Flow:**
-1. **User Request** → **Assistant Role**: User communicates with Assistant (Supervisor's external role)
-2. **Assistant** → **Orchestrator Role**: Assistant translates user request into organizational contract
-3. **Orchestrator** → **Head**: Orchestrator delegates tasks to appropriate department Heads
-4. **Head** → **Specialist**: Head selects and delegates to appropriate Specialists
-5. **Specialist** → **Head**: Specialist executes with domain-specific tools and reports back
-6. **Head** → **Orchestrator**: Head validates and forwards results to Orchestrator
-7. **Orchestrator** → **Assistant**: Orchestrator consolidates results for user presentation
-8. **Assistant** → **User Response**: Assistant translates results into clear user communication
+**Execution Flow:**
 
-### 4. Actions as Organizational Layer
-Actions are Syner OS's organizational abstraction over AI SDK Tools:
+1. **Routing**: Router classifies request and routes to appropriate department Supervisor(s)
+2. **Planning**: Supervisor plans task execution within their domain
+3. **Delegation**: Supervisor delegates to specialized workers
+4. **Execution**: Workers use tools to complete tasks
+5. **Synthesis**: Supervisor aggregates worker results
+6. **Response**: Router synthesizes final response to user
 
-- **Tool**: AI SDK primitive for agent extensibility (e.g., API calls, external functions)
-- **Action**: Syner OS organizational layer that wraps tools with standardized schemas and central registry
+**Pattern Combination**: Each step follows proven Anthropic patterns—routing for classification, orchestrator-workers for execution, and augmented LLM for tool usage.
 
-This enables:
-- **Supervisor and Heads** don't need to know tool implementation details, only what Actions exist
-- **Specialists** execute Actions transparently, trusting standardized input/output schemas
-- **Future compatibility** with MCP and A2A protocols through standardized Action definitions
+### 4. Tools and Agent-Computer Interface (ACI)
+
+Syner OS implements Anthropic's tool design principles for effective agent-computer interfaces:
+
+**Tool Architecture:**
+- **Tool**: AI SDK primitive for agent extensibility (API calls, external functions)
+- **Action**: Syner OS layer that wraps tools with standardized schemas and central registry
+- **ACI**: Well-documented interface between agents and tools
+
+**Design Principles** (from Anthropic):
+- Give agents enough tokens to "think" before writing
+- Keep formats close to natural text on the internet
+- Avoid formatting overhead (escaping, line counting, etc.)
+- Make tools obvious and easy to use
+- Test extensively and iterate on tool definitions
+
+**Tool Independence:**
+- Each worker has domain-specific tools
+- Tools are encapsulated to prevent conflicts
+- Centralized registry manages tool availability
+
+**Anthropic Reference**: [Prompt Engineering Your Tools](https://www.anthropic.com/engineering/building-effective-agents#appendix-2-prompt-engineering-your-tools)
+
+> **Key Insight**: Invest as much effort in agent-computer interfaces (ACI) as you would in human-computer interfaces (HCI).
 
 ## Technical Foundation
 
@@ -157,16 +189,17 @@ All agent communication follows defined schemas:
 - **Message Format**: Consistent communication structure
 - **Task Delegation**: Structured task assignment
 - **Response Format**: Standardized result reporting
-- **Organizational Contract**: Schema → Structure → Plan pipeline for all projects
+- **Type Safety**: Strong typing throughout the system
 
-### 4. Persistent Context System
-Syner OS features a modular, persistent context system where agents and apps share structured memory:
+### 4. Context Isolation System
 
-- **Modular Memory**: Each agent and app maintains its own memory while contributing to the whole
-- **Context Preservation**: Users don't lose context when switching between apps
-- **Structured History**: Agents can retrieve relevant historical context in a structured format
-- **Shared State**: Common context accessible across the entire organization
-- **Memory Optimization**: Efficient storage and retrieval of contextual information
+Syner OS implements isolated context per component, similar to process memory isolation in traditional operating systems:
+
+- **Memory Isolation**: Each component (app, agent, system) maintains its own isolated context
+- **Component Ownership**: Apps own and manage their context independently
+- **No Global State**: No shared state accessible across all components
+- **Inter-Component Communication**: Components communicate through defined protocols, not shared memory
+- **Context Persistence**: Each component's context persists independently
 
 ### 5. Action-Based System
 - **Tool registry**: Centralized action management
@@ -181,24 +214,24 @@ Syner OS features a modular, persistent context system where agents and apps sha
 Agents are organized in a folder structure with dynamic discovery:
 ```
 agents/
-├── supervisor.ts          # Your personal assistant (Orchestrator + Assistant roles)
-├── [department-a]/        # Dynamically discovered departments
-│   ├── head.ts           # Department leader
-│   ├── specialist-1.ts   # Domain specialist
-│   └── specialist-2.ts   # Domain specialist
-├── [department-b]/        # Another discovered department
-│   ├── head.ts           # Department leader
-│   └── specialist-1.ts   # Domain specialist
+├── router.ts              # OS-level router (Routing Pattern)
+├── engineering/           # Engineering department
+│   ├── supervisor.ts     # Engineering Supervisor (Orchestrator-Workers)
+│   └── fullstack-engineer.ts  # Full Stack Engineer (Worker)
+├── product/               # Product department
+│   ├── supervisor.ts     # Product Supervisor (Orchestrator-Workers)
+│   ├── product-manager.ts     # Product Manager (Worker)
+│   └── ux-designer.ts         # UX Designer (Worker)
 └── [department-n]/        # Additional departments discovered at runtime
-    ├── head.ts           # Department leader
-    └── specialist-1.ts   # Domain specialist
+    ├── supervisor.ts     # Department Supervisor
+    └── worker-n.ts       # Specialized workers
 ```
 
 **Discovery Process:**
-- **Supervisor** discovers departments by scanning the file system
-- **Heads** discover their Specialists within their department folders
-- **No predefined structure** - departments are added dynamically
-- **Capabilities-based matching** - tasks are routed based on agent capabilities
+- **Router** discovers departments by scanning the file system
+- **Supervisors** discover their workers within their department folders
+- **No predefined structure**—departments are added dynamically
+- **Capabilities-based matching**—tasks are routed based on agent capabilities
 
 ### 2. Capabilities and Tools per Agent
 
@@ -219,23 +252,19 @@ Each agent in Syner OS has **specific capabilities** that determine what tasks t
 #### **Example: Security Department**
 ```
 security/
-├── head.ts                    # Capabilities: ["security_coordination", "risk_assessment"]
+├── supervisor.ts                 # Capabilities: ["security_coordination", "risk_assessment"]
 │   └── Tools: ["threat_analyzer", "compliance_checker", "risk_assessor"]
-├── red-team/
-│   ├── ai_red_team_specialist.ts    # Capabilities: ["offensive_testing", "vulnerability_research"]
-│   │   └── Tools: ["attack_simulator", "vulnerability_scanner", "penetration_tester"]
-│   └── adversarial_attack_researcher.ts  # Capabilities: ["adversarial_research", "attack_development"]
-│       └── Tools: ["adversarial_generator", "attack_framework", "research_tools"]
-└── blue-team/
-    ├── incident_response_lead.ts     # Capabilities: ["incident_response", "threat_containment"]
-    │   └── Tools: ["incident_tracker", "containment_tools", "response_automation"]
-    └── ai_firewall_engineer.ts       # Capabilities: ["defensive_monitoring", "firewall_management"]
-        └── Tools: ["firewall_config", "monitoring_dashboard", "alert_system"]
+├── red-team-worker.ts            # Capabilities: ["offensive_testing", "vulnerability_research"]
+│   └── Tools: ["attack_simulator", "vulnerability_scanner", "penetration_tester"]
+├── blue-team-worker.ts           # Capabilities: ["defensive_monitoring", "incident_response"]
+│   └── Tools: ["firewall_config", "monitoring_dashboard", "incident_tracker"]
+└── compliance-worker.ts          # Capabilities: ["compliance_audit", "policy_enforcement"]
+    └── Tools: ["audit_tracker", "policy_validator", "report_generator"]
 ```
 
 ### 3. OS Applications
 Built-in applications that extend the OS capabilities:
-- **Projects**: Manage complex, multi-step tasks following Schema → Structure → Plan pipeline
+- **Projects**: Manage complex, multi-step tasks
 - **Workflows**: Create custom automation flows with persistent context
 - **Agent Management**: Configure and manage your agent organization
 - **System Settings**: Configure OS behavior and persistent context settings
@@ -251,20 +280,34 @@ Built-in applications that extend the OS capabilities:
 
 ## Development Approach
 
-### 1. Solo Founder Strategy
+### 1. Follow Proven Patterns
+
+**Design Authority**: We follow Anthropic's [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) as our technical foundation.
+
+**Why Anthropic**: Rather than follow multiple sources, we align with one authoritative reference that provides:
+- Proven patterns from production implementations
+- Clear guidance on when to use each pattern
+- Best practices for tool design and agent architecture
+- Research-backed recommendations
+
+**Our Rule**: When making architectural decisions, reference Anthropic's patterns first. Add custom solutions only when specific needs aren't covered by their patterns.
+
+### 2. Solo Founder Strategy
 - **Trunk-based development**: Fast iteration without branching overhead
 - **Feature flags**: Control feature releases and experimentation
 - **Rapid prototyping**: Quick validation of concepts
+- **Measure and iterate**: Add complexity only when it improves outcomes
 
-### 2. Schema-First Development
+### 3. Schema-First Development
 - **Define schemas first**: Establish communication standards
-- **Schema evolution**: Schemas can evolve into contracts
 - **Type safety**: Strong typing throughout the system
 - **Documentation**: Schemas serve as living documentation
+- **Tool documentation**: Invest in clear agent-computer interfaces
 
-### 3. Progressive Enhancement
-- **Start simple**: Basic supervisor-head communication
-- **Add complexity**: Gradually add more sophisticated features
+### 4. Progressive Enhancement
+- **Start simple**: Use basic patterns first
+- **Measure performance**: Track what works and what doesn't
+- **Add complexity deliberately**: Only when simpler solutions fall short
 - **Iterate quickly**: Fast feedback loops for improvement
 
 ## Future Vision
@@ -287,7 +330,7 @@ Built-in applications that extend the OS capabilities:
 ## Why This Matters
 
 ### 1. Scalability
-- **Organizational growth**: Add new departments and specialists
+- **Organizational growth**: Add new departments and workers
 - **Capability expansion**: New tools and actions
 - **User growth**: Support multiple users and organizations
 
@@ -321,27 +364,33 @@ Built-in applications that extend the OS capabilities:
 - **Test thoroughly**: Ensure agent communication works correctly
 - **Consider scalability**: Design for future growth and complexity
 
-## Hierarchical Summary
+## Summary
+
+### Architecture Pattern
 
 ```
-Supervisor (OS Basic Unit)
- ├── Orchestrator Role (Internal - coordinates schema → plan)
- ├── Assistant Role (External - communicates with user)
- └── Heads (Dynamically discovered departments)
-       ├── Specialists (Capability-based executors)
-       ├── Specialists
-       └── Specialists
-
-Agents = Basic building blocks with tools specific to their capabilities
+User
+ └── Router (Routing Pattern)
+      └── Supervisors (Orchestrator-Workers Pattern)
+           └── Workers (Augmented LLM Building Block)
 ```
 
-**Key Principles:**
-- **Supervisor** has dual roles: Orchestrator (internal coordination) and Assistant (external communication)
-- **Heads** manage departments and discover their Specialists dynamically
-- **Specialists** execute tasks with domain-specific tools and capabilities
-- **Agents** are the fundamental units with independent tools and capabilities
-- **Discovery** is dynamic - no predefined organizational structure
-- **Communication** flows through the hierarchy: User ↔ Assistant ↔ Orchestrator ↔ Heads ↔ Specialists
+### Key Principles
+
+**Simplicity First**: Start with the simplest solution. Add complexity only when it demonstrably improves outcomes.
+
+**Pattern Composition**: Combine proven Anthropic patterns—Routing for classification, Orchestrator-Workers for delegation, Augmented LLM for execution.
+
+**Clear Responsibilities**:
+- **Router** routes requests to appropriate departments
+- **Supervisors** orchestrate task execution within their domain
+- **Workers** execute tasks using domain-specific tools
+
+**Dynamic Discovery**: Departments and workers are discovered at runtime based on capabilities, not predefined structure.
+
+**Transparency**: Make planning and execution steps explicit at every level.
+
+**Tool Quality**: Invest in well-documented agent-computer interfaces (ACI) for effective tool usage.
 
 ---
 
