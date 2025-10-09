@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/typescript-config/react-library.json",
+  "extends": "@syner/ts-config/react",
   "compilerOptions": {
     "outDir": "dist"
   },
