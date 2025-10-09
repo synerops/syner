@@ -1,4 +1,4 @@
 {
-  "extends": "@repo/tsconfig/base.json"
+  "extends": "@syner/ts-config/base"
 }
 
