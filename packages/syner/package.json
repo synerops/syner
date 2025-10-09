@@ -31,7 +31,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "clean": "git clean -xdf .cache .next .turbo node_modules"
   },
   "dependencies": {
     "zod": "^4.1.5"

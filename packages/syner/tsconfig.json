@@ -2,7 +2,8 @@
   "extends": "@syner/ts-config/base",
   "compilerOptions": {
     // Build handled by tsup - this config is only for type checking and IDE
-    "incremental": false
+    "incremental": false,
+    "types": []
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tsup.config.ts"]

@@ -11,3 +11,4 @@ export * as actions from "./actions";
 // Re-export types from system
 export * from "./system/types";
 
+console.log("Syner OS");

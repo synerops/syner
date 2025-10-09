@@ -1,4 +1,9 @@
-import { config } from "@syner/eslint-config/base";
+import baseConfig from "@syner/eslint-config/base";
 
-export default [...config];
-
+/** @type {import('typescript-eslint').Config} */
+export default [
+  {
+    ignores: ["dist/**"],
+  },
+  ...baseConfig,
+];

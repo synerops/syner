@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/ts-config/react-library",
+  "extends": "@syner/ts-config/react",
   "compilerOptions": {
     "outDir": "dist"
   },

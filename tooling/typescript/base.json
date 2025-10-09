@@ -3,6 +3,7 @@
   "display": "Default",
   "compilerOptions": {
     "strict": true,
+    "strictNullChecks": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",

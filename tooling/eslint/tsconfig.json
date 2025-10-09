@@ -1,9 +1,0 @@
-{
-  "extends": "@syner/ts-config/base.json",
-  "include": [
-    "."
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}
