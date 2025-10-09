@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/tsconfig/react-library.json",
+  "extends": "@repo/tsconfig/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
