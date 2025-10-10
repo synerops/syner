@@ -2,10 +2,20 @@
 
 ## What is Syner OS?
 
-Syner OS is an **Agentic Operating System**.
+Syner OS is an **Agentic Operating System** - a platform where AI agents operate following systematic patterns to gather context, execute actions, and verify results in a continuous loop.
 
-## Architecture
-Syner OS architecture follows exclusively Anthropic's "Building Effective Agents" as the technical foundation. When making architectural decisions, reference Anthropic's patterns first and only add custom solutions when specific needs aren't covered by their patterns.
+## Documentation Hierarchy
+
+Syner uses hierarchical AGENTS.md files to avoid redundancy:
+
+- `/AGENTS.md` (this file) - Project overview, what is Syner OS
+- `/packages/*/AGENTS.md` - Package-specific architecture and rules
+
+**Rules:**
+- Root AGENTS.md = context ("what is this?")
+- Package AGENTS.md = architecture ("how does it work?")
+- NEVER duplicate information across levels
+- Read root first, then navigate to package for details
 
 ## Web Interface Guidelines
 
@@ -32,3 +42,10 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 - Content & Accessibility (a11y, semantics)
 - Performance (rendering, optimization)
 - Design (contrast, shadows, colors)
+
+## Project Structure
+
+This monorepo contains:
+- `/packages/syner/` - The kernel of the OS (see its AGENTS.md for architecture details)
+- `/packages/ui/` - Shared UI components and design system
+- `/tooling/` - Development tooling (eslint, prettier, typescript configs)
