@@ -28,7 +28,6 @@ build
 dist
 *.tsbuildinfo
 
-
 # Debug
 npm-debug.log*
 
@@ -38,3 +37,6 @@ npm-debug.log*
 
 # IDEs
 .idea
+
+# Workspace (local app for development)
+apps/workspace
