@@ -14,10 +14,30 @@
       "import": "./dist/system.js",
       "require": "./dist/system.cjs"
     },
+    "./context": {
+      "types": "./dist/context.d.ts",
+      "import": "./dist/context.js",
+      "require": "./dist/context.cjs"
+    },
     "./actions": {
       "types": "./dist/actions.d.ts",
       "import": "./dist/actions.js",
       "require": "./dist/actions.cjs"
+    },
+    "./checks": {
+      "types": "./dist/checks.d.ts",
+      "import": "./dist/checks.js",
+      "require": "./dist/checks.cjs"
+    },
+    "./agents": {
+      "types": "./dist/agents.d.ts",
+      "import": "./dist/agents.js",
+      "require": "./dist/agents.cjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.js",
+      "require": "./dist/runtime.cjs"
     }
   },
   "main": "./dist/index.js",

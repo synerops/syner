@@ -4,4 +4,7 @@
  */
 
 export * from "./types";
+export * as context from "../context";
+export * as actions from "../actions";
+export * as checks from "../checks";
 
