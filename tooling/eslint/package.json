@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     "./base": "./base.js",
-    "./nextjs": "./nextjs.js",
+    "./next": "./next.js",
     "./react": "./react.js"
   },
   "scripts": {
