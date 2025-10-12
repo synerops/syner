@@ -34,4 +34,3 @@ This API is designed to integrate with:
 **NEVER** modify state - only check it
 
 **NEVER** execute operations - only verify their results
-

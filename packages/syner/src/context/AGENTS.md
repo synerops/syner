@@ -38,4 +38,3 @@ This API is designed to integrate with:
 **NEVER** modify state - that's the responsibility of the actions API
 
 **NEVER** perform operations - only provide data
-

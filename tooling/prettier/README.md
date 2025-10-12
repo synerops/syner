@@ -43,4 +43,3 @@ This config includes:
 - Plugins:
   - `prettier-plugin-organize-imports` - Auto-organize imports
   - `prettier-plugin-tailwindcss` - Sort Tailwind CSS classes
-

@@ -12,6 +12,7 @@ Syner uses hierarchical AGENTS.md files to avoid redundancy:
 - `/packages/*/AGENTS.md` - Package-specific architecture and rules
 
 **Rules:**
+
 - Root AGENTS.md = context ("what is this?")
 - Package AGENTS.md = architecture ("how does it work?")
 - NEVER duplicate information across levels
@@ -22,6 +23,7 @@ Syner uses hierarchical AGENTS.md files to avoid redundancy:
 **IMPORTANT**: Before building, modifying, or reviewing ANY user interface component, form, interaction, or visual element, you MUST fetch and follow Vercel's Web Interface Guidelines.
 
 **When to fetch the guidelines**:
+
 - Before creating new UI components
 - Before modifying existing interfaces
 - When reviewing UI/UX code
@@ -30,12 +32,14 @@ Syner uses hierarchical AGENTS.md files to avoid redundancy:
 
 **How to fetch**:
 Run this command to get the latest guidelines (only fetch when needed to save tokens):
+
 ```bash
 curl -s --location 'https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/refs/heads/main/AGENTS.md' \
 --header 'Accept: text/markdown'
 ```
 
 These guidelines use MUST/SHOULD/NEVER terminology and cover:
+
 - Interactions (keyboard, forms, navigation, feedback)
 - Animation (accessibility, performance)
 - Layout (responsive, alignment)
@@ -46,6 +50,7 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 ## Project Structure
 
 This monorepo contains:
+
 - `/packages/syner/` - The kernel of the OS (see its AGENTS.md for architecture details)
 - `/packages/ui/` - Shared UI components and design system
 - `/tooling/` - Development tooling (eslint, prettier, typescript configs)

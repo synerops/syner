@@ -33,31 +33,35 @@ Structure IS documentation. No need to read code to understand what exists.
 
 ```ts
 // Namespace access
-import { system } from "syner"
-system.preferences.get()
+import { system } from "syner";
+system.preferences.get();
 
 // Direct API access
-import { preferences } from "syner/system"
-preferences.get()
+import { preferences } from "syner/system";
+preferences.get();
 ```
 
 ## Namespaces
 
 **Agent Loop:**
+
 - `context/` - info gathering (side-effect free)
 - `actions/` - execution (side effects)
 - `checks/` - verification (validation only)
 
 **Orchestration:**
+
 - `agents/` - orchestrators (planner, executor, orchestrator)
 
 **Infrastructure:**
+
 - `system/` - infrastructure (env, preferences, registry, sandbox, mcp, settings, collaboration, installer)
 - `runtime/` - utilities (retries, timeout, cancel)
 
 ## Rules
 
 **MUST:**
+
 - `context/` APIs = side-effect free
 - `actions/` APIs = side effects only
 - `checks/` APIs = validation only
@@ -65,6 +69,7 @@ preferences.get()
 - Agents depend only on namespace APIs, never on other agents
 
 **NEVER:**
+
 - Cross phase boundaries (context calling actions, actions calling checks)
 - Nest APIs deeper than 2 levels
 - Break the namespace/API import contract

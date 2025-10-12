@@ -34,4 +34,3 @@ This API is designed to integrate with:
 **NEVER** gather context directly - use the context API
 
 **NEVER** verify results - that's the responsibility of the checks API
-

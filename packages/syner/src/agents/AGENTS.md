@@ -36,23 +36,27 @@ Agents integrate with:
 ## Directives
 
 **MUST** use system APIs exclusively:
+
 - Agents MUST import from `../system`
 - Agents MUST NOT bypass system APIs
 
 **MUST** coordinate the loop:
+
 - orchestrator coordinates the overall flow
 - planner decides what to do
 - executor carries out the plan
 
 **SHOULD** be stateless:
+
 - State lives in system (via context/storage)
 - Agents orchestrate, don't store
 
 **NEVER** implement primitives:
+
 - Don't reimplement what system provides
 - Use system APIs, don't duplicate them
 
 **NEVER** depend on other agents:
+
 - Each agent should be independently testable
 - Orchestrator coordinates, agents don't call each other directly
-
