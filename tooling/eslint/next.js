@@ -1,17 +1,21 @@
 import nextPlugin from "@next/eslint-plugin-next";
+import tseslint from "typescript-eslint";
 
 /** @type {Awaited<import('typescript-eslint').Config>} */
-export default [
-  {
-    files: ["**/*.ts", "**/*.tsx"],
-    plugins: {
-      "@next/next": nextPlugin,
-    },
-    rules: {
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules,
-      // TypeError: context.getAncestors is not a function
-      "@next/next/no-duplicate-head": "off",
+export default tseslint.config({
+  files: ["**/*.ts", "**/*.tsx"],
+  plugins: {
+    "@next/next": nextPlugin,
+  },
+  languageOptions: {
+    parser: tseslint.parser,
+    parserOptions: {
+      projectService: true,
     },
   },
-];
+  rules: {
+    ...nextPlugin.configs.recommended.rules,
+    ...nextPlugin.configs["core-web-vitals"].rules,
+    "@next/next/no-duplicate-head": "off",
+  },
+});
