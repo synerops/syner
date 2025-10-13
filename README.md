@@ -6,4 +6,5 @@
 </p>
 
 # syner
+
 An Agentic Operating System written in TypeScript!

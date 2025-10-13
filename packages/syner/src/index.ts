@@ -1,17 +1,23 @@
 /**
  * Syner OS
- * Agentic Operating System
+ * @implements @syner/sdk
  */
 
 // Export namespace objects
-export * as system from "./system";
-export * as context from "./context";
-export * as actions from "./actions";
-export * as checks from "./checks";
-export * as agents from "./agents";
-export * as runtime from "./runtime";
+// import * as system from "./system";
+// import * as context from "./context";
+// import * as actions from "./actions";
+// import * as checks from "./checks";
+import * as agents from "./agents";
+// import * as runtime from "./runtime";
 
-// Re-export types from system
-export * from "./system/types";
+export { 
+  // system, 
+  // context, 
+  // actions, 
+  // checks, 
+  agents, 
+  // runtime 
+};
 
-console.log("Syner OS");
+

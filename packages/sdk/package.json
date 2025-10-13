@@ -1,5 +1,5 @@
 {
-  "name": "syner",
+  "name": "@syner/sdk",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -55,18 +55,11 @@
     "lint": "eslint . --max-warnings 0",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
-  "dependencies": {
-    "@syner/sdk": "workspace:*"
-  },
-  "peerDependencies": {
-    "ai": "catalog:aisdk",
-    "zod": "catalog:aisdk"
-  },
   "devDependencies": {
     "@syner/eslint-config": "workspace:*",
     "@syner/ts-config": "workspace:*",
-    "eslint": "^9.34.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

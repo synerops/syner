@@ -27,11 +27,13 @@ system/
 System contains two main categories:
 
 ### Agent Loop APIs
+
 - **context/** - Gather information (see context/AGENTS.md)
 - **actions/** - Execute operations (see actions/AGENTS.md)
 - **checks/** - Verify results (see checks/AGENTS.md)
 
 ### Infrastructure
+
 - **types.ts** - Base type definitions
 - **registry.ts** - Component registry
 - **preferences.ts, settings.ts, env.ts** - Configuration
@@ -57,4 +59,3 @@ System is used by:
 **NEVER** depend on agents/ - agents depend on system, never reverse
 
 **NEVER** bypass API contracts - follow the directives in nested AGENTS.md files
-

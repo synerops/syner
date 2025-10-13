@@ -5,4 +5,3 @@
 
 // Placeholder - to be implemented
 export type Action = Record<string, unknown>;
-

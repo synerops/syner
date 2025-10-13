@@ -13,7 +13,8 @@ context/
 ├── storage.ts    (persistent storage)
 ├── cache.ts      (cached data)
 ├── vector.ts     (vector search)
-└── dataset.ts    (dataset access)
+├── dataset.ts    (dataset access)
+└── reasoning.ts  (reasoning and LLM context)
 ```
 
 ## Integration Points
@@ -24,6 +25,7 @@ This API is designed to integrate with:
 - **System state** via `system.ts`
 - **Storage backends** via `storage.ts`, `cache.ts`, `dataset.ts`
 - **Vector databases** via `vector.ts`
+- **LLM reasoning** via `reasoning.ts`
 
 ## Directives
 
@@ -36,4 +38,3 @@ This API is designed to integrate with:
 **NEVER** modify state - that's the responsibility of the actions API
 
 **NEVER** perform operations - only provide data
-

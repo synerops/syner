@@ -1,5 +1,5 @@
 {
-  "name": "syner",
+  "name": "syner-root",
   "private": true,
   "scripts": {
     "build": "turbo build",
