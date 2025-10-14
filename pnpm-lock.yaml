@@ -70,6 +70,9 @@ importers:
 
   apps/workspace:
     dependencies:
+      '@syner/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       ai:
         specifier: ^5.0.68
         version: 5.0.68(zod@4.1.12)

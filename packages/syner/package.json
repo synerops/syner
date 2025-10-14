@@ -1,9 +1,24 @@
 {
   "name": "syner",
   "description": "syner OS: the agentic operating system implemented with syner SDK",
-  "version": "0.0.0",
+  "version": "0.0.0-dev.1",
   "type": "module",
-  "private": true,
+  "private": false,
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "Ronny Badilla",
+    "email": "info@rbadillap.dev",
+    "url": "https://rbadillap.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "packages/syner"
+  },
+  "homepage": "https://github.com/synerops/syner#readme",
+  "bugs": {
+    "url": "https://github.com/synerops/syner/issues"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {

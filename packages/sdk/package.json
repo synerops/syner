@@ -1,8 +1,15 @@
 {
   "name": "@syner/sdk",
-  "version": "0.0.0",
+  "version": "0.0.0-dev.1",
+  "description": "Syner Agentic Framework SDK - Build autonomous systems",
   "type": "module",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "author": {
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
