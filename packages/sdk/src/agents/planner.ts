@@ -8,6 +8,19 @@ import type {
   Prompt,
 } from "ai"
 
+export type PlannerTools = ToolSet
+
+export interface PlannerOutput {
+  plan: Plan
+}
+
+export type PlannerSettings = AgentSettings<
+  PlannerTools, 
+  PlannerOutput
+> & {
+  maxSteps?: number
+}
+
 /**
  * Represents a complete execution plan
  */
@@ -28,17 +41,6 @@ export interface PlanStep {
   isComplete: boolean
 }
 
-/**
- * Output from the Planner agent
- */
-export interface PlannerOutput {
-  plan: Plan
-}
-
-export type PlannerTools = ToolSet
-
-export type PlannerSettings = AgentSettings<PlannerTools, PlannerOutput>
-
 export interface PlannerContract {
   plan(
     options: Prompt & {
@@ -47,27 +49,24 @@ export interface PlannerContract {
     },
   ): Promise<GenerateTextResult<PlannerTools, PlannerOutput>>
 
-  isComplete(plan: Plan): boolean
 }
 
 export class Planner extends Agent<
   PlannerTools, 
   PlannerOutput
 > implements PlannerContract {
-  constructor(_options: PlannerSettings) {
-    super({} as PlannerSettings)
+  constructor(options: PlannerSettings) {
+    super(options)
   }
 
   plan(
-    _options: Prompt & {
+    settings: Prompt & {
       observations?: string[]
       previousSteps?: PlanStep[]
     },
   ): Promise<GenerateTextResult<PlannerTools, PlannerOutput>> {
-    return this.generate(_options)
-  }
-
-  isComplete(_plan: Plan): boolean {
-    return _plan.isComplete
+    return this.generate({
+      prompt: settings.prompt,
+    })
   }
 }
