@@ -7,8 +7,8 @@ settings:
 catalogs:
   aisdk:
     ai:
-      specifier: ^5.0.68
-      version: 5.0.68
+      specifier: git+ssh://git@github.com:vercel/ai.git#main
+      version: 0.0.0
     zod:
       specifier: ^3.25.76 || ^4.1.8
       version: 4.1.12
@@ -148,7 +148,7 @@ importers:
         version: link:../sdk
       ai:
         specifier: catalog:aisdk
-        version: 5.0.68(zod@4.1.12)
+        version: ai-repo@https://codeload.github.com/vercel/ai/tar.gz/34407b23b8c276359ac8dbeb42cc06f9db301b99
       zod:
         specifier: catalog:aisdk
         version: 4.1.12
@@ -1249,6 +1249,11 @@ packages:
   aggregate-error@3.1.0:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
+
+  ai-repo@https://codeload.github.com/vercel/ai/tar.gz/34407b23b8c276359ac8dbeb42cc06f9db301b99:
+    resolution: {tarball: https://codeload.github.com/vercel/ai/tar.gz/34407b23b8c276359ac8dbeb42cc06f9db301b99}
+    version: 0.0.0
+    engines: {node: ^18.0.0 || ^20.0.0 || ^22.0.0}
 
   ai@5.0.68:
     resolution: {integrity: sha512-SB6r+4TkKVlSg2ozGBSfuf6Is5hrcX/bpGBzOoyHIN3b4ILGhaly0IHEvP8+3GGIHXqtkPVEUmR6V05jKdjNlg==}
@@ -4257,6 +4262,8 @@ snapshots:
     dependencies:
       clean-stack: 2.2.0
       indent-string: 4.0.0
+
+  ai-repo@https://codeload.github.com/vercel/ai/tar.gz/34407b23b8c276359ac8dbeb42cc06f9db301b99: {}
 
   ai@5.0.68(zod@4.1.12):
     dependencies:

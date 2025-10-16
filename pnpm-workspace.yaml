@@ -12,7 +12,7 @@ catalog:
 
 catalogs:
   aisdk:
-    ai: ^5.0.68
+    ai: git+ssh://git@github.com:vercel/ai.git#main
     zod: ^3.25.76 || ^4.1.8
   next15:
     next: ^15.5.4

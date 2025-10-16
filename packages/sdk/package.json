@@ -12,40 +12,35 @@
   },
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./system": {
-      "types": "./dist/system.d.ts",
-      "import": "./dist/system.js",
-      "require": "./dist/system.cjs"
-    },
-    "./context": {
-      "types": "./dist/context.d.ts",
-      "import": "./dist/context.js",
-      "require": "./dist/context.cjs"
-    },
     "./actions": {
       "types": "./dist/actions.d.ts",
       "import": "./dist/actions.js",
       "require": "./dist/actions.cjs"
-    },
-    "./checks": {
-      "types": "./dist/checks.d.ts",
-      "import": "./dist/checks.js",
-      "require": "./dist/checks.cjs"
     },
     "./agents": {
       "types": "./dist/agents.d.ts",
       "import": "./dist/agents.js",
       "require": "./dist/agents.cjs"
     },
-    "./runtime": {
-      "types": "./dist/runtime.d.ts",
-      "import": "./dist/runtime.js",
-      "require": "./dist/runtime.cjs"
+    "./checks": {
+      "types": "./dist/checks.d.ts",
+      "import": "./dist/checks.js",
+      "require": "./dist/checks.cjs"
+    },
+    "./context": {
+      "types": "./dist/context.d.ts",
+      "import": "./dist/context.js",
+      "require": "./dist/context.cjs"
+    },
+    "./loop": {
+      "types": "./dist/loop.d.ts",
+      "import": "./dist/loop.js",
+      "require": "./dist/loop.cjs"
+    },
+    "./system": {
+      "types": "./dist/system.d.ts",
+      "import": "./dist/system.js",
+      "require": "./dist/system.cjs"
     }
   },
   "main": "./dist/index.js",

@@ -56,7 +56,7 @@ preferences.get();
 **Infrastructure:**
 
 - `system/` - infrastructure (env, preferences, registry, sandbox, mcp, settings, collaboration, installer)
-- `runtime/` - utilities (retries, timeout, cancel)
+- `loop/` - loop control flow (approval, retries, timeout, cancel)
 
 ## Rules
 
