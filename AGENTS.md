@@ -53,4 +53,4 @@ This monorepo contains:
 
 - `/packages/syner/` - The kernel of the OS (see its AGENTS.md for architecture details)
 - `/packages/ui/` - Shared UI components and design system
-- `/tooling/` - Development tooling (eslint, prettier, typescript configs)
+- `/tooling/` - Development tooling (eslint, prettier, typescript) for local consistency

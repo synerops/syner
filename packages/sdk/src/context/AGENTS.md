@@ -13,8 +13,7 @@ context/
 ├── storage.ts    (persistent storage)
 ├── cache.ts      (cached data)
 ├── vector.ts     (vector search)
-├── dataset.ts    (dataset access)
-└── reasoning.ts  (reasoning and LLM context)
+└── dataset.ts    (dataset access)
 ```
 
 ## Integration Points
@@ -25,7 +24,6 @@ This API is designed to integrate with:
 - **System state** via `system.ts`
 - **Storage backends** via `storage.ts`, `cache.ts`, `dataset.ts`
 - **Vector databases** via `vector.ts`
-- **LLM reasoning** via `reasoning.ts`
 
 ## Directives
 
@@ -38,3 +36,16 @@ This API is designed to integrate with:
 **NEVER** modify state - that's the responsibility of the actions API
 
 **NEVER** perform operations - only provide data
+
+## Error Handling
+
+**MUST** return null/undefined for missing data, throw only for system errors (network, permissions)
+
+```typescript
+// ✅ Good: return null for missing data
+const app = await context.apps.get(id);
+if (!app) return null;
+
+// ❌ Bad: throw for missing data
+if (!app) throw new Error("Not found");
+```

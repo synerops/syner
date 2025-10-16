@@ -22,23 +22,20 @@ orchestrator
     ↓ coordinates
 planner → executor
     ↓ uses
-system.context → system.actions → system.checks
+context → actions → checks
 ```
 
 ## Integration Points
 
 Agents integrate with:
 
-- **system/context/** - To gather information
-- **system/actions/** - To execute operations
-- **system/checks/** - To verify results
+- **context/** - To gather information
+- **actions/** - To execute operations
+- **checks/** - To verify results
 
 ## Directives
 
-**MUST** use system APIs exclusively:
-
-- Agents MUST import from `../system`
-- Agents MUST NOT bypass system APIs
+**MUST** use namespace APIs exclusively (import from `../context`, `../actions`, `../checks`)
 
 **MUST** coordinate the loop:
 
@@ -46,15 +43,9 @@ Agents integrate with:
 - planner decides what to do
 - executor carries out the plan
 
-**SHOULD** be stateless:
+**SHOULD** be stateless (state lives in context/storage, agents orchestrate)
 
-- State lives in system (via context/storage)
-- Agents orchestrate, don't store
-
-**NEVER** implement primitives:
-
-- Don't reimplement what system provides
-- Use system APIs, don't duplicate them
+**NEVER** implement primitives (use namespace APIs, don't duplicate them)
 
 **NEVER** depend on other agents:
 

@@ -61,3 +61,9 @@ All factories accept partial overrides. See JSDoc in source for details.
 SDK = unopinionated primitives | Syner = opinionated defaults
 
 For full control, use SDK primitives directly. For quick start, use Syner factories.
+
+## Usage Guide
+
+- Quick start / Production → `syner` factories (defaults included)
+- Custom config per agent → `@syner/sdk` + overrides
+- Full control / Testing → `@syner/sdk` primitives (easier mocking)

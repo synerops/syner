@@ -70,7 +70,10 @@ preferences.get();
 
 **NEVER:**
 
-- Cross phase boundaries (context calling actions, actions calling checks)
 - Nest APIs deeper than 2 levels
 - Break the namespace/API import contract
 - Create implementation detail folders in `src/`
+
+## Flow
+
+context (gather) → actions (execute) → checks (verify) → repeat
