@@ -1,20 +1,16 @@
-// import { Experimental_Agent as Agent } from "ai";
+import {
+  OrchestratorTools,
+  type Orchestrator,
+  type OrchestratorOutput,
+} from "@syner/sdk/agents";
+import { BasicAgent, type ToolSet } from "ai";
 
-// import type {
-//   OrchestratorTools,
-//   OrchestratorOutput,
-//   OrchestratorSettings,
-// } from "@syner/sdk/agents";
-import { Orchestrator } from "@syner/sdk/agents";
-
-// class Orchestrator extends Agent<OrchestratorTools, OrchestratorOutput> {
-//   constructor(options: OrchestratorSettings) {
-//     super(options);
-//   }
-// }
-
-export const orchestrator = new Orchestrator({
-  model: "xai/grok-4-fast-reasoning",
-  system:
-    "You are Syner, an AI agent designed to orchestrate tasks and manage resources within a team.",
+export const createOrchestrator = (): Orchestrator => ({
+  agents: {
+    researcher: new BasicAgent({
+      name: "Orchestrator",
+      description: "Orchestrates the execution of agents",
+      tools: OrchestratorTools,
+    }),
+  },
 });

@@ -1,73 +1,52 @@
-import { 
-  Experimental_Agent as Agent, 
-} from "ai"
 import type {
   Experimental_AgentSettings as AgentSettings,
-  ToolSet,
-  GenerateTextResult,
   Prompt,
-} from "ai"
+  ToolSet,
+} from "ai";
+import { Experimental_Agent as Agent } from "ai";
 
-/**
- * Represents a complete execution plan
- */
-export interface Plan {
-  steps: PlanStep[]
-  isComplete: boolean
-}
+import type { Context } from "../context";
 
-/**
- * Represents a single step in an execution plan
- */
-export interface PlanStep {
-  id: string
-  description: string
-  action: string
-  dependencies: string[]
-  expectedOutcome: string
-  isComplete: boolean
-}
+// # Planner
+export type PlannerTools = ToolSet;
 
-/**
- * Output from the Planner agent
- */
 export interface PlannerOutput {
-  plan: Plan
+  steps: PlanStep[];
+  shouldSummarize: () => boolean;
 }
 
-export type PlannerTools = ToolSet
+export type PlannerSettings = AgentSettings<PlannerTools, PlannerOutput>;
 
-export type PlannerSettings = AgentSettings<PlannerTools, PlannerOutput>
-
-export interface PlannerContract {
+export interface Planner extends Agent<PlannerTools, PlannerOutput> {
   plan(
     options: Prompt & {
-      observations?: string[]
-      previousSteps?: PlanStep[]
+      context: Context;
     },
-  ): Promise<GenerateTextResult<PlannerTools, PlannerOutput>>
-
-  isComplete(plan: Plan): boolean
+  ): ReturnType<Agent<PlannerTools, PlannerOutput>["generate"]>;
 }
 
-export class Planner extends Agent<
-  PlannerTools, 
-  PlannerOutput
-> implements PlannerContract {
-  constructor(_options: PlannerSettings) {
-    super({} as PlannerSettings)
+// ## Step
+export interface PlanStep {
+  id: string;
+  prompt: Prompt;
+  context: Context;
+  agent: Agent<ToolSet, unknown>;
+}
+
+export class DefaultPlanner
+  extends Agent<PlannerTools, PlannerOutput>
+  implements Planner
+{
+  constructor(settings: PlannerSettings) {
+    super(settings);
   }
 
   plan(
-    _options: Prompt & {
-      observations?: string[]
-      previousSteps?: PlanStep[]
+    options: Prompt & {
+      context: Context;
     },
-  ): Promise<GenerateTextResult<PlannerTools, PlannerOutput>> {
-    return this.generate(_options)
-  }
-
-  isComplete(_plan: Plan): boolean {
-    return _plan.isComplete
+  ) {
+    return this.generate(options);
   }
 }
+

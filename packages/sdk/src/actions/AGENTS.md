@@ -34,3 +34,15 @@ This API is designed to integrate with:
 **NEVER** gather context directly - use the context API
 
 **NEVER** verify results - that's the responsibility of the checks API
+
+## Error Handling
+
+**MUST** throw on failure with descriptive errors including operation context
+
+```typescript
+// ✅ Good: descriptive error with context
+throw new Error(`Failed to delete file: ${path}`);
+
+// ❌ Bad: generic error
+throw new Error("Operation failed");
+```

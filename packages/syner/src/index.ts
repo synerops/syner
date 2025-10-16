@@ -11,13 +11,4 @@
 import * as agents from "./agents";
 // import * as runtime from "./runtime";
 
-export { 
-  // system, 
-  // context, 
-  // actions, 
-  // checks, 
-  agents, 
-  // runtime 
-};
-
-
+export { agents };

@@ -12,15 +12,15 @@ catalog:
 
 catalogs:
   aisdk:
-    ai: ^5.0.68
+    ai: beta
     zod: ^3.25.76 || ^4.1.8
   next15:
     next: ^15.5.4
     react: ~19.1.0
     react-dom: ~19.1.0
-    '@types/node': ^20
-    '@types/react': ^19
-    '@types/react-dom': ^19
+    "@types/node": ^20
+    "@types/react": ^19
+    "@types/react-dom": ^19
 
 onlyBuiltDependencies:
   - esbuild

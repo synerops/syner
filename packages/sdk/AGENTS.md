@@ -51,12 +51,12 @@ preferences.get();
 
 **Orchestration:**
 
-- `agents/` - orchestrators (planner, executor, orchestrator)
+- `agents/` - orchestrators (planner, orchestrator)
 
 **Infrastructure:**
 
 - `system/` - infrastructure (env, preferences, registry, sandbox, mcp, settings, collaboration, installer)
-- `runtime/` - utilities (retries, timeout, cancel)
+- `loop/` - loop control flow (approval, retries, timeout, cancel)
 
 ## Rules
 
@@ -70,7 +70,10 @@ preferences.get();
 
 **NEVER:**
 
-- Cross phase boundaries (context calling actions, actions calling checks)
 - Nest APIs deeper than 2 levels
 - Break the namespace/API import contract
 - Create implementation detail folders in `src/`
+
+## Flow
+
+context (gather) → actions (execute) → checks (verify) → repeat

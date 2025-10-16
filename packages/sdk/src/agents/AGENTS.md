@@ -1,62 +1,35 @@
 # Agents
 
-## Purpose
-
-Orchestrate the agent loop by coordinating system APIs.
-
-## Agents Hierarchy
+## Structure
 
 ```
 agents/
-├── planner.ts       (plan generation)
-├── executor.ts      (plan execution)
-└── orchestrator.ts  (loop coordination)
+├── classifier.ts     (task classification)
+├── coordinator.ts    (coordination logic)
+├── planner.ts        (plan generation)
+├── summarizer.ts     (result summarization)
+├── orchestrator.ts   (team coordination)
+└── index.ts          (public exports)
 ```
 
-## Role in the System
+## Pattern
 
-Agents are **orchestrators** that use system APIs to implement the agent loop:
+Each agent follows:
 
-```
-orchestrator
-    ↓ coordinates
-planner → executor
-    ↓ uses
-system.context → system.actions → system.checks
+```ts
+export interface {Agent}Output { ... }
+export interface {Agent} extends Agent<ToolSet, Output>
+export class Default{Agent} extends Agent<ToolSet, Output> implements {Agent}
 ```
 
-## Integration Points
+## Orchestrator Team
 
-Agents integrate with:
+`DefaultOrchestrator` manages agents via:
 
-- **system/context/** - To gather information
-- **system/actions/** - To execute operations
-- **system/checks/** - To verify results
+- `team: Map<string, Agent>` - registry of team agents
+- Methods delegate to team members (classify → classifier, coordinate → coordinator, etc.)
+- Set team via constructor settings or setter
 
-## Directives
+## Exports
 
-**MUST** use system APIs exclusively:
-
-- Agents MUST import from `../system`
-- Agents MUST NOT bypass system APIs
-
-**MUST** coordinate the loop:
-
-- orchestrator coordinates the overall flow
-- planner decides what to do
-- executor carries out the plan
-
-**SHOULD** be stateless:
-
-- State lives in system (via context/storage)
-- Agents orchestrate, don't store
-
-**NEVER** implement primitives:
-
-- Don't reimplement what system provides
-- Use system APIs, don't duplicate them
-
-**NEVER** depend on other agents:
-
-- Each agent should be independently testable
-- Orchestrator coordinates, agents don't call each other directly
+`index.ts` re-exports all agents - import from `@syner/sdk/agents`
