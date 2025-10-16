@@ -51,7 +51,7 @@ preferences.get();
 
 **Orchestration:**
 
-- `agents/` - orchestrators (planner, executor, orchestrator)
+- `agents/` - orchestrators (planner, orchestrator)
 
 **Infrastructure:**
 

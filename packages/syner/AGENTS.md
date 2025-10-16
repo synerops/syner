@@ -7,15 +7,15 @@ Syner provides **opinionated defaults** for Syner OS. While `@syner/sdk` exports
 ## Architecture
 
 ```
-@syner/sdk → Primitives (Orchestrator, Planner, Executor classes)
-syner      → Factories with defaults (createOrchestrator, createPlanner, createExecutor)
+@syner/sdk → Primitives (Orchestrator, Planner classes)
+syner      → Factories with defaults (createOrchestrator, createPlanner)
 ```
 
 ## Defaults
 
 **Model:** `xai/grok-4-fast-reasoning` (all agents)
 
-**Injected:** `createOrchestrator()` auto-injects default Planner + Executor
+**Injected:** `createOrchestrator()` auto-injects default Planner
 
 ## Usage
 
@@ -26,7 +26,7 @@ import { createOrchestrator } from "syner/agents";
 
 const orchestrator = createOrchestrator();
 
-// Ready to use - planner and executor already injected
+// Ready to use - planner already injected
 const result = await orchestrator.run({
   prompt: "Your task here",
 });
@@ -50,9 +50,8 @@ orchestrator.addPlanner(customPlanner);
 
 ## Factories
 
-- `createOrchestrator(overrides?)` - Orchestrator with Syner defaults + injected planner/executor
+- `createOrchestrator(overrides?)` - Orchestrator with Syner defaults + injected planner
 - `createPlanner(overrides?)` - Planner with Syner defaults
-- `createExecutor(overrides?)` - Executor with Syner defaults
 
 All factories accept partial overrides. See JSDoc in source for details.
 

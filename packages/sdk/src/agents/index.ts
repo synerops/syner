@@ -1,30 +1,42 @@
-import type * as orchestrator from "./orchestrator";
-import type * as planner from "./planner";
-
-export interface Agents {
-  orchestrator: orchestrator.Orchestrator;
-  planner: planner.Planner;
-}
+// Orchestrator
 export type {
-  // orchestration capability
   OrchestratorTools,
   OrchestratorOutput,
   OrchestratorSettings,
   Orchestrator,
-
-  // coordination capability
-  CoordinationOutput,
-
-  // classification capability
-  ClassificationOutput,
-
-  // summarization capability
-  SummarizationOutput,
 } from "./orchestrator";
+export { DefaultOrchestrator } from "./orchestrator";
 
+// Classifier
 export type {
-  PlannerTools,
+  ClassificationOutput,
+  Classifier,
+  ClassifierSettings,
+} from "./classifier";
+export { DefaultClassifier } from "./classifier";
+
+// Coordinator
+export type {
+  CoordinationOutput,
+  Coordinator,
+  CoordinatorSettings,
+} from "./coordinator";
+export { DefaultCoordinator } from "./coordinator";
+
+// Summarizer
+export type {
+  SummarizationOutput,
+  Summarizer,
+  SummarizerSettings,
+} from "./summarizer";
+export { DefaultSummarizer } from "./summarizer";
+
+// Planner
+export type {
   PlannerOutput,
-  PlannerSettings,
+  PlanStep,
   Planner,
+  PlannerSettings,
+  PlannerTools,
 } from "./planner";
+export { DefaultPlanner } from "./planner";
