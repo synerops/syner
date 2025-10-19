@@ -7,4 +7,4 @@
 
 # syner
 
-An Agentic Operating System written in TypeScript!
+The Fullstack Agent
