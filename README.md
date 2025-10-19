@@ -7,4 +7,6 @@
 
 # syner
 
+[![protocol](https://img.shields.io/badge/protocol-v0.0.1-black.svg?labelColor=white&color=black&style=flat-square)](https://github.com/synerops/protocol)
+
 The Fullstack Agent
