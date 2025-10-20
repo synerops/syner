@@ -11,4 +11,9 @@
 // import * as agents from "./agents";
 // import * as runtime from "./runtime";
 
-export { };
+export const createFullstackAgent = () => {
+  return new Orchestrator({
+    model: 'openai/gpt-4o',
+    tools: [],
+  });
+}

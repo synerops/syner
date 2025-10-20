@@ -29,7 +29,7 @@ This API is designed to integrate with:
 
 ## Directives
 
-**MUST** be side-effect free - only query and retrieve information
+**MUST** be read-only - only query and retrieve information
 
 **MUST** provide information for action execution
 

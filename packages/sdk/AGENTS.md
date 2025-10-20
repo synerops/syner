@@ -65,9 +65,9 @@ preferences.get();
 
 **MUST:**
 
-- `context/` APIs = side-effect free
-- `actions/` APIs = side effects only
-- `checks/` APIs = validation only
+- `context/` APIs = read-only (gather information)
+- `actions/` APIs = tools and capabilities (execute)
+- `checks/` APIs = validation only (verify)
 - Follow loop: context → actions → checks → repeat
 - Agents depend only on namespace APIs, never on other agents
 
@@ -79,4 +79,4 @@ preferences.get();
 
 ## Flow
 
-context (gather) → actions (execute) → checks (verify) → repeat
+context (read) → actions (execute tools) → checks (validate) → repeat
