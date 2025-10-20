@@ -17,11 +17,6 @@
       "import": "./dist/actions.js",
       "require": "./dist/actions.cjs"
     },
-    "./agents": {
-      "types": "./dist/agents.d.ts",
-      "import": "./dist/agents.js",
-      "require": "./dist/agents.cjs"
-    },
     "./checks": {
       "types": "./dist/checks.d.ts",
       "import": "./dist/checks.js",
@@ -36,6 +31,11 @@
       "types": "./dist/loop.d.ts",
       "import": "./dist/loop.js",
       "require": "./dist/loop.cjs"
+    },
+    "./skills": {
+      "types": "./dist/skills.d.ts",
+      "import": "./dist/skills.js",
+      "require": "./dist/skills.cjs"
     },
     "./system": {
       "types": "./dist/system.d.ts",
