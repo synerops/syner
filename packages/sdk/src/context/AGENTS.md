@@ -1,5 +1,7 @@
 # Context API
 
+> Implements the `context` contract from the OS Protocol.
+
 ## Purpose
 
 Gather information without side effects before making decisions.

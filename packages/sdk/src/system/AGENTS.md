@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provide the agent loop APIs and foundational infrastructure.
+Provide infrastructure that enables OS Protocol implementation.
 
 ## Hierarchy
 

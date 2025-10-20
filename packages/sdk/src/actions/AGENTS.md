@@ -1,5 +1,7 @@
 # Actions API
 
+> Implements the `actions` contract from the OS Protocol.
+
 ## Purpose
 
 Execute operations with side effects based on gathered context.

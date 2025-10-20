@@ -1,5 +1,8 @@
 # Syner OS
 
+This SDK implements the [OS Protocol](https://github.com/synerops/protocol) specification in TypeScript.
+The MUST/NEVER rules below enforce protocol contracts.
+
 ## Architecture
 
 **Everything is an API.**

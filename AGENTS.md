@@ -4,6 +4,12 @@
 
 Syner OS is an **Agentic Operating System** - a platform where AI agents operate following systematic patterns to gather context, execute actions, and verify results in a continuous loop.
 
+## Architecture
+
+- **OS Protocol** (separate spec) - Defines the agent loop contract
+- **@syner/sdk** - TypeScript implementation of the protocol
+- **syner** - The fullstack agent built with the SDK
+
 ## Documentation Hierarchy
 
 Syner uses hierarchical AGENTS.md files to avoid redundancy:
@@ -17,6 +23,33 @@ Syner uses hierarchical AGENTS.md files to avoid redundancy:
 - Package AGENTS.md = architecture ("how does it work?")
 - NEVER duplicate information across levels
 - Read root first, then navigate to package for details
+
+## OS Protocol Specification
+
+**IMPORTANT**: Before implementing agents, modifying the SDK, or working with the agent loop (context/actions/checks), you MUST fetch and understand the OS Protocol specification.
+
+**When to fetch the protocol**:
+
+- Before building new agents
+- Before modifying SDK core functionality
+- When implementing context/actions/checks APIs
+- When working on the agent loop or orchestration
+- When you need to understand the contract that all agents must follow
+
+**How to fetch**:
+Run this command to get the latest protocol specification (only fetch when needed to save tokens):
+
+```bash
+curl -s --location 'https://raw.githubusercontent.com/synerops/protocol/refs/heads/main/AGENTS.md' \
+--header 'Accept: text/markdown'
+```
+
+The protocol defines:
+
+- The agent loop contract (context → actions → checks → repeat)
+- MUST/NEVER rules that all implementations must follow
+- Interface contracts for Agent, Context, Action, and Check primitives
+- Communication patterns between agents
 
 ## Web Interface Guidelines
 
@@ -51,6 +84,7 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 
 This monorepo contains:
 
-- `/packages/syner/` - The kernel of the OS (see its AGENTS.md for architecture details)
+- `/packages/sdk/` - TypeScript implementation of the OS Protocol
+- `/packages/syner/` - The fullstack agent (reference implementation)
 - `/packages/ui/` - Shared UI components and design system
-- `/tooling/` - Development tooling (eslint, prettier, typescript) for local consistency
+- `/tooling/` - Development tooling (eslint, prettier, typescript)

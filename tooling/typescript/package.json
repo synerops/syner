@@ -1,6 +1,5 @@
 {
   "name": "@syner/ts-config",
-  "type": "module",
   "private": true,
   "exports": {
     "./base": "./base.json",

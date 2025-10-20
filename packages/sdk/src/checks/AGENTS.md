@@ -1,5 +1,7 @@
 # Checks API
 
+> Implements the `checks` contract from the OS Protocol.
+
 ## Purpose
 
 Verify that actions were successful without performing actions.
