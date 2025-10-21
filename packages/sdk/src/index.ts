@@ -8,6 +8,5 @@ import * as context from "./context";
 import * as actions from "./actions";
 import * as checks from "./checks";
 import * as skills from "./skills";
-import * as loop from "./loop";
 
-export { system, context, actions, checks, skills, loop };
+export { system, context, actions, checks, skills };

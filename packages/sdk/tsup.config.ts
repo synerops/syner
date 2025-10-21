@@ -1,5 +1,4 @@
 import { defineConfig } from "tsup";
-import { system, type actions, type loop } from "./src";
 
 export default defineConfig({
   entry: {
@@ -8,7 +7,6 @@ export default defineConfig({
     skills: "src/skills/index.ts",
     checks: "src/checks/index.ts",
     context: "src/context/index.ts",
-    loop: "src/loop/index.ts",
     system: "src/system/index.ts",
   },
   format: ["cjs", "esm"],

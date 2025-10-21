@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Gather information without side effects before making decisions.
+Build knowledge and understanding by gathering, storing, and retrieving information.
 
 ## API Hierarchy
 
@@ -29,12 +29,15 @@ This API is designed to integrate with:
 
 ## Directives
 
-**MUST** be side-effect free - only query and retrieve information
+**DOES:**
+- Read from sources (filesystem, git, databases, APIs)
+- Store contextual knowledge (memory, cache)
+- Search and retrieve information
+- Provide information for action execution
 
-**MUST** provide information for action execution
+**DOES NOT:**
+- Execute real-world operations (use actions API)
+- Modify external systems
+- Send notifications or trigger workflows
 
 **SHOULD** be fast - context gathering should not block the agent loop
-
-**NEVER** modify state - that's the responsibility of the actions API
-
-**NEVER** perform operations - only provide data

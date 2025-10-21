@@ -48,9 +48,9 @@ preferences.get();
 
 **Agent Loop:**
 
-- `context/` - info gathering (side-effect free)
-- `actions/` - execution (side effects)
-- `checks/` - verification (validation only)
+- `context/` - knowledge & information (gather, store, retrieve)
+- `actions/` - real-world execution (files, APIs, workflows)
+- `checks/` - validation (verify conditions and states)
 
 **Orchestration:**
 

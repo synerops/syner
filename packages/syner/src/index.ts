@@ -1,19 +1,37 @@
 /**
- * Syner OS
+ * Syner OS - The Fullstack Agent
  * @implements @syner/sdk
  */
 
-// Export namespace objects
-// import * as system from "./system";
-// import * as context from "./context";
-// import * as actions from "./actions";
-// import * as checks from "./checks";
-// import * as agents from "./agents";
-// import * as runtime from "./runtime";
+// ============================================
+// Core Exports
+// ============================================
 
-export const createFullstackAgent = () => {
-  return new Orchestrator({
-    model: 'openai/gpt-4o',
-    tools: [],
-  });
-}
+export { context, createContextAgent } from "./context";
+export { createFullstackAgent } from "./factories";
+
+// ============================================
+// Types (for custom configurations)
+// ============================================
+
+export type { ContextAgentOptions } from "./context";
+
+// Re-export SDK types for convenience
+export type {
+  Memory,
+  MemoryContext,
+  MemorySearchOptions,
+} from "@syner/sdk/context";
+
+// ============================================
+// Providers (custom storage backends)
+// ============================================
+
+export {
+  InMemoryProvider,
+  RedisMemoryProvider,
+  type RedisMemoryOptions,
+} from "./context/providers";
+
+// For advanced users who want to extend providers
+export { DefaultMemoryProvider } from "@syner/sdk/context";

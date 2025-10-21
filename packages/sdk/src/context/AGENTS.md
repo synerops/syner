@@ -1,53 +1,63 @@
 # Context API
 
-> Implements the `context` contract from the OS Protocol.
+> Knowledge and information gathering layer
 
 ## Purpose
 
-Gather information without side effects before making decisions.
+Gather, store, and retrieve information to build understanding. Context enriches the agent's knowledge without executing real-world operations.
 
-## API Hierarchy
+## API Registry Pattern
 
-```
-context/
-├── apps.ts       (application context)
-├── system.ts     (system state)
-├── storage.ts    (persistent storage)
-├── cache.ts      (cached data)
-├── vector.ts     (vector search)
-└── dataset.ts    (dataset access)
-```
+Context APIs are registered and discovered dynamically:
 
-## Integration Points
+- `memory` - Store/retrieve cross-interaction context
+- `apps` - Application state
+- `git` - Version control information
+- `storage` - Persistent data
+- `cache` - Cached data
+- `vector` - Semantic search
+- `dataset` - Dataset access
 
-This API is designed to integrate with:
-
-- **Applications** via `apps.ts`
-- **System state** via `system.ts`
-- **Storage backends** via `storage.ts`, `cache.ts`, `dataset.ts`
-- **Vector databases** via `vector.ts`
-
-## Directives
-
-**MUST** be read-only - only query and retrieve information
-
-**MUST** provide information for action execution
-
-**SHOULD** be fast - context gathering should not block the agent loop
-
-**NEVER** modify state - that's the responsibility of the actions API
-
-**NEVER** perform operations - only provide data
-
-## Error Handling
-
-**MUST** return null/undefined for missing data, throw only for system errors (network, permissions)
+## Registration
 
 ```typescript
-// ✅ Good: return null for missing data
-const app = await context.apps.get(id);
-if (!app) return null;
+const agent = new DefaultContextAgent({ model: "..." });
+agent.registerAPI("memory", memoryAPI);
+// API accessible as: agent.memory.get()
+```
 
-// ❌ Bad: throw for missing data
-if (!app) throw new Error("Not found");
+Memory supports pluggable providers (InMemory, Redis, DynamoDB, etc). Implement `MemoryContext` or extend `DefaultMemoryProvider`.
+
+## Guidelines
+
+Guidelines make reasoning predictable by mapping conditions to APIs:
+
+```typescript
+agent.createGuideline({
+  condition: "User asks to remember something",
+  action: "Store in memory with tags",
+  apis: ["memory"],
+  priority: 100
+});
+```
+
+## What Context Does
+
+**DOES:**
+- Read from sources (filesystem, git, databases, APIs)
+- Store contextual knowledge (memory, cache)
+- Search and retrieve information (vector, semantic)
+- Build understanding over time
+
+**DOES NOT:**
+- Execute real-world operations (use actions API)
+- Modify external systems
+- Send notifications or trigger workflows
+
+**MUST** return null for missing data (throw only for system errors)
+
+## Output
+
+```typescript
+{ data: {...}, sources: ["memory", "git"], confidence: 0.95 }
 ```
