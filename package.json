@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "clean": "turbo clean",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "turbo format"
   },
   "devDependencies": {
     "@syner/eslint-config": "workspace:*",

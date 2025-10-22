@@ -19,15 +19,59 @@ src/
 └── ...
 ```
 
+**Characteristics:**
+- Each folder = domain with specific responsibility
 - Each `.ts` file = public API
-- Each folder = namespace grouping related APIs
 - Flat hierarchy (max 2 levels)
+- Follow protocol loop: context → actions → checks
+
+### Layer 2: Skills (Meta-agents)
+
+Orchestration patterns that compose domain APIs to implement complex workflows.
+
+```
+src/
+└── skills/           ← Meta-agents for orchestration
+    ├── orchestrator.ts   ← Coordinates domain APIs
+    ├── classifier.ts     ← Decides task routing
+    ├── planner.ts        ← Generates execution plans
+    ├── coordinator.ts    ← Coordinates multi-step tasks
+    └── summarizer.ts     ← Summarizes results
+```
+
+**Characteristics:**
+- Each skill can use: context → actions → checks
+- Skills are independent of each other
+- Skills compose domain APIs, not other skills
+- Orchestrator coordinates skills, doesn't impose flow
+
+### Layer 3: Syner Factories (User API)
+
+Opinionated defaults in the `syner` package for quick start.
+
+```
+syner/src/
+├── context/          ← createContextAgent()
+├── actions/          ← createActionsAgent()
+└── fullstack/        ← createFullstackAgent()
+```
+
+**Characteristics:**
+- Factories compose SDK primitives with best practices
+- Users choose composition level (single agent vs orchestrated)
+- Advanced users can use SDK primitives directly
 
 ## Discovery
 
 ```bash
-tree src/ -L 1              # See all namespaces
-tree src/<namespace>/ -L 1  # See namespace APIs
+# See all domain APIs
+tree src/ -L 1
+
+# See specific domain API
+tree src/context/ -L 1
+
+# See orchestration skills
+tree src/skills/ -L 1
 ```
 
 Structure IS documentation. No need to read code to understand what exists.
@@ -35,31 +79,32 @@ Structure IS documentation. No need to read code to understand what exists.
 ## Usage
 
 ```ts
-// Namespace access
-import { system } from "syner"
-system.preferences.get()
+// Layer 3: Quick start with factories (recommended)
+import { createContextAgent } from "syner"
+const agent = createContextAgent()
 
-// Direct API access
-import { preferences } from "syner/system"
-preferences.get()
+// Layer 2: Custom orchestration
+import { DefaultOrchestrator } from "@syner/sdk/skills"
+const orchestrator = new DefaultOrchestrator({ ... })
+
+// Layer 1: Direct API access (advanced)
+import { memory } from "@syner/sdk/context"
+await memory.set("key", "value")
 ```
 
-## Namespaces
+## Domain APIs
 
-**Agent Loop:**
+**Agent Loop (follow protocol):**
 
 - `context/` - knowledge & information (gather, store, retrieve)
 - `actions/` - real-world execution (files, APIs, workflows)
 - `checks/` - validation (verify conditions and states)
 
-**Orchestration:**
-
-- `agents/` - orchestrators (planner, orchestrator)
-
 **Infrastructure:**
 
-- `system/` - infrastructure (env, preferences, registry, sandbox, mcp, settings, collaboration, installer)
-- `loop/` - loop control flow (approval, retries, timeout, cancel)
+- `system/` - infrastructure (env, preferences, registry, sandbox, mcp)
+- `workflows/` - workflow definitions and execution
+- `runs/` - run tracking and history
 
 ## Rules
 

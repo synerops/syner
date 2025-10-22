@@ -12,7 +12,7 @@ catalog:
 
 catalogs:
   aisdk:
-    ai: beta
+    ai: ^5.0.76
     zod: ^3.25.76 || ^4.1.8
   next15:
     next: ^15.5.4
