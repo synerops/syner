@@ -35,3 +35,9 @@ export {
 
 // For advanced users who want to extend providers
 export { DefaultMemoryProvider } from "@syner/sdk/context";
+
+// ============================================
+// Tools (for custom LLM integrations)
+// ============================================
+
+export { createMemoryTools } from "./context/tools";

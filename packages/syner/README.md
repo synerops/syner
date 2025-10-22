@@ -297,6 +297,168 @@ Coming soon:
 - **FileSystemMemoryProvider** - JSON file storage
 - **CompositeMemoryProvider** - Multi-layer caching (L1: InMemory, L2: Redis)
 
+## Using Memory in Chat
+
+The context agent automatically uses memory tools when appropriate based on guidelines. Here's how it works:
+
+### How Tools Work
+
+The context agent has three memory tools available:
+
+1. **memory_set** - Store information
+2. **memory_get** - Retrieve by exact key
+3. **memory_search** - Search with filters
+
+The LLM decides which tool to use based on:
+- The user's prompt
+- Configured guidelines
+- Available tools
+
+### Example Conversation
+
+**Request:**
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Remember that I'\''m working on authentication"}'
+```
+
+**Response:**
+```json
+{
+  "response": "I've stored that information. You're working on authentication.",
+  "toolCalls": [
+    {
+      "toolName": "memory_set",
+      "args": {
+        "key": "current_task",
+        "value": "authentication",
+        "tags": ["work", "task"]
+      },
+      "result": {
+        "success": true,
+        "id": "mem_1234567890_abc123",
+        "key": "current_task"
+      }
+    }
+  ]
+}
+```
+
+**Later Request:**
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "What am I working on?"}'
+```
+
+**Response:**
+```json
+{
+  "response": "You're working on authentication.",
+  "toolCalls": [
+    {
+      "toolName": "memory_search",
+      "args": {
+        "query": "working on",
+        "limit": 10
+      },
+      "result": {
+        "count": 1,
+        "memories": [
+          {
+            "key": "current_task",
+            "value": "authentication"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### How Guidelines Trigger Tools
+
+The context agent has pre-configured guidelines that map user intent to tools:
+
+**Guideline 1: Storage** (priority: 100)
+- **When:** User says "remember", "save", "store", "keep in mind"
+- **Then:** Use `memory_set` tool
+- **Example:** "Remember my favorite color is blue" → `memory_set("favorite_color", "blue", ["preferences"])`
+
+**Guideline 2: Retrieval** (priority: 95)
+- **When:** User says "recall", "what did", "do you remember", "what was"
+- **Then:** Use `memory_search` or `memory_get` tool
+- **Example:** "What did I say earlier?" → `memory_search({ query: "said earlier" })`
+
+**Guideline 3: Context References** (priority: 90)
+- **When:** User references past conversation or work
+- **Then:** Use `memory_search` with filters
+- **Example:** "What was I working on yesterday?" → `memory_search({ query: "working on" })`
+
+### Chat API Reference
+
+**Endpoint:** `POST /chat`
+
+**Request:**
+```typescript
+{
+  prompt: string; // User's message
+}
+```
+
+**Response:**
+```typescript
+{
+  response: string;           // Agent's text response
+  output: {                  // Structured output
+    data: Record<string, unknown>;
+    sources: string[];
+    confidence: number;
+  };
+  toolCalls: Array<{         // Tools the agent used
+    toolName: string;
+    args: any;
+    result: any;
+  }>;
+  usage: {                   // Token usage stats
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  finishReason: string;
+}
+```
+
+### Testing Locally
+
+**Start the server:**
+```bash
+cd apps/workspace
+pnpm dev
+```
+
+**Test memory storage:**
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Remember that my name is Ronny"}'
+```
+
+**Test memory retrieval:**
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "What is my name?"}'
+```
+
+**Test memory search:**
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "What do you know about me?"}'
+```
+
 ## Custom Configuration
 
 ### Create Custom Instance
