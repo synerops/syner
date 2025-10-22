@@ -2,31 +2,31 @@ import type {
   Experimental_AgentSettings as AgentSettings,
   Prompt,
   ToolSet,
-} from "ai";
-import { Experimental_Agent as Agent, jsonSchema, Output } from "ai";
+} from "ai"
+import { Experimental_Agent as Agent, jsonSchema, Output } from "ai"
 
-import type { Context } from "../context";
+import type { Context } from "../context"
 
 export interface CoordinationOutput {
-  plan?: string;
-  readonly planRequiresSummary?: boolean;
-  summary?: string;
-  metadata?: Record<string, unknown>;
+  plan?: string
+  readonly planRequiresSummary?: boolean
+  summary?: string
+  metadata?: Record<string, unknown>
 }
 
 export type CoordinatorSettings = AgentSettings<
   ToolSet,
   CoordinationOutput,
   Partial<CoordinationOutput>
->;
+>
 
 export interface Coordinator
   extends Agent<ToolSet, CoordinationOutput, Partial<CoordinationOutput>> {
   coordinate(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
-  ): ReturnType<Agent<ToolSet, CoordinationOutput>["generate"]>;
+  ): ReturnType<Agent<ToolSet, CoordinationOutput>["generate"]>
 }
 
 export class DefaultCoordinator
@@ -54,14 +54,14 @@ export class DefaultCoordinator
           required: ["plan", "summary"],
         }),
       }),
-    });
+    })
   }
 
   coordinate(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
   ): ReturnType<Agent<ToolSet, CoordinationOutput>["generate"]> {
-    return this.generate(options);
+    return this.generate(options)
   }
 }

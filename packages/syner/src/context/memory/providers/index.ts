@@ -5,7 +5,7 @@
  * Each provider implements the MemoryContext interface from @syner/sdk.
  */
 
-export { InMemoryProvider } from "./in-memory";
+export { InMemoryProvider } from "./in-memory"
 
 // Future providers (not yet implemented):
 // export { RedisMemoryProvider, type RedisMemoryOptions } from "./redis";

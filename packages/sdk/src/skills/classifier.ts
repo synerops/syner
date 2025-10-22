@@ -2,31 +2,31 @@ import type {
   Experimental_AgentSettings as AgentSettings,
   Prompt,
   ToolSet,
-} from "ai";
-import { Experimental_Agent as Agent, jsonSchema, Output } from "ai";
+} from "ai"
+import { Experimental_Agent as Agent, jsonSchema, Output } from "ai"
 
-import type { Context } from "../context";
+import type { Context } from "../context"
 
 export interface ClassificationOutput {
-  agentName: string;
-  prompt: string;
-  context: string;
-  isSimple: boolean;
+  agentName: string
+  prompt: string
+  context: string
+  isSimple: boolean
 }
 
 export type ClassifierSettings = AgentSettings<
   ToolSet,
   ClassificationOutput,
   Partial<ClassificationOutput>
->;
+>
 
 export interface Classifier
   extends Agent<ToolSet, ClassificationOutput, Partial<ClassificationOutput>> {
   classify(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
-  ): ReturnType<Agent<ToolSet, ClassificationOutput>["generate"]>;
+  ): ReturnType<Agent<ToolSet, ClassificationOutput>["generate"]>
 }
 
 export class DefaultClassifier
@@ -48,14 +48,14 @@ export class DefaultClassifier
           required: ["agentName", "prompt", "context", "isSimple"],
         }),
       }),
-    });
+    })
   }
 
   classify(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
   ): ReturnType<Agent<ToolSet, ClassificationOutput>["generate"]> {
-    return this.generate(options);
+    return this.generate(options)
   }
 }

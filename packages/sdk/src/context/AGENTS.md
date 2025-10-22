@@ -21,8 +21,8 @@ Context APIs are registered and discovered dynamically:
 ## Registration
 
 ```typescript
-const agent = new DefaultContextAgent({ model: "..." });
-agent.registerAPI("memory", memoryAPI);
+const agent = new DefaultContextAgent({ model: "..." })
+agent.registerAPI("memory", memoryAPI)
 // API accessible as: agent.memory.get()
 ```
 
@@ -38,7 +38,7 @@ agent.createGuideline({
   action: "Store in memory with tags",
   apis: ["memory"],
   priority: 100,
-});
+})
 ```
 
 ## What Context Does

@@ -1,1 +1,1 @@
-export type Actions = Record<string, unknown>;
+export type Actions = Record<string, unknown>

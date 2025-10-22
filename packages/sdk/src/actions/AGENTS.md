@@ -43,8 +43,8 @@ This API is designed to integrate with:
 
 ```typescript
 // ✅ Good: descriptive error with context
-throw new Error(`Failed to delete file: ${path}`);
+throw new Error(`Failed to delete file: ${path}`)
 
 // ❌ Bad: generic error
-throw new Error("Operation failed");
+throw new Error("Operation failed")
 ```

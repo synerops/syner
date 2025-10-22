@@ -2,35 +2,35 @@ import type {
   Experimental_AgentSettings as AgentSettings,
   Prompt,
   ToolSet,
-} from "ai";
-import { Experimental_Agent as Agent } from "ai";
+} from "ai"
+import { Experimental_Agent as Agent } from "ai"
 
-import type { Context } from "../context";
+import type { Context } from "../context"
 
 // # Planner
-export type PlannerTools = ToolSet;
+export type PlannerTools = ToolSet
 
 export interface PlannerOutput {
-  steps: PlanStep[];
-  shouldSummarize: () => boolean;
+  steps: PlanStep[]
+  shouldSummarize: () => boolean
 }
 
-export type PlannerSettings = AgentSettings<PlannerTools, PlannerOutput>;
+export type PlannerSettings = AgentSettings<PlannerTools, PlannerOutput>
 
 export interface Planner extends Agent<PlannerTools, PlannerOutput> {
   plan(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
-  ): ReturnType<Agent<PlannerTools, PlannerOutput>["generate"]>;
+  ): ReturnType<Agent<PlannerTools, PlannerOutput>["generate"]>
 }
 
 // ## Step
 export interface PlanStep {
-  id: string;
-  prompt: Prompt;
-  context: Context;
-  agent: Agent<ToolSet, unknown>;
+  id: string
+  prompt: Prompt
+  context: Context
+  agent: Agent<ToolSet, unknown>
 }
 
 export class DefaultPlanner
@@ -38,14 +38,14 @@ export class DefaultPlanner
   implements Planner
 {
   constructor(settings: PlannerSettings) {
-    super(settings);
+    super(settings)
   }
 
   plan(
     options: Prompt & {
-      context: Context;
+      context: Context
     }
   ) {
-    return this.generate(options);
+    return this.generate(options)
   }
 }

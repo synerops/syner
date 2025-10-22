@@ -36,12 +36,12 @@ Structure IS documentation. No need to read code to understand what exists.
 
 ```ts
 // Namespace access
-import { system } from "syner";
-system.preferences.get();
+import { system } from "syner"
+system.preferences.get()
 
 // Direct API access
-import { preferences } from "syner/system";
-preferences.get();
+import { preferences } from "syner/system"
+preferences.get()
 ```
 
 ## Namespaces
