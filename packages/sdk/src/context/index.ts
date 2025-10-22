@@ -7,14 +7,8 @@ import type {
 import { Experimental_Agent as Agent } from "ai";
 
 // Re-export memory types and base provider
-export type {
-  Memory,
-  MemoryContext,
-  MemorySearchOptions
-} from "./memory";
-export {
-  DefaultMemoryProvider
-} from "./memory";
+export { DefaultMemoryProvider } from "./memory";
+export type { Memory, MemoryContext, MemorySearchOptions } from "./memory";
 
 // Context Type (for backward compatibility)
 export type Context = Record<string, unknown>;
@@ -36,18 +30,12 @@ export interface ContextOutput {
 }
 
 export type ContextTools = ToolSet;
-export type ContextSettings = AgentSettings<
-  ContextTools,
-  ContextOutput
-> & {
+export type ContextSettings = AgentSettings<ContextTools, ContextOutput> & {
   guidelines?: Guideline[];
 };
 
 // Context Agent Interface
-export interface ContextAgent extends Agent<
-  ContextTools,
-  ContextOutput
-> {
+export interface ContextAgent extends Agent<ContextTools, ContextOutput> {
   guidelines: Map<string, Guideline>;
   apiRegistry: Map<string, unknown>;
 
@@ -74,10 +62,7 @@ export interface ContextAgent extends Agent<
  * based on user request and configured guidelines.
  */
 export class DefaultContextAgent
-  extends Agent<
-    ContextTools,
-    ContextOutput
-  >
+  extends Agent<ContextTools, ContextOutput>
   implements ContextAgent
 {
   #guidelines: Map<string, Guideline>;
@@ -100,9 +85,7 @@ export class DefaultContextAgent
   async gather(
     query: string | Prompt,
     options?: { context?: Record<string, unknown> }
-  ): Promise<
-    GenerateTextResult<ContextTools, ContextOutput>
-  > {
+  ): Promise<GenerateTextResult<ContextTools, ContextOutput>> {
     const prompt: Prompt =
       typeof query === "string"
         ? { messages: [{ role: "user", content: query }] }
@@ -181,8 +164,9 @@ WHAT YOU DON'T DO:
     }
 
     // Pass ALL guidelines to LLM (sorted by priority for context)
-    const allGuidelines = Array.from(this.#guidelines.values())
-      .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    const allGuidelines = Array.from(this.#guidelines.values()).sort(
+      (a, b) => (b.priority || 0) - (a.priority || 0)
+    );
 
     if (allGuidelines.length > 0) {
       prompt += `\nGUIDELINES:\n`;

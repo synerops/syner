@@ -70,7 +70,9 @@ export default tseslint.config(
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/prefer-nullish-coalescing": "off",
       "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/no-explicit-any": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
       "no-restricted-imports": [
         "error",
         {

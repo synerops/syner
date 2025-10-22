@@ -1,9 +1,0 @@
-{
-  "extends": "@syner/ts-config/base",
-  "compilerOptions": {
-    // Build handled by tsup - this config is only for type checking and IDE
-    "incremental": false,
-    "types": [],
-    "baseUrl": "."
-  }
-}

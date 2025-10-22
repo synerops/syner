@@ -6,7 +6,6 @@ import type {
 import { Experimental_Agent as Agent, jsonSchema, Output } from "ai";
 
 import type { Context } from "../context";
-import type { PlannerOutput } from "./planner";
 
 export interface CoordinationOutput {
   plan?: string;
@@ -16,29 +15,22 @@ export interface CoordinationOutput {
 }
 
 export type CoordinatorSettings = AgentSettings<
-  ToolSet, 
-  CoordinationOutput, 
+  ToolSet,
+  CoordinationOutput,
   Partial<CoordinationOutput>
 >;
 
-export interface Coordinator extends Agent<
-  ToolSet, 
-  CoordinationOutput, 
-  Partial<CoordinationOutput>
-> {
+export interface Coordinator
+  extends Agent<ToolSet, CoordinationOutput, Partial<CoordinationOutput>> {
   coordinate(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<ToolSet, CoordinationOutput>["generate"]>;
 }
 
 export class DefaultCoordinator
-  extends Agent<
-    ToolSet, 
-    CoordinationOutput, 
-    Partial<CoordinationOutput>
-  >
+  extends Agent<ToolSet, CoordinationOutput, Partial<CoordinationOutput>>
   implements Coordinator
 {
   constructor(settings: CoordinatorSettings) {
@@ -48,16 +40,16 @@ export class DefaultCoordinator
         schema: jsonSchema<CoordinationOutput>({
           type: "object",
           properties: {
-            plan: { 
-              type: "object", 
-              properties: { 
-                details: { type: "string" }, 
-                requiresSummary: { type: "boolean" } 
-              }, 
-              required: ["details", "requiresSummary"] 
+            plan: {
+              type: "object",
+              properties: {
+                details: { type: "string" },
+                requiresSummary: { type: "boolean" },
+              },
+              required: ["details", "requiresSummary"],
             },
             summary: { type: "string" },
-            metadata: { type: "object" }
+            metadata: { type: "object" },
           },
           required: ["plan", "summary"],
         }),
@@ -68,7 +60,7 @@ export class DefaultCoordinator
   coordinate(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<ToolSet, CoordinationOutput>["generate"]> {
     return this.generate(options);
   }

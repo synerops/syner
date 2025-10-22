@@ -64,7 +64,7 @@ export abstract class DefaultMemoryProvider implements MemoryContext {
     value: unknown,
     options?: {
       tags?: string[];
-      expiresAt?: Date
+      expiresAt?: Date;
     }
   ): Promise<Memory>;
   abstract get(key: string): Promise<Memory | null>;

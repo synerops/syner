@@ -21,7 +21,7 @@ export interface Planner extends Agent<PlannerTools, PlannerOutput> {
   plan(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<PlannerTools, PlannerOutput>["generate"]>;
 }
 
@@ -44,9 +44,8 @@ export class DefaultPlanner
   plan(
     options: Prompt & {
       context: Context;
-    },
+    }
   ) {
     return this.generate(options);
   }
 }
-

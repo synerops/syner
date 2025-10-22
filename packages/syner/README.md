@@ -38,9 +38,13 @@ Store and retrieve information across agent interactions.
 import { context } from "syner";
 
 // Store information
-await context.memory.set("user_preference", { theme: "dark" }, {
-  tags: ["preferences", "ui"]
-});
+await context.memory.set(
+  "user_preference",
+  { theme: "dark" },
+  {
+    tags: ["preferences", "ui"],
+  }
+);
 
 // Retrieve by key
 const pref = await context.memory.get("user_preference");
@@ -50,7 +54,7 @@ console.log(pref?.value); // { theme: "dark" }
 const recent = await context.memory.search({
   tags: ["preferences"],
   after: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
-  limit: 10
+  limit: 10,
 });
 
 // Delete
@@ -87,7 +91,7 @@ await context.gather("What was I working on last week?");
 // Temporary information that expires
 await context.memory.set("session_token", "abc123", {
   expiresAt: new Date(Date.now() + 3600 * 1000), // 1 hour
-  tags: ["session", "temporary"]
+  tags: ["session", "temporary"],
 });
 
 // After expiration, returns null
@@ -99,24 +103,28 @@ const token = await context.memory.get("session_token");
 
 ```typescript
 // Store with semantic tags
-await context.memory.set("api_design", {
-  decision: "REST over GraphQL",
-  reasoning: "Simpler for team",
-  date: "2025-10-21"
-}, {
-  tags: ["architecture", "api", "decision"]
-});
+await context.memory.set(
+  "api_design",
+  {
+    decision: "REST over GraphQL",
+    reasoning: "Simpler for team",
+    date: "2025-10-21",
+  },
+  {
+    tags: ["architecture", "api", "decision"],
+  }
+);
 
 // Find all architectural decisions
 const decisions = await context.memory.search({
-  tags: ["architecture", "decision"]
+  tags: ["architecture", "decision"],
 });
 
 // Find API-related memories from last month
 const apiMemories = await context.memory.search({
   tags: ["api"],
   after: new Date("2025-09-21"),
-  limit: 20
+  limit: 20,
 });
 ```
 
@@ -136,7 +144,7 @@ import { context } from "syner";
 import { createContextAgent, InMemoryProvider } from "syner";
 
 const context = createContextAgent({
-  memory: new InMemoryProvider()
+  memory: new InMemoryProvider(),
 });
 ```
 
@@ -148,31 +156,38 @@ const context = createContextAgent({
 Production-ready provider with persistence and multi-instance support.
 
 **Installation:**
+
 ```bash
 pnpm add ioredis
 ```
 
 **Usage:**
+
 ```typescript
-import Redis from 'ioredis';
+import Redis from "ioredis";
 import { createContextAgent, RedisMemoryProvider } from "syner";
 
 const context = createContextAgent({
   memory: new RedisMemoryProvider({
     client: new Redis(process.env.REDIS_URL),
     keyPrefix: "myapp:",
-    ttl: 3600 // Default TTL in seconds
-  })
+    ttl: 3600, // Default TTL in seconds
+  }),
 });
 
 // All memory operations now use Redis
-await context.memory.set("user_session", { userId: "123" }, {
-  tags: ["session"],
-  expiresAt: new Date(Date.now() + 3600000)
-});
+await context.memory.set(
+  "user_session",
+  { userId: "123" },
+  {
+    tags: ["session"],
+    expiresAt: new Date(Date.now() + 3600000),
+  }
+);
 ```
 
 **Configuration Options:**
+
 - `client` - ioredis client instance (required or url)
 - `url` - Redis connection URL (alternative to client)
 - `keyPrefix` - Prefix for all keys (default: "syner:memory:")
@@ -186,14 +201,22 @@ await context.memory.set("user_session", { userId: "123" }, {
 Create your own provider by implementing `MemoryContext`:
 
 ```typescript
-import { DefaultMemoryProvider, type Memory, type MemorySearchOptions } from "@syner/sdk/context";
+import {
+  DefaultMemoryProvider,
+  type Memory,
+  type MemorySearchOptions,
+} from "@syner/sdk/context";
 
 class SupabaseMemoryProvider extends DefaultMemoryProvider {
   constructor(private supabase: SupabaseClient) {
     super();
   }
 
-  async set(key: string, value: unknown, options?: { tags?: string[]; expiresAt?: Date }) {
+  async set(
+    key: string,
+    value: unknown,
+    options?: { tags?: string[]; expiresAt?: Date }
+  ) {
     const memory: Memory = {
       id: this.generateId(),
       key,
@@ -203,7 +226,7 @@ class SupabaseMemoryProvider extends DefaultMemoryProvider {
         updatedAt: new Date(),
         expiresAt: options?.expiresAt,
         tags: options?.tags,
-      }
+      },
     };
 
     await this.supabase.from("memories").insert(memory);
@@ -218,7 +241,7 @@ class SupabaseMemoryProvider extends DefaultMemoryProvider {
       .single();
 
     if (!data) return null;
-    
+
     // Check expiration
     if (this.isExpired(data)) {
       await this.delete(key);
@@ -266,11 +289,12 @@ class SupabaseMemoryProvider extends DefaultMemoryProvider {
 
 // Use custom provider
 const context = createContextAgent({
-  memory: new SupabaseMemoryProvider(supabaseClient)
+  memory: new SupabaseMemoryProvider(supabaseClient),
 });
 ```
 
 **Implement these methods:**
+
 - `set(key, value, options)` - Store memory
 - `get(key)` - Retrieve memory (handle expiration)
 - `search(options)` - Search with filters
@@ -278,22 +302,24 @@ const context = createContextAgent({
 - `clear(tags?)` - Clear all or by tags
 
 **Helper methods from DefaultMemoryProvider:**
+
 - `generateId()` - Generate unique memory ID
 - `isExpired(memory)` - Check if memory expired
 
 ### Provider Comparison
 
-| Provider | Persistence | Multi-Instance | Speed | Setup |
-|----------|-------------|----------------|-------|-------|
-| InMemory | ❌ | ❌ | ⚡️ Fastest | Zero config |
-| Redis | ✅ | ✅ | 🚀 Fast | Install ioredis |
-| Custom | Depends | Depends | Varies | Implement interface |
+| Provider | Persistence | Multi-Instance | Speed       | Setup               |
+| -------- | ----------- | -------------- | ----------- | ------------------- |
+| InMemory | ❌          | ❌             | ⚡️ Fastest | Zero config         |
+| Redis    | ✅          | ✅             | 🚀 Fast     | Install ioredis     |
+| Custom   | Depends     | Depends        | Varies      | Implement interface |
 
 ### Future Providers
 
 Coming soon:
+
 - **DynamoDBMemoryProvider** - AWS DynamoDB backend
-- **MongoDBMemoryProvider** - MongoDB backend  
+- **MongoDBMemoryProvider** - MongoDB backend
 - **FileSystemMemoryProvider** - JSON file storage
 - **CompositeMemoryProvider** - Multi-layer caching (L1: InMemory, L2: Redis)
 
@@ -310,6 +336,7 @@ The context agent has three memory tools available:
 3. **memory_search** - Search with filters
 
 The LLM decides which tool to use based on:
+
 - The user's prompt
 - Configured guidelines
 - Available tools
@@ -317,6 +344,7 @@ The LLM decides which tool to use based on:
 ### Example Conversation
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
@@ -324,6 +352,7 @@ curl -X POST http://localhost:3000/chat \
 ```
 
 **Response:**
+
 ```json
 {
   "response": "I've stored that information. You're working on authentication.",
@@ -346,6 +375,7 @@ curl -X POST http://localhost:3000/chat \
 ```
 
 **Later Request:**
+
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
@@ -353,6 +383,7 @@ curl -X POST http://localhost:3000/chat \
 ```
 
 **Response:**
+
 ```json
 {
   "response": "You're working on authentication.",
@@ -382,16 +413,19 @@ curl -X POST http://localhost:3000/chat \
 The context agent has pre-configured guidelines that map user intent to tools:
 
 **Guideline 1: Storage** (priority: 100)
+
 - **When:** User says "remember", "save", "store", "keep in mind"
 - **Then:** Use `memory_set` tool
 - **Example:** "Remember my favorite color is blue" → `memory_set("favorite_color", "blue", ["preferences"])`
 
 **Guideline 2: Retrieval** (priority: 95)
+
 - **When:** User says "recall", "what did", "do you remember", "what was"
 - **Then:** Use `memory_search` or `memory_get` tool
 - **Example:** "What did I say earlier?" → `memory_search({ query: "said earlier" })`
 
 **Guideline 3: Context References** (priority: 90)
+
 - **When:** User references past conversation or work
 - **Then:** Use `memory_search` with filters
 - **Example:** "What was I working on yesterday?" → `memory_search({ query: "working on" })`
@@ -401,6 +435,7 @@ The context agent has pre-configured guidelines that map user intent to tools:
 **Endpoint:** `POST /chat`
 
 **Request:**
+
 ```typescript
 {
   prompt: string; // User's message
@@ -408,6 +443,7 @@ The context agent has pre-configured guidelines that map user intent to tools:
 ```
 
 **Response:**
+
 ```typescript
 {
   response: string;           // Agent's text response
@@ -433,12 +469,14 @@ The context agent has pre-configured guidelines that map user intent to tools:
 ### Testing Locally
 
 **Start the server:**
+
 ```bash
 cd apps/workspace
 pnpm dev
 ```
 
 **Test memory storage:**
+
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
@@ -446,6 +484,7 @@ curl -X POST http://localhost:3000/chat \
 ```
 
 **Test memory retrieval:**
+
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
@@ -453,6 +492,7 @@ curl -X POST http://localhost:3000/chat \
 ```
 
 **Test memory search:**
+
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
@@ -467,7 +507,7 @@ curl -X POST http://localhost:3000/chat \
 import { createContextAgent } from "syner/context";
 
 const myContext = createContextAgent({
-  model: "anthropic/claude-3.5-sonnet"
+  model: "anthropic/claude-3.5-sonnet",
 });
 
 // Add custom guideline
@@ -475,7 +515,7 @@ myContext.createGuideline({
   condition: "User asks about team members",
   action: "Search memory with team tag and return profiles",
   apis: ["memory"],
-  priority: 110
+  priority: 110,
 });
 
 await myContext.gather("Who is on the frontend team?");
@@ -522,19 +562,23 @@ console.log(ctx.confidence);
 
 ```typescript
 // Store conversation context
-await context.memory.set(`conv_${userId}_${timestamp}`, {
-  user: userId,
-  message: "How do I deploy?",
-  response: "Run pnpm build && pnpm deploy",
-}, {
-  tags: ["conversation", userId],
-  expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
-});
+await context.memory.set(
+  `conv_${userId}_${timestamp}`,
+  {
+    user: userId,
+    message: "How do I deploy?",
+    response: "Run pnpm build && pnpm deploy",
+  },
+  {
+    tags: ["conversation", userId],
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+  }
+);
 
 // Retrieve user's conversation history
 const history = await context.memory.search({
   tags: ["conversation", userId],
-  limit: 50
+  limit: 50,
 });
 ```
 
@@ -542,14 +586,18 @@ const history = await context.memory.search({
 
 ```typescript
 // Track current work
-await context.memory.set("current_task", {
-  name: "Implement Memory API",
-  started: new Date(),
-  files: ["context/memory.ts", "context/index.ts"],
-  status: "in_progress"
-}, {
-  tags: ["task", "active"]
-});
+await context.memory.set(
+  "current_task",
+  {
+    name: "Implement Memory API",
+    started: new Date(),
+    files: ["context/memory.ts", "context/index.ts"],
+    status: "in_progress",
+  },
+  {
+    tags: ["task", "active"],
+  }
+);
 
 // Later, resume where you left off
 const task = await context.memory.get("current_task");
@@ -560,18 +608,22 @@ console.log(`Resuming: ${task.value.name}`);
 
 ```typescript
 // Store project decisions and conventions
-await context.memory.set("naming_convention", {
-  files: "kebab-case",
-  components: "PascalCase",
-  functions: "camelCase",
-  constants: "UPPER_SNAKE_CASE"
-}, {
-  tags: ["convention", "project", "documentation"]
-});
+await context.memory.set(
+  "naming_convention",
+  {
+    files: "kebab-case",
+    components: "PascalCase",
+    functions: "camelCase",
+    constants: "UPPER_SNAKE_CASE",
+  },
+  {
+    tags: ["convention", "project", "documentation"],
+  }
+);
 
 // Query project knowledge
 const conventions = await context.memory.search({
-  tags: ["convention", "project"]
+  tags: ["convention", "project"],
 });
 ```
 
@@ -581,13 +633,17 @@ const conventions = await context.memory.search({
 
 ```typescript
 interface MemoryContext {
-  set(key: string, value: unknown, options?: {
-    tags?: string[];
-    expiresAt?: Date;
-  }): Promise<Memory>;
-  
+  set(
+    key: string,
+    value: unknown,
+    options?: {
+      tags?: string[];
+      expiresAt?: Date;
+    }
+  ): Promise<Memory>;
+
   get(key: string): Promise<Memory | null>;
-  
+
   search(options: {
     query?: string;
     tags?: string[];
@@ -595,9 +651,9 @@ interface MemoryContext {
     before?: Date;
     after?: Date;
   }): Promise<Memory[]>;
-  
+
   delete(key: string): Promise<boolean>;
-  
+
   clear(tags?: string[]): Promise<number>;
 }
 ```
@@ -647,4 +703,3 @@ This implementation establishes the pattern for all Context APIs:
 - `context.vector` (coming soon)
 
 Each API follows the same pattern: SDK defines interface, Syner implements with defaults.
-

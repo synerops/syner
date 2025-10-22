@@ -1,15 +1,14 @@
 /**
- * Factory functions for creating Syner agents
+ * Syner Fullstack Engineer Agent
  */
 
-import { context } from "./context";
+import { createContextAgent } from "./context";
 
 /**
  * Create a fullstack agent with all Syner defaults
  */
 export const createFullstackAgent = () => {
   return {
-    context,
+    context: createContextAgent(),
   };
 };
-

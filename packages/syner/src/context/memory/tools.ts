@@ -1,7 +1,7 @@
 // @ts-nocheck - AI SDK tool typing has issues with tsup DTS build
+import type { MemoryContext } from "@syner/sdk/context";
 import { tool } from "ai";
 import { z } from "zod";
-import type { MemoryContext } from "@syner/sdk/context";
 
 /**
  * Create AI SDK tools for Memory API

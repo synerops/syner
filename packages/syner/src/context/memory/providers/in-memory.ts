@@ -1,10 +1,5 @@
-import type {
-  Memory,
-  MemorySearchOptions,
-} from "@syner/sdk/context";
-import {
-  DefaultMemoryProvider,
-} from "@syner/sdk/context";
+import type { Memory, MemorySearchOptions } from "@syner/sdk/context";
+import { DefaultMemoryProvider } from "@syner/sdk/context";
 
 /**
  * In-memory implementation of MemoryContext
@@ -14,7 +9,12 @@ import {
  * Not recommended for: Production multi-instance deployments
  */
 export class InMemoryProvider extends DefaultMemoryProvider {
-  #store = new Map<string, Memory>();
+  #store: Map<string, Memory>;
+
+  constructor() {
+    super();
+    this.#store = new Map<string, Memory>();
+  }
 
   async set(
     key: string,

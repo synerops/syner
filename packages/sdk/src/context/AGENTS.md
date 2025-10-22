@@ -37,19 +37,21 @@ agent.createGuideline({
   condition: "User asks to remember something",
   action: "Store in memory with tags",
   apis: ["memory"],
-  priority: 100
+  priority: 100,
 });
 ```
 
 ## What Context Does
 
 **DOES:**
+
 - Read from sources (filesystem, git, databases, APIs)
 - Store contextual knowledge (memory, cache)
 - Search and retrieve information (vector, semantic)
 - Build understanding over time
 
 **DOES NOT:**
+
 - Execute real-world operations (use actions API)
 - Modify external systems
 - Send notifications or trigger workflows

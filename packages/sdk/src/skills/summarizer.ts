@@ -13,29 +13,22 @@ export interface SummarizationOutput {
 }
 
 export type SummarizerSettings = AgentSettings<
-  ToolSet, 
-  SummarizationOutput, 
+  ToolSet,
+  SummarizationOutput,
   Partial<SummarizationOutput>
 >;
 
-export interface Summarizer extends Agent<
-  ToolSet, 
-  SummarizationOutput, 
-  Partial<SummarizationOutput>
-> {
+export interface Summarizer
+  extends Agent<ToolSet, SummarizationOutput, Partial<SummarizationOutput>> {
   summarize(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<ToolSet, SummarizationOutput>["generate"]>;
 }
 
 export class DefaultSummarizer
-  extends Agent<
-    ToolSet, 
-    SummarizationOutput, 
-    Partial<SummarizationOutput>
-  >
+  extends Agent<ToolSet, SummarizationOutput, Partial<SummarizationOutput>>
   implements Summarizer
 {
   constructor(settings: SummarizerSettings) {
@@ -44,7 +37,7 @@ export class DefaultSummarizer
       experimental_output: Output.object<SummarizationOutput>({
         schema: jsonSchema<SummarizationOutput>({
           type: "object",
-          properties: { 
+          properties: {
             summary: { type: "string" },
             reasoning: { type: "string" },
           },
@@ -57,9 +50,8 @@ export class DefaultSummarizer
   summarize(
     options: Prompt & {
       context: Context;
-    },
+    }
   ) {
     return this.generate(options);
   }
 }
-

@@ -31,6 +31,9 @@ dist
 # Debug
 npm-debug.log*
 
+# Cache
+.cache
+
 # Misc
 .DS_Store
 *.pem

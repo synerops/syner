@@ -15,29 +15,22 @@ export interface ClassificationOutput {
 }
 
 export type ClassifierSettings = AgentSettings<
-  ToolSet, 
-  ClassificationOutput, 
+  ToolSet,
+  ClassificationOutput,
   Partial<ClassificationOutput>
 >;
 
-export interface Classifier extends Agent<
-  ToolSet, 
-  ClassificationOutput, 
-  Partial<ClassificationOutput>
-> {
+export interface Classifier
+  extends Agent<ToolSet, ClassificationOutput, Partial<ClassificationOutput>> {
   classify(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<ToolSet, ClassificationOutput>["generate"]>;
 }
 
 export class DefaultClassifier
-  extends Agent<
-    ToolSet, 
-    ClassificationOutput, 
-    Partial<ClassificationOutput>
-  >
+  extends Agent<ToolSet, ClassificationOutput, Partial<ClassificationOutput>>
   implements Classifier
 {
   constructor(settings: ClassifierSettings) {
@@ -61,9 +54,8 @@ export class DefaultClassifier
   classify(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): ReturnType<Agent<ToolSet, ClassificationOutput>["generate"]> {
     return this.generate(options);
   }
 }
-

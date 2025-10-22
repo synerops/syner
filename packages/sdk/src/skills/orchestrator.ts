@@ -8,16 +8,16 @@ import { Experimental_Agent as Agent } from "ai";
 
 import type { Context } from "../context";
 
-import type { Classifier, ClassificationOutput } from "./classifier";
+import type { ClassificationOutput, Classifier } from "./classifier";
 import { DefaultClassifier } from "./classifier";
 
-import type { Coordinator, CoordinationOutput } from "./coordinator";
+import type { CoordinationOutput, Coordinator } from "./coordinator";
 import { DefaultCoordinator } from "./coordinator";
 
 import type { Planner, PlannerOutput } from "./planner";
 import { DefaultPlanner } from "./planner";
 
-import type { Summarizer, SummarizationOutput } from "./summarizer";
+import type { SummarizationOutput, Summarizer } from "./summarizer";
 import { DefaultSummarizer } from "./summarizer";
 
 // # Orchestrator Team
@@ -41,35 +41,33 @@ export type OrchestratorSettings = AgentSettings<
   team?: Partial<OrchestratorTeam>;
 };
 
-export interface Orchestrator extends Agent<
-  OrchestratorTools,
-  OrchestratorOutput
-> {
+export interface Orchestrator
+  extends Agent<OrchestratorTools, OrchestratorOutput> {
   agents: Map<string, Agent<ToolSet, unknown>>;
   team: OrchestratorTeam;
 
   classify(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): Promise<GenerateTextResult<ToolSet, ClassificationOutput>>;
 
   coordinate(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): Promise<GenerateTextResult<ToolSet, CoordinationOutput>>;
 
   summarize(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): Promise<GenerateTextResult<ToolSet, SummarizationOutput>>;
 
   orchestrate(
     options: Prompt & {
       context: Context;
-    },
+    }
   ): Promise<GenerateTextResult<ToolSet, unknown>>;
 }
 
@@ -86,54 +84,48 @@ export class DefaultOrchestrator
     super(settings);
 
     // Extract base settings without experimental_output
-    const {
-      experimental_output: _,
-      team: _team,
-      ...baseSettings
-    } = settings;
+    const { experimental_output: _, team: _team, ...baseSettings } = settings;
 
     // Initialize team with provided agents or create default instances
     this.#team = {
-      classifier: 
-        settings.team?.classifier ?? 
-        new DefaultClassifier(baseSettings) as Classifier,
+      classifier:
+        settings.team?.classifier ??
+        (new DefaultClassifier(baseSettings) as Classifier),
       coordinator:
-        settings.team?.coordinator ?? 
-        new DefaultCoordinator(baseSettings) as Coordinator,
-      planner: 
-        settings.team?.planner ?? 
-        new DefaultPlanner(baseSettings) as Planner,
+        settings.team?.coordinator ??
+        (new DefaultCoordinator(baseSettings) as Coordinator),
+      planner:
+        settings.team?.planner ?? (new DefaultPlanner(baseSettings) as Planner),
       summarizer:
-        settings.team?.summarizer ?? 
-        new DefaultSummarizer(baseSettings) as Summarizer,
+        settings.team?.summarizer ??
+        (new DefaultSummarizer(baseSettings) as Summarizer),
     };
   }
 
   async classify(
-    options: Prompt & { context: Context },
+    options: Prompt & { context: Context }
   ): Promise<GenerateTextResult<ToolSet, ClassificationOutput>> {
     return this.#team.classifier.classify(options);
   }
 
   async coordinate(
-    options: Prompt & { context: Context },
+    options: Prompt & { context: Context }
   ): Promise<GenerateTextResult<ToolSet, CoordinationOutput>> {
     return this.#team.coordinator.coordinate(options);
   }
 
   async summarize(
-    options: Prompt & { context: Context },
+    options: Prompt & { context: Context }
   ): Promise<GenerateTextResult<ToolSet, SummarizationOutput>> {
     return this.#team.summarizer.summarize(options);
   }
 
   async orchestrate(
-    options: Prompt & { context: Context },
+    options: Prompt & { context: Context }
   ): Promise<GenerateTextResult<ToolSet, unknown>> {
     // classify the request of the user
-    const {
-      experimental_output: classification,
-    } = await this.classify(options);
+    const { experimental_output: classification } =
+      await this.classify(options);
 
     if (classification.isSimple) {
       if (!Object.keys(this.#team).includes(classification.agentName)) {
@@ -141,7 +133,8 @@ export class DefaultOrchestrator
       }
 
       // route the request to the appropriate agent
-      const agent = this.#team[classification.agentName as keyof OrchestratorTeam];
+      const agent =
+        this.#team[classification.agentName as keyof OrchestratorTeam];
       if (!agent) {
         throw new Error(`Agent ${classification.agentName} not found`);
       }
@@ -149,11 +142,10 @@ export class DefaultOrchestrator
       console.log(`Routing request to ${classification.agentName}...`);
       return agent.generate(options);
     }
-    
+
     // request requires coordination
-    const {
-      experimental_output: coordination,
-    } = await this.coordinate(options);
+    const { experimental_output: coordination } =
+      await this.coordinate(options);
 
     // request requires summarization
     if (coordination.planRequiresSummary) {
@@ -177,10 +169,19 @@ export class DefaultOrchestrator
   // Backward compatibility getter for agents
   get agents(): Map<string, Agent<ToolSet, unknown>> {
     return new Map([
-      ["classifier", this.#team.classifier as unknown as Agent<ToolSet, unknown>],
-      ["coordinator", this.#team.coordinator as unknown as Agent<ToolSet, unknown>],
+      [
+        "classifier",
+        this.#team.classifier as unknown as Agent<ToolSet, unknown>,
+      ],
+      [
+        "coordinator",
+        this.#team.coordinator as unknown as Agent<ToolSet, unknown>,
+      ],
       ["planner", this.#team.planner as unknown as Agent<ToolSet, unknown>],
-      ["summarizer", this.#team.summarizer as unknown as Agent<ToolSet, unknown>],
+      [
+        "summarizer",
+        this.#team.summarizer as unknown as Agent<ToolSet, unknown>,
+      ],
     ]);
   }
 }

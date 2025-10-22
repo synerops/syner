@@ -4,7 +4,9 @@
   "version": "0.0.0-dev.1",
   "type": "module",
   "private": false,
+  "sideEffects": false,
   "license": "AGPL-3.0-only",
+  "prettier": "@syner/prettier-config",
   "author": {
     "name": "Ronny Badilla",
     "email": "info@rbadillap.dev",
@@ -44,6 +46,8 @@
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
@@ -55,8 +59,10 @@
   },
   "devDependencies": {
     "@syner/eslint-config": "workspace:*",
+    "@syner/prettier-config": "workspace:*",
     "@syner/ts-config": "workspace:*",
     "eslint": "^9.34.0",
+    "prettier": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   }

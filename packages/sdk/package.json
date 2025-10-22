@@ -4,13 +4,20 @@
   "description": "Syner Agentic Framework SDK - Build autonomous systems",
   "type": "module",
   "private": false,
+  "sideEffects": false,
   "license": "MIT",
+  "prettier": "@syner/prettier-config",
   "author": {
     "name": "SynerOps, Inc",
     "email": "info@synerops.com",
     "url": "https://synerops.com"
   },
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
     "./package.json": "./package.json",
     "./actions": {
       "types": "./dist/actions.d.ts",
@@ -55,12 +62,16 @@
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "devDependencies": {
     "@syner/eslint-config": "workspace:*",
+    "@syner/prettier-config": "workspace:*",
     "@syner/ts-config": "workspace:*",
     "eslint": "catalog:",
+    "prettier": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:"
   }

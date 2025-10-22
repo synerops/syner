@@ -1,5 +1,5 @@
 /**
- * Syner OS - The Fullstack Agent
+ * Syner - The Fullstack Agent
  * @implements @syner/sdk
  */
 
@@ -7,8 +7,8 @@
 // Core Exports
 // ============================================
 
-export { context, createContextAgent } from "./context";
-export { createFullstackAgent } from "./factories";
+export { createContextAgent } from "./context";
+export { createFullstackAgent } from "./fullstack-engineer";
 
 // ============================================
 // Types (for custom configurations)
@@ -27,11 +27,7 @@ export type {
 // Providers (custom storage backends)
 // ============================================
 
-export {
-  InMemoryProvider,
-  RedisMemoryProvider,
-  type RedisMemoryOptions,
-} from "./context/providers";
+export { InMemoryProvider } from "./context/memory/providers";
 
 // For advanced users who want to extend providers
 export { DefaultMemoryProvider } from "@syner/sdk/context";
@@ -40,4 +36,4 @@ export { DefaultMemoryProvider } from "@syner/sdk/context";
 // Tools (for custom LLM integrations)
 // ============================================
 
-export { createMemoryTools } from "./context/tools";
+export { createMemoryTools } from "./context/memory/tools";

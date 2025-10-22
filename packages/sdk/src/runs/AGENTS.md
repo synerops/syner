@@ -30,12 +30,14 @@ This API is designed to integrate with:
 ## Directives
 
 **DOES:**
+
 - Read from sources (filesystem, git, databases, APIs)
 - Store contextual knowledge (memory, cache)
 - Search and retrieve information
 - Provide information for action execution
 
 **DOES NOT:**
+
 - Execute real-world operations (use actions API)
 - Modify external systems
 - Send notifications or trigger workflows

@@ -6,8 +6,8 @@
 import type { MemoryContext } from "@syner/sdk/context";
 import { DefaultContextAgent } from "@syner/sdk/context";
 
-import { InMemoryProvider } from "./providers";
-import { createMemoryTools } from "./tools";
+import { InMemoryProvider } from "./memory/providers";
+import { createMemoryTools } from "./memory/tools";
 
 export interface ContextAgentOptions {
   /**
@@ -65,6 +65,3 @@ export function createContextAgent(options?: ContextAgentOptions) {
 
   return agent;
 }
-
-// Export singleton with Syner defaults (InMemory)
-export const context = createContextAgent();
