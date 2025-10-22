@@ -1,6 +1,6 @@
 /**
  * Syner Context - Opinionated context gathering with smart defaults
- * @implements @syner/sdk/context
+ * @implements @syner/sdk
  */
 
 import type { MemoryContext } from "@syner/sdk/context"
@@ -29,13 +29,12 @@ export function createContextAgent(options?: ContextAgentOptions) {
   // Create memory provider
   const memory = options?.memory ?? new InMemoryProvider()
 
-  // Create memory tools for LLM
-  const memoryTools = createMemoryTools(memory)
-
   // Create agent with tools
   const agent = new DefaultContextAgent({
     model: options?.model ?? "openai/gpt-4o-mini",
-    tools: memoryTools as any, // Cast needed for AI SDK tool compatibility
+
+    // Create memory tools for LLM
+    tools: createMemoryTools(memory),
   })
 
   // Register memory API for direct access

@@ -138,7 +138,7 @@ export class DefaultOrchestrator
         throw new Error(`Agent ${classification.agentName} not found`)
       }
 
-      console.log(`Routing request to ${classification.agentName}...`)
+      // console.log(`Routing request to ${classification.agentName}...`)
       return agent.generate(options)
     }
 

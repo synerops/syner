@@ -16,7 +16,7 @@ export class InMemoryProvider extends DefaultMemoryProvider {
     this.#store = new Map<string, Memory>()
   }
 
-  async set(
+  set(
     key: string,
     value: unknown,
     options?: { tags?: string[]; expiresAt?: Date }
@@ -35,24 +35,24 @@ export class InMemoryProvider extends DefaultMemoryProvider {
     }
 
     this.#store.set(key, memory)
-    return memory
+    return Promise.resolve(memory)
   }
 
-  async get(key: string): Promise<Memory | null> {
+  get(key: string): Promise<Memory | null> {
     const memory = this.#store.get(key)
 
-    if (!memory) return null
+    if (!memory) return Promise.resolve(null)
 
     // Check expiration using helper
     if (this.isExpired(memory)) {
       this.#store.delete(key)
-      return null
+      return Promise.resolve(null)
     }
 
-    return memory
+    return Promise.resolve(memory)
   }
 
-  async search(options: MemorySearchOptions): Promise<Memory[]> {
+  search(options: MemorySearchOptions): Promise<Memory[]> {
     let results = Array.from(this.#store.values())
 
     // Filter expired
@@ -67,14 +67,16 @@ export class InMemoryProvider extends DefaultMemoryProvider {
 
     // Filter by date range
     if (options.after) {
+      const afterDate = options.after
       results = results.filter(
-        (m) => m.metadata && m.metadata.createdAt >= options.after!
+        (m) => m.metadata && m.metadata.createdAt >= afterDate
       )
     }
 
     if (options.before) {
+      const beforeDate = options.before
       results = results.filter(
-        (m) => m.metadata && m.metadata.createdAt <= options.before!
+        (m) => m.metadata && m.metadata.createdAt <= beforeDate
       )
     }
 
@@ -91,18 +93,18 @@ export class InMemoryProvider extends DefaultMemoryProvider {
       results = results.slice(0, options.limit)
     }
 
-    return results
+    return Promise.resolve(results)
   }
 
-  async delete(key: string): Promise<boolean> {
-    return this.#store.delete(key)
+  delete(key: string): Promise<boolean> {
+    return Promise.resolve(this.#store.delete(key))
   }
 
-  async clear(tags?: string[]): Promise<number> {
+  clear(tags?: string[]): Promise<number> {
     if (!tags) {
       const size = this.#store.size
       this.#store.clear()
-      return size
+      return Promise.resolve(size)
     }
 
     let count = 0
@@ -113,6 +115,6 @@ export class InMemoryProvider extends DefaultMemoryProvider {
       }
     }
 
-    return count
+    return Promise.resolve(count)
   }
 }
