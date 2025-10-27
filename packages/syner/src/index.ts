@@ -1,14 +1,17 @@
 /**
- * Syner OS
+ * Syner - The Fullstack Agent
  * @implements @syner/sdk
  */
 
-// Export namespace objects
-// import * as system from "./system";
-// import * as context from "./context";
-// import * as actions from "./actions";
-// import * as checks from "./checks";
-import * as agents from "./agents";
-// import * as runtime from "./runtime";
+// # Factories
 
-export { agents };
+export { createContextAgent } from "./context"
+export { createFullstackAgent } from "./fullstack-engineer"
+
+// # Types
+
+export type { ContextAgentOptions } from "./context"
+
+// # Re-exports
+
+export * from "./context"

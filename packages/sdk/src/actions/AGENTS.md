@@ -1,8 +1,10 @@
 # Actions API
 
+> Implements the `actions` contract from the OS Protocol.
+
 ## Purpose
 
-Execute operations with side effects based on gathered context.
+Register and manage agent capabilities - tools and integrations that agents can execute.
 
 ## API Hierarchy
 
@@ -23,17 +25,17 @@ This API is designed to integrate with:
 
 ## Directives
 
-**MUST** have side effects - this is the execution phase
+**MUST** register as tools (AI SDK) or MCP servers
 
-**MUST** operate on context gathered from the context API
+**MUST** provide clear descriptions for LLM usage
 
-**MUST** be verifiable - actions should produce results that can be checked
+**MUST** be verifiable - produce results that can be checked
 
 **SHOULD** be idempotent when possible
 
-**NEVER** gather context directly - use the context API
+**NEVER** gather context - use the context API
 
-**NEVER** verify results - that's the responsibility of the checks API
+**NEVER** validate results - use the checks API
 
 ## Error Handling
 
@@ -41,8 +43,8 @@ This API is designed to integrate with:
 
 ```typescript
 // ✅ Good: descriptive error with context
-throw new Error(`Failed to delete file: ${path}`);
+throw new Error(`Failed to delete file: ${path}`)
 
 // ❌ Bad: generic error
-throw new Error("Operation failed");
+throw new Error("Operation failed")
 ```

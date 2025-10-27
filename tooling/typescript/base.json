@@ -17,7 +17,7 @@
     "exactOptionalPropertyTypes": false,
     "incremental": true,
     "noErrorTruncation": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext"],
     "declaration": true,
     "declarationMap": true,
     "isolatedModules": true,

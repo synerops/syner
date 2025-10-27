@@ -1,1 +1,1 @@
-export type Check = Record<string, unknown>;
+export type Check = Record<string, unknown>

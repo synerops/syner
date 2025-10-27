@@ -1,14 +1,12 @@
-import { defineConfig } from "tsup";
-import { system, type actions, type loop } from "./src";
+import { defineConfig } from "tsup"
 
 export default defineConfig({
   entry: {
     index: "src/index.ts",
     actions: "src/actions/index.ts",
-    agents: "src/agents/index.ts",
+    skills: "src/skills/index.ts",
     checks: "src/checks/index.ts",
     context: "src/context/index.ts",
-    loop: "src/loop/index.ts",
     system: "src/system/index.ts",
   },
   format: ["cjs", "esm"],
@@ -21,4 +19,4 @@ export default defineConfig({
 
   splitting: false,
   treeshake: true,
-});
+})
