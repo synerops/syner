@@ -27,5 +27,8 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.15",
     "typescript": "catalog:"
+  },
+  "resolutions": {
+    "@types/minimatch": "^6"
   }
 }
