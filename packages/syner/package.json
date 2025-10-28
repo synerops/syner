@@ -51,7 +51,8 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
-    "@syner/sdk": "workspace:*"
+    "@syner/sdk": "workspace:*",
+    "express": "^5.1.0"
   },
   "peerDependencies": {
     "ai": "catalog:aisdk",
