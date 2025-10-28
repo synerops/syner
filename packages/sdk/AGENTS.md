@@ -50,7 +50,7 @@ src/
 Opinionated defaults in the `syner` package for quick start.
 
 ```
-syner/src/
+apps/syner/src/
 ├── context/          ← createContextAgent()
 ├── actions/          ← createActionsAgent()
 └── fullstack/        ← createFullstackAgent()

@@ -15,6 +15,7 @@ Syner OS is an **Agentic Operating System** - a platform where AI agents operate
 Syner uses hierarchical AGENTS.md files to avoid redundancy:
 
 - `/AGENTS.md` (this file) - Project overview, what is Syner OS
+- `/apps/*/AGENTS.md` - App-specific architecture and rules
 - `/packages/*/AGENTS.md` - Package-specific architecture and rules
 
 **Rules:**
@@ -85,6 +86,7 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 This monorepo contains:
 
 - `/packages/sdk/` - TypeScript implementation of the OS Protocol
-- `/packages/syner/` - The fullstack agent (reference implementation)
+- `/apps/syner/` - The fullstack agent (CLI + Express + API)
+- `/apps/docs/` - Documentation site
 - `/packages/ui/` - Shared UI components and design system
 - `/tooling/` - Development tooling (eslint, prettier, typescript)

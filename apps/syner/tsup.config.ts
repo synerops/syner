@@ -18,4 +18,7 @@ export default defineConfig({
   external: ["ai", "zod", /^node:/],
   splitting: false,
   treeshake: true,
+  banner: {
+    js: "#!/usr/bin/env node",
+  },
 })
