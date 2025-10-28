@@ -1,10 +1,10 @@
 'use client';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import SynerLogo from '@/lib/syner-light';
+import SynerLogo from '@/components/branding/logo';
 
 export function baseOptions(): BaseLayoutProps {
   return {
-    links: 
+    links:
     [
       {
         text: 'Docs',
@@ -33,25 +33,25 @@ export function baseOptions(): BaseLayoutProps {
         <div
           className="text-foreground text-[22px]"
           title="Right click for design assets"
-          onContextMenu={(e) => {
-            e.preventDefault();
-            const link = document.createElement('a');
-            link.href = '/workflow-assets.zip';
-            link.download = 'workflow-assets.zip';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }}
+          // onContextMenu={(e) => {
+          //   e.preventDefault();
+          //   const link = document.createElement('a');
+          //   link.href = '/workflow-assets.zip';
+          //   link.download = 'workflow-assets.zip';
+          //   document.body.appendChild(link);
+          //   link.click();
+          //   document.body.removeChild(link);
+          // }}
         >
           <span className="text-foreground text-lg font-semibold tracking-tight flex items-center gap-1.5">
-            <SynerLogo 
+            <SynerLogo
               className="hidden sm:block w-8 h-8"
               height={18}
               fill="currentColor"
             />
             syner
           </span>
-        </div>        
+        </div>
       ),
     },
   };
