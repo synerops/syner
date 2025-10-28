@@ -1,16 +1,27 @@
-import { RootProvider } from 'fumadocs-ui/provider/next';
-import './global.css';
-import { Inter } from 'next/font/google';
+import "./global.css"
 
-const inter = Inter({
-  subsets: ['latin'],
-});
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import { fonts } from '@syner/ui/lib/fonts';
+import { RootProvider } from 'fumadocs-ui/provider/next';
+import { ThemeProvider } from './providers/theme';
+import { Toaster } from '@syner/ui/components/sonner';
+import { TooltipProvider } from '@syner/ui/components/tooltip';
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen">
-        <RootProvider>{children}</RootProvider>
+    <html
+      className={fonts}
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-screen flex-col">
+        <ThemeProvider>
+          <RootProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </RootProvider>
+          <VercelAnalytics />
+        </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
