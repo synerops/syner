@@ -39,13 +39,19 @@
         "ai": "^5.0.76",
         "zod": "^3.25.76 || ^4.1.8"
       },
-      "next15": {
-        "next": "^15.5.4",
+      "next16": {
+        "next": "^16",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "@types/node": "^24",
         "@types/react": "^19.2.2",
         "@types/react-dom": "^19.2.2"
+      },
+      "docs": {
+        "fumadocs-core": "^16",
+        "fumadocs-mdx": "^13.0.2",
+        "fumadocs-ui": "^16",
+        "@types/mdx": "^2.0.13"
       }
     }
   }
