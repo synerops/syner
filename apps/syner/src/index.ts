@@ -1,17 +1,18 @@
 /**
- * Syner - The Orchestrator Agent
+ * syner - The Orchestrator Agent
  * @implements @syner/sdk
  */
 
 import { Command } from 'commander';
 import express from 'express';
+import { name, description, version } from '../package.json';
 
 const program = new Command();
 
 program
-  .name('syner')
-  .description('Syner OS - Agentic Operating System')
-  .version('1.0.0');
+  .name(name)
+  .description(description)
+  .version(version);
 
 program
   .command('dev')
@@ -20,7 +21,7 @@ program
     const app = express();
     
     app.listen(3005, () => {
-      console.log(`Syner OS listening on port 3005`);
+      console.log(`syner OS listening on port 3005`);
     });
   });
 

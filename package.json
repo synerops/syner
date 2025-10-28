@@ -2,6 +2,7 @@
   "name": "syner-root",
   "private": true,
   "scripts": {
+    "syner": "bun run apps/syner/dist/index.js",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
