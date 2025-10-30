@@ -6,6 +6,6 @@
     "types": [],
     "baseUrl": "."
   },
-  "include": ["src"],
+  "include": ["index.ts", "packages/**/*"],
   "exclude": ["node_modules", "dist", "tsup.config.ts"]
 }
