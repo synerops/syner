@@ -10,12 +10,19 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true,
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "format": {
+      "dependsOn": ["^format"],
+      "cache": true,
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"]
     }
   }
 }
