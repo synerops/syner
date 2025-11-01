@@ -2,8 +2,7 @@ import { defineConfig } from "tsup"
 
 export default defineConfig({
   entry: {
-    index: "index.ts",
-    health: "api/health/route.ts",
+    index: "index.ts"
   },
   format: ["cjs", "esm"],
   dts: true,

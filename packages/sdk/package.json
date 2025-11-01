@@ -18,7 +18,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./package.json": "./package.json",
     "./actions": {
       "types": "./dist/actions.d.ts",
       "import": "./dist/actions.js",

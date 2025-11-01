@@ -4,18 +4,16 @@
  */
 
 import { Command } from 'commander';
-import { createDevCommand, createBuildCommand } from './packages/cli';
-import { name, description, version } from './package.json';
+import { createBuildCommand } from './packages/cli';
 
 const program = new Command();
 
 program
-  .name(name)
-  .description(description)
-  .version(version);
+  .name(`syner`)
+  .description(`syner OS: The Fullstack Agent`)
 
 // Top-level command: syner dev
-program.addCommand(createDevCommand());
+// program.addCommand(createDevCommand());
 program.addCommand(createBuildCommand());
 
 program.parse();
