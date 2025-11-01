@@ -29,8 +29,7 @@
       "packages/*",
       "tooling/*",
       "!apps/docs/*",
-      "!packages/sdk/*",
-      "!apps/syner/*"
+      "!packages/sdk/*"
     ],
     "overrides": {
       "typescript": "^5.9.3",

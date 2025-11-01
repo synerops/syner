@@ -39,8 +39,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun run --bun tsup",
-    "dev": "bun run --bun tsup --watch",
+    "build": "bun build index.ts",
+    "dev": "bun --watch --bun index.ts dev --port 3000",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
