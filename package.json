@@ -17,11 +17,11 @@
     "turbo": "^2.5.8",
     "typescript": "5.8.3"
   },
-  "packageManager": "bun@1.3.1",
   "engines": {
     "bun": ">=1.3.1",
     "node": ">=20"
   },
+  "packageManager": "bun@1.3.1",
   "workspaces": {
     "packages": [
       "api",
@@ -29,7 +29,8 @@
       "packages/*",
       "tooling/*",
       "!apps/docs/*",
-      "!packages/sdk/*"
+      "!packages/sdk/*",
+      "!packages/syner/*"
     ],
     "overrides": {
       "typescript": "^5.9.3",

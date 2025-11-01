@@ -1,4 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "bunVersion": "1.x",
+  "functions": {
+    "api/*.ts": {
+      "excludeFiles": "*.md"
+    }
+  }
 }

@@ -39,7 +39,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun build index.ts",
+    "build": "bun build index.ts --outdir dist",
     "dev": "bun --watch --bun index.ts dev --port 3000",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
