@@ -2,7 +2,7 @@
   "name": "syner-monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo run build --ui stream",
+    "build": "turbo --no-update-notifier run build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "clean": "turbo clean",
@@ -24,6 +24,7 @@
   },
   "workspaces": {
     "packages": [
+      "api",
       "apps/*",
       "packages/*",
       "tooling/*",

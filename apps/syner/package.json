@@ -41,7 +41,6 @@
   "scripts": {
     "build": "bun run --bun tsup",
     "dev": "bun run --bun tsup --watch",
-    "start": "echo 'Not implemented'",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
