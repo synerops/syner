@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo --no-update-notifier run build",
-    "dev": "turbo dev",
+    "dev": "turbo dev --ui stream",
     "lint": "turbo lint",
     "clean": "turbo clean",
     "typecheck": "turbo typecheck",
@@ -28,8 +28,7 @@
       "apps/*",
       "packages/*",
       "tooling/*",
-      "!apps/docs/*",
-      "!packages/sdk/*"
+      "!apps/docs/*"
     ],
     "overrides": {
       "typescript": "^5.9.3",

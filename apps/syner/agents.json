@@ -1,0 +1,5 @@
+{
+  "$schema": "https://syner.dev/schema.json",
+  "directory": "./src/agents"
+}
+

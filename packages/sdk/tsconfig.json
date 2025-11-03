@@ -1,12 +1,13 @@
 {
   "extends": "@syner/ts-config/base",
   "compilerOptions": {
-    // Build handled by tsup - this config is only for type checking and IDE
+    // Build handled by bun - this config is only for type checking and IDE
     "incremental": false,
-    "types": [],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "paths": {
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "tsup.config.ts"]
+  "include": ["index.ts", "src/**/*"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
 }
-

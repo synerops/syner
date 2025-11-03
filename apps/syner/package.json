@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@vercel/build-utils": "^12.2.3",
+    "@syner/sdk": "workspace:*",
     "commander": "^12.0.0"
   },
   "peerDependencies": {
