@@ -14,7 +14,7 @@
     "@syner/prettier-config": "workspace:*",
     "@syner/ts-config": "workspace:*",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.8",
+    "turbo": "^2.6.0",
     "typescript": "5.8.3"
   },
   "engines": {
@@ -29,8 +29,7 @@
       "packages/*",
       "tooling/*",
       "!apps/docs/*",
-      "!packages/sdk/*",
-      "!packages/syner/*"
+      "!packages/sdk/*"
     ],
     "overrides": {
       "typescript": "^5.9.3",

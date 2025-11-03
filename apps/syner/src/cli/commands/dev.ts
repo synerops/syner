@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { checkHealth } from '@syner/api/health';
 
 export function createDevCommand() {
   const cmd = new Command('dev');
@@ -15,7 +16,9 @@ export function createDevCommand() {
         const server = Bun.serve({
           port: options.port,
           routes: {
-            '/api/status': new Response('OK'),
+            '/api/health': () => Response.json(
+              checkHealth()
+            ),
           },
         })
 

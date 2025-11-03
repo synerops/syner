@@ -6,9 +6,11 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@syner/cli/*": ["packages/cli/*"]
+      "@syner/cli/*": ["src/cli/*"],
+      "@syner/api/*": ["src/api/*"],
+      "@syner/bundle/*": ["src/bundle/*"]
     }
   },
-  "include": ["index.ts", "packages/**/*"],
+  "include": ["index.ts", "src/**/*"],
   "exclude": ["node_modules/**/*", "dist/**/*"]
 }

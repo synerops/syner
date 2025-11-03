@@ -7,7 +7,7 @@ import { Command } from 'commander';
 import {
   createDevCommand,
   createBuildCommand,
-} from './packages/cli';
+} from './src/cli';
 
 const program = new Command();
 
