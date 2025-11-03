@@ -40,6 +40,7 @@ npm-debug.log*
 
 # IDEs
 .idea
+.vscode
 
 # Workspace (local app for development)
-apps/workspace
+# apps/workspace
