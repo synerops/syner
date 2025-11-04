@@ -2,8 +2,9 @@
   "name": "syner-monorepo",
   "private": true,
   "scripts": {
+    "syner": "turbo -F syner syner",
     "build": "turbo --no-update-notifier run build",
-    "dev": "turbo dev --ui stream",
+    "dev": "turbo run dev --parallel",
     "lint": "turbo lint",
     "clean": "turbo clean",
     "typecheck": "turbo typecheck",

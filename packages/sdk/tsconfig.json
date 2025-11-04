@@ -4,10 +4,8 @@
     // Build handled by bun - this config is only for type checking and IDE
     "incremental": false,
     "baseUrl": ".",
-    "skipLibCheck": true,
-    "paths": {
-    }
+    "skipLibCheck": true
   },
   "include": ["index.ts", "src/**/*"],
-  "exclude": ["node_modules/**/*", "dist/**/*"]
+  "exclude": ["node_modules/**/*", "dist/**/*", "src/skills/*"]
 }

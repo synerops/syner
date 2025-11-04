@@ -1,7 +1,6 @@
 {
   "name": "api",
   "description": "API for the synerops/syner repo",
-  "main": "index.js",
   "scripts": {
   },
   "devDependencies": {

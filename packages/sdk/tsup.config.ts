@@ -1,3 +1,5 @@
+// TODO: tsup cannot be dropped in favor of Bun.build yet:
+// https://github.com/oven-sh/bun/issues/5141
 import { defineConfig } from "tsup"
 
 export default defineConfig({
@@ -10,7 +12,7 @@ export default defineConfig({
   sourcemap: true,
   target: "es2020",
 
-  external: ["ai", "zod", /^node:/],
+  external: ["ai", "zod", "bun", /^node:/],
 
   splitting: false,
   treeshake: true,
