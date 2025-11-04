@@ -7,10 +7,3 @@ export {
   AgentSchema,
   type Agent
 } from './agents';
-
-export {
-  AgentsConfigSchema,
-  loadConfig,
-  resolveAgentsDirectory,
-  type AgentsConfig,
-} from './config';

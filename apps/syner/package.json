@@ -1,6 +1,6 @@
 {
   "name": "syner",
-  "description": "syner OS: the agentic operating system implemented with syner SDK",
+  "description": "syner OS: the agentic operating system for TypeScript",
   "version": "0.0.0-dev.1",
   "type": "module",
   "private": false,
@@ -12,9 +12,19 @@
     "email": "info@rbadillap.dev",
     "url": "https://rbadillap.dev"
   },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "syner": "bun --watch --bun index.ts dev --port 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "clean": "git clean -xdf .cache .vercel .turbo dist node_modules"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/synerops/syner.git",
+    "url": "https://github.com/synerops/syner",
     "directory": "apps/syner"
   },
   "homepage": "https://github.com/synerops/syner#readme",
@@ -50,16 +60,6 @@
     "README.md",
     "LICENSE"
   ],
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "syner": "bun --watch --bun dist/index.js dev --port 3000",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "clean": "git clean -xdf .cache .vercel .turbo dist node_modules"
-  },
   "dependencies": {
     "@vercel/build-utils": "^12.2.3",
     "@syner/sdk": "workspace:*",

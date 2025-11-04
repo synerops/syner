@@ -7,13 +7,15 @@ import { Command } from 'commander';
 import {
   createDevCommand,
   createBuildCommand,
-} from './src/cli';
+} from '@syner/cli/index';
+
+import pkg from 'package.json'
 
 const program = new Command();
 
 program
-  .name(`syner`)
-  .description(`syner OS: The Fullstack Agent`)
+  .name(pkg.name)
+  .description(pkg.description)
 
 // Top-level command: syner dev
 program.addCommand(createDevCommand());

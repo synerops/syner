@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
-import { existsSync, statSync, readdirSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
+import { glob, promises } from 'node:fs';
 
 import { z } from 'zod';
 
@@ -31,13 +32,19 @@ export class AgentRegistry
 
   /**
    * Discovers agents from a specified directory path.
-   * Scans for .ts and .js files, imports them, and validates their exports.
+   * Scans for .ts and .js files using glob patterns, imports them, and validates their exports.
    *
    * @param dirPath - The directory path to scan for agent files
+   * @param options - Optional configuration for discovery
+   * @param options.patterns - Glob patterns to match agent files (default: ['*.{ts,js}', '*\/*.{ts,js}'])
+   * @param options.exclude - Patterns to exclude (default: ['**\/*.test.*', '**\/*.spec.*'])
    * @returns Array of discovered and validated agents
    * @throws Error if directory doesn't exist or validation fails
    */
-  async discover(dirPath: string): Promise<Agent[]> {
+  async discover(
+    dirPath: string,
+    options?: { patterns?: string[]; exclude?: string[] }
+  ): Promise<Agent[]> {
     // Check if directory exists
     if (!existsSync(dirPath)) {
       throw new Error(
@@ -49,14 +56,19 @@ export class AgentRegistry
       throw new Error(`Path '${dirPath}' is not a directory.`);
     }
 
-    // Read all files in directory
-    const files = readdirSync(dirPath).filter(
-      (file) => file.endsWith('.ts') || file.endsWith('.js')
-    );
+    // Use provided patterns or defaults (flat + 1 level deep)
+    const patterns = options?.patterns || ['*.{ts,js}', '*/*.{ts,js}'];
+    const exclude = options?.exclude || ['**/*.test.*', '**/*.spec.*'];
+
+    // Use fs.glob for pattern matching with exclusions
+    const files = promises.glob(patterns, {
+      cwd: dirPath,
+      exclude,
+    });
 
     const agents: Agent[] = [];
 
-    for (const file of files) {
+    for await (const file of files) {
       const filePath = resolve(dirPath, file);
 
       try {
