@@ -1,5 +1,5 @@
 {
-  "name": "@syner/ts-config",
+  "name": "@syner/typescript",
   "private": true,
   "exports": {
     "./base": "./base.json",

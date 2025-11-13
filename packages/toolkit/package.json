@@ -1,26 +1,43 @@
 {
-  "name": "@syner/sdk",
+  "name": "@syner/toolkit",
+  "description": "Syner OS Toolkit for building agentic systems",
+  "url": "https://syner.dev",
   "version": "0.0.0-dev.1",
-  "description": "Syner Agentic Framework SDK - Build autonomous systems",
   "type": "module",
   "private": false,
   "sideEffects": false,
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "prettier": "@syner/prettier",
   "author": {
-    "name": "SynerOps, Inc",
-    "email": "info@synerops.com",
-    "url": "https://synerops.com"
+    "name": "Ronny Badilla",
+    "email": "info@rbadillap.dev",
+    "url": "https://rbadillap.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "packages/syner"
+  },
+  "homepage": "https://github.com/synerops/syner#readme",
+  "bugs": {
+    "url": "https://github.com/synerops/syner/issues"
   },
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/server.cjs"
     }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "module": "src/index.ts",
   "files": [
     "dist",
     "README.md",
@@ -35,17 +52,19 @@
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
-  "peerDependencies": {
-    "zod": "catalog:aisdk"
+  "dependencies": {
+    "@syner/sdk": "workspace:*"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@types/bun": "*",
+    "@types/bun": "latest",
+    "tsup": "^8.5.1"
+  },
+  "peerDependencies": {
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "tsup": "^8.5.0",
     "typescript": "catalog:"
   }
 }

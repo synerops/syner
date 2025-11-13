@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/ts-config/base",
+  "extends": "@syner/typescript/base",
   "compilerOptions": {
     // Build handled by bun - this config is only for type checking and IDE
     "incremental": false,

@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "sideEffects": false,
-  "prettier": "@syner/prettier-config",
+  "prettier": "@syner/prettier",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -27,9 +27,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@syner/eslint-config": "workspace:*",
-    "@syner/prettier-config": "workspace:*",
-    "@syner/ts-config": "workspace:*",
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
     "@tailwindcss/postcss": "^4.1.14",
     "@turbo/gen": "^2.5.8",
     "@types/node": "catalog:next16",
