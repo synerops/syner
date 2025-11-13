@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/ts-config/react",
+  "extends": "@syner/typescript/react",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

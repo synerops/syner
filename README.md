@@ -5,8 +5,12 @@
   </picture>
 </p>
 
-# syner
+<p align="center">
+  <img src="https://img.shields.io/badge/protocol-v0.0.1-black.svg?labelColor=white&color=black&style=flat-square)](https://github.com/synerops/protocol">
+</p>
 
-[![protocol](https://img.shields.io/badge/protocol-v0.0.1-black.svg?labelColor=white&color=black&style=flat-square)](https://github.com/synerops/protocol)
+# syner - The Orchestrator Agent
 
-The Fullstack Agent
+
+
+

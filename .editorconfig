@@ -12,6 +12,7 @@ trim_trailing_whitespace = true
 [*.{js,jsx,ts,tsx,json,md,yml,yaml}]
 indent_style = space
 indent_size = 2
+max_line_length = 100
 
 # Markdown files
 [*.md]

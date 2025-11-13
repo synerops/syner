@@ -6,7 +6,7 @@
   "private": false,
   "sideEffects": false,
   "license": "MIT",
-  "prettier": "@syner/prettier-config",
+  "prettier": "@syner/prettier",
   "author": {
     "name": "SynerOps, Inc",
     "email": "info@synerops.com",
@@ -17,37 +17,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json",
-    "./actions": {
-      "types": "./dist/actions.d.ts",
-      "import": "./dist/actions.js",
-      "require": "./dist/actions.cjs"
-    },
-    "./checks": {
-      "types": "./dist/checks.d.ts",
-      "import": "./dist/checks.js",
-      "require": "./dist/checks.cjs"
-    },
-    "./context": {
-      "types": "./dist/context.d.ts",
-      "import": "./dist/context.js",
-      "require": "./dist/context.cjs"
-    },
-    "./loop": {
-      "types": "./dist/loop.d.ts",
-      "import": "./dist/loop.js",
-      "require": "./dist/loop.cjs"
-    },
-    "./skills": {
-      "types": "./dist/skills.d.ts",
-      "import": "./dist/skills.js",
-      "require": "./dist/skills.cjs"
-    },
-    "./system": {
-      "types": "./dist/system.d.ts",
-      "import": "./dist/system.js",
-      "require": "./dist/system.cjs"
     }
   },
   "main": "./dist/index.js",
@@ -66,13 +35,17 @@
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
+  "peerDependencies": {
+    "zod": "catalog:aisdk"
+  },
   "devDependencies": {
-    "@syner/eslint-config": "workspace:*",
-    "@syner/prettier-config": "workspace:*",
-    "@syner/ts-config": "workspace:*",
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/bun": "*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "tsup": "catalog:",
+    "tsup": "^8.5.0",
     "typescript": "catalog:"
   }
 }
