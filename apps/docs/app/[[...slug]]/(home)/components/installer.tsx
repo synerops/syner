@@ -4,7 +4,7 @@ import { CopyIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@syner/ui/components/button";
 
-const command = "npx syner@latest dev";
+const command = "npx syner@latest init";
 
 export const Installer = () => {
   const handleCopy = () => {

@@ -114,6 +114,7 @@ export async function generateMetadata(props: {
 
   if (!params.slug) {
     return {
+      // TODO: replace this
       title: "Production-grade Turborepo template for Next.js apps",
       description:
         "A monorepo template designed to have everything you need to build your new SaaS app as quick as possible. Authentication, billing, analytics, SEO, database ORM and more — it's all here.",

@@ -11,7 +11,7 @@ const Home = () => (
         {/*<OpenSource />*/}
       </div>
     </div>
-    <div className="h-8 bg-dashed" />
+    {/*<div className="h-8 bg-dashed" />*/}
   </main>
 );
 
