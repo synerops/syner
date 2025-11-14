@@ -5,11 +5,11 @@
   </picture>
 </p>
 
-<h1 align="center">syner OS - The Agentic Operating System</h1>
+<h1 align="center">Syner OS - The Agentic Operating System</h1>
 
 <h4 align="center">
   <a href="#">Syner OS</a> |
-  <a href="#">Toolkit</a> |
+  <a href="#">Developer Toolkit</a> |
   <a href="#">OS Protocol</a>
 </h4>
 
@@ -17,4 +17,4 @@
   <img src="https://img.shields.io/badge/protocol-v0.0.1-black.svg?labelColor=white&color=black&style=flat-square)](https://github.com/synerops/protocol">
 </p>
 
-Welcome to syner OS, this is an **Agentic Operating System**, designed to provide the necessary tools and services for agents to interact among themselves and with the world in a secure and efficient manner.
+Welcome to Syner OS, this is an **Agentic Operating System**, designed to provide the necessary tools and services for agents to interact among themselves and with the world in a secure and efficient manner.

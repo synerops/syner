@@ -8,7 +8,8 @@ Syner OS is an **Agentic Operating System** - a platform where AI agents operate
 
 - **OS Protocol** (separate spec) - Defines the agent loop contract
 - **@syner/sdk** - TypeScript implementation of the protocol
-- **syner** - The fullstack agent built with the SDK
+- **@syner/toolkit** - Tools and utilities for building agents, tools, and apps
+- **syner** - Assistant Agent created by default in Syner OS
 
 ## Documentation Hierarchy
 
@@ -86,7 +87,8 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 This monorepo contains:
 
 - `/packages/sdk/` - TypeScript implementation of the OS Protocol
-- `/apps/syner/` - The fullstack agent (CLI + Express + API)
-- `/apps/docs/` - Documentation site
+- `/packages/toolkit/` - Tools and utilities for building agents, tools, and apps
+- `/apps/os/` - Syner OS application
+- `/apps/docs/` - Documentation site (syner.dev)
 - `/packages/ui/` - Shared UI components and design system
 - `/tooling/` - Development tooling (eslint, prettier, typescript)

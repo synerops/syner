@@ -45,19 +45,12 @@ src/
 - Skills compose domain APIs, not other skills
 - Orchestrator coordinates skills, doesn't impose flow
 
-### Layer 3: Syner Factories (User API)
+### Layer 3: Toolkit (User API)
 
-Opinionated defaults in the `syner` package for quick start.
-
-```
-apps/syner/src/
-├── context/          ← createContextAgent()
-├── actions/          ← createActionsAgent()
-└── fullstack/        ← createFullstackAgent()
-```
+Tools and utilities provided by `@syner/toolkit` for building agents, tools, and apps.
 
 **Characteristics:**
-- Factories compose SDK primitives with best practices
+- Toolkit provides opinionated defaults and utilities
 - Users choose composition level (single agent vs orchestrated)
 - Advanced users can use SDK primitives directly
 
@@ -79,9 +72,8 @@ Structure IS documentation. No need to read code to understand what exists.
 ## Usage
 
 ```ts
-// Layer 3: Quick start with factories (recommended)
-import { createContextAgent } from "syner"
-const agent = createContextAgent()
+// Layer 3: Quick start with toolkit (recommended)
+import { nextHandler } from "@syner/toolkit"
 
 // Layer 2: Custom orchestration
 import { DefaultOrchestrator } from "@syner/sdk/skills"
