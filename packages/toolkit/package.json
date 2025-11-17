@@ -16,7 +16,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/synerops/syner.git",
-    "directory": "packages/syner"
+    "directory": "packages/toolkit"
   },
   "homepage": "https://github.com/synerops/syner#readme",
   "bugs": {
@@ -65,6 +65,7 @@
   "peerDependencies": {
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "next": "catalog:next16"
   }
 }
