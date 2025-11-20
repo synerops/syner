@@ -1,8 +1,6 @@
 {
-  "name": "syner-monorepo",
   "private": true,
   "scripts": {
-    "syner": "turbo -F syner syner",
     "build": "turbo --no-update-notifier run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo lint",
@@ -25,7 +23,8 @@
     "packages": [
       "apps/*",
       "packages/*",
-      "tooling/*"
+      "tooling/*",
+      "extensions/*"
     ],
     "overrides": {
       "typescript": "^5",

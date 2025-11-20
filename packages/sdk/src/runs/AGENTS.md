@@ -1,45 +1,92 @@
-# Context API
+# Runs API
 
 ## Purpose
 
-Build knowledge and understanding by gathering, storing, and retrieving information.
+Track and execute agent runs, including sandboxed execution.
 
 ## API Hierarchy
 
 ```
-context/
-├── apps.ts       (application context)
-├── system.ts     (system state)
-├── storage.ts    (persistent storage)
-├── cache.ts      (cached data)
-├── vector.ts     (vector search)
-├── dataset.ts    (dataset access)
-└── reasoning.ts  (reasoning and LLM context)
+runs/
+├── index.ts          (run schema and exports)
+└── sandbox.ts        (sandbox run execution)
 ```
+
+## Structure
+
+### Run Schema
+
+- `RunSchema` - Zod schema for run tracking
+- Defines structure for run metadata (id, name)
+
+### Sandbox Execution
+
+- `run()` - Main entry point for executing agent logic in sandbox
+- `RunOptions` - Options for sandbox execution
+  - `task` - Task description
+  - `inSandbox` - Whether to run in sandbox
+  - `project` - Optional git repository URL
+  - `sandbox` - Optional sandbox instance (if not provided and inSandbox is true, extension must create it)
+- `RunResult` - Result of execution
+  - `result` - Generated result from agent
+  - `sandbox` - Sandbox instance used
 
 ## Integration Points
 
-This API is designed to integrate with:
+This API integrates with:
 
-- **Applications** via `apps.ts`
-- **System state** via `system.ts`
-- **Storage backends** via `storage.ts`, `cache.ts`, `dataset.ts`
-- **Vector databases** via `vector.ts`
-- **LLM reasoning** via `reasoning.ts`
+- **Sandbox protocol** via `system/sandbox` - Uses `Sandbox` interface
+- **Extensions** (e.g., `@syner/vercel`) - Provides sandbox implementation
+- **Agent execution** - Executes agent loop within sandbox
 
 ## Directives
 
 **DOES:**
 
-- Read from sources (filesystem, git, databases, APIs)
-- Store contextual knowledge (memory, cache)
-- Search and retrieve information
-- Provide information for action execution
+- Execute agent logic within sandbox environment
+- Manage sandbox lifecycle (create, setup, cleanup)
+- Clone repositories into sandbox
+- Install dependencies in sandbox
 
 **DOES NOT:**
 
-- Execute real-world operations (use actions API)
-- Modify external systems
-- Send notifications or trigger workflows
+- Create sandbox instances directly (extensions do this)
+- Execute agent logic outside sandbox (for that, use agent directly)
 
-**SHOULD** be fast - context gathering should not block the agent loop
+**MUST** ensure cleanup - destroy sandbox in finally block
+
+**SHOULD** handle errors gracefully and cleanup resources
+
+## Usage
+
+```typescript
+import { run } from "@syner/sdk/runs"
+import { createVercelSandbox } from "@syner/vercel"
+
+// Create sandbox using extension
+const sandbox = await createVercelSandbox({
+  runtime: "node22",
+  source: {
+    url: "https://github.com/user/repo.git",
+    type: "git"
+  }
+})
+
+// Execute run
+const result = await run({
+  task: "Change hero of landing page",
+  inSandbox: true,
+  project: { url: "https://github.com/user/repo.git" },
+  sandbox
+})
+```
+
+## Flow
+
+1. User calls `run()` with `inSandbox: true`
+2. If sandbox not provided, must be created using extension (e.g., `@syner/vercel`)
+3. If `project.url` provided, clone repository into sandbox
+4. If package.json exists, install dependencies
+5. Execute agent loop within sandbox
+6. Return result
+7. Cleanup sandbox (destroy)

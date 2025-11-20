@@ -9,4 +9,12 @@
 // system
 export * from './system';
 
+// runs
+export {
+  run,
+  RunSchema,
+  type RunOptions,
+  type RunResult,
+} from './runs';
+
 // workflows

@@ -18,7 +18,9 @@ system/
 ├── env.ts            (environment variables)
 ├── installer.ts      (installation logic)
 ├── mcp-server.ts     (MCP protocol server)
-├── sandbox.ts        (sandboxing)
+├── sandbox/          (sandbox protocol)
+│   ├── protocol.ts   (vendor-agnostic contract)
+│   └── index.ts      (exports)
 └── collaboration.ts  (collaboration features)
 ```
 
@@ -38,7 +40,9 @@ System contains two main categories:
 - **registry.ts** - Component registry
 - **preferences.ts, settings.ts, env.ts** - Configuration
 - **mcp-server.ts** - MCP protocol server
-- **sandbox.ts** - Sandboxed execution
+- **sandbox/** - Sandbox protocol (vendor-agnostic contract)
+  - **protocol.ts** - Defines `Sandbox` interface and `SandboxOptions`
+  - Vendor-specific implementations go in extensions (e.g., `extensions/vercel`)
 - **collaboration.ts** - Multi-agent collaboration
 
 ## Integration Points
@@ -59,3 +63,14 @@ System is used by:
 **NEVER** depend on agents/ - agents depend on system, never reverse
 
 **NEVER** bypass API contracts - follow the directives in nested AGENTS.md files
+
+## Sandbox Protocol
+
+The sandbox protocol defines a vendor-agnostic contract for executing agent logic in isolated environments.
+
+- **Protocol**: Defined in `sandbox/protocol.ts` as `Sandbox` interface
+- **Implementations**: Vendor-specific implementations go in extensions (e.g., `@syner/vercel`)
+- **Usage**: Sandboxes are ephemeral - created for a run, destroyed after execution
+- **Export**: Protocol is exported from root: `import { Sandbox } from "@syner/sdk"`
+
+See `sandbox/protocol.ts` for the complete interface definition.

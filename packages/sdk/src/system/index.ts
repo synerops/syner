@@ -19,3 +19,12 @@ export {
   type Agent,
   type Discoverable,
 } from './registry';
+
+// Sandbox API
+export {
+  SandboxOptionsSchema,
+  type Sandbox,
+  type SandboxOptions,
+  type RunCommandOptions,
+  type RunCommandResult,
+} from './sandbox';

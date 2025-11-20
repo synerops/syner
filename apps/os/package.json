@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "next": "catalog:next16",
-    "@syner/toolkit": "workspace:*"
+    "@syner/sdk": "workspace:*",
+    "@syner/vercel": "workspace:*",
+    "ai": "catalog:aisdk"
   },
   "devDependencies": {
     "@syner/typescript": "workspace:*",
