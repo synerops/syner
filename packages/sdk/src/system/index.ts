@@ -20,14 +20,15 @@
 //   type Discoverable,
 // } from './registry';
 
-// Sandbox API
-export {
-  type Sandbox,
-} from './sandbox'
-
 // Env API
 export {
   type Env,
 } from './env';
+
+// Sandbox API
+export type {
+  Sandbox,
+  CreateSandboxOptions,
+} from './env/sandbox'
 
 export { env } from './env';

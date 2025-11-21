@@ -2,37 +2,13 @@ import { tool } from "ai"
 import { z } from "zod"
 import { Sandbox as VercelSandbox } from "@vercel/sandbox"
 
-import { env } from "@syner/sdk/system/env"
-import type { Sandbox } from "@syner/sdk/system/sandbox"
+import type {
+  Sandbox,
+  CreateSandboxOptions,
+} from "@syner/sdk"
+import { env } from "@syner/sdk"
 
-type CreateSandboxOptions = {
-  source?:
-    | {
-        type: "git"
-        url: string
-        depth?: number
-        revision?: string
-      }
-    | {
-        type: "git"
-        url: string
-        username: string
-        password: string
-        depth?: number
-        revision?: string
-      }
-    | {
-        type: "tarball"
-        url: string
-      }
-  ports?: number[]
-  timeout?: number
-  resources?: {
-    vcpus: number
-  }
-  runtime?: string | "node22" | "python3.13"
-  signal?: AbortSignal
-}
+
 
 export const createSandbox = (options: CreateSandboxOptions = {}) =>
   tool({

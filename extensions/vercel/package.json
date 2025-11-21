@@ -47,10 +47,10 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
-    "@vercel/sandbox": "latest"
+    "@vercel/sandbox": "latest",
+    "@syner/sdk": "workspace:*"
   },
   "peerDependencies": {
-    "@syner/sdk": "workspace:*",
     "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
   },

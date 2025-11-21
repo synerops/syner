@@ -59,6 +59,7 @@
       "name": "@syner/vercel",
       "version": "0.0.0-dev.1",
       "dependencies": {
+        "@syner/sdk": "workspace:*",
         "@vercel/sandbox": "latest",
       },
       "devDependencies": {
@@ -70,7 +71,6 @@
         "typescript": "catalog:",
       },
       "peerDependencies": {
-        "@syner/sdk": "workspace:*",
         "ai": "catalog:aisdk",
         "zod": "catalog:aisdk",
       },

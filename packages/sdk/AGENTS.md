@@ -82,7 +82,7 @@ await memory.set("key", "value")
 
 **Infrastructure:**
 
-- `system/` - infrastructure (env, preferences, registry, sandbox, mcp)
+- `system/` - infrastructure (env with sandbox, preferences, registry, mcp)
 - `workflows/` - workflow definitions and execution
 
 ## Rules

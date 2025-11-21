@@ -1,8 +1,4 @@
-export interface Sandbox {
-  id: string
-  status: "pending" | "running" | "stopping" | "stopped" | "failed"
-  timeout: number
-
+export interface Filesystem {
   readFile: (
     path: string,
     signal?: AbortSignal
@@ -13,3 +9,4 @@ export interface Sandbox {
     signal?: AbortSignal
   ) => Promise<void>
 }
+
