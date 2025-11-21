@@ -84,7 +84,6 @@ await memory.set("key", "value")
 
 - `system/` - infrastructure (env, preferences, registry, sandbox, mcp)
 - `workflows/` - workflow definitions and execution
-- `runs/` - run tracking and history
 
 ## Rules
 

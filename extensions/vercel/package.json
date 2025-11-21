@@ -1,6 +1,6 @@
 {
   "name": "@syner/vercel",
-  "description": "Vercel Sandbox extension for Syner OS",
+  "description": "Vercel Agent for Syner OS",
   "version": "0.0.0-dev.1",
   "type": "module",
   "private": false,
@@ -50,7 +50,9 @@
     "@vercel/sandbox": "latest"
   },
   "peerDependencies": {
-    "@syner/sdk": "workspace:*"
+    "@syner/sdk": "workspace:*",
+    "ai": "catalog:aisdk",
+    "zod": "catalog:aisdk"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",

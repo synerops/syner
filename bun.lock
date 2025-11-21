@@ -71,6 +71,8 @@
       },
       "peerDependencies": {
         "@syner/sdk": "workspace:*",
+        "ai": "catalog:aisdk",
+        "zod": "catalog:aisdk",
       },
     },
     "packages/sdk": {
