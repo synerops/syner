@@ -61,7 +61,7 @@ export const Hero = () => (
         Alpha
       </span>
       <span className="truncate font-medium">
-        Announcing the Syner OS Toolkit
+        Announcing Syner OS
       </span>
     </a>
     <h1 className="max-w-3xl text-balance text-center font-semibold text-4xl leading-tight tracking-tighter! sm:text-5xl md:max-w-4xl md:text-6xl lg:leading-[1.1]">
@@ -82,7 +82,7 @@ export const Hero = () => (
           <SynerLogo className="pointer-events-none mx-1.5 inline-block h-8 w-auto translate-y-0.5 select-none align-baseline sm:h-[38px] md:h-12 md:translate-y-1" />
         </div>
       </a>{" "}
-      Toolkit{" "}
+      OS{" "}
       for multi-agentic systems
     </h1>
     <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl md:text-lg">
