@@ -31,4 +31,9 @@ export type {
   CreateSandboxOptions,
 } from './env/sandbox'
 
+// Filesystem API
+export type {
+  Filesystem,
+} from './fs/protocol'
+
 export { env } from './env';
