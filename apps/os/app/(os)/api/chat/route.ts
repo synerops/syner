@@ -5,11 +5,11 @@ import { env } from '@syner/sdk';
 
 export async function POST(req: Request) {
   try {
+    const model = process.env.SYNER_ORCHESTRATOR_MODEL || 'anthropic/claude-haiku-4.5';
+
     const result = await generateText({
-      model: 'openai/gpt-5.1',
-      system: 'You are syner, a helpful assistant with sandbox capabilities',
+      model,
       prompt: 'Create a sandbox environment with Node.js 22',
-      maxSteps: 5,
       tools: {
         createSandbox: createSandbox({
           runtime: 'node22',
