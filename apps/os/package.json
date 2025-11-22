@@ -12,7 +12,8 @@
     "next": "catalog:next16",
     "@syner/sdk": "workspace:*",
     "@syner/vercel": "workspace:*",
-    "ai": "catalog:aisdk"
+    "ai": "catalog:aisdk",
+    "zod": "catalog:aisdk"
   },
   "devDependencies": {
     "@syner/typescript": "workspace:*",

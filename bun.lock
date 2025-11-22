@@ -48,6 +48,7 @@
         "@syner/vercel": "workspace:*",
         "ai": "catalog:aisdk",
         "next": "catalog:next16",
+        "zod": "catalog:aisdk",
       },
       "devDependencies": {
         "@syner/typescript": "workspace:*",

@@ -8,5 +8,6 @@
 // skills
 // system
 export type { Sandbox, CreateSandboxOptions } from "./system"
+export { env } from "./system"
 
 // workflows

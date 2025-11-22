@@ -8,24 +8,31 @@ import type {
 } from "@syner/sdk"
 import { env } from "@syner/sdk"
 
-
-
 export const createSandbox = (options: CreateSandboxOptions = {}) =>
   tool({
     description: "Create an ephemeral sandbox environment",
     inputSchema: z.object({}),
     execute: async () => {
-      const { sandboxId, status, timeout } = await VercelSandbox.create(options)
+      console.log('[createSandbox] Starting sandbox creation with options:', options);
+      try {
+        const { sandboxId, status, timeout } = await VercelSandbox.create(options)
+        console.log('[createSandbox] Sandbox created:', { sandboxId, status, timeout });
 
-      env.setSandbox({
-        id: sandboxId,
-        status,
-        timeout,
-      })
+        env.setSandbox({
+          id: sandboxId,
+          status,
+          timeout,
+        })
 
-      return {
-        message: "Sandbox created and stored in environment",
-        sandbox: getSandbox()
+        const result = {
+          message: "Sandbox created and stored in environment",
+          sandbox: getSandbox()
+        };
+        console.log('[createSandbox] Result:', result);
+        return result;
+      } catch (error) {
+        console.error('[createSandbox] Error:', error);
+        throw error;
       }
     }
   })
