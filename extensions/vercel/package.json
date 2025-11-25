@@ -1,6 +1,6 @@
 {
   "name": "@syner/vercel",
-  "description": "Vercel Agent for Syner OS",
+  "description": "Vercel extension for Syner OS",
   "version": "0.0.0-dev.1",
   "type": "module",
   "private": false,
