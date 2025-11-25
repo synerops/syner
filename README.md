@@ -9,7 +9,6 @@
 
 <h4 align="center">
   <a href="#">Syner OS</a> |
-  <a href="#">Developer Toolkit</a> |
   <a href="#">OS Protocol</a>
 </h4>
 
