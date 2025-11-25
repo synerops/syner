@@ -5,16 +5,16 @@ import { defineConfig } from "tsup"
 export default defineConfig({
   entry: {
     index: "src/index.ts",
-    server: "src/server/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,
   clean: true,
   sourcemap: true,
   target: "es2020",
-  
-  external: ["@syner/sdk"],
-  
+
+  external: ["@syner/sdk", "@vercel/sandbox", /^node:/],
+
   splitting: false,
   treeshake: true,
 })
+

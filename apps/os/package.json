@@ -4,13 +4,16 @@
   "description": "syner OS: the agentic operating system",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
     "start": "next start"
   },
   "dependencies": {
     "next": "catalog:next16",
-    "@syner/toolkit": "workspace:*"
+    "@syner/sdk": "workspace:*",
+    "@syner/vercel": "workspace:*",
+    "ai": "catalog:aisdk",
+    "zod": "catalog:aisdk"
   },
   "devDependencies": {
     "@syner/typescript": "workspace:*",

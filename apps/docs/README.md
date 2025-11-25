@@ -1,3 +1,3 @@
 # Docs
 
-Documentation site for the toolkit (syner.dev) built with Next.js and Fumadocs.
+Documentation site for Syner OS (syner.dev) built with Next.js and Fumadocs.
