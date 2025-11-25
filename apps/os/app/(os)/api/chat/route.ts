@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { NextResponse } from 'next/server';
 import { createSandbox, writeFiles, readFile } from '@syner/vercel';
 import { env } from '@syner/sdk';
@@ -10,6 +10,7 @@ export async function POST(req: Request) {
     const result = await generateText({
       model,
       prompt: 'Create a sandbox environment with Node.js 22, then write a file called test.js with the content "console.log(\'Hello from sandbox!\')" and read it back',
+      stopWhen: stepCountIs(20),
       tools: {
         createSandbox: createSandbox({
           runtime: 'node22',

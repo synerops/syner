@@ -33,7 +33,7 @@ extensions/vercel/
 ### Filesystem Protocol Methods
 
 The `Filesystem` interface (defined in `fs.ts`) provides:
-- `readFile(path: string, signal?: AbortSignal) => Promise<null | ReadableStream>` - Reads a file from the filesystem
+- `readFile(path: string, signal?: AbortSignal) => Promise<null | ReadableStream | Readable>` - Reads a file from the filesystem. Returns a Web API ReadableStream or Node.js Readable stream depending on the implementation. Vercel Sandbox returns a Node.js Readable stream.
 - `writeFiles(files: Array<{path: string, content: string}>, signal?: AbortSignal) => Promise<void>` - Writes multiple files to the filesystem
 
 **Note**: The `Sandbox` interface (from `@syner/sdk/system/env/sandbox`) manages container properties (id, status, timeout). File operations are separate and defined in the `Filesystem` interface. The sandbox instance is obtained from the environment (`env.sandbox`). The sandbox must exist in the environment before filesystem operations can be performed.

@@ -10,9 +10,17 @@ import { env } from "@syner/sdk"
 
 export const createSandbox = (options: CreateSandboxOptions = {}) =>
   tool({
-    description: "Create an ephemeral sandbox environment",
+    description: `Create an ephemeral sandbox environment. 
+IMPORTANT: This tool automatically checks if an active sandbox already exists. 
+If a sandbox with status 'running' or 'pending' exists, it will be reused instead of creating a new one. 
+You do NOT need to check for existing sandboxes before calling this tool - it handles that internally.
+The tool will return a 'reused: true' flag if an existing sandbox was found and reused.`,
     inputSchema: z.object({}),
     execute: async () => {
+      console.log('═══════════════════════════════════════════════════════════');
+      console.log('[TOOL] TOOL CALL START - createSandbox');
+      console.log('═══════════════════════════════════════════════════════════');
+
       // Check for abort signal before starting
       if (options.signal?.aborted) {
         throw new Error('Sandbox creation was aborted before execution');
@@ -24,11 +32,15 @@ export const createSandbox = (options: CreateSandboxOptions = {}) =>
       const existing = env.getSandbox();
       if (existing && (existing.status === 'running' || existing.status === 'pending')) {
         console.log('[createSandbox] Existing sandbox found:', existing);
-        return {
-          message: "Sandbox already exists and is active",
+        const result = {
+          message: `Sandbox already exists and is active (id: ${existing.id}, status: ${existing.status}). Reusing existing sandbox instead of creating a new one.`,
           sandbox: existing,
           reused: true
         };
+        console.log('═══════════════════════════════════════════════════════════');
+        console.log('[TOOL] TOOL CALL END - createSandbox');
+        console.log('═══════════════════════════════════════════════════════════');
+        return result;
       }
 
       try {
@@ -51,6 +63,9 @@ export const createSandbox = (options: CreateSandboxOptions = {}) =>
           sandbox: getSandbox()
         };
         console.log('[createSandbox] Result:', result);
+        console.log('═══════════════════════════════════════════════════════════');
+        console.log('[TOOL] TOOL CALL END - createSandbox');
+        console.log('═══════════════════════════════════════════════════════════');
         return result;
       } catch (error) {
         const errorMessage = error instanceof Error
@@ -63,6 +78,9 @@ export const createSandbox = (options: CreateSandboxOptions = {}) =>
         };
 
         console.error('[createSandbox] Error:', errorDetails);
+        console.log('═══════════════════════════════════════════════════════════');
+        console.log('[TOOL] TOOL CALL END - createSandbox (ERROR)');
+        console.log('═══════════════════════════════════════════════════════════');
 
         throw new Error(
           `Failed to create sandbox: ${errorMessage}. ` +
