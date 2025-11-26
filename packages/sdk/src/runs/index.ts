@@ -1,5 +1,4 @@
 export type {
-  Agent,
   Timeout,
   Retry,
   Backoff,

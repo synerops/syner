@@ -6,10 +6,10 @@ Syner agent - Agentic workflow implementations for Syner OS.
 
 Implements 4 core workflow patterns from Anthropic's [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents):
 
-- **RoutingWorkflow**: Input classification and specialized handling
-- **ParallelizationWorkflow**: Concurrent execution (sectioning/voting)
-- **OrchestratorWorkerWorkflow**: Dynamic task decomposition and delegation
-- **EvaluatorOptimizerWorkflow**: Iterative generation and feedback
+- **Routing**: Input classification and specialized handling
+- **Parallelization**: Concurrent execution (sectioning/voting)
+- **Orchestration**: Dynamic task decomposition and delegation
+- **Evaluation**: Iterative generation and feedback
 
 ## Architecture
 
@@ -21,25 +21,33 @@ agent.generate(input) // ❌
 
 // Domain-specific handlers
 router.route(input, routes) // ✅
-orchestrator.orchestrate(task, workers) // ✅
+orchestrator.orchestrate(task, workflows) // ✅
 evaluator.evaluate(output, criteria) // ✅
 ```
+
+### Naming Convention
+
+| Type        | Pattern         | Example         |
+| ----------- | --------------- | --------------- |
+| Interface   | `Agentic{Role}` | `AgenticRouter` |
+| Implementation | `{Role}`     | `Router`        |
+| Workflow    | `{Action}`      | `Routing`       |
 
 ### Extensibility
 
 All workflow agents expose interfaces for custom implementations:
 
 ```typescript
-import { RouterAgent, RoutingWorkflow } from 'syner'
+import { AgenticRouter, Router, Routing } from 'syner'
 
 // Use default implementation
-const workflow = new RoutingWorkflow({
-  router: new DefaultRouterAgent({ model }),
+const workflow = new Routing({
+  router: new Router({ model }),
   routes: { billing, support, sales },
 })
 
 // Or provide custom implementation
-class CachedRouterAgent implements RouterAgent {
+class CachedRouter implements AgenticRouter {
   async route(input, routes) {
     const cached = await cache.get(input)
     if (cached) return cached
@@ -47,8 +55,8 @@ class CachedRouterAgent implements RouterAgent {
   }
 }
 
-const workflow = new RoutingWorkflow({
-  router: new CachedRouterAgent(),
+const workflow = new Routing({
+  router: new CachedRouter(),
   routes: { billing, support, sales },
 })
 ```
@@ -57,14 +65,14 @@ const workflow = new RoutingWorkflow({
 
 ```typescript
 import { run } from '@syner/sdk'
-import { RoutingWorkflow, DefaultRouterAgent } from 'syner'
+import { Routing, Router } from 'syner'
 
-const workflow = new RoutingWorkflow({
-  router: new DefaultRouterAgent({ model: openai('gpt-4') }),
+const workflow = new Routing({
+  router: new Router({ model: openai('gpt-4') }),
   routes: {
-    billing: billingAgent,
-    support: supportAgent,
-    sales: salesAgent,
+    billing: billingWorkflow,
+    support: supportWorkflow,
+    sales: salesWorkflow,
   },
 })
 
@@ -76,9 +84,9 @@ const result = await execution.result
 
 > **Work in Progress** - Implementing workflow agents incrementally.
 
-| Workflow                   | Status     |
-| -------------------------- | ---------- |
-| RoutingWorkflow            | ⏳ Pending |
-| ParallelizationWorkflow    | ⏳ Pending |
-| OrchestratorWorkerWorkflow | ⏳ Pending |
-| EvaluatorOptimizerWorkflow | ⏳ Pending |
+| Workflow        | Status     |
+| --------------- | ---------- |
+| Routing         | ⏳ Pending |
+| Parallelization | ⏳ Pending |
+| Orchestration   | ⏳ Pending |
+| Evaluation      | ⏳ Pending |

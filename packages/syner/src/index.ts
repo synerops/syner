@@ -1,27 +1,37 @@
-// Orchestrator-Worker
-export {
-  OrchestratorWorkerWorkflow,
-  type OrchestratorWorkerAgents,
-  type OrchestratorWorkerConfig,
-} from './workflows/orchestrator-worker'
-
 // Routing
 export {
-  RoutingWorkflow,
-  type RoutingAgents,
+  Routing,
+  Router,
+  type AgenticRouter,
+  type RouterConfig,
   type RoutingConfig,
 } from './workflows/routing'
 
+// Orchestration
+export {
+  Orchestration,
+  Orchestrator,
+  type AgenticOrchestrator,
+  type OrchestratorConfig,
+  type OrchestrationConfig,
+} from './workflows/orchestration'
+
 // Parallelization
 export {
-  ParallelizationWorkflow,
-  type ParallelizationAgents,
+  Parallelization,
   type ParallelizationConfig,
+  type ParallelizationMode,
 } from './workflows/parallelization'
 
-// Evaluator-Optimizer
+// Evaluation
 export {
-  EvaluatorOptimizerWorkflow,
-  type EvaluatorOptimizerAgents,
-  type EvaluatorOptimizerConfig,
-} from './workflows/evaluator-optimizer'
+  Evaluation,
+  Evaluator,
+  Generator,
+  type AgenticEvaluator,
+  type AgenticGenerator,
+  type EvaluatorConfig,
+  type GeneratorConfig,
+  type EvaluationConfig,
+  type EvaluationResult,
+} from './workflows/evaluation'

@@ -81,6 +81,51 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 - Performance (rendering, optimization)
 - Design (contrast, shadows, colors)
 
+## Coding Best Practices
+
+### Interfaces Over Abstract Classes for Static Members
+
+TypeScript does not support `override` for static members. When you need to enforce static properties on subclasses:
+
+- **DO**: Use interfaces to define the static contract (`AgentStatic`)
+- **DO**: Use a base abstract class for instance members only (`Agent`)
+- **DON'T**: Declare static members in abstract classes expecting subclasses to override them
+
+```typescript
+// ✅ Correct approach
+export interface AgentStatic<Output, Config> {
+  readonly name: string
+  readonly description: string
+  readonly metadata: Metadata
+  new (config: Config): AgentInstance<Output, Config>
+}
+
+export abstract class Agent<Output, Config> {
+  abstract config: Config
+  abstract execute(input: unknown): Promise<Output>
+}
+
+// ❌ Wrong approach - TypeScript can't enforce static overrides
+export abstract class Agent {
+  static readonly name: string  // Subclasses can't use `override`
+}
+```
+
+### Signed TODOs
+
+All TODOs MUST be signed with the author's identifier for traceability:
+
+```typescript
+// ✅ Correct
+// TODO(@claude): Awaiting Ronny's approval - description of what's pending
+
+// ✅ Correct
+// TODO(@ronny): Refactor this when we migrate to v2
+
+// ❌ Wrong - unsigned TODO
+// TODO: Fix this later
+```
+
 ## Project Structure
 
 This monorepo contains:
