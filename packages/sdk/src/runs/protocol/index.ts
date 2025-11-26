@@ -38,5 +38,11 @@ export interface Execution<T> {
   result: Promise<T>
 }
 
-// Workflow type TBD based on existing workflow implementation
-export type Workflow<T> = unknown
+// Agent type (temporal - to be implemented)
+export type Agent = unknown
+
+// Workflow protocol interface
+export interface Workflow<T, C = Record<string, unknown>> {
+  execute(input: unknown): Promise<T>
+  config?: C
+}
