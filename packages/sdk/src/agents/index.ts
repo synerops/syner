@@ -1,2 +1,1 @@
-export { Agent } from './protocol'
-export type { Annotations, Metadata, AgentStatic, AgentInstance } from './protocol'
+export type { Agent, Annotations, Metadata } from './protocol'

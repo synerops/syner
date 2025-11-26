@@ -11,8 +11,7 @@ export type { Sandbox, CreateSandboxOptions, Filesystem } from "./system"
 export { env } from "./system"
 
 // agents
-export { Agent } from "./agents"
-export type { Annotations, Metadata } from "./agents"
+export type { Agent, Annotations, Metadata } from "./agents"
 
 // runs
 export type { Workflow, Run, Execution, Status } from "./runs"

@@ -1,4 +1,4 @@
-import { Agent, type Metadata, type Workflow } from '@syner/sdk'
+import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 
 // ============================================================================
@@ -101,13 +101,10 @@ export interface RoutingConfig<RouteKey extends string = string> {
  *
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
-export class Routing<Output, RouteKey extends string = string> extends Agent<
-  Output,
-  RoutingConfig<RouteKey>
-> {
-  // TODO(@claude): Awaiting Ronny's approval - using `agentName` instead of `name`
-  // to avoid conflict with Function.name. Pending decision on final naming convention.
-  static readonly agentName = 'Routing'
+export class Routing<Output, RouteKey extends string = string>
+  implements Agent<Output, RoutingConfig<RouteKey>>
+{
+  static readonly name = 'Routing'
 
   static readonly description =
     'Classifies an input and directs it to a specialized followup task. ' +
@@ -127,9 +124,7 @@ export class Routing<Output, RouteKey extends string = string> extends Agent<
     },
   }
 
-  constructor(public config: RoutingConfig<RouteKey>) {
-    super()
-  }
+  constructor(public config: RoutingConfig<RouteKey>) {}
 
   async execute(input: unknown): Promise<Output> {
     const routeKeys = Object.keys(this.config.routes) as RouteKey[]

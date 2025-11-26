@@ -87,22 +87,26 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 
 TypeScript does not support `override` for static members. When you need to enforce static properties on subclasses:
 
-- **DO**: Use interfaces to define the static contract (`AgentStatic`)
-- **DO**: Use a base abstract class for instance members only (`Agent`)
+- **DO**: Use interfaces to define the contract
 - **DON'T**: Declare static members in abstract classes expecting subclasses to override them
 
 ```typescript
-// ✅ Correct approach
-export interface AgentStatic<Output, Config> {
-  readonly name: string
-  readonly description: string
-  readonly metadata: Metadata
-  new (config: Config): AgentInstance<Output, Config>
+// ✅ Correct approach - interface for instance contract, statics by convention
+export interface Agent<Output, Config> {
+  config: Config
+  execute(input: unknown): Promise<Output>
 }
 
-export abstract class Agent<Output, Config> {
-  abstract config: Config
-  abstract execute(input: unknown): Promise<Output>
+class MyAgent implements Agent<string, MyConfig> {
+  static readonly name = 'MyAgent'
+  static readonly description = 'Does something useful'
+  static readonly metadata: Metadata = { annotations: { ... } }
+
+  constructor(public config: MyConfig) {}
+
+  async execute(input: unknown): Promise<string> {
+    // implementation
+  }
 }
 
 // ❌ Wrong approach - TypeScript can't enforce static overrides
@@ -120,7 +124,7 @@ All TODOs MUST be signed with the author's identifier for traceability:
 // TODO(@claude): Awaiting Ronny's approval - description of what's pending
 
 // ✅ Correct
-// TODO(@ronny): Refactor this when we migrate to v2
+// TODO(@syner): Refactor this when we migrate to v2
 
 // ❌ Wrong - unsigned TODO
 // TODO: Fix this later
