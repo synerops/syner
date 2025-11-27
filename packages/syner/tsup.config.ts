@@ -16,4 +16,9 @@ export default defineConfig({
 
   splitting: false,
   treeshake: true,
+
+  // Enable importing .md files as text
+  loader: {
+    ".md": "text",
+  },
 })

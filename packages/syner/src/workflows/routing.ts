@@ -1,7 +1,7 @@
 import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
-import { z } from 'zod'
+import classifierSystemPrompt from '../prompts/routing/classifier.md'
 
 // ============================================================================
 // RoutingConfig
@@ -107,13 +107,11 @@ export class Routing<Output, RouteKey extends string = string>
 
   /**
    * Classifies the input into one of the available routes.
-   * Uses generateObject for structured output.
+   * Uses generateObject with enum output for classification.
    *
    * @internal
    * @param input - The input to classify
    * @returns The selected route key
-   *
-   * TODO(@syner): Refine prompt based on OpenCode research (awaiting Ronny approval)
    */
   private async _classify(input: unknown): Promise<RouteKey> {
     const keys = Object.keys(this.config.routes) as RouteKey[]
@@ -125,19 +123,18 @@ export class Routing<Output, RouteKey extends string = string>
 
     const { object } = await generateObject({
       model: this.config.model,
-      schema: z.object({
-        route: z.enum(keys as [RouteKey, ...RouteKey[]]),
-      }),
-      prompt: `Classify this input into one of the available routes.
+      output: 'enum',
+      enum: keys,
+      system: classifierSystemPrompt,
+      prompt: `<input>
+${JSON.stringify(input, null, 2)}
+</input>
 
-Input: ${JSON.stringify(input)}
-
-Available routes:
+<routes>
 ${descriptions}
-
-Select the most appropriate route based on the input content.`,
+</routes>`,
     })
 
-    return object.route
+    return object as RouteKey
   }
 }
