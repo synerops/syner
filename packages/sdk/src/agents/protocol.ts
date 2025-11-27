@@ -4,6 +4,8 @@
  * Defines the base contract for all agents in Syner OS.
  */
 
+import type { Workflow } from '../runs'
+
 // ============================================================================
 // Annotations
 // ============================================================================
@@ -35,7 +37,9 @@ export interface Annotations {
 
 /**
  * Metadata associated with an agent.
- * Contains annotations and optional fields for documentation, licensing, etc.
+ * Si, hemos creado nuestro propio Agent porque necesitamos metadata y otros fields como annotations, y otros valores que iremos implementando y que TODOS los agentes tendran incorporados.
+ 
+ Tienes dos opciones, o verificas si el Agent de ai-sdk permite crearle fields adicionales, o ajustamos nuestro Agent para que extienda el Agent de ai-sdk.Contains annotations and optional fields for documentation, licensing, etc.
  */
 export interface Metadata {
   /**
@@ -64,17 +68,16 @@ export interface Metadata {
 // ============================================================================
 
 /**
- * Base interface for all agents in Syner OS.
+ * An Agent is a Workflow with metadata.
+ *
+ * - Workflow: execute() for the run system (timeout, retry, cancel, etc.)
+ * - Agent: adds static metadata (name, description, annotations) for Syner
  *
  * @typeParam Output - The type returned by execute()
  * @typeParam Config - The configuration type for this agent
  *
  * @example
  * ```typescript
- * interface MyConfig {
- *   model: LanguageModel
- * }
- *
  * class MyAgent implements Agent<string, MyConfig> {
  *   static readonly name = 'MyAgent'
  *   static readonly description = 'Does something useful'
@@ -90,17 +93,11 @@ export interface Metadata {
  * }
  * ```
  */
-export interface Agent<Output, Config = Record<string, unknown>> {
+export interface Agent<Output, Config = Record<string, unknown>>
+  extends Workflow<Output, Config> {
   /**
    * Instance configuration provided by the user.
+   * Required in Agent (optional in Workflow).
    */
   config: Config
-
-  /**
-   * Executes the agent's logic.
-   *
-   * @param input - The input to process
-   * @returns A promise resolving to the output
-   */
-  execute(input: unknown): Promise<Output>
 }

@@ -2,88 +2,14 @@ import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 
 // ============================================================================
-// AgenticRouter - Public Interface
-// ============================================================================
-
-/**
- * Contract for routing agents that classify input and select a route.
- */
-export interface AgenticRouter {
-  /**
-   * Analyzes input and determines which route to take.
-   * @param input - The input to classify
-   * @param routes - Available route keys to choose from
-   * @returns The selected route key
-   */
-  route<RouteKey extends string>(input: unknown, routes: RouteKey[]): Promise<RouteKey>
-}
-
-// ============================================================================
-// Router - Default Implementation
-// ============================================================================
-
-export interface RouterConfig {
-  /**
-   * The language model to use for classification.
-   */
-  model: LanguageModel
-
-  /**
-   * Optional system prompt for the router.
-   */
-  system?: string
-
-  /**
-   * Optional descriptions for each route to help the LLM classify.
-   */
-  descriptions?: Record<string, string>
-}
-
-/**
- * Default router implementation using AI SDK.
- */
-export class Router implements AgenticRouter {
-  constructor(private _config: RouterConfig) {}
-
-  async route<RouteKey extends string>(
-    _input: unknown,
-    _routes: RouteKey[]
-  ): Promise<RouteKey> {
-    // TODO(@claude): Awaiting Ronny's approval - he may have a better
-    // alternative to generateObject for classification.
-    //
-    // Proposed implementation:
-    //
-    // import { generateObject } from 'ai'
-    // import { z } from 'zod'
-    //
-    // const routeDescriptions = this._config.descriptions
-    //   ? _routes.map(r => `- ${r}: ${this._config.descriptions?.[r] ?? 'No description'}`).join('\n')
-    //   : _routes.join(', ')
-    //
-    // const { object } = await generateObject({
-    //   model: this._config.model,
-    //   system: this._config.system ?? 'You are a router that classifies input into categories.',
-    //   prompt: `Classify this input into one of the available routes.\n\nInput: ${JSON.stringify(_input)}\n\nAvailable routes:\n${routeDescriptions}`,
-    //   schema: z.object({
-    //     route: z.enum(_routes as [RouteKey, ...RouteKey[]])
-    //   })
-    // })
-    // return object.route
-
-    throw new Error('Router.route() not implemented - awaiting approval from Ronny')
-  }
-}
-
-// ============================================================================
-// Routing - Agent
+// RoutingConfig
 // ============================================================================
 
 export interface RoutingConfig<RouteKey extends string = string> {
   /**
-   * The router that classifies input.
+   * The language model to use for classification.
    */
-  router: AgenticRouter
+  model: LanguageModel
 
   /**
    * Map of route keys to workflows.
@@ -91,10 +17,19 @@ export interface RoutingConfig<RouteKey extends string = string> {
   routes: Record<RouteKey, Workflow<unknown>>
 
   /**
+   * Optional descriptions for each route to help the LLM classify.
+   */
+  descriptions?: Record<RouteKey, string>
+
+  /**
    * Optional default route if classification fails.
    */
   defaultRoute?: RouteKey
 }
+
+// ============================================================================
+// Routing - Agent
+// ============================================================================
 
 /**
  * Routing agent - classifies input and delegates to the appropriate workflow.
@@ -126,27 +61,64 @@ export class Routing<Output, RouteKey extends string = string>
 
   constructor(public config: RoutingConfig<RouteKey>) {}
 
+  /**
+   * Executes the routing workflow.
+   * Used by the run system for timeout, retry, cancel, etc.
+   */
   async execute(input: unknown): Promise<Output> {
-    const routeKeys = Object.keys(this.config.routes) as RouteKey[]
-
-    let selectedRoute: RouteKey
-
-    try {
-      selectedRoute = await this.config.router.route(input, routeKeys)
-    } catch (error) {
-      if (this.config.defaultRoute) {
-        selectedRoute = this.config.defaultRoute
-      } else {
-        throw error
-      }
-    }
-
-    const workflow = this.config.routes[selectedRoute]
+    const selected = await this.route(input)
+    const workflow = this.config.routes[selected]
 
     if (!workflow) {
-      throw new Error(`Route "${selectedRoute}" not found in routes`)
+      throw new Error(`Route "${selected}" not found in routes`)
     }
 
     return workflow.execute(input) as Promise<Output>
+  }
+
+  /**
+   * Routes the input to the appropriate workflow.
+   * This is the semantic method for the routing workflow.
+   */
+  async route(input: unknown): Promise<RouteKey> {
+    const keys = Object.keys(this.config.routes) as RouteKey[]
+
+    try {
+      return await this._classify(input, keys)
+    } catch (error) {
+      if (this.config.defaultRoute) {
+        return this.config.defaultRoute
+      }
+      throw error
+    }
+  }
+
+  /**
+   * Classifies the input into one of the available routes.
+   * @internal
+   */
+  private async _classify(_input: unknown, _keys: RouteKey[]): Promise<RouteKey> {
+    // TODO(@claude): Awaiting Ronny's approval - he may have a better
+    // alternative to generateObject for classification.
+    //
+    // Proposed implementation:
+    //
+    // import { generateObject } from 'ai'
+    // import { z } from 'zod'
+    //
+    // const descriptions = this.config.descriptions
+    //   ? keys.map(k => `- ${k}: ${this.config.descriptions?.[k] ?? 'No description'}`).join('\n')
+    //   : keys.join(', ')
+    //
+    // const { object } = await generateObject({
+    //   model: this.config.model,
+    //   prompt: `Classify this input into one of the available routes.\n\nInput: ${JSON.stringify(input)}\n\nAvailable routes:\n${descriptions}`,
+    //   schema: z.object({
+    //     route: z.enum(keys as [RouteKey, ...RouteKey[]])
+    //   })
+    // })
+    // return object.route
+
+    throw new Error('Routing._classify() not implemented - awaiting approval')
   }
 }

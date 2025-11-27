@@ -1,11 +1,5 @@
 // Routing
-export {
-  Routing,
-  Router,
-  type AgenticRouter,
-  type RouterConfig,
-  type RoutingConfig,
-} from './workflows/routing'
+export { Routing, type RoutingConfig } from './workflows/routing'
 
 // Orchestration
 export {
