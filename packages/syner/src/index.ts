@@ -1,4 +1,7 @@
-// Routing
+// Tools (new architecture)
+export { route, type RouteConfig, type RouteMetadata } from './tools'
+
+// Routing (deprecated - use route() tool instead)
 export { Routing, type RoutingConfig } from './workflows/routing'
 
 // Orchestration

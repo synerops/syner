@@ -1,6 +1,154 @@
 # Workflows
 
-## Export Guidelines
+> **DEPRECATED**: This folder is being migrated to `tools/` architecture.
+> See migration plan below.
+
+## Migration: Classes → Tools (AI SDK v6)
+
+### Why Tools, Not Classes?
+
+AI SDK v6 introduces a tools-first paradigm. Instead of:
+
+```typescript
+// ❌ Old pattern (class-based)
+class MyRouter extends Router {
+  async route(input) { ... }
+}
+const router = new MyRouter(config)
+await router.execute(input)
+```
+
+Users now compose agents declaratively:
+
+```typescript
+// ✅ New pattern (tools-first)
+import { route } from 'syner/tools'
+
+const myAgent = new ToolLoopAgent({
+  model: 'anthropic/claude-sonnet-4.5',
+  tools: {
+    route({
+      payments: {
+        description: "Handle payment queries",
+        whenToUse: "When user asks about billing",
+        examples: ["I need a refund", "Check my invoice"]
+      },
+      support: {
+        description: "Technical support",
+        whenToUse: "When user has issues", 
+        examples: ["App is crashing", "Can't login"]
+      }
+    })
+  }
+})
+```
+
+### Benefits
+
+| Aspect | Classes | Tools |
+|--------|---------|-------|
+| **Composition** | `extends`, inheritance | `tools: { route(), orchestrate() }` |
+| **Reusability** | Create subclasses | Import tool and configure |
+| **AI SDK v6** | Custom Agent class | `ToolLoopAgent` + tools |
+| **DX** | Boilerplate, constructors | Declarative, JSON-like config |
+| **Flexibility** | Override methods | Combine tools freely |
+| **Type inference** | Manual generics | `InferAgentUIMessage<typeof agent>` |
+
+### New File Structure
+
+```
+syner/
+├── tools/                    ← NEW: Tool functions
+│   ├── route.ts              ← export function route(config): Tool
+│   ├── orchestrate.ts        ← export function orchestrate(config): Tool
+│   ├── evaluate.ts           ← export function evaluate(config): Tool
+│   ├── parallelize.ts        ← export function parallelize(config): Tool
+│   └── index.ts              ← export { route, orchestrate, evaluate, parallelize }
+├── workflows/                ← DEPRECATED: Being migrated
+│   ├── routing.ts            ← Will be deleted after migration
+│   └── AGENTS.md
+└── index.ts                  ← export tools from 'syner/tools'
+```
+
+### Tool Interface Pattern
+
+Each tool is a function that returns an AI SDK Tool:
+
+```typescript
+// tools/route.ts
+import { tool } from 'ai'
+import { z } from 'zod'
+
+interface RouteConfig {
+  [routeName: string]: {
+    description: string
+    whenToUse: string
+    examples: string[]
+  }
+}
+
+export function route(config: RouteConfig) {
+  return tool({
+    description: 'Classifies input and routes to the appropriate handler',
+    parameters: z.object({
+      input: z.string().describe('The input to classify'),
+      selectedRoute: z.enum(Object.keys(config) as [string, ...string[]])
+        .describe('The route that best matches the input')
+    }),
+    execute: async ({ input, selectedRoute }) => {
+      // Tool logic here
+      return { route: selectedRoute, input }
+    }
+  })
+}
+```
+
+### Usage in OS (User Side)
+
+```typescript
+// apps/os/agents/my-agent.ts
+import { ToolLoopAgent } from 'ai'
+import { route, orchestrate } from 'syner/tools'
+
+export const myAgent = new ToolLoopAgent({
+  model: 'anthropic/claude-sonnet-4.5',
+  tools: {
+    route({
+      billing: {
+        description: "Billing and payments",
+        whenToUse: "Invoices, refunds, subscriptions",
+        examples: ["I need a refund", "Update payment method"]
+      },
+      support: {
+        description: "Technical support",
+        whenToUse: "Bugs, errors, troubleshooting",
+        examples: ["App crashes on startup"]
+      }
+    }),
+    orchestrate({
+      // orchestration config
+    })
+  }
+})
+
+// Type inference for frontend
+export type MyAgentMessage = InferAgentUIMessage<typeof myAgent>
+```
+
+### Migration Status
+
+| Component | Class (old) | Tool (new) | Status |
+|-----------|-------------|------------|--------|
+| Routing | `Routing` class | `route()` tool | ⏳ Pending |
+| Orchestration | `Orchestration` class | `orchestrate()` tool | ⏳ Pending |
+| Evaluation | `Evaluation` class | `evaluate()` tool | ⏳ Pending |
+| Parallelization | `Parallelization` class | `parallelize()` tool | ⏳ Pending |
+
+---
+
+## Legacy Documentation (To Be Removed)
+
+### Export Guidelines
 
 **DO NOT use `export * from './module'` patterns.**
 
@@ -10,97 +158,3 @@ Always use explicit named exports for better:
 - Type inference
 - Code readability
 - Build optimization
-
-## Naming Convention
-
-| Type                       | Pattern         | Example          |
-| -------------------------- | --------------- | ---------------- |
-| Interface (public contract)| `Agentic{Role}` | `AgenticRouter`  |
-| Implementation (class)     | `{Role}`        | `Router`         |
-| Workflow (verb/action)     | `{Action}`      | `Routing`        |
-
-## Architecture
-
-### File Structure
-
-```
-workflows/
-├── routing.ts         ← AgenticRouter + Router + Routing
-├── orchestration.ts   ← AgenticOrchestrator + Orchestrator + Orchestration
-├── parallelization.ts ← Parallelization (uses Workflow[])
-├── evaluation.ts      ← AgenticEvaluator + AgenticGenerator + Evaluator + Generator + Evaluation
-└── AGENTS.md
-```
-
-### Design Principles
-
-1. **Interface + Default Pattern**
-
-   - Each agent type has a public interface (`Agentic{Role}`)
-   - Default implementation uses AI SDK internally (`{Role}`)
-   - Users can provide custom implementations
-
-2. **Semantic Handlers**
-
-   - NOT: `agent.generate(input)` (generic)
-   - YES: `router.route(input, routes)` (semantic)
-
-3. **Encapsulation**
-
-   - AI SDK (`Experimental_Agent`) is internal detail
-   - Workflows depend on interfaces, not implementations
-
-4. **Workflows as Workers**
-
-   - No `AgenticWorker` type - workers are `Workflow`s
-   - Orchestration and Parallelization receive `Workflow[]`
-   - This integrates with the OS `run()` system (timeout, retry, cancel, human-in-the-loop)
-
-### Agent → Workflow Mapping
-
-| Agent       | Interface            | Implementation | Workflow        | Handler Method                |
-| ----------- | -------------------- | -------------- | --------------- | ----------------------------- |
-| Router      | `AgenticRouter`      | `Router`       | `Routing`       | `route(input, routes)`        |
-| Orchestrator| `AgenticOrchestrator`| `Orchestrator` | `Orchestration` | `orchestrate(task, workflows)`|
-| Evaluator   | `AgenticEvaluator`   | `Evaluator`    | `Evaluation`    | `evaluate(output, criteria)`  |
-| Generator   | `AgenticGenerator`   | `Generator`    | `Evaluation`    | `generate(input)`             |
-
-> **Note:** `Parallelization` receives `Workflow[]` directly - no dedicated agent needed.
-
-### Implementation Status
-
-| Component           | Interface | Default Impl | Workflow Integration |
-| ------------------- | --------- | ------------ | -------------------- |
-| Router              | ⏳        | ⏳           | ⏳                   |
-| Orchestrator        | ⏳        | ⏳           | ⏳                   |
-| Evaluator           | ⏳        | ⏳           | ⏳                   |
-| Generator           | ⏳        | ⏳           | ⏳                   |
-| Parallelization     | N/A       | N/A          | ⏳                   |
-
-## Pattern
-
-Each workflow file exports:
-
-- Interfaces for agentic contracts
-- Default implementations
-- Workflow class implementing `Workflow<T>` from `@syner/sdk`
-
-Example:
-
-```typescript
-// Interface (public contract)
-export interface AgenticRouter {
-  route<K extends string>(input: unknown, routes: Record<K, Workflow<unknown>>): Promise<K>
-}
-
-// Default implementation
-export class Router implements AgenticRouter {
-  async route(input, routes) { ... }
-}
-
-// Workflow
-export interface RoutingConfig { ... }
-export class Routing<T> implements Workflow<T, RoutingConfig> {
-  async execute(input: unknown): Promise<T> { ... }
-}
-```

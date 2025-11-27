@@ -1,7 +1,43 @@
+/**
+ * @deprecated Use the `route()` tool from 'syner' instead.
+ * This class-based approach is being replaced by a tools-first architecture.
+ *
+ * @example
+ * ```typescript
+ * // Old (deprecated)
+ * const router = new Routing({ model, routes, descriptions })
+ *
+ * // New (recommended)
+ * import { route } from 'syner'
+ * const myAgent = new ToolLoopAgent({
+ *   tools: {
+ *     route({
+ *       billing: { description: '...', whenToUse: '...', examples: ['...'] }
+ *     })
+ *   }
+ * })
+ * ```
+ */
+
 import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
-import classifierSystemPrompt from '../prompts/routing/classifier.md'
+
+// Inline system prompt (previously in prompts/routing/classifier.md)
+const classifierSystemPrompt = `<role>
+You are a routing classifier that directs inputs to specialized workflows.
+</role>
+
+<instructions>
+Analyze the input and select the single most appropriate route based on:
+- The primary intent or goal expressed in the input
+- Keywords and phrases that signal a specific category
+- The type of response or action the input requires
+</instructions>
+
+<output>
+Return only the route key that best matches the input.
+</output>`
 
 // ============================================================================
 // RoutingConfig
@@ -98,6 +134,7 @@ export class Routing<Output, RouteKey extends string = string>
     try {
       return await this._classify(input)
     } catch (error) {
+      console.error('Routing classification error:', error)
       if (this.config.defaultRoute) {
         return this.config.defaultRoute
       }

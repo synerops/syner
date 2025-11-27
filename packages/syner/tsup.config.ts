@@ -17,7 +17,8 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
 
-  // Enable importing .md files as text
+  // NOTE: .md loader kept for backwards compatibility
+  // Can be removed once workflows/routing.ts is fully deprecated
   loader: {
     ".md": "text",
   },
