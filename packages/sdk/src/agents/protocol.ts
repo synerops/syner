@@ -37,9 +37,7 @@ export interface Annotations {
 
 /**
  * Metadata associated with an agent.
- * Si, hemos creado nuestro propio Agent porque necesitamos metadata y otros fields como annotations, y otros valores que iremos implementando y que TODOS los agentes tendran incorporados.
- 
- Tienes dos opciones, o verificas si el Agent de ai-sdk permite crearle fields adicionales, o ajustamos nuestro Agent para que extienda el Agent de ai-sdk.Contains annotations and optional fields for documentation, licensing, etc.
+ * Contains annotations and optional fields for documentation, licensing, etc.
  */
 export interface Metadata {
   /**

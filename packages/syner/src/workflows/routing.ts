@@ -1,5 +1,7 @@
 import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
+import { generateObject } from 'ai'
+import { z } from 'zod'
 
 // ============================================================================
 // RoutingConfig
@@ -34,6 +36,12 @@ export interface RoutingConfig<RouteKey extends string = string> {
 /**
  * Routing agent - classifies input and delegates to the appropriate workflow.
  *
+ * Uses composition with generateObject for classification, keeping the
+ * AI SDK as an internal implementation detail.
+ *
+ * @typeParam Output - The output type from the delegated workflow
+ * @typeParam RouteKey - The string literal union of route keys
+ *
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
 export class Routing<Output, RouteKey extends string = string>
@@ -64,6 +72,9 @@ export class Routing<Output, RouteKey extends string = string>
   /**
    * Executes the routing workflow.
    * Used by the run system for timeout, retry, cancel, etc.
+   *
+   * @param input - The input to classify and route
+   * @returns The output from the selected workflow
    */
   async execute(input: unknown): Promise<Output> {
     const selected = await this.route(input)
@@ -79,12 +90,13 @@ export class Routing<Output, RouteKey extends string = string>
   /**
    * Routes the input to the appropriate workflow.
    * This is the semantic method for the routing workflow.
+   *
+   * @param input - The input to classify
+   * @returns The selected route key
    */
   async route(input: unknown): Promise<RouteKey> {
-    const keys = Object.keys(this.config.routes) as RouteKey[]
-
     try {
-      return await this._classify(input, keys)
+      return await this._classify(input)
     } catch (error) {
       if (this.config.defaultRoute) {
         return this.config.defaultRoute
@@ -95,30 +107,37 @@ export class Routing<Output, RouteKey extends string = string>
 
   /**
    * Classifies the input into one of the available routes.
+   * Uses generateObject for structured output.
+   *
    * @internal
+   * @param input - The input to classify
+   * @returns The selected route key
+   *
+   * TODO(@syner): Refine prompt based on OpenCode research (awaiting Ronny approval)
    */
-  private async _classify(_input: unknown, _keys: RouteKey[]): Promise<RouteKey> {
-    // TODO(@claude): Awaiting Ronny's approval - he may have a better
-    // alternative to generateObject for classification.
-    //
-    // Proposed implementation:
-    //
-    // import { generateObject } from 'ai'
-    // import { z } from 'zod'
-    //
-    // const descriptions = this.config.descriptions
-    //   ? keys.map(k => `- ${k}: ${this.config.descriptions?.[k] ?? 'No description'}`).join('\n')
-    //   : keys.join(', ')
-    //
-    // const { object } = await generateObject({
-    //   model: this.config.model,
-    //   prompt: `Classify this input into one of the available routes.\n\nInput: ${JSON.stringify(input)}\n\nAvailable routes:\n${descriptions}`,
-    //   schema: z.object({
-    //     route: z.enum(keys as [RouteKey, ...RouteKey[]])
-    //   })
-    // })
-    // return object.route
+  private async _classify(input: unknown): Promise<RouteKey> {
+    const keys = Object.keys(this.config.routes) as RouteKey[]
+    const descriptions = this.config.descriptions
+      ? keys
+          .map((k) => `- ${k}: ${this.config.descriptions?.[k] ?? 'No description'}`)
+          .join('\n')
+      : keys.map((k) => `- ${k}`).join('\n')
 
-    throw new Error('Routing._classify() not implemented - awaiting approval')
+    const { object } = await generateObject({
+      model: this.config.model,
+      schema: z.object({
+        route: z.enum(keys as [RouteKey, ...RouteKey[]]),
+      }),
+      prompt: `Classify this input into one of the available routes.
+
+Input: ${JSON.stringify(input)}
+
+Available routes:
+${descriptions}
+
+Select the most appropriate route based on the input content.`,
+    })
+
+    return object.route
   }
 }
