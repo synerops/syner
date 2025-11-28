@@ -1,29 +1,8 @@
-/**
- * @deprecated Use the `route()` tool from 'syner' instead.
- * This class-based approach is being replaced by a tools-first architecture.
- *
- * @example
- * ```typescript
- * // Old (deprecated)
- * const router = new Routing({ model, routes, descriptions })
- *
- * // New (recommended)
- * import { route } from 'syner'
- * const myAgent = new ToolLoopAgent({
- *   tools: {
- *     route({
- *       billing: { description: '...', whenToUse: '...', examples: ['...'] }
- *     })
- *   }
- * })
- * ```
- */
-
 import type { Agent, Metadata, Workflow } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
 
-// Inline system prompt (previously in prompts/routing/classifier.md)
+// Inline system prompt
 const classifierSystemPrompt = `<role>
 You are a routing classifier that directs inputs to specialized workflows.
 </role>
@@ -43,45 +22,39 @@ Return only the route key that best matches the input.
 // RoutingConfig
 // ============================================================================
 
-export interface RoutingConfig<RouteKey extends string = string> {
+export interface RoutingConfig<WorkflowKey extends string = string> {
   /**
    * The language model to use for classification.
    */
   model: LanguageModel
 
   /**
-   * Map of route keys to workflows.
+   * Map of workflow keys to workflow metadata.
    */
-  routes: Record<RouteKey, Workflow<unknown>>
-
-  /**
-   * Optional descriptions for each route to help the LLM classify.
-   */
-  descriptions?: Record<RouteKey, string>
-
-  /**
-   * Optional default route if classification fails.
-   */
-  defaultRoute?: RouteKey
+  workflows: Record<WorkflowKey, {
+    workflow: Workflow<any, any>
+    description: string
+    markAsDefault?: boolean
+  }>
 }
 
 // ============================================================================
-// Routing - Agent
+// Routing - Workflow
 // ============================================================================
 
 /**
- * Routing agent - classifies input and delegates to the appropriate workflow.
+ * Routing workflow - classifies input and delegates to the appropriate workflow.
  *
  * Uses composition with generateObject for classification, keeping the
  * AI SDK as an internal implementation detail.
  *
  * @typeParam Output - The output type from the delegated workflow
- * @typeParam RouteKey - The string literal union of route keys
+ * @typeParam WorkflowKey - The string literal union of workflow keys
  *
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
-export class Routing<Output, RouteKey extends string = string>
-  implements Agent<Output, RoutingConfig<RouteKey>>
+export class Routing<Output, WorkflowKey extends string = string>
+  implements Agent<Output, RoutingConfig<WorkflowKey>>
 {
   static readonly name = 'Routing'
 
@@ -103,75 +76,90 @@ export class Routing<Output, RouteKey extends string = string>
     },
   }
 
-  constructor(public config: RoutingConfig<RouteKey>) {}
-
-  /**
-   * Executes the routing workflow.
-   * Used by the run system for timeout, retry, cancel, etc.
-   *
-   * @param input - The input to classify and route
-   * @returns The output from the selected workflow
-   */
-  async execute(input: unknown): Promise<Output> {
-    const selected = await this.route(input)
-    const workflow = this.config.routes[selected]
-
-    if (!workflow) {
-      throw new Error(`Route "${selected}" not found in routes`)
+  constructor(public config: RoutingConfig<WorkflowKey>) {
+    // Validate only one workflow has markAsDefault
+    const entries = Object.entries(config.workflows) as [WorkflowKey, {
+      workflow: Workflow<any, any>
+      description: string
+      markAsDefault?: boolean
+    }][]
+    const defaults = entries.filter(([_, meta]) => meta.markAsDefault)
+    if (defaults.length > 1) {
+      throw new Error('Only one workflow can be marked as default')
     }
-
-    return workflow.execute(input) as Promise<Output>
   }
 
   /**
-   * Routes the input to the appropriate workflow.
-   * This is the semantic method for the routing workflow.
+   * Runs the routing workflow.
+   * Classifies input and executes the selected workflow.
    *
-   * @param input - The input to classify
-   * @returns The selected route key
+   * @param input - The input string to classify and route
+   * @returns The output from the selected workflow
    */
-  async route(input: unknown): Promise<RouteKey> {
+  async run(input: string): Promise<Output> {
+    const selected = await this.classify(input)
+    const { workflow } = this.config.workflows[selected]
+
+    if (!workflow) {
+      throw new Error(`Workflow "${selected}" not found`)
+    }
+
+    return workflow.run(input) as Promise<Output>
+  }
+
+  /**
+   * Classifies the input and returns the selected workflow key.
+   *
+   * @param input - The input string to classify
+   * @returns The selected workflow key
+   */
+  async classify(input: string): Promise<WorkflowKey> {
+    const entries = Object.entries(this.config.workflows) as [WorkflowKey, {
+      workflow: Workflow<any, any>
+      description: string
+      markAsDefault?: boolean
+    }][]
+    const keys = entries.map(([key]) => key)
+    const descriptions = entries
+      .map(([key, { description }]) => `- ${key}: ${description}`)
+      .join('\n')
+
     try {
-      return await this._classify(input)
+      const { object } = await generateObject({
+        model: this.config.model,
+        output: 'enum',
+        enum: keys,
+        system: classifierSystemPrompt,
+        prompt: `<input>${input}</input>\n\n<routes>\n${descriptions}\n</routes>`,
+      })
+
+      return object as WorkflowKey
     } catch (error) {
       console.error('Routing classification error:', error)
-      if (this.config.defaultRoute) {
-        return this.config.defaultRoute
+      
+      // Find default workflow
+      const defaultEntry = entries.find(([_, meta]) => meta.markAsDefault)
+      if (defaultEntry) {
+        return defaultEntry[0] as WorkflowKey
       }
+      
       throw error
     }
   }
-
-  /**
-   * Classifies the input into one of the available routes.
-   * Uses generateObject with enum output for classification.
-   *
-   * @internal
-   * @param input - The input to classify
-   * @returns The selected route key
-   */
-  private async _classify(input: unknown): Promise<RouteKey> {
-    const keys = Object.keys(this.config.routes) as RouteKey[]
-    const descriptions = this.config.descriptions
-      ? keys
-          .map((k) => `- ${k}: ${this.config.descriptions?.[k] ?? 'No description'}`)
-          .join('\n')
-      : keys.map((k) => `- ${k}`).join('\n')
-
-    const { object } = await generateObject({
-      model: this.config.model,
-      output: 'enum',
-      enum: keys,
-      system: classifierSystemPrompt,
-      prompt: `<input>
-${JSON.stringify(input, null, 2)}
-</input>
-
-<routes>
-${descriptions}
-</routes>`,
-    })
-
-    return object as RouteKey
-  }
 }
+
+// ============================================================================
+// Type Inference
+// ============================================================================
+
+/**
+ * Infer the output type from a Routing instance.
+ *
+ * @example
+ * ```typescript
+ * const routing = new Routing({ ... })
+ * type Output = InferRoutingOutput<typeof routing>
+ * ```
+ */
+export type InferRoutingOutput<T> = 
+  T extends Routing<infer Output, any> ? Output : never

@@ -53,7 +53,7 @@ export interface OrchestrationConfig {
 export class Orchestration<T> implements Workflow<T, OrchestrationConfig> {
   constructor(public config: OrchestrationConfig) {}
 
-  async execute(_input: unknown): Promise<T> {
+  async run(_input: string): Promise<T> {
     throw new Error('Orchestration workflow not implemented yet')
   }
 }

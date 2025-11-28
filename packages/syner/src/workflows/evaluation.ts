@@ -100,7 +100,7 @@ export interface EvaluationConfig {
 export class Evaluation<T> implements Workflow<T, EvaluationConfig> {
   constructor(public config: EvaluationConfig) {}
 
-  async execute(_input: unknown): Promise<T> {
+  async run(_input: string): Promise<T> {
     throw new Error('Evaluation workflow not implemented yet')
   }
 }

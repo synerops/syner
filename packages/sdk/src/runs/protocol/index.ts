@@ -40,6 +40,13 @@ export interface Execution<T> {
 
 // Workflow protocol interface
 export interface Workflow<T, C = Record<string, unknown>> {
-  execute(input: unknown): Promise<T>
+  run(input: string): Promise<T>
   config?: C
 }
+
+// Type inference utilities
+export type InferWorkflowOutput<T> = 
+  T extends Workflow<infer Output, any> ? Output : never
+
+export type InferWorkflowConfig<T> = 
+  T extends Workflow<any, infer Config> ? Config : never

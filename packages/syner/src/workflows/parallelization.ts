@@ -34,7 +34,7 @@ export interface ParallelizationConfig {
 export class Parallelization<T> implements Workflow<T, ParallelizationConfig> {
   constructor(public config: ParallelizationConfig) {}
 
-  async execute(_input: unknown): Promise<T> {
+  async run(_input: string): Promise<T> {
     throw new Error('Parallelization workflow not implemented yet')
   }
 }
