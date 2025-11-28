@@ -1,4 +1,4 @@
-import type { Agent, Metadata, Workflow } from '@syner/sdk'
+import type { Workflow, RuntimeConfig } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
 
@@ -22,7 +22,7 @@ Return only the route key that best matches the input.
 // RoutingConfig
 // ============================================================================
 
-export interface RoutingConfig<WorkflowKey extends string = string> {
+export interface RoutingConfig<ROUTE extends string = string> {
   /**
    * The language model to use for classification.
    */
@@ -31,7 +31,7 @@ export interface RoutingConfig<WorkflowKey extends string = string> {
   /**
    * Map of workflow keys to workflow metadata.
    */
-  workflows: Record<WorkflowKey, {
+  workflows: Record<ROUTE, {
     workflow: Workflow<any, any>
     description: string
     markAsDefault?: boolean
@@ -48,37 +48,17 @@ export interface RoutingConfig<WorkflowKey extends string = string> {
  * Uses composition with generateObject for classification, keeping the
  * AI SDK as an internal implementation detail.
  *
- * @typeParam Output - The output type from the delegated workflow
- * @typeParam WorkflowKey - The string literal union of workflow keys
+ * @typeParam OUTPUT - The output type from the delegated workflow
+ * @typeParam ROUTE - The string literal union of workflow keys
  *
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
-export class Routing<Output, WorkflowKey extends string = string>
-  implements Agent<Output, RoutingConfig<WorkflowKey>>
+export class Routing<OUTPUT, ROUTE extends string = string>
+  implements Workflow<OUTPUT, RuntimeConfig>
 {
-  static readonly name = 'Routing'
-
-  static readonly description =
-    'Classifies an input and directs it to a specialized followup task. ' +
-    'Allows separation of concerns and building more specialized prompts. ' +
-    'Without this workflow, optimizing for one kind of input can hurt performance on other inputs.'
-
-  static readonly metadata: Metadata = {
-    annotations: {
-      whenToUse:
-        'Routing works well for complex tasks where there are distinct categories ' +
-        'that are better handled separately, and where classification can be handled ' +
-        'accurately, either by an LLM or a more traditional classification model/algorithm.',
-      examples: [
-        'Directing different types of customer service queries (general questions, refund requests, technical support) into different downstream processes, prompts, and tools.',
-        'Routing easy/common questions to smaller, cost-efficient models like Claude Haiku 4.5 and hard/unusual questions to more capable models like Claude Sonnet 4.5 to optimize for best performance.',
-      ],
-    },
-  }
-
-  constructor(public config: RoutingConfig<WorkflowKey>) {
+  constructor(public config: RoutingConfig<ROUTE>) {
     // Validate only one workflow has markAsDefault
-    const entries = Object.entries(config.workflows) as [WorkflowKey, {
+    const entries = Object.entries(config.workflows) as [ROUTE, {
       workflow: Workflow<any, any>
       description: string
       markAsDefault?: boolean
@@ -94,9 +74,10 @@ export class Routing<Output, WorkflowKey extends string = string>
    * Classifies input and executes the selected workflow.
    *
    * @param input - The input string to classify and route
+   * @param runtimeConfig - Optional runtime configuration (timeout, retry, cancel)
    * @returns The output from the selected workflow
    */
-  async run(input: string): Promise<Output> {
+  async run(input: string, runtimeConfig?: RuntimeConfig): Promise<OUTPUT> {
     const selected = await this.classify(input)
     const { workflow } = this.config.workflows[selected]
 
@@ -104,7 +85,7 @@ export class Routing<Output, WorkflowKey extends string = string>
       throw new Error(`Workflow "${selected}" not found`)
     }
 
-    return workflow.run(input) as Promise<Output>
+    return workflow.run(input, runtimeConfig) as Promise<OUTPUT>
   }
 
   /**
@@ -113,8 +94,8 @@ export class Routing<Output, WorkflowKey extends string = string>
    * @param input - The input string to classify
    * @returns The selected workflow key
    */
-  async classify(input: string): Promise<WorkflowKey> {
-    const entries = Object.entries(this.config.workflows) as [WorkflowKey, {
+  async classify(input: string): Promise<ROUTE> {
+    const entries = Object.entries(this.config.workflows) as [ROUTE, {
       workflow: Workflow<any, any>
       description: string
       markAsDefault?: boolean
@@ -133,14 +114,14 @@ export class Routing<Output, WorkflowKey extends string = string>
         prompt: `<input>${input}</input>\n\n<routes>\n${descriptions}\n</routes>`,
       })
 
-      return object as WorkflowKey
+      return object as ROUTE
     } catch (error) {
       console.error('Routing classification error:', error)
       
       // Find default workflow
       const defaultEntry = entries.find(([_, meta]) => meta.markAsDefault)
       if (defaultEntry) {
-        return defaultEntry[0] as WorkflowKey
+        return defaultEntry[0] as ROUTE
       }
       
       throw error
@@ -162,4 +143,4 @@ export class Routing<Output, WorkflowKey extends string = string>
  * ```
  */
 export type InferRoutingOutput<T> = 
-  T extends Routing<infer Output, any> ? Output : never
+  T extends Routing<infer OUTPUT, any> ? OUTPUT : never

@@ -16,10 +16,10 @@ import type { LanguageModel } from 'ai'
  */
 function createMockWorkflow(name: string): Workflow<{ route: string; message: string }> {
   return {
-    async execute(input: unknown) {
+    async run(input: string) {
       return {
         route: name,
-        message: `Routed to "${name}" workflow with input: ${JSON.stringify(input)}`,
+        message: `Routed to "${name}" workflow with input: ${input}`,
       }
     },
   }
@@ -27,7 +27,8 @@ function createMockWorkflow(name: string): Workflow<{ route: string; message: st
 
 export async function POST(req: Request) {
   try {
-    const { prompt } = await req.json()
+    const body = await req.json() as { prompt?: string }
+    const { prompt } = body
 
     if (!prompt) {
       return NextResponse.json(
@@ -41,26 +42,33 @@ export async function POST(req: Request) {
 
     const router = new Routing<{ route: string; message: string }>({
       model: model as unknown as LanguageModel,
-      routes: {
-        support: createMockWorkflow('support'),
-        billing: createMockWorkflow('billing'),
-        code: createMockWorkflow('code'),
-        general: createMockWorkflow('general'),
+      workflows: {
+        support: {
+          workflow: createMockWorkflow('support'),
+          description: 'Technical support, bugs, errors, and troubleshooting',
+          markAsDefault: false,
+        },
+        billing: {
+          workflow: createMockWorkflow('billing'),
+          description: 'Payments, invoices, refunds, and subscription issues',
+        },
+        code: {
+          workflow: createMockWorkflow('code'),
+          description: 'Writing, reviewing, or debugging code',
+        },
+        general: {
+          workflow: createMockWorkflow('general'),
+          description: 'General questions, greetings, and casual conversation',
+          markAsDefault: true,
+        },
       },
-      descriptions: {
-        support: 'Technical support, bugs, errors, and troubleshooting',
-        billing: 'Payments, invoices, refunds, and subscription issues',
-        code: 'Writing, reviewing, or debugging code',
-        general: 'General questions, greetings, and casual conversation',
-      },
-      defaultRoute: 'general',
     })
 
-    // Test the route() method to see classification
-    const selectedRoute = await router.route(prompt)
+    // Test the classify() method to see classification
+    const selectedRoute = await router.classify(prompt)
 
-    // Test the full execute() to see delegation
-    const result = await router.execute(prompt)
+    // Test the full run() to see delegation
+    const result = await router.run(prompt)
 
     return NextResponse.json({
       input: prompt,

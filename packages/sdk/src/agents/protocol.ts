@@ -68,11 +68,11 @@ export interface Metadata {
 /**
  * An Agent is a Workflow with metadata.
  *
- * - Workflow: execute() for the run system (timeout, retry, cancel, etc.)
+ * - Workflow: run() for the run system (timeout, retry, cancel, etc.)
  * - Agent: adds static metadata (name, description, annotations) for Syner
  *
- * @typeParam Output - The type returned by execute()
- * @typeParam Config - The configuration type for this agent
+ * @typeParam OUTPUT - The type returned by run()
+ * @typeParam CONFIG - The configuration type for this agent
  *
  * @example
  * ```typescript
@@ -85,17 +85,18 @@ export interface Metadata {
  *
  *   constructor(public config: MyConfig) {}
  *
- *   async execute(input: unknown): Promise<string> {
+ *   async run(input: string, runtimeConfig?: RuntimeConfig): Promise<string> {
  *     // implementation
  *   }
  * }
  * ```
  */
-export interface Agent<Output, Config = Record<string, unknown>>
-  extends Workflow<Output, Config> {
+export interface Agent<OUTPUT, CONFIG = Record<string, unknown>>
+  extends Workflow<OUTPUT> {
   /**
    * Instance configuration provided by the user.
-   * Required in Agent (optional in Workflow).
+   * This is the agent's configuration (model, settings, etc.),
+   * not the runtime config (timeout, retry, cancel).
    */
-  config: Config
+  config: CONFIG
 }

@@ -38,7 +38,10 @@ async function main() {
   })
 
   const input = 'My app crashes when I submit'
-  const result = await routing.run(input)
+  const result = await routing.run(input, {
+    timeout: { ms: 5000 },
+    retry: { maxAttempts: 3 }
+  })
   console.log(result)
 }
 

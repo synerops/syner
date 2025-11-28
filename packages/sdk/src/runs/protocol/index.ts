@@ -38,15 +38,21 @@ export interface Execution<T> {
   result: Promise<T>
 }
 
+// Runtime configuration for workflow execution
+export interface RuntimeConfig {
+  timeout?: Timeout
+  retry?: Retry
+  cancel?: Cancel
+}
+
 // Workflow protocol interface
-export interface Workflow<T, C = Record<string, unknown>> {
-  run(input: string): Promise<T>
-  config?: C
+export interface Workflow<OUTPUT, RUNTIME_CONFIG extends RuntimeConfig = RuntimeConfig> {
+  run(input: string, runtimeConfig?: RUNTIME_CONFIG): Promise<OUTPUT>
 }
 
 // Type inference utilities
 export type InferWorkflowOutput<T> = 
-  T extends Workflow<infer Output, any> ? Output : never
+  T extends Workflow<infer OUTPUT, any> ? OUTPUT : never
 
-export type InferWorkflowConfig<T> = 
-  T extends Workflow<any, infer Config> ? Config : never
+export type InferWorkflowRuntimeConfig<T> = 
+  T extends Workflow<any, infer RUNTIME_CONFIG> ? RUNTIME_CONFIG : never
