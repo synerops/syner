@@ -118,18 +118,18 @@ export function route(config: RouteConfig) {
   return tool({
     description: 'Classifies input and routes to the appropriate handler based on intent',
     inputSchema: z.object({
-      input: z.string().describe('The user input to classify'),
+      prompt: z.string().describe('The user input to classify'),
     }),
-    execute: async ({ input }) => {
+    execute: async ({ prompt }) => {
       const { object: selectedRoute } = await generateObject({
         model: gateway(modelId),
         output: 'enum',
         enum: keys,
         system: systemPrompt,
-        prompt: `<input>${input}</input>`,
+        prompt: `<input>${prompt}</input>`,
       })
 
-      return { route: selectedRoute, input }
+      return { selectedRoute, userPrompt: prompt }
     },
   })
 }

@@ -1,8 +1,11 @@
 // Tools (new architecture)
 export { route, type RouteConfig, type RouteMetadata } from './tools'
 
-// Routing
+// Workflows
 export { Routing, type RoutingConfig, type InferRoutingOutput } from './workflows/routing'
+
+// Agents
+export { Router } from './agents/router'
 
 // TODO: Refactor these workflows to work with new Workflow protocol
 // // Orchestration

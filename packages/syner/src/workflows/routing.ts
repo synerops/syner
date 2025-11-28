@@ -1,28 +1,9 @@
 import type { Workflow, Run, Execution, Timeout, Retry, Cancel } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
+import indications from './indications.txt'
 
-// Inline system prompt
-const classifierSystemPrompt = `<role>
-You are a routing classifier that directs inputs to specialized workflows.
-</role>
-
-<instructions>
-Analyze the input and select the single most appropriate route based on:
-- The primary intent or goal expressed in the input
-- Keywords and phrases that signal a specific category
-- The type of response or action the input requires
-</instructions>
-
-<output>
-Return only the route key that best matches the input.
-</output>`
-
-// ============================================================================
-// RoutingConfig
-// ============================================================================
-
-export interface RoutingConfig<T, ROUTE extends string = string> {
+export interface RoutingConfig<OUTPUT, ROUTE extends string = string> {
   /**
    * The language model to use for classification.
    */
@@ -32,7 +13,7 @@ export interface RoutingConfig<T, ROUTE extends string = string> {
    * Map of workflow keys to workflow metadata.
    */
   workflows: Record<ROUTE, {
-    workflow: Workflow<T>
+    workflow: Workflow<OUTPUT>
     description: string
     markAsDefault?: boolean
   }>
@@ -115,7 +96,7 @@ export class Routing<T> implements Workflow<T>
         model: this.config.model,
         output: 'enum',
         enum: keys,
-        system: classifierSystemPrompt,
+        system: indications,
         prompt: `<input>${prompt}</input>\n\n<routes>\n${descriptions}\n</routes>`,
       })
 

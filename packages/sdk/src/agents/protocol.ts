@@ -91,12 +91,6 @@ export interface Metadata {
  * }
  * ```
  */
-export interface Agent<OUTPUT, CONFIG = Record<string, unknown>>
-  extends Workflow<OUTPUT> {
-  /**
-   * Instance configuration provided by the user.
-   * This is the agent's configuration (model, settings, etc.),
-   * not the runtime config (timeout, retry, cancel).
-   */
-  config: CONFIG
+export interface Agent extends Workflow<any> {
+  metadata: Metadata
 }
