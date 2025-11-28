@@ -1,4 +1,4 @@
-import type { Workflow, RuntimeConfig } from '@syner/sdk'
+import type { Workflow, Run, Execution, Timeout, Retry, Cancel } from '@syner/sdk'
 import type { LanguageModel } from 'ai'
 import { generateObject } from 'ai'
 
@@ -22,7 +22,7 @@ Return only the route key that best matches the input.
 // RoutingConfig
 // ============================================================================
 
-export interface RoutingConfig<ROUTE extends string = string> {
+export interface RoutingConfig<T, ROUTE extends string = string> {
   /**
    * The language model to use for classification.
    */
@@ -32,7 +32,7 @@ export interface RoutingConfig<ROUTE extends string = string> {
    * Map of workflow keys to workflow metadata.
    */
   workflows: Record<ROUTE, {
-    workflow: Workflow<any, any>
+    workflow: Workflow<T>
     description: string
     markAsDefault?: boolean
   }>
@@ -53,13 +53,18 @@ export interface RoutingConfig<ROUTE extends string = string> {
  *
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
-export class Routing<OUTPUT, ROUTE extends string = string>
-  implements Workflow<OUTPUT, RuntimeConfig>
+export class Routing<T> implements Workflow<T>
 {
-  constructor(public config: RoutingConfig<ROUTE>) {
+  timeout?: Timeout
+  retry?: Retry
+  cancel?: Cancel
+  onComplete?: (result: T) => void
+  onFailed?: (error: Error) => void
+
+  constructor(public config: RoutingConfig<T, string>) {
     // Validate only one workflow has markAsDefault
-    const entries = Object.entries(config.workflows) as [ROUTE, {
-      workflow: Workflow<any, any>
+    const entries = Object.entries(config.workflows) as [string, {
+      workflow: Workflow<T>
       description: string
       markAsDefault?: boolean
     }][]
@@ -71,32 +76,32 @@ export class Routing<OUTPUT, ROUTE extends string = string>
 
   /**
    * Runs the routing workflow.
-   * Classifies input and executes the selected workflow.
+   * Classifies prompt and executes the selected workflow.
    *
-   * @param input - The input string to classify and route
-   * @param runtimeConfig - Optional runtime configuration (timeout, retry, cancel)
+   * @param prompt - The prompt string to classify and route
+   * @param options - Optional run configuration (timeout, retry, cancel, callbacks)
    * @returns The output from the selected workflow
    */
-  async run(input: string, runtimeConfig?: RuntimeConfig): Promise<OUTPUT> {
-    const selected = await this.classify(input)
-    const { workflow } = this.config.workflows[selected]
+  async run(prompt: string, options?: Run<T>): Promise<T> {
+    const selected = await this.classify(prompt)
+    const entry = this.config.workflows[selected]
 
-    if (!workflow) {
+    if (!entry || !entry.workflow) {
       throw new Error(`Workflow "${selected}" not found`)
     }
 
-    return workflow.run(input, runtimeConfig) as Promise<OUTPUT>
+    return entry.workflow.run(prompt, options)
   }
 
   /**
-   * Classifies the input and returns the selected workflow key.
+   * Classifies the prompt and returns the selected workflow key.
    *
-   * @param input - The input string to classify
+   * @param prompt - The prompt string to classify
    * @returns The selected workflow key
    */
-  async classify(input: string): Promise<ROUTE> {
-    const entries = Object.entries(this.config.workflows) as [ROUTE, {
-      workflow: Workflow<any, any>
+  async classify(prompt: string): Promise<string> {
+    const entries = Object.entries(this.config.workflows) as [string, {
+      workflow: Workflow<T>
       description: string
       markAsDefault?: boolean
     }][]
@@ -111,19 +116,19 @@ export class Routing<OUTPUT, ROUTE extends string = string>
         output: 'enum',
         enum: keys,
         system: classifierSystemPrompt,
-        prompt: `<input>${input}</input>\n\n<routes>\n${descriptions}\n</routes>`,
+        prompt: `<input>${prompt}</input>\n\n<routes>\n${descriptions}\n</routes>`,
       })
 
-      return object as ROUTE
+      return object as string
     } catch (error) {
       console.error('Routing classification error:', error)
-      
+
       // Find default workflow
       const defaultEntry = entries.find(([_, meta]) => meta.markAsDefault)
       if (defaultEntry) {
-        return defaultEntry[0] as ROUTE
+        return defaultEntry[0]
       }
-      
+
       throw error
     }
   }
@@ -142,5 +147,5 @@ export class Routing<OUTPUT, ROUTE extends string = string>
  * type Output = InferRoutingOutput<typeof routing>
  * ```
  */
-export type InferRoutingOutput<T> = 
-  T extends Routing<infer OUTPUT, any> ? OUTPUT : never
+export type InferRoutingOutput<T> =
+  T extends Routing<infer U> ? U : never

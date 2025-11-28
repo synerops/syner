@@ -85,7 +85,7 @@ export interface Metadata {
  *
  *   constructor(public config: MyConfig) {}
  *
- *   async run(input: string, runtimeConfig?: RuntimeConfig): Promise<string> {
+ *   async run(prompt: string, options?: Run<string>): Promise<string> {
  *     // implementation
  *   }
  * }

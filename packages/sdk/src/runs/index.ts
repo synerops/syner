@@ -8,7 +8,5 @@ export type {
   Run,
   Execution,
   Workflow,
-  RuntimeConfig,
   InferWorkflowOutput,
-  InferWorkflowRuntimeConfig,
 } from './protocol'

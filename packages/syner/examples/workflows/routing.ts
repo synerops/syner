@@ -9,15 +9,15 @@ import { Routing } from '../../src'
 import type { Workflow } from '@syner/sdk'
 
 // Define specialized workflows
-const supportWorkflow: Workflow<string, string> = {
-  run: async (input: string) => {
-    return `[Support] Handling: ${input}`
+const supportWorkflow: Workflow<string> = {
+  run: async (prompt: string) => {
+    return `[Support] Handling: ${prompt}`
   },
 }
 
-const billingWorkflow: Workflow<string, string> = {
-  run: async (input: string) => {
-    return `[Billing] Processing: ${input}`
+const billingWorkflow: Workflow<string> = {
+  run: async (prompt: string) => {
+    return `[Billing] Processing: ${prompt}`
   },
 }
 

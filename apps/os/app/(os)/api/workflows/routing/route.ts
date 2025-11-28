@@ -16,10 +16,10 @@ import type { LanguageModel } from 'ai'
  */
 function createMockWorkflow(name: string): Workflow<{ route: string; message: string }> {
   return {
-    async run(input: string) {
+    async run(prompt: string) {
       return {
         route: name,
-        message: `Routed to "${name}" workflow with input: ${input}`,
+        message: `Routed to "${name}" workflow with prompt: ${prompt}`,
       }
     },
   }
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     // Use Haiku for fast/cheap testing
     const model = process.env.SYNER_ORCHESTRATOR_MODEL || 'anthropic/claude-haiku-4.5'
 
-    const router = new Routing<{ route: string; message: string }>({
+    const router = new Routing({
       model: model as unknown as LanguageModel,
       workflows: {
         support: {

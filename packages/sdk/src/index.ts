@@ -14,6 +14,6 @@ export { env } from "./system"
 export type { Agent, Annotations, Metadata } from "./agents"
 
 // runs
-export type { Workflow, Run, Execution, Status, RuntimeConfig } from "./runs"
+export type { Workflow, Run, Execution, Status, Timeout, Retry, Cancel, Backoff, Approval } from "./runs"
 
 // workflows
