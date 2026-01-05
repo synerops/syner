@@ -1,5 +1,5 @@
 {
-  "name": "@syner/eslint-config",
+  "name": "@syner/eslint",
   "private": true,
   "type": "module",
   "exports": {
@@ -23,11 +23,11 @@
     "typescript-eslint": "^8.42.0"
   },
   "devDependencies": {
-    "@syner/prettier-config": "workspace:*",
-    "@syner/ts-config": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@syner/prettier-config"
+  "prettier": "@syner/prettier"
 }

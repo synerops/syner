@@ -1,17 +1,19 @@
 /**
- * Syner Agentic Framework
+ * Syner Agentic OS SDK
  */
 
-// Export namespaces as objects
-export * as actions from "./actions"
-export * as checks from "./checks"
-export * as context from "./context"
-export * as skills from "./skills"
-export * as system from "./system"
+// actions
+// checks
+// context
+// skills
+// system
+export type { Sandbox, CreateSandboxOptions, Filesystem } from "./system"
+export { env } from "./system"
 
-// Re-export all exports from namespaces for flat imports
-export * from "./actions"
-export * from "./checks"
-export * from "./context"
-export * from "./skills"
-export * from "./system"
+// agents
+export type { Agent, Annotations, Metadata } from "./agents"
+
+// runs
+export type { Workflow, Run, Execution, Status, Timeout, Retry, Cancel, Backoff, Approval } from "./runs"
+
+// workflows

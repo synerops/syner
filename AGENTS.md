@@ -8,13 +8,14 @@ Syner OS is an **Agentic Operating System** - a platform where AI agents operate
 
 - **OS Protocol** (separate spec) - Defines the agent loop contract
 - **@syner/sdk** - TypeScript implementation of the protocol
-- **syner** - The fullstack agent built with the SDK
+- **syner** - Assistant Agent created by default in Syner OS
 
 ## Documentation Hierarchy
 
 Syner uses hierarchical AGENTS.md files to avoid redundancy:
 
 - `/AGENTS.md` (this file) - Project overview, what is Syner OS
+- `/apps/*/AGENTS.md` - App-specific architecture and rules
 - `/packages/*/AGENTS.md` - Package-specific architecture and rules
 
 **Rules:**
@@ -80,11 +81,61 @@ These guidelines use MUST/SHOULD/NEVER terminology and cover:
 - Performance (rendering, optimization)
 - Design (contrast, shadows, colors)
 
+## Coding Best Practices
+
+### Interfaces Over Abstract Classes for Static Members
+
+TypeScript does not support `override` for static members. When you need to enforce static properties on subclasses:
+
+- **DO**: Use interfaces to define the contract
+- **DON'T**: Declare static members in abstract classes expecting subclasses to override them
+
+```typescript
+// ✅ Correct approach - interface for instance contract, statics by convention
+export interface Agent<Output, Config> {
+  config: Config
+  execute(input: unknown): Promise<Output>
+}
+
+class MyAgent implements Agent<string, MyConfig> {
+  static readonly name = 'MyAgent'
+  static readonly description = 'Does something useful'
+  static readonly metadata: Metadata = { annotations: { ... } }
+
+  constructor(public config: MyConfig) {}
+
+  async execute(input: unknown): Promise<string> {
+    // implementation
+  }
+}
+
+// ❌ Wrong approach - TypeScript can't enforce static overrides
+export abstract class Agent {
+  static readonly name: string  // Subclasses can't use `override`
+}
+```
+
+### Signed TODOs
+
+All TODOs MUST be signed with the author's identifier for traceability:
+
+```typescript
+// ✅ Correct
+// TODO(@claude): Awaiting Ronny's approval - description of what's pending
+
+// ✅ Correct
+// TODO(@syner): Refactor this when we migrate to v2
+
+// ❌ Wrong - unsigned TODO
+// TODO: Fix this later
+```
+
 ## Project Structure
 
 This monorepo contains:
 
 - `/packages/sdk/` - TypeScript implementation of the OS Protocol
-- `/packages/syner/` - The fullstack agent (reference implementation)
+- `/apps/os/` - Syner OS application
+- `/apps/docs/` - Documentation site (syner.dev)
 - `/packages/ui/` - Shared UI components and design system
 - `/tooling/` - Development tooling (eslint, prettier, typescript)

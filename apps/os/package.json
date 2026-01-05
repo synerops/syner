@@ -1,0 +1,24 @@
+{
+  "name": "os",
+  "version": "0.0.1",
+  "description": "syner OS: the agentic operating system",
+  "private": true,
+  "scripts": {
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "catalog:next16",
+    "@syner/sdk": "workspace:*",
+    "@syner/vercel": "workspace:*",
+    "syner": "workspace:*",
+    "ai": "catalog:aisdk",
+    "zod": "catalog:aisdk"
+  },
+  "devDependencies": {
+    "@syner/typescript": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19"
+  }
+}

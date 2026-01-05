@@ -1,0 +1,36 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --port 3002",
+    "start": "next start",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@syner/ui": "workspace:*",
+    "@vercel/analytics": "catalog:vercel",
+    "clsx": "^2.1.1",
+    "fumadocs-core": "catalog:docs",
+    "fumadocs-mdx": "catalog:docs",
+    "fumadocs-ui": "catalog:docs",
+    "lucide-react": "^0.546.0",
+    "next": "catalog:next16",
+    "next-themes": "^0.4.6",
+    "react": "catalog:next16",
+    "react-dom": "catalog:next16",
+    "sonner": "catalog:ui",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.15",
+    "@types/mdx": "catalog:docs",
+    "@types/node": "catalog:next16",
+    "@types/react": "catalog:next16",
+    "@types/react-dom": "catalog:next16",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.15",
+    "typescript": "catalog:"
+  }
+}

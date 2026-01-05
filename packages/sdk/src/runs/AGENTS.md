@@ -1,45 +1,17 @@
-# Context API
+# Runs Module
 
-## Purpose
+Protocol interfaces for workflow execution lifecycle management.
 
-Build knowledge and understanding by gathering, storing, and retrieving information.
+## Structure
 
-## API Hierarchy
+- `protocol/` - TypeScript interfaces (TODO: migrate to synerops/protocol)
+  - `timeout.ts` - Timeout
+  - `retries.ts` - Retry, Backoff
+  - `cancel.ts` - Cancel
+  - `human-in-the-loop.ts` - Approval
 
-```
-context/
-├── apps.ts       (application context)
-├── system.ts     (system state)
-├── storage.ts    (persistent storage)
-├── cache.ts      (cached data)
-├── vector.ts     (vector search)
-├── dataset.ts    (dataset access)
-└── reasoning.ts  (reasoning and LLM context)
-```
+## Key Types
 
-## Integration Points
-
-This API is designed to integrate with:
-
-- **Applications** via `apps.ts`
-- **System state** via `system.ts`
-- **Storage backends** via `storage.ts`, `cache.ts`, `dataset.ts`
-- **Vector databases** via `vector.ts`
-- **LLM reasoning** via `reasoning.ts`
-
-## Directives
-
-**DOES:**
-
-- Read from sources (filesystem, git, databases, APIs)
-- Store contextual knowledge (memory, cache)
-- Search and retrieve information
-- Provide information for action execution
-
-**DOES NOT:**
-
-- Execute real-world operations (use actions API)
-- Modify external systems
-- Send notifications or trigger workflows
-
-**SHOULD** be fast - context gathering should not block the agent loop
+- `Status` - Execution states: in-progress, awaiting, completed, failed, cancelled
+- `Run<T>` - Configuration for `run()` function
+- `Execution<T>` - Interface returned by `run()` for controlling workflow execution

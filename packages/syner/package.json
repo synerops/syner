@@ -1,45 +1,29 @@
 {
   "name": "syner",
-  "description": "syner OS: the agentic operating system implemented with syner SDK",
   "version": "0.0.0-dev.1",
+  "description": "Syner - Agentic Workflow Implementations for Syner OS",
   "type": "module",
   "private": false,
   "sideEffects": false,
-  "license": "AGPL-3.0-only",
-  "prettier": "@syner/prettier-config",
+  "license": "MIT",
+  "prettier": "@syner/prettier",
   "author": {
-    "name": "Ronny Badilla",
-    "email": "info@rbadillap.dev",
-    "url": "https://rbadillap.dev"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/synerops/syner.git",
-    "directory": "packages/syner"
-  },
-  "homepage": "https://github.com/synerops/syner#readme",
-  "bugs": {
-    "url": "https://github.com/synerops/syner/issues"
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
   },
   "exports": {
-    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./agents": {
-      "types": "./dist/agents.d.ts",
-      "import": "./dist/agents.js",
-      "require": "./dist/agents.cjs"
     }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -58,12 +42,13 @@
     "zod": "catalog:aisdk"
   },
   "devDependencies": {
-    "@syner/eslint-config": "workspace:*",
-    "@syner/prettier-config": "workspace:*",
-    "@syner/ts-config": "workspace:*",
-    "eslint": "^9.34.0",
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/bun": "*",
+    "eslint": "catalog:",
     "prettier": "catalog:",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "catalog:"
   }
 }

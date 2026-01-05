@@ -1,11 +1,10 @@
 {
-  "extends": "@syner/ts-config/base",
+  "extends": "@syner/typescript/base",
   "compilerOptions": {
-    // Build handled by tsup - this config is only for type checking and IDE
     "incremental": false,
-    "types": [],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "tsup.config.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
 }

@@ -1,17 +1,38 @@
-/**
- * Syner - The Fullstack Agent
- * @implements @syner/sdk
- */
+// Tools (new architecture)
+export { route, type RouteConfig, type RouteMetadata } from './tools'
 
-// # Factories
+// Workflows
+export { Routing, type RoutingConfig, type InferRoutingOutput } from './workflows/routing'
 
-export { createContextAgent } from "./context"
-export { createFullstackAgent } from "./fullstack-engineer"
+// Agents
+export { Router } from './agents/router'
 
-// # Types
+// TODO: Refactor these workflows to work with new Workflow protocol
+// // Orchestration
+// export {
+//   Orchestration,
+//   Orchestrator,
+//   type AgenticOrchestrator,
+//   type OrchestratorConfig,
+//   type OrchestrationConfig,
+// } from './workflows/orchestration'
 
-export type { ContextAgentOptions } from "./context"
+// // Parallelization
+// export {
+//   Parallelization,
+//   type ParallelizationConfig,
+//   type ParallelizationMode,
+// } from './workflows/parallelization'
 
-// # Re-exports
-
-export * from "./context"
+// // Evaluation
+// export {
+//   Evaluation,
+//   Evaluator,
+//   Generator,
+//   type AgenticEvaluator,
+//   type AgenticGenerator,
+//   type EvaluatorConfig,
+//   type GeneratorConfig,
+//   type EvaluationConfig,
+//   type EvaluationResult,
+// } from './workflows/evaluation'
