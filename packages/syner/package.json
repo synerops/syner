@@ -1,7 +1,7 @@
 {
-  "name": "@syner/vercel",
-  "description": "Vercel extension for Syner OS",
+  "name": "syner",
   "version": "0.0.0-dev.1",
+  "description": "Syner - Agentic Workflow Implementations for Syner OS",
   "type": "module",
   "private": false,
   "sideEffects": false,
@@ -11,18 +11,6 @@
     "name": "SynerOps, Inc",
     "email": "info@synerops.com",
     "url": "https://synerops.com"
-  },
-  "contributors": [
-    {
-      "name": "Ronny Badilla",
-      "email": "info@ronnybadilla.com",
-      "url": "https://ronnybadilla.com"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/synerops/syner.git",
-    "directory": "extensions/vercel"
   },
   "exports": {
     ".": {
@@ -47,7 +35,6 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
-    "@vercel/sandbox": "latest",
     "@syner/sdk": "workspace:*"
   },
   "peerDependencies": {
@@ -59,6 +46,8 @@
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/bun": "*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:"
   }

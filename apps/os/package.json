@@ -12,6 +12,7 @@
     "next": "catalog:next16",
     "@syner/sdk": "workspace:*",
     "@syner/vercel": "workspace:*",
+    "syner": "workspace:*",
     "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
   },
