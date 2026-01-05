@@ -1,6 +1,6 @@
 export interface Sandbox {
   id: string
-  status: "pending" | "running" | "stopping" | "stopped" | "failed"
+  status: "pending" | "running" | "stopping" | "stopped" | "failed" | "snapshotting"
   timeout: number
 }
 
@@ -32,4 +32,3 @@ export type CreateSandboxOptions = {
   runtime?: string | "node22" | "python3.13"
   signal?: AbortSignal
 }
-
