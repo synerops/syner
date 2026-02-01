@@ -16,4 +16,4 @@
   <img src="https://img.shields.io/badge/protocol-v0.0.1-black.svg?labelColor=white&color=black&style=flat-square)](https://github.com/synerops/protocol">
 </p>
 
-Welcome to Syner OS, this is an **Agentic Operating System**, designed to provide the necessary tools and services for agents to interact among themselves and with the world in a secure and efficient manner.
+Welcome to Syner OS, this is an **Agentic Operating System**, designed to provide the necessary tools and agents to interact among themselves and with the world.
