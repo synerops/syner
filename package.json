@@ -1,4 +1,5 @@
 {
+  "name": "syner",
   "private": true,
   "scripts": {
     "build": "turbo --no-update-notifier run build",

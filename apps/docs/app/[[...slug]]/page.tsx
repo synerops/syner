@@ -95,7 +95,7 @@ const Page = async (props: PageProps) => {
           <MDX
             components={getMDXComponents({
               // this allows you to link to other pages with relative file paths
-              a: createRelativeLink(source, page),
+              a: createRelativeLink(source as unknown as Parameters<typeof createRelativeLink>[0], page),
             })}
           />
         </DocsBody>

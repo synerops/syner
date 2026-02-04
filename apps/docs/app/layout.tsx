@@ -6,6 +6,11 @@ import { RootProvider } from 'fumadocs-ui/provider/next';
 import { ThemeProvider } from './providers/theme';
 import { Toaster } from '@syner/ui/components/sonner';
 import { TooltipProvider } from '@syner/ui/components/tooltip';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://osprotocol.dev'),
+};
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
