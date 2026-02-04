@@ -9,7 +9,7 @@ import { TooltipProvider } from '@syner/ui/components/tooltip';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://osprotocol.dev'),
+  metadataBase: new URL('https://syner.dev'),
 };
 
 export default function Layout({ children }: LayoutProps<'/'>) {

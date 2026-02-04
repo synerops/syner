@@ -44,3 +44,6 @@ npm-debug.log*
 
 # Workspace (local app for development)
 # apps/workspace
+
+# Claude Code
+.claude/

@@ -1,17 +1,20 @@
 import { Hero } from "./components/hero";
+import { WhatIsSyner } from "./components/what-is-syner";
+import { Architecture } from "./components/architecture";
+import { AgentLoop } from "./components/agent-loop";
+import { WorkflowPatterns } from "./components/workflow-patterns";
+import { Integrations } from "./components/integrations";
+import { OpenSource } from "./components/open-source";
 
 const Home = () => (
-  <main className="container mx-auto divide-y border-x px-0">
+  <main>
     <Hero />
-    <div className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-      <div className="sm:col-span-2">
-        {/*<Review />*/}
-      </div>
-      <div className="sm:col-span-1">
-        {/*<OpenSource />*/}
-      </div>
-    </div>
-    {/*<div className="h-8 bg-dashed" />*/}
+    <WhatIsSyner />
+    <Architecture />
+    <AgentLoop />
+    <WorkflowPatterns />
+    <Integrations />
+    <OpenSource />
   </main>
 );
 
