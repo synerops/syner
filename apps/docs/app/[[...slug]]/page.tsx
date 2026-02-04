@@ -1,4 +1,5 @@
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
+import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
@@ -24,15 +25,9 @@ const Page = async (props: PageProps) => {
 
   if (!params.slug) {
     return (
-      <DocsLayout
-        {...baseOptions}
-        containerProps={{ className: "landing-page" }}
-        nav={{ ...baseOptions.nav, mode: "top" }}
-        sidebar={{ hidden: true, collapsible: false }}
-        tree={source.pageTree}
-      >
+      <HomeLayout {...baseOptions}>
         <Home />
-      </DocsLayout>
+      </HomeLayout>
     );
   }
 

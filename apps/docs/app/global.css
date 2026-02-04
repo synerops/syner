@@ -185,14 +185,3 @@ h3 {
   }
 }
 
-.landing-page {
-  --fd-sidebar-width: 0 !important;
-}
-
-:root {
-  --fd-layout-width: 1200px;
-}
-
-#nd-sidebar {
-  @apply bg-transparent!;
-}

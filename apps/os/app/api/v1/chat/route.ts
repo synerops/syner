@@ -1,49 +1,102 @@
 /**
  * Chat API v1
  *
- * Main chat endpoint using SDK skill discovery and AI SDK v6.
+ * Main chat endpoint with complete agent loop implementation.
+ * Syner has identity, dynamic skills, and context → actions → checks pattern.
  */
 
 import { generateText, stepCountIs } from 'ai'
 import { NextResponse } from 'next/server'
-import { createSandbox, writeFiles, readFile } from '@syner/vercel'
 import { env } from '@syner/sdk'
+import { loadSynerIdentity, buildSystemPrompt } from '../../../../lib/identity'
+import { initializeSkills } from '../../../../lib/skills'
+import {
+  createLoopState,
+  createStepFinishHandler,
+  getLoopSummary,
+} from '../../../../lib/agent-loop'
+
+interface ChatRequest {
+  prompt?: string
+  maxSteps?: number
+  verbose?: boolean
+}
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as { prompt?: string }
+    const body = (await req.json()) as ChatRequest
     const model = process.env.SYNER_ORCHESTRATOR_MODEL || 'anthropic/claude-haiku-4.5'
+    const maxSteps = body.maxSteps ?? 20
+    const verbose = body.verbose ?? true
+
     const prompt =
       body.prompt ||
-      "Create a sandbox environment with Node.js 22, then write a file called test.js with the content \"console.log('Hello from sandbox!')\" and read it back"
+      "Hello! Who are you and what can you help me with?"
 
+    // 1. Load Syner's identity
+    const identity = await loadSynerIdentity()
+
+    if (verbose) {
+      console.log('[chat] Loaded identity:', identity.agent.metadata.name)
+    }
+
+    // 2. Initialize skills and tools
+    const { tools, descriptions, loadedSkills } = await initializeSkills()
+
+    if (verbose) {
+      console.log('[chat] Loaded skills:', loadedSkills.map((s) => s.definition.metadata.name))
+      console.log('[chat] Available tools:', Object.keys(tools))
+    }
+
+    // 3. Build system prompt with identity and skills
+    const system = buildSystemPrompt(identity, descriptions)
+
+    if (verbose) {
+      console.log('[chat] System prompt length:', system.length)
+    }
+
+    // 4. Initialize loop state
+    const loopState = createLoopState()
+    const onStepFinish = createStepFinishHandler(loopState, { verbose })
+
+    // 5. Execute agent loop
     const result = await generateText({
       model,
+      system,
       prompt,
-      stopWhen: stepCountIs(20),
-      tools: {
-        createSandbox: createSandbox({
-          runtime: 'node22',
-          timeout: 300000,
-        }),
-        writeFiles: writeFiles(),
-        readFile: readFile(),
-      },
+      tools,
+      stopWhen: stepCountIs(maxSteps),
+      onStepFinish,
     })
 
-    console.log('Text:', result.text)
-    console.log('Tool Calls:', JSON.stringify(result.toolCalls, null, 2))
-    console.log('Tool Results:', JSON.stringify(result.toolResults, null, 2))
-    console.log('Sandbox in env:', env.getSandbox())
+    // 6. Get loop summary
+    const summary = getLoopSummary(loopState)
 
+    if (verbose) {
+      console.log('[chat] Loop summary:', summary)
+    }
+
+    // 7. Return response
     return NextResponse.json({
       text: result.text,
-      toolCalls: result.toolCalls,
-      toolResults: result.toolResults,
+      steps: {
+        total: summary.totalSteps,
+        toolCalls: summary.totalToolCalls,
+        tools: summary.uniqueTools,
+        duration: summary.duration,
+        errors: summary.errors,
+      },
       sandbox: env.getSandbox(),
+      identity: {
+        name: identity.agent.metadata.name,
+        version: identity.agent.metadata.version,
+      },
     })
   } catch (error) {
     console.error('Error in POST /api/v1/chat:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    )
   }
 }
