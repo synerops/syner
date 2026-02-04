@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { Button } from "@syner/ui/components/button";
 import { Installer } from "./installer";
-import SynerLogo from "@/components/branding/logo";
+import { Logo as SynerLogo } from "@syner/ui/branding/logo";
 
 const NextLogo = (props: ComponentProps<"svg">) => (
   <svg
@@ -88,6 +88,9 @@ export const Hero = () => (
     <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl md:text-lg">
       Syner OS offers ready-to-use agents, tools, and components to help you develop and deploy agentic systems today.
     </p>
+    <blockquote className="max-w-lg text-balance text-center font-serif text-muted-foreground/80 text-sm italic">
+      "The future of software is agentic."
+    </blockquote>
     <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 sm:flex-row">
       <Installer />
       <Button asChild size="lg">
