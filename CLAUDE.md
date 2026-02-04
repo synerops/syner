@@ -56,9 +56,16 @@ The SDK implements the OS Protocol with skills-based architecture:
 
 ```
 src/
-├── core/            # Types + Runtime
-│   ├── types.ts     # Core type definitions
-│   └── runtime/     # Skill discovery, parser, loader
+├── lib/             # Runtime infrastructure (NOT part of protocol)
+│   ├── types.ts     # SkillMetadata, SkillDefinition, LoadedSkill
+│   ├── parser.ts    # Parses .md files (YAML frontmatter)
+│   ├── loader.ts    # Dynamic tool loading
+│   └── discovery.ts # SKILL.md discovery
+├── workflows/       # Workflow pattern implementations
+│   ├── routing.ts         # Classify → delegate
+│   ├── orchestrator-workers.ts
+│   ├── parallelization.ts
+│   └── evaluator-optimizer.ts
 ├── system/          # protocol/system/* (intelligence)
 │   ├── env/         # Environment + sandbox (SKILL.md + tools/)
 │   ├── fs/          # Filesystem operations (SKILL.md + tools/)
@@ -71,7 +78,6 @@ src/
 │   ├── rules/       # Rule validation (SKILL.md + tools/)
 │   └── audit/       # Audit logging (SKILL.md + tools/)
 ├── skills/          # protocol/skills/* (meta-agents)
-├── workflows/       # protocol/workflows/*
 └── runs/            # protocol/runs/*
 ```
 

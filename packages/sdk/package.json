@@ -17,6 +17,21 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./workflows": {
+      "types": "./dist/workflows/index.d.ts",
+      "import": "./dist/workflows/index.js",
+      "require": "./dist/workflows/index.cjs"
+    },
+    "./runs": {
+      "types": "./dist/runs/index.d.ts",
+      "import": "./dist/runs/index.js",
+      "require": "./dist/runs/index.cjs"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.cjs"
     }
   },
   "main": "./dist/index.js",

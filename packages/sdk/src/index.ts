@@ -4,8 +4,8 @@
  * Implements the OS Protocol specification
  */
 
-// Core (types + runtime)
-export * from './core'
+// Lib (types + runtime infrastructure - NOT part of protocol)
+export * from './lib'
 
 // System (protocol/system/*)
 export type { Sandbox, CreateSandboxOptions, Filesystem } from './system'
