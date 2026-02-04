@@ -2,13 +2,51 @@
 
 ## What is Syner OS?
 
-Syner OS is an **Agentic Operating System** - a platform where AI agents operate following systematic patterns to gather context, execute actions, and verify results in a continuous loop.
+Syner OS is a **Semantic and Agentic Operating System** where:
+1. Users can create and orchestrate AI agents
+2. **Syner** (default agent) is a meta-orchestrator that chooses workflow patterns
+3. The "source code" of Syner are `.md` files (SKILL.md, AGENT.md, etc.)
+4. Users modify these files to customize behavior
 
-## Architecture
+## Three-Layer Architecture
 
-- **OS Protocol** (separate spec) - Defines the agent loop contract
-- **@syner/sdk** - TypeScript implementation of the protocol
-- **syner** - Assistant Agent created by default in Syner OS
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    OS PROTOCOL                              │
+│                 (Defines CONTRACTS)                         │
+│                                                             │
+│  - TypeScript interfaces in @osprotocol/schema              │
+│  - "A Filesystem MUST have readFile(), writeFile()"         │
+│  - Agnostic to implementation                               │
+│  - The "law" that everyone must follow                      │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           │ implements
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       SDK                                   │
+│            (DEFAULT Implementation)                         │
+│                                                             │
+│  - @syner/sdk provides base workflow classes                │
+│  - lib/: Runtime (parser, loader, discovery)                │
+│  - Works out-of-the-box without extensions                  │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           │ can replace
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    EXTENSIONS                               │
+│           (ALTERNATIVE Implementations)                     │
+│                                                             │
+│  @syner/vercel:                                             │
+│    - VercelFilesystem (uses Vercel API)                     │
+│    - VercelSandbox (secure execution)                       │
+│                                                             │
+│  Other vendors can create their own extensions              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key Rule**: Protocol defines contracts, SDK implements defaults, Extensions replace.
 
 ## Documentation Hierarchy
 
@@ -52,69 +90,6 @@ The protocol defines:
 - Interface contracts for Agent, Context, Action, and Check primitives
 - Communication patterns between agents
 
-## Web Interface Guidelines
-
-**IMPORTANT**: Before building, modifying, or reviewing ANY user interface component, form, interaction, or visual element, you MUST fetch and follow Vercel's Web Interface Guidelines.
-
-**When to fetch the guidelines**:
-
-- Before creating new UI components
-- Before modifying existing interfaces
-- When reviewing UI/UX code
-- When implementing forms, animations, or interactions
-- When working on accessibility features
-
-**How to fetch**:
-Run this command to get the latest guidelines (only fetch when needed to save tokens):
-
-```bash
-curl -s --location 'https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/refs/heads/main/AGENTS.md' \
---header 'Accept: text/markdown'
-```
-
-These guidelines use MUST/SHOULD/NEVER terminology and cover:
-
-- Interactions (keyboard, forms, navigation, feedback)
-- Animation (accessibility, performance)
-- Layout (responsive, alignment)
-- Content & Accessibility (a11y, semantics)
-- Performance (rendering, optimization)
-- Design (contrast, shadows, colors)
-
-## Coding Best Practices
-
-### Interfaces Over Abstract Classes for Static Members
-
-TypeScript does not support `override` for static members. When you need to enforce static properties on subclasses:
-
-- **DO**: Use interfaces to define the contract
-- **DON'T**: Declare static members in abstract classes expecting subclasses to override them
-
-```typescript
-// ✅ Correct approach - interface for instance contract, statics by convention
-export interface Agent<Output, Config> {
-  config: Config
-  execute(input: unknown): Promise<Output>
-}
-
-class MyAgent implements Agent<string, MyConfig> {
-  static readonly name = 'MyAgent'
-  static readonly description = 'Does something useful'
-  static readonly metadata: Metadata = { annotations: { ... } }
-
-  constructor(public config: MyConfig) {}
-
-  async execute(input: unknown): Promise<string> {
-    // implementation
-  }
-}
-
-// ❌ Wrong approach - TypeScript can't enforce static overrides
-export abstract class Agent {
-  static readonly name: string  // Subclasses can't use `override`
-}
-```
-
 ### Signed TODOs
 
 All TODOs MUST be signed with the author's identifier for traceability:
@@ -134,8 +109,71 @@ All TODOs MUST be signed with the author's identifier for traceability:
 
 This monorepo contains:
 
-- `/packages/sdk/` - TypeScript implementation of the OS Protocol
-- `/apps/os/` - Syner OS application
-- `/apps/docs/` - Documentation site (syner.dev)
-- `/packages/ui/` - Shared UI components and design system
-- `/tooling/` - Development tooling (eslint, prettier, typescript)
+```
+apps/
+├── os/                      # syner.app + syner.bot (API at /api/v1/*)
+└── docs/                    # syner.dev (documentation)
+
+packages/
+├── sdk/                     # @syner/sdk - OS Protocol implementation
+│   └── src/
+│       ├── lib/             # Runtime infrastructure (NOT part of protocol)
+│       │   ├── parser.ts    # Parses .md files (SKILL.md, AGENT.md)
+│       │   ├── loader.ts    # Loads tools dynamically
+│       │   ├── discovery.ts # Discovers skills/agents
+│       │   └── types.ts     # SDK-specific types
+│       ├── system/          # protocol/system/* (env, fs, preferences, registry)
+│       ├── context/         # protocol/context/* (memory, documents)
+│       ├── actions/         # protocol/actions/* (tools, ops)
+│       ├── checks/          # protocol/checks/* (rules, audit)
+│       ├── skills/          # protocol/skills/* (orchestrator, planner, executor)
+│       ├── workflows/       # protocol/workflows/* implementations
+│       └── runs/            # protocol/runs/* control
+│
+├── syner/                   # Default orchestrator agent
+│   ├── AGENT.md             # Syner as agent definition
+│   ├── PERSONALITY.md       # Default personality
+│   ├── RULES.md             # Default rules
+│   └── src/                 # AI SDK-specific implementations
+│
+└── ui/                      # @syner/ui - Shared components
+
+extensions/
+└── vercel/                  # @syner/vercel - Vercel sandbox integration
+    └── src/system/sandbox/  # Extends SDK system/
+
+tooling/                     # eslint, prettier, typescript configs
+```
+
+**Domains:**
+- `syner.app` → apps/os (UI + API)
+- `syner.bot` → apps/os/api/v1/* (same deploy, different domain)
+- `syner.dev` → apps/docs
+
+## Skills Architecture
+
+Skills use the SKILL.md format (inspired by Anthropic Skills) for discovery and loading:
+
+```yaml
+---
+name: fs
+description: File system operations
+protocol:
+  domain: system
+  api: fs
+---
+
+# Filesystem
+
+## Capabilities
+- Read files and directories
+- Write and create files
+
+## When to Use
+- User needs to read or write files
+```
+
+Each skill directory contains:
+- `SKILL.md` - Skill metadata and documentation
+- `tools/` - AI SDK tool implementations
+- `index.ts` - Module exports

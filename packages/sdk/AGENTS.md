@@ -1,106 +1,109 @@
-# Syner OS
+# @syner/sdk
 
-This SDK implements the [OS Protocol](https://github.com/synerops/protocol) specification in TypeScript.
-The MUST/NEVER rules below enforce protocol contracts.
+This SDK provides TypeScript implementations of the [OS Protocol](https://github.com/synerops/protocol) specification.
 
 ## Architecture
 
-**Everything is an API.**
+The SDK is the middle layer in the three-tier architecture:
 
-Hierarchy: `namespace/ → api.ts`
+```
+Protocol (contracts) → SDK (default impl) → Extensions (replacements)
+```
+
+### Directory Structure
 
 ```
 src/
-├── system/           namespace
-│   ├── env.ts        ← API
-│   └── preferences.ts ← API
-├── context/          namespace
-│   └── apps.ts       ← API
-└── ...
+├── lib/                    # Runtime infrastructure (NOT part of protocol)
+│   ├── types.ts           # SkillMetadata, SkillDefinition, LoadedSkill
+│   ├── parser.ts          # Parses .md files (YAML frontmatter)
+│   ├── loader.ts          # Dynamic tool loading
+│   ├── discovery.ts       # SKILL.md discovery
+│   └── index.ts
+│
+├── workflows/             # Workflow pattern implementations
+│   ├── routing.ts         # Classify → delegate
+│   ├── orchestrator-workers.ts  # Plan → delegate → synthesize
+│   ├── parallelization.ts # Split → parallel → merge
+│   ├── evaluator-optimizer.ts   # Generate → evaluate → optimize
+│   └── index.ts
+│
+├── runs/                  # Run control
+│   └── protocol/          # Run, Execution, Timeout, Retry, Cancel, Approval
+│
+├── system/                # protocol/system/*
+│   ├── env/               # Environment + sandbox
+│   ├── fs/                # Filesystem (placeholder)
+│   ├── preferences/       # User preferences
+│   └── registry/          # Agent registry
+│
+├── context/               # protocol/context/*
+│   ├── memory/            # Session memory
+│   └── documents/         # Document management
+│
+├── checks/                # protocol/checks/*
+│   ├── rules/             # Rule validation
+│   └── audit/             # Audit logging
+│
+├── skills/                # Meta-agents (commented out)
+├── actions/               # Action definitions
+├── agents/                # Agent type definitions
+└── index.ts
 ```
 
-**Characteristics:**
-- Each folder = domain with specific responsibility
-- Each `.ts` file = public API
-- Flat hierarchy (max 2 levels)
-- Follow protocol loop: context → actions → checks
+## Key Concepts
 
-### Layer 2: Skills (Meta-agents)
+### lib/ vs Protocol Domains
 
-Orchestration patterns that compose domain APIs to implement complex workflows.
+**lib/** contains runtime infrastructure that is NOT part of the OS Protocol:
+- Parser, Loader, Discovery are SDK implementation details
+- Extensions do NOT replace `lib/`
+- Extensions replace protocol domains (`system/`, `context/`, `checks/`)
 
-```
-src/
-└── skills/           ← Meta-agents for orchestration
-    ├── orchestrator.ts   ← Coordinates domain APIs
-    ├── classifier.ts     ← Decides task routing
-    ├── planner.ts        ← Generates execution plans
-    ├── coordinator.ts    ← Coordinates multi-step tasks
-    └── summarizer.ts     ← Summarizes results
-```
+### Workflow Patterns
 
-**Characteristics:**
-- Each skill can use: context → actions → checks
-- Skills are independent of each other
-- Skills compose domain APIs, not other skills
-- Orchestrator coordinates skills, doesn't impose flow
+SDK provides base implementations of [Anthropic's workflow patterns](https://www.anthropic.com/engineering/building-effective-agents):
 
-## Discovery
+| Pattern | Class | Use Case |
+|---------|-------|----------|
+| Routing | `Routing<T>` | Classify and delegate |
+| Orchestrator-Workers | `OrchestratorWorkers<T>` | Multi-step with workers |
+| Parallelization | `Parallelization<T>` | Independent subtasks |
+| Evaluator-Optimizer | `EvaluatorOptimizer<T>` | Iterative refinement |
 
-```bash
-# See all domain APIs
-tree src/ -L 1
+### SKILL.md Format
 
-# See specific domain API
-tree src/context/ -L 1
-
-# See orchestration skills
-tree src/skills/ -L 1
+```yaml
+---
+name: fs
+description: File system operations
+protocol:
+  domain: system
+  api: fs
+---
 ```
 
-Structure IS documentation. No need to read code to understand what exists.
+## Exports
 
-## Usage
+```typescript
+// Main entry
+import { Routing, env, discoverSkills } from '@syner/sdk'
 
-```ts
-// Layer 2: Custom orchestration
-import { DefaultOrchestrator } from "@syner/sdk/skills"
-const orchestrator = new DefaultOrchestrator({ ... })
-
-// Layer 1: Direct API access (advanced)
-import { memory } from "@syner/sdk/context"
-await memory.set("key", "value")
+// Subpath exports
+import { Routing } from '@syner/sdk/workflows'
+import { Timeout, Retry } from '@syner/sdk/runs'
+import { discoverSkills } from '@syner/sdk/lib'
 ```
-
-## Domain APIs
-
-**Agent Loop (follow protocol):**
-
-- `context/` - knowledge & information (gather, store, retrieve)
-- `actions/` - real-world execution (files, APIs, workflows)
-- `checks/` - validation (verify conditions and states)
-
-**Infrastructure:**
-
-- `system/` - infrastructure (env with sandbox, preferences, registry, mcp)
-- `workflows/` - workflow definitions and execution
 
 ## Rules
 
 **MUST:**
-
 - `context/` APIs = read-only (gather information)
 - `actions/` APIs = tools and capabilities (execute)
 - `checks/` APIs = validation only (verify)
 - Follow loop: context → actions → checks → repeat
-- Agents depend only on namespace APIs, never on other agents
 
 **NEVER:**
-
 - Nest APIs deeper than 2 levels
-- Break the namespace/API import contract
-- Create implementation detail folders in `src/`
-
-## Flow
-
-context (read) → actions (execute tools) → checks (validate) → repeat
+- Create implementation detail folders in `src/` outside `lib/`
+- Mix protocol domains (e.g., don't put actions in context/)

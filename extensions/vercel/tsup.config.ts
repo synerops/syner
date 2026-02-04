@@ -7,12 +7,14 @@ export default defineConfig({
     index: "src/index.ts",
   },
   format: ["cjs", "esm"],
-  dts: true,
+  // DTS disabled due to AI SDK v6 + tsup type inference issues
+  // Manual type declarations are provided in src/index.d.ts
+  dts: false,
   clean: true,
   sourcemap: true,
   target: "es2020",
 
-  external: ["@syner/sdk", "@vercel/sandbox", /^node:/],
+  external: ["@syner/sdk", "@vercel/sandbox", "ai", "zod", /^node:/],
 
   splitting: false,
   treeshake: true,

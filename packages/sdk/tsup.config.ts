@@ -5,6 +5,9 @@ import { defineConfig } from "tsup"
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    "workflows/index": "src/workflows/index.ts",
+    "runs/index": "src/runs/index.ts",
+    "lib/index": "src/lib/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,

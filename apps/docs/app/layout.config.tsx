@@ -1,4 +1,4 @@
-import SynerLogo from "@/components/branding/logo";
+import { Logo as SynerLogo } from "@syner/ui/branding/logo";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 const Vercel = () => (

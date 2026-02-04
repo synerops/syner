@@ -1,3 +1,8 @@
-export { createSandbox, getSandbox } from './system/env';
-export { writeFiles, readFile, filesystem } from './system/fs';
-export type { WriteFilesOptions, ReadFileOptions } from './system/fs';
+/**
+ * @syner/vercel - Vercel Sandbox Integration
+ *
+ * Extends the SDK with Vercel-specific sandbox capabilities.
+ */
+
+export { createSandbox, getSandbox, writeFiles, readFile, filesystem } from './system/sandbox'
+export type { WriteFilesOptions, ReadFileOptions } from './system/sandbox'
