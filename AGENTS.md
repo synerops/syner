@@ -134,8 +134,62 @@ All TODOs MUST be signed with the author's identifier for traceability:
 
 This monorepo contains:
 
-- `/packages/sdk/` - TypeScript implementation of the OS Protocol
-- `/apps/os/` - Syner OS application
-- `/apps/docs/` - Documentation site (syner.dev)
-- `/packages/ui/` - Shared UI components and design system
-- `/tooling/` - Development tooling (eslint, prettier, typescript)
+```
+apps/
+├── os/                      # syner.app + syner.bot (API at /api/v1/*)
+└── docs/                    # syner.dev (documentation)
+
+packages/
+├── sdk/                     # @syner/sdk - OS Protocol implementation
+│   └── src/
+│       ├── system/          # protocol/system/* (env, fs, preferences, registry)
+│       ├── context/         # protocol/context/* (memory, documents)
+│       ├── actions/         # protocol/actions/* (tools, ops)
+│       ├── checks/          # protocol/checks/* (rules, audit)
+│       ├── skills/          # protocol/skills/* (orchestrator, planner, executor)
+│       ├── workflows/       # protocol/workflows/*
+│       ├── runs/            # protocol/runs/*
+│       └── core/            # Types + Runtime (discovery, parser, loader)
+│
+├── syner/                   # Default orchestrator agent
+└── ui/                      # @syner/ui - Shared components
+
+extensions/
+└── vercel/                  # @syner/vercel - Vercel sandbox integration
+    └── src/system/sandbox/  # Extends SDK system/
+
+tooling/                     # eslint, prettier, typescript configs
+```
+
+**Domains:**
+- `syner.app` → apps/os (UI + API)
+- `syner.bot` → apps/os/api/v1/* (same deploy, different domain)
+- `syner.dev` → apps/docs
+
+## Skills Architecture
+
+Skills use the SKILL.md format (inspired by Anthropic Skills) for discovery and loading:
+
+```yaml
+---
+name: fs
+description: File system operations
+protocol:
+  domain: system
+  api: fs
+---
+
+# Filesystem
+
+## Capabilities
+- Read files and directories
+- Write and create files
+
+## When to Use
+- User needs to read or write files
+```
+
+Each skill directory contains:
+- `SKILL.md` - Skill metadata and documentation
+- `tools/` - AI SDK tool implementations
+- `index.ts` - Module exports

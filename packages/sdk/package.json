@@ -36,6 +36,7 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "peerDependencies": {
+    "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
   },
   "devDependencies": {
@@ -43,9 +44,11 @@
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/bun": "*",
+    "ai": "catalog:aisdk",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsup": "^8.5.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:aisdk"
   }
 }
