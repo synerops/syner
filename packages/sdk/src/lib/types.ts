@@ -67,4 +67,6 @@ export interface SkillRegistryEntry {
 export interface RuntimeConfig {
   basePath: string
   extensions?: string[]
+  /** Project root directory for security scoping */
+  projectRoot?: string
 }

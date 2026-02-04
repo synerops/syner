@@ -2,21 +2,38 @@
  * Skill Loader
  *
  * Dynamically loads skill tools from the filesystem.
+ * Validates paths against project scope before loading.
  */
 
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { readdir, stat } from 'node:fs/promises'
 import type { Tool } from 'ai'
-import type { SkillDefinition, LoadedSkill, SkillRegistryEntry } from '../types'
+import type { LoadedSkill, SkillRegistryEntry } from '../types'
 import { parseSkillFile } from './parser'
+import { validateImportPath, resolveSafePath, SecurityError } from '../security'
 
 const TOOLS_DIR = 'tools'
 
 /**
- * Load tools from a skill's tools directory
+ * Options for loading tools
  */
-async function loadToolsFromDirectory(toolsPath: string): Promise<Record<string, Tool>> {
+export interface LoadToolsOptions {
+  /** Project root for security validation */
+  projectRoot?: string
+  /** Allowed paths for tool loading */
+  allowedPaths?: string[]
+}
+
+/**
+ * Load tools from a skill's tools directory
+ * Validates paths before dynamic imports when projectRoot is provided
+ */
+async function loadToolsFromDirectory(
+  toolsPath: string,
+  options: LoadToolsOptions = {}
+): Promise<Record<string, Tool>> {
   const tools: Record<string, Tool> = {}
+  const { projectRoot } = options
 
   try {
     const pathStat = await stat(toolsPath)
@@ -33,17 +50,29 @@ async function loadToolsFromDirectory(toolsPath: string): Promise<Record<string,
       const toolName = entry.name.replace(/\.(ts|js)$/, '')
 
       try {
+        // Validate path security before import
+        if (projectRoot) {
+          validateImportPath(toolPath, projectRoot)
+        }
+
         const module = await import(toolPath)
         // Tool can be default export or named export matching filename
         const tool = module.default ?? module[toolName]
         if (tool) {
           tools[toolName] = tool
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof SecurityError) {
+          console.error(`[loader] Security violation loading tool: ${toolPath}`, error.message)
+          throw error
+        }
         console.warn(`[loader] Failed to load tool: ${toolPath}`)
       }
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof SecurityError) {
+      throw error
+    }
     // No tools directory
   }
 
@@ -53,11 +82,19 @@ async function loadToolsFromDirectory(toolsPath: string): Promise<Record<string,
 /**
  * Load a single skill from its directory path
  */
-export async function loadSkill(skillPath: string): Promise<LoadedSkill> {
+export async function loadSkill(skillPath: string, options: LoadToolsOptions = {}): Promise<LoadedSkill> {
+  const { projectRoot } = options
+
+  // Validate skill path is within project scope
+  if (projectRoot) {
+    const resolvedPath = resolveSafePath(skillPath, projectRoot)
+    skillPath = resolvedPath
+  }
+
   const skillFile = join(skillPath, 'SKILL.md')
   const definition = await parseSkillFile(skillFile)
   const toolsPath = join(skillPath, TOOLS_DIR)
-  const tools = await loadToolsFromDirectory(toolsPath)
+  const tools = await loadToolsFromDirectory(toolsPath, options)
 
   return {
     definition,
@@ -68,26 +105,47 @@ export async function loadSkill(skillPath: string): Promise<LoadedSkill> {
 /**
  * Load a skill from a registry entry
  */
-export async function loadSkillFromRegistry(entry: SkillRegistryEntry): Promise<LoadedSkill> {
-  return loadSkill(entry.path)
+export async function loadSkillFromRegistry(
+  entry: SkillRegistryEntry,
+  options: LoadToolsOptions = {}
+): Promise<LoadedSkill> {
+  return loadSkill(entry.path, options)
 }
 
 /**
  * Load multiple skills from registry entries
  */
-export async function loadSkills(entries: SkillRegistryEntry[]): Promise<LoadedSkill[]> {
+export async function loadSkills(
+  entries: SkillRegistryEntry[],
+  options: LoadToolsOptions = {}
+): Promise<LoadedSkill[]> {
   const results: LoadedSkill[] = []
 
   for (const entry of entries) {
     try {
-      const skill = await loadSkillFromRegistry(entry)
+      const skill = await loadSkillFromRegistry(entry, options)
       results.push(skill)
-    } catch {
+    } catch (error) {
+      if (error instanceof SecurityError) {
+        console.error(`[loader] Security violation for skill: ${entry.name}`, error.message)
+        // Don't include skills that fail security validation
+        continue
+      }
       console.warn(`[loader] Failed to load skill: ${entry.name}`)
     }
   }
 
   return results
+}
+
+/**
+ * Load skills with project root from runtime config
+ */
+export async function loadSkillsSecure(
+  entries: SkillRegistryEntry[],
+  projectRoot: string
+): Promise<LoadedSkill[]> {
+  return loadSkills(entries, { projectRoot })
 }
 
 /**

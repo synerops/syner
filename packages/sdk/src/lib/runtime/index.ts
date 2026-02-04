@@ -2,6 +2,14 @@
  * Runtime exports
  */
 
-export { discoverSkills, discoverSkillsByDomain } from './discovery'
+export { discoverSkills, discoverSkillsByDomain, discoverSkillsAuto } from './discovery'
 export { parseSkillFile, parseSkillContent } from './parser'
-export { loadSkill, loadSkillFromRegistry, loadSkills, getToolsFromSkills, getToolsBySkill } from './loader'
+export {
+  loadSkill,
+  loadSkillFromRegistry,
+  loadSkills,
+  loadSkillsSecure,
+  getToolsFromSkills,
+  getToolsBySkill,
+  type LoadToolsOptions,
+} from './loader'
