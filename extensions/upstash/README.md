@@ -39,7 +39,7 @@ bun add @syner/upstash
 ## Usage
 
 ```typescript
-import { createUpstashCache } from '@syner/upstash/cache'
+import { createUpstashCache } from '@syner/upstash/system/data/cache'
 
 const cache = createUpstashCache()
 
@@ -65,7 +65,7 @@ console.log(`Hits: ${stats.hits}, Misses: ${stats.misses}`)
 
 ```typescript
 import { Redis } from '@upstash/redis'
-import { createUpstashCache } from '@syner/upstash/cache'
+import { createUpstashCache } from '@syner/upstash/system/data/cache'
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
