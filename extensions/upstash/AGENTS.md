@@ -48,12 +48,14 @@ Consumer (@syner/github)                    @syner/upstash
 
 ```
 src/
-├── index.ts              # Re-exports cache module
+├── index.ts              # Re-exports system/data/cache
 ├── index.d.ts            # Type declarations
-└── cache/
-    ├── index.ts          # Module exports
-    ├── index.d.ts        # Type declarations
-    └── upstash.ts        # Cache implementation
+└── system/
+    └── data/
+        └── cache/        # Implements @syner/sdk/system/data/cache
+            ├── index.ts
+            ├── index.d.ts
+            └── upstash.ts
 ```
 
 ## Environment Variables

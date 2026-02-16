@@ -23,10 +23,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./cache": {
-      "types": "./src/cache/index.d.ts",
-      "import": "./dist/cache.js",
-      "require": "./dist/cache.cjs"
+    "./system/data/cache": {
+      "types": "./src/system/data/cache/index.d.ts",
+      "import": "./dist/system/data/cache.js",
+      "require": "./dist/system/data/cache.cjs"
     }
   },
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
   "files": [
     "dist",
     "src/index.d.ts",
-    "src/cache/index.d.ts",
+    "src/system/data/cache/index.d.ts",
     "README.md"
   ],
   "scripts": {
