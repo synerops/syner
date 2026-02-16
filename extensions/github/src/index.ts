@@ -3,8 +3,8 @@
  *
  * Extends Syner OS with GitHub integration capabilities:
  * - OAuth authentication flow
- * - API client (Octokit wrapper)
- * - Cache layer for rate limit optimization (placeholder)
+ * - API client with rate limit handling
+ * - ETag-based cache layer for rate limit optimization
  */
 
 // OAuth
@@ -29,13 +29,21 @@ export {
   createGitHubClient,
   createGitHubClientFromTokens,
   getAuthenticatedUser,
+  getFileContent,
+  type GitHubClient,
   type GitHubClientOptions,
+  type FileContent,
+  type GetFileContentOptions,
 } from './api'
 
-// Cache (placeholder for G6)
+// Cache
 export {
+  contentCacheKey,
+  repoCacheKey,
+  repoInvalidationPattern,
+  getCachedContent,
   createConditionalHeaders,
   extractCacheHeaders,
-  type CacheEntry,
-  type CacheOptions,
+  type CachedFetchOptions,
+  type CachedFetchResult,
 } from './cache'
