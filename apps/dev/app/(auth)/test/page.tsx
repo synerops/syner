@@ -3,8 +3,7 @@
 /**
  * GitHub OAuth Test Page
  *
- * Development-only UI for testing the GitHub OAuth flow.
- * NOT the final UI - the real "Connect with GitHub" will be in syner.md (Epic #36).
+ * Development-only UI for testing the GitHub OAuth flow and content fetching.
  */
 
 import { useEffect, useState } from 'react'
@@ -13,6 +12,17 @@ import { useSearchParams } from 'next/navigation'
 interface ConnectionStatus {
   connected: boolean
   error?: string
+}
+
+interface FileResult {
+  content: string
+  sha: string
+  path: string
+  cache: {
+    hits: number
+    misses: number
+    size: number
+  }
 }
 
 function GitHubIcon({ className }: { className?: string }) {
@@ -28,8 +38,15 @@ export default function GitHubTestPage() {
   const [status, setStatus] = useState<ConnectionStatus>({ connected: false })
   const [isLoading, setIsLoading] = useState(true)
 
+  // Content fetching state
+  const [owner, setOwner] = useState('synerops')
+  const [repo, setRepo] = useState('syner')
+  const [path, setPath] = useState('README.md')
+  const [fileResult, setFileResult] = useState<FileResult | null>(null)
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  const [isFetching, setIsFetching] = useState(false)
+
   useEffect(() => {
-    // Check for error in URL params
     const error = searchParams.get('error')
     if (error) {
       setStatus({ connected: false, error: decodeErrorMessage(error) })
@@ -37,7 +54,6 @@ export default function GitHubTestPage() {
       return
     }
 
-    // Check for github_connected cookie
     const connected = document.cookie
       .split('; ')
       .find((row) => row.startsWith('github_connected='))
@@ -59,15 +75,37 @@ export default function GitHubTestPage() {
   }
 
   function handleConnect() {
-    // Redirect to OAuth initiation with origin=dev for testing
     window.location.href = '/api/auth/github?origin=dev&returnUrl=/test'
   }
 
   function handleDisconnect() {
-    // Clear cookies and refresh
     document.cookie = 'github_connected=; path=/; max-age=0'
     document.cookie = 'github_access_token=; path=/; max-age=0'
     setStatus({ connected: false })
+    setFileResult(null)
+  }
+
+  async function handleFetchContent() {
+    setIsFetching(true)
+    setFetchError(null)
+    setFileResult(null)
+
+    try {
+      const params = new URLSearchParams({ owner, repo, path })
+      const response = await fetch(`/api/github/content?${params}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setFetchError(data.error ?? 'Failed to fetch content')
+        return
+      }
+
+      setFileResult(data)
+    } catch {
+      setFetchError('Network error')
+    } finally {
+      setIsFetching(false)
+    }
   }
 
   if (isLoading) {
@@ -80,11 +118,11 @@ export default function GitHubTestPage() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8 max-w-md text-center">
-      <div>
+    <div className="flex flex-col items-center gap-8 max-w-2xl w-full">
+      <div className="text-center">
         <h1 className="text-2xl font-semibold mb-2">GitHub OAuth Test</h1>
         <p className="text-neutral-500 text-sm">
-          Development-only page for testing the OAuth flow.
+          Test OAuth flow and content fetching with cache.
         </p>
       </div>
 
@@ -95,20 +133,88 @@ export default function GitHubTestPage() {
       )}
 
       {status.connected ? (
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-900 dark:bg-green-950">
-            <GitHubIcon className="h-5 w-5 text-green-700 dark:text-green-300" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-300">
-              Connected to GitHub
-            </span>
+        <div className="w-full flex flex-col gap-6">
+          {/* Connection status */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-2 dark:border-green-900 dark:bg-green-950">
+              <GitHubIcon className="h-4 w-4 text-green-700 dark:text-green-300" />
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                Connected
+              </span>
+            </div>
+            <button
+              onClick={handleDisconnect}
+              className="text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+            >
+              Disconnect
+            </button>
           </div>
 
-          <button
-            onClick={handleDisconnect}
-            className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
-          >
-            Disconnect
-          </button>
+          {/* Fetch form */}
+          <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 p-4">
+            <h2 className="text-sm font-medium mb-4">Fetch Markdown File</h2>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div>
+                <label className="text-xs text-neutral-500 block mb-1">Owner</label>
+                <input
+                  type="text"
+                  value={owner}
+                  onChange={(e) => setOwner(e.target.value)}
+                  className="w-full rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm"
+                  placeholder="owner"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-neutral-500 block mb-1">Repo</label>
+                <input
+                  type="text"
+                  value={repo}
+                  onChange={(e) => setRepo(e.target.value)}
+                  className="w-full rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm"
+                  placeholder="repo"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-neutral-500 block mb-1">Path</label>
+                <input
+                  type="text"
+                  value={path}
+                  onChange={(e) => setPath(e.target.value)}
+                  className="w-full rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm"
+                  placeholder="README.md"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleFetchContent}
+              disabled={isFetching}
+              className="w-full rounded-lg bg-neutral-900 dark:bg-white px-4 py-2 text-sm font-medium text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50"
+            >
+              {isFetching ? 'Fetching...' : 'Fetch Content'}
+            </button>
+          </div>
+
+          {/* Error */}
+          {fetchError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950 p-4">
+              <p className="text-sm text-red-700 dark:text-red-300">{fetchError}</p>
+            </div>
+          )}
+
+          {/* Result */}
+          {fileResult && (
+            <div className="rounded-lg border border-neutral-200 dark:border-neutral-800">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900">
+                <span className="text-sm font-mono">{fileResult.path}</span>
+                <span className="text-xs text-neutral-500">
+                  Cache: {fileResult.cache.hits} hits / {fileResult.cache.misses} misses / {fileResult.cache.size} entries
+                </span>
+              </div>
+              <pre className="p-4 text-sm overflow-auto max-h-96 whitespace-pre-wrap font-mono bg-white dark:bg-neutral-950">
+                {fileResult.content}
+              </pre>
+            </div>
+          )}
         </div>
       ) : (
         <button
@@ -119,23 +225,6 @@ export default function GitHubTestPage() {
           Connect with GitHub
         </button>
       )}
-
-      <div className="mt-8 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <h2 className="text-sm font-medium mb-2">Test Instructions</h2>
-        <ol className="text-left text-xs text-neutral-500 space-y-1 list-decimal list-inside">
-          <li>Click "Connect with GitHub"</li>
-          <li>Authorize the Syner app on GitHub</li>
-          <li>You should be redirected back here with "Connected" status</li>
-          <li>Check cookies: <code className="bg-neutral-200 dark:bg-neutral-800 px-1 rounded">github_access_token</code> (HttpOnly) and <code className="bg-neutral-200 dark:bg-neutral-800 px-1 rounded">github_connected</code></li>
-        </ol>
-      </div>
-
-      <div className="text-xs text-neutral-400">
-        <p>Testing origins:</p>
-        <code className="bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded text-xs block mt-1">
-          /api/auth/github?origin=md
-        </code>
-      </div>
     </div>
   )
 }

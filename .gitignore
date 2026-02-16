@@ -55,3 +55,4 @@ npm-debug.log*
 !SYNER.md
 !**/README.md
 !**/AGENTS.md
+.env*.local
