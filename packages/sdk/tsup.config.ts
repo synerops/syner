@@ -8,6 +8,7 @@ export default defineConfig({
     "workflows/index": "src/workflows/index.ts",
     "runs/index": "src/runs/index.ts",
     "lib/index": "src/lib/index.ts",
+    "system/data/cache/index": "src/system/data/cache/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,

@@ -1,12 +1,15 @@
 /**
  * GitHub Cache Module
  *
- * Placeholder for G6 implementation.
+ * ETag-based caching for GitHub API requests.
  */
 
+export { contentCacheKey, repoCacheKey, repoInvalidationPattern } from './keys'
+
 export {
+  getCachedContent,
   createConditionalHeaders,
   extractCacheHeaders,
-  type CacheEntry,
-  type CacheOptions,
-} from './etag'
+  type CachedFetchOptions,
+  type CachedFetchResult,
+} from './cache'

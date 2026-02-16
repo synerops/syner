@@ -32,6 +32,11 @@
       "types": "./dist/lib/index.d.ts",
       "import": "./dist/lib/index.js",
       "require": "./dist/lib/index.cjs"
+    },
+    "./system/data/cache": {
+      "types": "./dist/system/data/cache/index.d.ts",
+      "import": "./dist/system/data/cache/index.js",
+      "require": "./dist/system/data/cache/index.cjs"
     }
   },
   "main": "./dist/index.js",

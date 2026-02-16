@@ -54,6 +54,7 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
+    "@octokit/plugin-throttling": "^9",
     "@syner/sdk": "workspace:*",
     "octokit": "^4"
   },
