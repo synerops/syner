@@ -1,0 +1,71 @@
+{
+  "name": "@syner/github",
+  "description": "GitHub OAuth and API integration for Syner OS",
+  "version": "0.0.0-dev.1",
+  "type": "module",
+  "private": false,
+  "sideEffects": false,
+  "license": "MIT",
+  "prettier": "@syner/prettier",
+  "author": {
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
+  },
+  "contributors": [
+    {
+      "name": "Ronny Badilla",
+      "email": "info@ronnybadilla.com",
+      "url": "https://ronnybadilla.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "extensions/github"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./oauth": {
+      "types": "./src/oauth/index.d.ts",
+      "import": "./dist/oauth.js",
+      "require": "./dist/oauth.cjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "dist",
+    "src/index.d.ts",
+    "src/oauth/index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "clean": "git clean -xdf .cache .next .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@syner/sdk": "workspace:*",
+    "octokit": "^4"
+  },
+  "peerDependencies": {
+    "zod": "catalog:aisdk"
+  },
+  "devDependencies": {
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/bun": "*",
+    "tsup": "^8.5.0",
+    "typescript": "catalog:"
+  }
+}

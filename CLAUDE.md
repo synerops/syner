@@ -22,7 +22,7 @@ bun run format
 # Run commands for specific packages using turbo filter
 bunx turbo run dev --filter=os
 bunx turbo run build --filter=@syner/sdk
-bunx turbo run lint --filter=docs
+bunx turbo run lint --filter=dev
 ```
 
 ## Architecture
@@ -34,7 +34,7 @@ Syner OS is an **Agentic Operating System** implementing the [OS Protocol](https
 ```
 apps/
 ├── os/          # Main Syner OS Next.js application
-└── docs/        # Documentation site (syner.dev) - Fumadocs
+└── dev/         # Developer hub (syner.dev) - Auth, APIs, Devkit, Docs
 
 packages/
 ├── sdk/         # @syner/sdk - TypeScript OS Protocol implementation
@@ -42,6 +42,7 @@ packages/
 └── ui/          # @syner/ui - Shared UI components
 
 extensions/
+├── github/      # @syner/github - GitHub OAuth and API integration
 └── vercel/      # @syner/vercel - Vercel sandbox integration
 
 tooling/
