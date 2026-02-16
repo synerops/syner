@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "dev",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@syner/github": "workspace:*",
     "@syner/ui": "workspace:*",
     "@vercel/analytics": "catalog:vercel",
     "clsx": "^2.1.1",
