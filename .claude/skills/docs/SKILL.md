@@ -272,8 +272,34 @@ When user runs `/docs`:
 1. Ask what they want to review (specific package, level, or full audit)
 2. Read the relevant files
 3. Compare against the templates above
-4. Report findings: what's missing, what's outdated, what's good
+4. Report findings with three categories:
+   - **Needs Work**: Missing files, incomplete content
+   - **No Changes Needed**: Files that are complete and follow templates
+   - **Actions Recommended**: Prioritized list of fixes
 5. Offer to fix issues if requested
+
+## Report Format
+
+Always include all three sections in your audit report:
+
+```markdown
+## Needs Work
+| Location | Issue |
+|----------|-------|
+| `apps/dev` | Missing AGENTS.md |
+
+## No Changes Needed
+| Location | Status |
+|----------|--------|
+| `extensions/github` | README.md and AGENTS.md complete |
+
+## Recommended Actions
+**Priority High:** ...
+**Priority Medium:** ...
+**Priority Low:** ...
+```
+
+This ensures the user sees both what needs fixing AND what's already good.
 
 ## Example Invocations
 
