@@ -1,7 +1,7 @@
 {
-  "name": "@syner/sdk",
+  "name": "@syner/github",
+  "description": "GitHub OAuth and API integration for Syner OS",
   "version": "0.0.0-dev.1",
-  "description": "Syner Agentic Framework SDK - Build autonomous systems",
   "type": "module",
   "private": false,
   "sideEffects": false,
@@ -12,34 +12,37 @@
     "email": "info@synerops.com",
     "url": "https://synerops.com"
   },
+  "contributors": [
+    {
+      "name": "Ronny Badilla",
+      "email": "info@ronnybadilla.com",
+      "url": "https://ronnybadilla.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "extensions/github"
+  },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./src/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./workflows": {
-      "types": "./dist/workflows/index.d.ts",
-      "import": "./dist/workflows/index.js",
-      "require": "./dist/workflows/index.cjs"
-    },
-    "./runs": {
-      "types": "./dist/runs/index.d.ts",
-      "import": "./dist/runs/index.js",
-      "require": "./dist/runs/index.cjs"
-    },
-    "./lib": {
-      "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/index.js",
-      "require": "./dist/lib/index.cjs"
+    "./oauth": {
+      "types": "./src/oauth/index.d.ts",
+      "import": "./dist/oauth.js",
+      "require": "./dist/oauth.cjs"
     }
   },
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.d.ts",
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "src/index.d.ts",
+    "src/oauth/index.d.ts",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -51,10 +54,12 @@
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
   "dependencies": {
-    "@osprotocol/schema": "catalog:osprotocol"
+    "@octokit/plugin-throttling": "^9",
+    "@osprotocol/schema": "catalog:osprotocol",
+    "@syner/sdk": "workspace:*",
+    "octokit": "^4"
   },
   "peerDependencies": {
-    "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
   },
   "devDependencies": {
@@ -62,11 +67,7 @@
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/bun": "*",
-    "ai": "catalog:aisdk",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
     "tsup": "^8.5.0",
-    "typescript": "catalog:",
-    "zod": "catalog:aisdk"
+    "typescript": "catalog:"
   }
 }
