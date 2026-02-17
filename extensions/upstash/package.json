@@ -1,6 +1,6 @@
 {
-  "name": "@syner/github",
-  "description": "GitHub OAuth and API integration for Syner OS",
+  "name": "@syner/upstash",
+  "description": "Upstash Redis integration for Syner OS",
   "version": "0.0.0-dev.1",
   "type": "module",
   "private": false,
@@ -12,17 +12,10 @@
     "email": "info@synerops.com",
     "url": "https://synerops.com"
   },
-  "contributors": [
-    {
-      "name": "Ronny Badilla",
-      "email": "info@ronnybadilla.com",
-      "url": "https://ronnybadilla.com"
-    }
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/synerops/syner.git",
-    "directory": "extensions/github"
+    "directory": "extensions/upstash"
   },
   "exports": {
     ".": {
@@ -30,10 +23,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./oauth": {
-      "types": "./src/oauth/index.d.ts",
-      "import": "./dist/oauth.js",
-      "require": "./dist/oauth.cjs"
+    "./system/data/cache": {
+      "types": "./src/system/data/cache/index.d.ts",
+      "import": "./dist/system/data/cache.js",
+      "require": "./dist/system/data/cache.cjs"
     }
   },
   "main": "./dist/index.js",
@@ -41,7 +34,7 @@
   "files": [
     "dist",
     "src/index.d.ts",
-    "src/oauth/index.d.ts",
+    "src/system/data/cache/index.d.ts",
     "README.md"
   ],
   "scripts": {
@@ -51,16 +44,11 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "clean": "git clean -xdf .cache .next .turbo dist node_modules"
+    "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
-    "@octokit/plugin-throttling": "^9",
     "@osprotocol/schema": "catalog:osprotocol",
-    "@syner/sdk": "workspace:*",
-    "octokit": "^4"
-  },
-  "peerDependencies": {
-    "zod": "catalog:aisdk"
+    "@upstash/redis": "^1.35.0"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",

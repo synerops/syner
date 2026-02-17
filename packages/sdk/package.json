@@ -55,6 +55,9 @@
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .next .turbo dist node_modules"
   },
+  "dependencies": {
+    "@osprotocol/schema": "catalog:osprotocol"
+  },
   "peerDependencies": {
     "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
