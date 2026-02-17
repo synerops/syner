@@ -7,7 +7,7 @@ import type {
   Cache,
   CacheEntry,
   CacheStats,
-} from '@syner/sdk/system/data/cache'
+} from '@osprotocol/schema/system/data'
 
 export interface UpstashCacheOptions {
   /** Upstash Redis client instance. If not provided, uses Redis.fromEnv() */

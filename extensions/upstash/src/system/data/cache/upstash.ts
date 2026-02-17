@@ -14,7 +14,7 @@ import type {
   Cache,
   CacheEntry,
   CacheStats,
-} from '@syner/sdk/system/data/cache'
+} from '@osprotocol/schema/system/data'
 
 const DEFAULT_TTL = 30 * 24 * 60 * 60 // 30 days in seconds
 const INDEX_PREFIX = 'cache:index:'

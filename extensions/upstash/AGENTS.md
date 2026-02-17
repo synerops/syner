@@ -1,8 +1,24 @@
 # @syner/upstash
 
+Upstash Redis integration for Syner OS — implements the Cache capability from the OS Protocol.
+
+## Important: Interface Source
+
+`@osprotocol/schema` is the single source of truth for all capability interfaces.
+
+Import Cache types from the protocol, NOT from `@syner/sdk`:
+
+```typescript
+// Correct
+import type { Cache, CacheEntry, CacheStats } from '@osprotocol/schema/system/data'
+
+// Wrong — do not import interfaces from the SDK
+import type { Cache } from '@syner/sdk/system/data/cache'
+```
+
 ## Overview
 
-Upstash Redis extension implementing the SDK's `Cache` interface with Set-based indexing for efficient pattern invalidation.
+Upstash Redis extension implementing the `Cache` interface with Set-based indexing for efficient pattern invalidation.
 
 ## Architecture
 
@@ -52,7 +68,7 @@ src/
 ├── index.d.ts            # Type declarations
 └── system/
     └── data/
-        └── cache/        # Implements @syner/sdk/system/data/cache
+        └── cache/        # Implements @osprotocol/schema Cache interface
             ├── index.ts
             ├── index.d.ts
             └── upstash.ts

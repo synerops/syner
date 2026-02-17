@@ -15,7 +15,6 @@
       "version": "0.0.0",
       "dependencies": {
         "@syner/github": "workspace:*",
-        "@syner/sdk": "workspace:*",
         "@syner/ui": "workspace:*",
         "@vercel/analytics": "catalog:vercel",
         "clsx": "^2.1.1",
@@ -83,7 +82,7 @@
       "name": "@syner/upstash",
       "version": "0.0.0-dev.1",
       "dependencies": {
-        "@syner/sdk": "workspace:*",
+        "@osprotocol/schema": "catalog:osprotocol",
         "@upstash/redis": "^1.35.0",
       },
       "devDependencies": {

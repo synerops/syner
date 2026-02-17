@@ -5,4 +5,4 @@
  */
 
 export { createUpstashCache, type UpstashCacheOptions } from './upstash'
-export type { Cache, CacheEntry, CacheStats } from '@syner/sdk/system/data/cache'
+export type { Cache, CacheEntry, CacheStats } from '@osprotocol/schema/system/data'
