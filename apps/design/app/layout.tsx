@@ -1,4 +1,3 @@
-import '@syner/ui/globals.css';
 import './global.css';
 
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
