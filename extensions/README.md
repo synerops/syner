@@ -1,16 +1,41 @@
 # Syner OS Extensions
 
-Extensions provide vendor-specific implementations of OS Protocol interfaces.
+Extensions provide vendor-specific implementations of [OS Protocol](https://osprotocol.dev) interfaces.
+
+## OS Protocol
+
+The **Operating System Protocol** is the foundation of all Syner OS extensions. It defines TypeScript interfaces that establish contracts for capabilities like caching, sandboxing, filesystem operations, and more.
+
+- **Website**: [osprotocol.dev](https://osprotocol.dev)
+- **GitHub**: [github.com/synerops/protocol](https://github.com/synerops/protocol)
+- **npm**: [`@osprotocol/schema`](https://www.npmjs.com/package/@osprotocol/schema)
+
+The protocol is vendor-agnostic — it defines *what* capabilities must do, not *how* they're implemented. This allows extensions to provide alternative implementations (Redis instead of in-memory, Vercel instead of local execution) while maintaining a consistent API.
+
+```typescript
+// Protocol defines the interface
+import type { Cache } from '@osprotocol/schema/system/data'
+
+// Extensions implement it
+import { createUpstashCache } from '@syner/upstash/system/data/cache'
+import { createMemoryCache } from '@syner/sdk/system/data/cache'
+
+// Both satisfy the same Cache interface
+const cache: Cache = createUpstashCache()  // Redis-backed
+const cache: Cache = createMemoryCache()   // In-memory
+```
 
 ## Architecture
 
 ```
-Protocol (@osprotocol/schema)    ← Defines interfaces (Cache, Sandbox, etc.)
-         ↓
-SDK (@syner/sdk)                 ← Default implementations (in-memory cache, etc.)
-         ↓
-Extensions (@syner/*)            ← Alternative implementations (Redis, Vercel, etc.)
+OS Protocol (@osprotocol/schema)    ← Defines interfaces (Cache, Sandbox, etc.)
+              ↓
+SDK (@syner/sdk)                    ← Default implementations (in-memory, local)
+              ↓
+Extensions (@syner/*)               ← Alternative implementations (Redis, Vercel, etc.)
 ```
+
+**Key principle**: Extensions implement protocol interfaces, not SDK abstractions. This ensures interoperability across the ecosystem.
 
 ## Available Extensions
 
