@@ -1,0 +1,58 @@
+---
+title: Overview
+description: Welcome to the Syner UI component documentation
+---
+
+# Syner UI Components
+
+Welcome to the Syner Design System documentation. This is a collection of reusable components built with React, TypeScript, and Tailwind CSS.
+
+## Getting Started
+
+All components are part of the `@syner/ui` package. To use them in your project:
+
+```bash
+# Already included in the monorepo
+import { Button } from '@syner/ui/components/button';
+```
+
+## Available Components
+
+Browse the components in the sidebar to see detailed documentation, examples, and usage guidelines.
+
+### Form Components
+
+- **[Button](/components/button)** - Versatile button component with multiple variants and sizes
+
+### Feedback Components
+
+- **[Tooltip](/components/tooltip)** - Contextual information on hover or focus
+- **[Toaster](/components/toaster)** - Toast notification system
+
+## Design Principles
+
+All components in the Syner UI library follow these principles:
+
+1. **Accessibility First** - Components are built with ARIA attributes and keyboard navigation
+2. **Type Safety** - Full TypeScript support with comprehensive type definitions
+3. **Customizable** - Easy to customize with Tailwind CSS and CSS variables
+4. **Consistent** - Unified design language across all components
+5. **Composable** - Build complex UIs by combining simple components
+
+## Styling
+
+Components use CSS variables for theming, making it easy to customize colors and styles:
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  /* ... more variables */
+}
+```
+
+## Support
+
+For questions or issues, please refer to the main repository documentation or open an issue on GitHub.
