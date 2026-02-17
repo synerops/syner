@@ -9,8 +9,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
-import { ComponentPreview } from '@/ui-components/component-preview';
-import { CodeBlock } from '@/ui-components/code-block';
+import { ComponentPreview } from '@/components/component-preview';
+import { CodeBlock } from '@/components/code-block';
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;

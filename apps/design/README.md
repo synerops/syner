@@ -53,7 +53,7 @@ apps/design/
 │       ├── tooltip.mdx          # Tooltip documentation
 │       ├── toaster.mdx          # Toaster documentation
 │       └── meta.json            # Navigation metadata
-├── ui-components/               # React components for the app
+├── components/                   # React components for the app
 │   ├── component-preview.tsx   # Preview container
 │   └── code-block.tsx          # Code display
 ├── lib/                         # Utilities
@@ -76,7 +76,7 @@ description: A description of what the component does.
 ---
 
 import { MyComponent } from '@syner/ui/components/my-component';
-import { ComponentPreview } from '@/ui-components/component-preview';
+import { ComponentPreview } from '@/components/component-preview';
 import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
 
 ## Installation
