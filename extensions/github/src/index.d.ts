@@ -3,8 +3,12 @@
  */
 
 import type { Octokit } from 'octokit'
+import type { Cache } from '@syner/sdk/system/data/cache'
 
+// ============================================================================
 // OAuth Types
+// ============================================================================
+
 export interface GitHubOAuthConfig {
   clientId: string
   clientSecret: string
@@ -67,31 +71,77 @@ export declare function isValidOriginKey(key: string | null | undefined): key is
 
 export declare function getOriginKeys(): OriginKey[]
 
+// ============================================================================
 // API Types
+// ============================================================================
+
+export type GitHubClient = Octokit
+
 export interface GitHubClientOptions {
   accessToken: string
+  onRateLimit?: (retryAfter: number, retryCount: number) => void
+  onSecondaryRateLimit?: (retryAfter: number) => void
+}
+
+export interface GetFileContentOptions {
+  client: GitHubClient
+  cache: Cache
+  owner: string
+  repo: string
+  path: string
+  ref?: string
+}
+
+export interface FileContent {
+  content: string
+  sha: string
+  path: string
+  encoding: 'utf-8' | 'base64'
 }
 
 // API Functions
-export declare function createGitHubClient(options: GitHubClientOptions): Octokit
+export declare function createGitHubClient(options: GitHubClientOptions): GitHubClient
 
-export declare function createGitHubClientFromTokens(tokens: GitHubOAuthTokens): Octokit
+export declare function createGitHubClientFromTokens(tokens: GitHubOAuthTokens): GitHubClient
 
-export declare function getAuthenticatedUser(client: Octokit): Promise<GitHubUser>
+export declare function getAuthenticatedUser(client: GitHubClient): Promise<GitHubUser>
 
+export declare function getFileContent(options: GetFileContentOptions): Promise<FileContent | null>
+
+// ============================================================================
 // Cache Types
-export interface CacheEntry<T> {
+// ============================================================================
+
+export interface CachedFetchResult<T> {
   data: T
   etag?: string
   lastModified?: string
-  cachedAt: number
 }
 
-export interface CacheOptions {
+export interface CachedFetchOptions {
+  cache: Cache
   ttl?: number
+  invalidationKey?: string
 }
 
 // Cache Functions
+export declare function contentCacheKey(
+  owner: string,
+  repo: string,
+  ref: string,
+  path: string
+): string
+
+export declare function repoCacheKey(owner: string, repo: string): string
+
+export declare function repoInvalidationPattern(owner: string, repo: string): string
+
+export declare function getCachedContent<T>(
+  options: CachedFetchOptions,
+  key: string,
+  fetcher: (etag?: string) => Promise<CachedFetchResult<T> | null>
+): Promise<T | null>
+
 export declare function createConditionalHeaders(
   etag?: string,
   lastModified?: string
