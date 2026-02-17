@@ -1,0 +1,18 @@
+{
+  "extends": "@syner/typescript/nextjs.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".fumadocs"
+  ],
+  "exclude": ["node_modules"]
+}

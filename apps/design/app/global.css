@@ -1,0 +1,11 @@
+/* Additional styles for design app */
+
+/* Ensure proper spacing for component previews */
+.component-preview {
+  @apply rounded-lg border bg-background p-8;
+}
+
+/* Code block styling */
+.code-block {
+  @apply rounded-lg border bg-muted/50;
+}

@@ -1,0 +1,151 @@
+---
+title: Toaster
+description: A notification component that displays toast messages.
+---
+
+import { ComponentPreview } from '@/ui-components/component-preview';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+## Installation
+
+The Toaster component is part of the `@syner/ui` package and uses the `sonner` library.
+
+```tsx
+import { Toaster } from '@syner/ui/components/sonner';
+```
+
+## Usage
+
+Add the Toaster component to your root layout:
+
+<Tabs items={['Preview', 'Code']}>
+  <Tab value="Preview">
+    <ComponentPreview>
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          The Toaster component should be added to your root layout.
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          See the code tab for implementation details.
+        </p>
+      </div>
+    </ComponentPreview>
+  </Tab>
+  <Tab value="Code">
+    ```tsx
+    // app/layout.tsx
+    import { Toaster } from '@syner/ui/components/sonner';
+
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) {
+      return (
+        <html lang="en">
+          <body>
+            {children}
+            <Toaster />
+          </body>
+        </html>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Triggering Toasts
+
+To trigger toast notifications, import and use the `toast` function from `sonner`:
+
+<Tabs items={['Preview', 'Code']}>
+  <Tab value="Preview">
+    <ComponentPreview>
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          Toast notifications can be triggered programmatically using the toast function.
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Check the code tab for examples.
+        </p>
+      </div>
+    </ComponentPreview>
+  </Tab>
+  <Tab value="Code">
+    ```tsx
+    'use client';
+
+    import { toast } from 'sonner';
+    import { Button } from '@syner/ui/components/button';
+
+    export function ToastDemo() {
+      return (
+        <div className="flex gap-2">
+          <Button
+            onClick={() =>
+              toast('Event has been created', {
+                description: 'Sunday, December 03, 2023 at 9:00 AM',
+              })
+            }
+          >
+            Show Toast
+          </Button>
+
+          <Button
+            onClick={() =>
+              toast.success('Event has been created')
+            }
+          >
+            Success
+          </Button>
+
+          <Button
+            onClick={() =>
+              toast.error('Event could not be created')
+            }
+          >
+            Error
+          </Button>
+
+          <Button
+            onClick={() =>
+              toast.warning('Event has a warning')
+            }
+          >
+            Warning
+          </Button>
+
+          <Button
+            onClick={() =>
+              toast.info('Event has information')
+            }
+          >
+            Info
+          </Button>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Features
+
+The Toaster component comes with:
+
+- **Multiple variants**: success, error, warning, info, loading
+- **Custom icons**: Pre-configured icons for each toast type
+- **Theme support**: Automatically adapts to light/dark mode
+- **Customizable styling**: Uses CSS variables from your design system
+- **Rich content**: Support for descriptions and actions
+
+## Customization
+
+The Toaster uses CSS variables from your design system:
+
+- `--popover`: Background color
+- `--popover-foreground`: Text color
+- `--border`: Border color
+- `--radius`: Border radius
+
+These are automatically inherited from the `@syner/ui` package's global styles.

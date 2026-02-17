@@ -1,0 +1,145 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+---
+
+import { Tooltip, TooltipTrigger, TooltipContent } from '@syner/ui/components/tooltip';
+import { Button } from '@syner/ui/components/button';
+import { ComponentPreview } from '@/ui-components/component-preview';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+## Installation
+
+The Tooltip component is part of the `@syner/ui` package.
+
+```tsx
+import { Tooltip, TooltipTrigger, TooltipContent } from '@syner/ui/components/tooltip';
+```
+
+## Usage
+
+<Tabs items={['Preview', 'Code']}>
+  <Tab value="Preview">
+    <ComponentPreview>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline">Hover me</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>This is a tooltip</p>
+        </TooltipContent>
+      </Tooltip>
+    </ComponentPreview>
+  </Tab>
+  <Tab value="Code">
+    ```tsx
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline">Hover me</Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>This is a tooltip</p>
+      </TooltipContent>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+## Positioning
+
+Tooltips can be positioned on different sides of the trigger element.
+
+<Tabs items={['Preview', 'Code']}>
+  <Tab value="Preview">
+    <ComponentPreview>
+      <div className="flex items-center gap-4">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">Top</Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <p>Top tooltip</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">Right</Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Right tooltip</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">Bottom</Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Bottom tooltip</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">Left</Button>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            <p>Left tooltip</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </ComponentPreview>
+  </Tab>
+  <Tab value="Code">
+    ```tsx
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline">Top</Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        <p>Top tooltip</p>
+      </TooltipContent>
+    </Tooltip>
+
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline">Right</Button>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Right tooltip</p>
+      </TooltipContent>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+## With Custom Content
+
+<Tabs items={['Preview', 'Code']}>
+  <Tab value="Preview">
+    <ComponentPreview>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button>Info</Button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs">
+          <p className="font-semibold">Helpful Information</p>
+          <p className="text-xs">This tooltip contains more detailed information about the action.</p>
+        </TooltipContent>
+      </Tooltip>
+    </ComponentPreview>
+  </Tab>
+  <Tab value="Code">
+    ```tsx
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button>Info</Button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">
+        <p className="font-semibold">Helpful Information</p>
+        <p className="text-xs">
+          This tooltip contains more detailed information about the action.
+        </p>
+      </TooltipContent>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
