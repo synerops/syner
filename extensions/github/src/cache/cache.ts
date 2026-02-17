@@ -5,7 +5,7 @@
  * Optimizes rate limit usage by returning cached data on 304 Not Modified.
  */
 
-import type { Cache } from '@syner/sdk/system/data/cache'
+import type { Cache } from '@osprotocol/schema/system/data'
 
 /** Default TTL: 30 days in seconds */
 const DEFAULT_TTL = 30 * 24 * 60 * 60

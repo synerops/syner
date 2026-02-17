@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@octokit/plugin-throttling": "^9",
+    "@osprotocol/schema": "catalog:osprotocol",
     "@syner/sdk": "workspace:*",
     "octokit": "^4"
   },

@@ -64,6 +64,9 @@
       },
       "vercel": {
         "@vercel/analytics": "^1.5.0"
+      },
+      "osprotocol": {
+        "@osprotocol/schema": "latest"
       }
     }
   }

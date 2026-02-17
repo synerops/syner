@@ -4,7 +4,7 @@
  * File content retrieval with ETag caching.
  */
 
-import type { Cache } from '@syner/sdk/system/data/cache'
+import type { Cache } from '@osprotocol/schema/system/data'
 import type { GitHubClient } from './client'
 import {
   contentCacheKey,

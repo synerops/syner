@@ -29,6 +29,22 @@ bunx turbo run lint --filter=dev
 
 Syner OS is an **Agentic Operating System** implementing the [OS Protocol](https://github.com/synerops/protocol) specification.
 
+### OS Protocol (`@osprotocol/schema`)
+
+The protocol is the single source of truth for all capability interfaces. Published on npm as `@osprotocol/schema`.
+
+**Extensions import interfaces from the protocol directly, NOT from `@syner/sdk`:**
+
+```typescript
+// Correct — import from the protocol
+import type { Cache } from '@osprotocol/schema/system/data'
+
+// Wrong — do not import interfaces from the SDK
+import type { Cache } from '@syner/sdk/system/data/cache'
+```
+
+The SDK re-exports protocol types for convenience, but extensions should always reference the protocol directly. The SDK provides default implementations (e.g., `createMemoryCache`), not the interfaces.
+
 ### Monorepo Structure
 
 ```
@@ -43,6 +59,7 @@ packages/
 
 extensions/
 ├── github/      # @syner/github - GitHub OAuth and API integration
+├── upstash/     # @syner/upstash - Upstash Redis integration
 └── vercel/      # @syner/vercel - Vercel sandbox integration
 
 tooling/
@@ -103,6 +120,7 @@ Version catalogs are defined in root `package.json` under `workspaces.catalogs`:
 - `docs`: Fumadocs packages
 - `ui`: Sonner and UI libraries
 - `vercel`: Vercel analytics
+- `osprotocol`: `@osprotocol/schema` (capability interfaces)
 
 Usage: `"dependency": "catalog:catalogName"`
 
