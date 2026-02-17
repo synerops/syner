@@ -1,34 +1,49 @@
 # @syner/github
 
-GitHub OAuth and API integration for Syner OS — uses the Cache capability from the OS Protocol for ETag-based API response caching.
+GitHub OAuth and API integration. Provides OAuth flow and cached content fetching.
 
-## Important: Interface Source
+## Usage
 
-`@osprotocol/schema` is the single source of truth for all capability interfaces.
-
-Import Cache types from the protocol, NOT from `@syner/sdk`:
+### OAuth
 
 ```typescript
-// Correct
-import type { Cache, CacheEntry, CacheStats } from '@osprotocol/schema/system/data'
+import { createAuthorizationUrl, exchangeCodeForToken } from '@syner/github/oauth'
 
-// Wrong — do not import interfaces from the SDK
-import type { Cache } from '@syner/sdk/system/data/cache'
+// Generate auth URL
+const url = createAuthorizationUrl(config, { origin: 'dev', nonce, returnUrl })
+
+// Exchange code for tokens
+const tokens = await exchangeCodeForToken(config, code)
 ```
 
-## Architecture
+### Content API
 
-This extension uses the `Cache` interface for ETag-based revalidation of GitHub API responses. The cache implementation is injected — the extension doesn't care whether it's in-memory (SDK) or Redis (Upstash).
+```typescript
+import { createGitHubClient, getFileContent } from '@syner/github'
+import { createUpstashCache } from '@syner/upstash/system/data/cache'
 
-Key files:
-- `src/cache/cache.ts` — `getCachedContent()` with ETag revalidation
-- `src/cache/keys.ts` — Cache key generators (`github:content:owner/repo:ref:path`)
-- `src/api/content.ts` — GitHub Content API with caching
+const cache = createUpstashCache()
+const client = createGitHubClient({ accessToken })
 
-## Verification
-
-After updating imports, run:
-
-```bash
-bunx turbo run typecheck --filter=@syner/github
+const file = await getFileContent({
+  client,
+  cache,
+  owner: 'synerops',
+  repo: 'syner',
+  path: 'README.md',
+})
+// Returns: { content, sha, path, encoding }
 ```
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/oauth/client.ts` | `createAuthorizationUrl`, `exchangeCodeForToken` |
+| `src/api/client.ts` | `createGitHubClient` with rate limit handling |
+| `src/api/content.ts` | `getFileContent` with ETag caching |
+| `src/cache/cache.ts` | `getCachedContent` revalidation logic |
+
+## Environment
+
+Requires `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` for OAuth.

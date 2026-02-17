@@ -2,6 +2,24 @@
 
 Upstash Redis integration for Syner OS. Provides a distributed cache implementation with efficient Set-based invalidation.
 
+## Overview
+
+This extension provides a distributed `Cache` implementation for Syner OS agents. Agents use the cache to:
+
+- **Store API responses** with ETag/Last-Modified for conditional requests
+- **Bulk invalidate** related entries (e.g., all cache for `owner/repo`) via `invalidationKey` metadata
+- **Reduce rate limit consumption** by returning cached data on 304 Not Modified
+
+The `@syner/github` extension uses this cache for GitHub API responses.
+
+```typescript
+import { createUpstashCache } from '@syner/upstash/system/data/cache'
+import { getFileContent } from '@syner/github'
+
+const cache = createUpstashCache()
+const file = await getFileContent({ client, cache, owner, repo, path })
+```
+
 ## Setup
 
 ### 1. Create an Upstash Redis Database
