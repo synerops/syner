@@ -21,7 +21,8 @@
     "react": "catalog:next16",
     "react-dom": "catalog:next16",
     "sonner": "catalog:ui",
-    "tailwind-merge": "^2.5.4"
+    "tailwind-merge": "^2.5.4",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.15",
