@@ -54,6 +54,8 @@ npm-debug.log*
 !README.md
 !AGENTS.md
 !SYNER.md
+!SKILL.md
 !**/README.md
 !**/AGENTS.md
+!**/SKILL.md
 .env*.local
