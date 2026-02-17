@@ -49,8 +49,9 @@ The SDK re-exports protocol types for convenience, but extensions should always 
 
 ```
 apps/
-├── os/          # Main Syner OS Next.js application
-└── dev/         # Developer hub (syner.dev) - Auth, APIs, Devkit, Docs
+├── os/          # Main Syner OS Next.js application (port 3000)
+├── dev/         # Developer hub (syner.dev) - Auth, APIs, Devkit, Docs (port 3002)
+└── design/      # Design system documentation (port 3003)
 
 packages/
 ├── sdk/         # @syner/sdk - TypeScript OS Protocol implementation
@@ -124,6 +125,24 @@ Version catalogs are defined in root `package.json` under `workspaces.catalogs`:
 
 Usage: `"dependency": "catalog:catalogName"`
 
+## Environment Variables
+
+For `apps/dev` and extensions, copy `.env.example` to `.env.local`:
+
+```bash
+# GitHub OAuth (@syner/github)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# GitHub App - server-to-server
+GITHUB_APP_ID=
+GITHUB_PRIVATE_KEY=
+
+# Upstash Redis (@syner/upstash)
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
 ## External Dependencies
 
 Before implementing agents or modifying SDK core:
@@ -160,11 +179,3 @@ curl -s -X POST http://localhost:3000/api/workflows/routing \
   -d '{"prompt": "Write a function to sort an array"}' | jq .
 ```
 
-## Documentation Hierarchy
-
-Syner uses hierarchical AGENTS.md files:
-- `/AGENTS.md` - Project overview (what is Syner OS)
-- `/apps/*/AGENTS.md` - App-specific rules
-- `/packages/*/AGENTS.md` - Package-specific architecture
-
-Read root first, then navigate to package for implementation details.

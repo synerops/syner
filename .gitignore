@@ -46,13 +46,16 @@ npm-debug.log*
 # apps/workspace
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/skills/
 
 # Planning files (local only)
 *.md
 !README.md
 !AGENTS.md
 !SYNER.md
+!SKILL.md
 !**/README.md
 !**/AGENTS.md
+!**/SKILL.md
 .env*.local
