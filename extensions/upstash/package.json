@@ -1,0 +1,61 @@
+{
+  "name": "@syner/upstash",
+  "description": "Upstash Redis integration for Syner OS",
+  "version": "0.0.0-dev.1",
+  "type": "module",
+  "private": false,
+  "sideEffects": false,
+  "license": "MIT",
+  "prettier": "@syner/prettier",
+  "author": {
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "extensions/upstash"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./system/data/cache": {
+      "types": "./src/system/data/cache/index.d.ts",
+      "import": "./dist/system/data/cache.js",
+      "require": "./dist/system/data/cache.cjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "dist",
+    "src/index.d.ts",
+    "src/system/data/cache/index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "clean": "git clean -xdf .cache .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@osprotocol/schema": "catalog:osprotocol",
+    "@upstash/redis": "^1.35.0"
+  },
+  "devDependencies": {
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/bun": "*",
+    "tsup": "^8.5.0",
+    "typescript": "catalog:"
+  }
+}

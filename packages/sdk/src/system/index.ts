@@ -36,4 +36,7 @@ export type {
   Filesystem,
 } from './fs/protocol'
 
+// Data API (cache, storage)
+export * from './data'
+
 export { env } from './env';

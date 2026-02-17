@@ -11,6 +11,10 @@ export * from './lib'
 export type { Sandbox, CreateSandboxOptions, Filesystem } from './system'
 export { env } from './system'
 
+// Data (protocol/system/data/*)
+export type { Cache, CacheEntry, CacheStats } from './system/data'
+export { createMemoryCache, type MemoryCacheOptions } from './system/data'
+
 // Note: Individual skill tools are available via direct imports:
 // import { read } from '@syner/sdk/system/fs/tools'
 // They are placeholders - use extensions like @syner/vercel for actual implementations
