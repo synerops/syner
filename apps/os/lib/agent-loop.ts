@@ -5,7 +5,7 @@
  * Provides hooks for the AI SDK's step callbacks.
  */
 
-import type { StepResult, ToolCallPart, Tool } from 'ai'
+import type { StepResult, ToolCallPart, Tool, TypedToolResult } from 'ai'
 import { env } from '@syner/sdk'
 
 /**
@@ -16,8 +16,8 @@ export interface LoopState {
   stepCount: number
   /** Tool calls made */
   toolCalls: ToolCallPart[]
-  /** Tool results received - using any[] to avoid type conflicts */
-  toolResults: any[]
+  /** Tool results received - typed properly for AI SDK v6 */
+  toolResults: TypedToolResult<Record<string, Tool>>[]
   /** Timestamps for each step */
   timestamps: number[]
   /** Current sandbox ID if any */
@@ -67,26 +67,18 @@ export function readContext(state: LoopState): LoopContext {
  */
 export function validateToolResult(
   toolName: string,
-  result: any
+  result: TypedToolResult<Record<string, Tool>>
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = []
 
-  // Check for error results  
-  // ToolResultPart has a 'content' field that contains the actual result
-  if ('content' in result && result.content) {
-    const content = result.content
-    if (Array.isArray(content)) {
-      // Check if any content part indicates an error
-      for (const part of content) {
-        if (typeof part === 'object' && part !== null && 'error' in part) {
-          errors.push(`Tool ${toolName} returned error: ${(part as any).error}`)
-        }
-      }
-    } else if (typeof content === 'object' && content !== null) {
-      // Single content object
-      const contentObj = content as Record<string, unknown>
-      if (contentObj.error) {
-        errors.push(`Tool ${toolName} returned error: ${contentObj.error}`)
+  // Check for error results in the tool output
+  // TypedToolResult has an 'output' field that contains the actual result
+  if ('output' in result && result.output !== undefined) {
+    const output = result.output
+    if (typeof output === 'object' && output !== null) {
+      const outputObj = output as Record<string, unknown>
+      if (outputObj.error) {
+        errors.push(`Tool ${toolName} returned error: ${outputObj.error}`)
       }
     }
   }
@@ -143,24 +135,12 @@ export function createStepFinishHandler(
         }
 
         // Update sandbox tracking
-        if (result.toolName === 'createSandbox' && 'content' in result && result.content) {
-          const content = result.content
-          // Try to extract sandboxId from content
-          if (Array.isArray(content) && content.length > 0) {
-            const firstContent = content[0]
-            if (typeof firstContent === 'object' && firstContent !== null) {
-              const contentObj = firstContent as Record<string, unknown>
-              if (contentObj.sandboxId) {
-                state.sandboxId = contentObj.sandboxId as string
-                if (verbose) {
-                  console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
-                }
-              }
-            }
-          } else if (typeof content === 'object' && content !== null) {
-            const contentObj = content as Record<string, unknown>
-            if (contentObj.sandboxId) {
-              state.sandboxId = contentObj.sandboxId as string
+        if (result.toolName === 'createSandbox' && 'output' in result && result.output !== undefined) {
+          const output = result.output
+          if (typeof output === 'object' && output !== null) {
+            const outputObj = output as Record<string, unknown>
+            if (outputObj.sandboxId) {
+              state.sandboxId = outputObj.sandboxId as string
               if (verbose) {
                 console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
               }
@@ -171,8 +151,8 @@ export function createStepFinishHandler(
         if (verbose) {
           console.log(`[step ${state.stepCount}] Tool result: ${result.toolName}`)
           // Truncate long results
-          const resultContent = 'content' in result ? result.content : undefined
-          const resultStr = JSON.stringify(resultContent) ?? 'undefined'
+          const resultOutput = 'output' in result ? result.output : undefined
+          const resultStr = JSON.stringify(resultOutput) ?? 'undefined'
           console.log(
             `  Result: ${resultStr.length > 200 ? resultStr.slice(0, 200) + '...' : resultStr}`
           )
