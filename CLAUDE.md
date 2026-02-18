@@ -27,7 +27,7 @@ bunx turbo run lint --filter=dev
 
 ## Architecture
 
-Syner OS is an **Agentic Operating System** implementing the [OS Protocol](https://github.com/synerops/protocol) specification.
+Syner OS is an **Agentic Operating System** implementing the [OS Protocol](https://github.com/synerops/osprotocol) specification.
 
 ### OS Protocol (`@osprotocol/schema`)
 
@@ -37,13 +37,13 @@ The protocol is the single source of truth for all capability interfaces. Publis
 
 ```typescript
 // Correct — import from the protocol
-import type { Cache } from '@osprotocol/schema/system/data'
+import type { Kv } from '@osprotocol/schema/context/kv'
 
 // Wrong — do not import interfaces from the SDK
-import type { Cache } from '@syner/sdk/system/data/cache'
+import type { Kv } from '@syner/sdk/context/kv'
 ```
 
-The SDK re-exports protocol types for convenience, but extensions should always reference the protocol directly. The SDK provides default implementations (e.g., `createMemoryCache`), not the interfaces.
+The SDK re-exports protocol types for convenience, but extensions should always reference the protocol directly. The SDK provides default implementations (e.g., `createMemoryKv`), not the interfaces.
 
 ### Monorepo Structure
 
@@ -60,7 +60,7 @@ packages/
 
 extensions/
 ├── github/      # @syner/github - GitHub OAuth and API integration
-├── upstash/     # @syner/upstash - Upstash Redis integration
+├── upstash/     # @syner/upstash - Upstash Redis KV implementation
 └── vercel/      # @syner/vercel - Vercel sandbox integration
 
 tooling/
@@ -71,47 +71,36 @@ tooling/
 
 ### SDK Architecture (packages/sdk)
 
-The SDK implements the OS Protocol with skills-based architecture:
+The SDK implements the OS Protocol with direct tool implementations:
 
 ```
 src/
 ├── lib/             # Runtime infrastructure (NOT part of protocol)
-│   ├── types.ts     # SkillMetadata, SkillDefinition, LoadedSkill
-│   ├── parser.ts    # Parses .md files (YAML frontmatter)
-│   ├── loader.ts    # Dynamic tool loading
-│   └── discovery.ts # SKILL.md discovery
+│   ├── types.ts     # Runtime types
+│   ├── config.ts    # Configuration
+│   └── security.ts  # Path validation and security
 ├── workflows/       # Workflow pattern implementations
 │   ├── routing.ts         # Classify → delegate
 │   ├── orchestrator-workers.ts
 │   ├── parallelization.ts
 │   └── evaluator-optimizer.ts
 ├── system/          # protocol/system/* (intelligence)
-│   ├── env/         # Environment + sandbox (SKILL.md + tools/)
-│   ├── fs/          # Filesystem operations (SKILL.md + tools/)
-│   ├── preferences/ # User preferences (SKILL.md + tools/)
-│   └── registry/    # Agent registry (SKILL.md + tools/)
+│   ├── env/         # Environment + sandbox
+│   ├── fs/          # Filesystem operations (placeholder)
+│   ├── preferences/ # User preferences (placeholder)
+│   └── registry/    # Agent registry
 ├── context/         # protocol/context/* (data)
-│   ├── memory/      # Session memory (SKILL.md + tools/)
-│   └── documents/   # Document management (SKILL.md + tools/)
+│   ├── kv/          # Key-value store (memory implementation)
+│   ├── memory/      # Session memory
+│   └── documents/   # Document management
 ├── checks/          # protocol/checks/* (verification)
-│   ├── rules/       # Rule validation (SKILL.md + tools/)
-│   └── audit/       # Audit logging (SKILL.md + tools/)
-├── skills/          # protocol/skills/* (meta-agents)
+│   ├── rules/       # Rule validation
+│   └── audit/       # Audit logging
+├── agents/          # Meta-agents for orchestration
 └── runs/            # protocol/runs/*
 ```
 
 **Agent Loop**: `context (read) → actions (execute) → checks (validate) → repeat`
-
-**SKILL.md Format**: Each API has a SKILL.md with YAML frontmatter for discovery:
-```yaml
----
-name: fs
-description: File system operations
-protocol:
-  domain: system
-  api: fs
----
-```
 
 ### Package Catalogs
 
@@ -147,35 +136,27 @@ UPSTASH_REDIS_REST_TOKEN=
 
 Before implementing agents or modifying SDK core:
 ```bash
-curl -s 'https://raw.githubusercontent.com/synerops/protocol/refs/heads/main/AGENTS.md'
+curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/AGENTS.md'
 ```
 
-Before building/modifying UI components:
-```bash
-curl -s 'https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/refs/heads/main/AGENTS.md'
-```
+## Conventions
 
-## Coding Conventions
+### Imports
+- Extensions import interfaces from `@osprotocol/schema`, not SDK
+- Apps import implementations from SDK or extensions
+- Use catalog versions for consistency
 
-### Signed TODOs
-```typescript
-// TODO(@claude): Description of what's pending
-// TODO(@syner): Refactor when we migrate to v2
-```
+### Testing
+- Run `bun run typecheck` before committing
+- Use `bunx turbo run build --filter=<package>` to test specific packages
 
-### Interfaces Over Abstract Classes for Static Members
-TypeScript cannot enforce static overrides. Use interfaces for contracts, document static members by convention.
+### Code Style
+- ESLint and Prettier configs are shared from `/tooling`
+- No console.log in production code (use structured logging when available)
 
-### Testing API Endpoints
-```bash
-# Chat API v1
-curl -s -X POST http://localhost:3000/api/v1/chat \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "Hello"}' | jq .
+## Important Notes
 
-# Routing workflow test
-curl -s -X POST http://localhost:3000/api/workflows/routing \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "Write a function to sort an array"}' | jq .
-```
-
+1. **Protocol is immutable**: Never modify interfaces from `@osprotocol/schema`
+2. **SDK provides defaults**: Extensions replace SDK implementations
+3. **Direct tool loading**: No discovery system, tools are loaded directly
+4. **KV not Cache**: Use Kv interface from OSP, not legacy Cache

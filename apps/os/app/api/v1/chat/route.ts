@@ -2,7 +2,7 @@
  * Chat API v1
  *
  * Main chat endpoint with complete agent loop implementation.
- * Syner has identity, dynamic skills, and context → actions → checks pattern.
+ * Syner has identity, tools, and context → actions → checks pattern.
  */
 
 import { generateText, stepCountIs } from 'ai'

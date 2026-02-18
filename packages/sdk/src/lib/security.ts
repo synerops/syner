@@ -126,7 +126,7 @@ export function validateImportPath(importPath: string, projectRoot: string): voi
 }
 
 /**
- * Check if a path is within the allowed skill paths
+ * Check if a path is within the allowed paths
  *
  * @param targetPath - The path to check
  * @param allowedPaths - Array of allowed base paths
@@ -148,7 +148,7 @@ export function isWithinAllowedPaths(
 }
 
 /**
- * Assert that a path is within the allowed skill paths
+ * Assert that a path is within the allowed paths
  *
  * @throws SecurityError if the path is not within any allowed path
  */
@@ -159,7 +159,7 @@ export function assertWithinAllowedPaths(
 ): void {
   if (!isWithinAllowedPaths(targetPath, allowedPaths, projectRoot)) {
     throw new SecurityError(
-      `Path not in allowed skill paths: ${targetPath}. Allowed: ${allowedPaths.join(', ')}`,
+      `Path not in allowed paths: ${targetPath}. Allowed: ${allowedPaths.join(', ')}`,
       'PATH_NOT_ALLOWED'
     )
   }
