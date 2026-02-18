@@ -5,7 +5,7 @@
  * Provides hooks for the AI SDK's step callbacks.
  */
 
-import type { StepResult, ToolCallPart, ToolResultPart } from 'ai'
+import type { StepResult, ToolCallPart, Tool } from 'ai'
 import { env } from '@syner/sdk'
 
 /**
@@ -16,8 +16,8 @@ export interface LoopState {
   stepCount: number
   /** Tool calls made */
   toolCalls: ToolCallPart[]
-  /** Tool results received */
-  toolResults: ToolResultPart[]
+  /** Tool results received - using any[] to avoid type conflicts */
+  toolResults: any[]
   /** Timestamps for each step */
   timestamps: number[]
   /** Current sandbox ID if any */
@@ -67,15 +67,27 @@ export function readContext(state: LoopState): LoopContext {
  */
 export function validateToolResult(
   toolName: string,
-  result: ToolResultPart
+  result: any
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = []
 
-  // Check for error results
-  if (typeof result.result === 'object' && result.result !== null) {
-    const resultObj = result.result as Record<string, unknown>
-    if (resultObj.error) {
-      errors.push(`Tool ${toolName} returned error: ${resultObj.error}`)
+  // Check for error results  
+  // ToolResultPart has a 'content' field that contains the actual result
+  if ('content' in result && result.content) {
+    const content = result.content
+    if (Array.isArray(content)) {
+      // Check if any content part indicates an error
+      for (const part of content) {
+        if (typeof part === 'object' && part !== null && 'error' in part) {
+          errors.push(`Tool ${toolName} returned error: ${(part as any).error}`)
+        }
+      }
+    } else if (typeof content === 'object' && content !== null) {
+      // Single content object
+      const contentObj = content as Record<string, unknown>
+      if (contentObj.error) {
+        errors.push(`Tool ${toolName} returned error: ${contentObj.error}`)
+      }
     }
   }
 
@@ -98,7 +110,7 @@ export function createStepFinishHandler(
 ) {
   const { verbose = false } = options
 
-  return async (step: StepResult<Record<string, unknown>>): Promise<void> => {
+  return async (step: StepResult<Record<string, Tool>>): Promise<void> => {
     state.stepCount++
     state.timestamps.push(Date.now())
 
@@ -109,7 +121,9 @@ export function createStepFinishHandler(
 
         if (verbose) {
           console.log(`[step ${state.stepCount}] Tool call: ${toolCall.toolName}`)
-          console.log(`  Args: ${JSON.stringify(toolCall.args)}`)
+          // TypedToolCall might have 'input' or 'args' depending on the type
+          const args = 'args' in toolCall ? toolCall.args : 'input' in toolCall ? toolCall.input : {}
+          console.log(`  Args: ${JSON.stringify(args)}`)
         }
       }
     }
@@ -129,12 +143,27 @@ export function createStepFinishHandler(
         }
 
         // Update sandbox tracking
-        if (result.toolName === 'createSandbox' && typeof result.result === 'object') {
-          const resultObj = result.result as Record<string, unknown>
-          if (resultObj.sandboxId) {
-            state.sandboxId = resultObj.sandboxId as string
-            if (verbose) {
-              console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
+        if (result.toolName === 'createSandbox' && 'content' in result && result.content) {
+          const content = result.content
+          // Try to extract sandboxId from content
+          if (Array.isArray(content) && content.length > 0) {
+            const firstContent = content[0]
+            if (typeof firstContent === 'object' && firstContent !== null) {
+              const contentObj = firstContent as Record<string, unknown>
+              if (contentObj.sandboxId) {
+                state.sandboxId = contentObj.sandboxId as string
+                if (verbose) {
+                  console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
+                }
+              }
+            }
+          } else if (typeof content === 'object' && content !== null) {
+            const contentObj = content as Record<string, unknown>
+            if (contentObj.sandboxId) {
+              state.sandboxId = contentObj.sandboxId as string
+              if (verbose) {
+                console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
+              }
             }
           }
         }
@@ -142,7 +171,8 @@ export function createStepFinishHandler(
         if (verbose) {
           console.log(`[step ${state.stepCount}] Tool result: ${result.toolName}`)
           // Truncate long results
-          const resultStr = JSON.stringify(result.result) ?? 'undefined'
+          const resultContent = 'content' in result ? result.content : undefined
+          const resultStr = JSON.stringify(resultContent) ?? 'undefined'
           console.log(
             `  Result: ${resultStr.length > 200 ? resultStr.slice(0, 200) + '...' : resultStr}`
           )

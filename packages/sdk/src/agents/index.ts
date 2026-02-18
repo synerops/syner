@@ -1,3 +1,11 @@
+/**
+ * Agent exports
+ */
+
+// Protocol types
+export type { Agent, Annotations, Metadata } from './protocol'
+
+// Meta-agents (commented out until implemented)
 // // Orchestrator
 // export { DefaultOrchestrator } from "./orchestrator"
 // export type {
