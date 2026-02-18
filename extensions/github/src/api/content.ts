@@ -1,10 +1,10 @@
 /**
- * GitHub Content API
+ * GitHub Content API with KV Store
  *
- * File content retrieval with ETag caching.
+ * File content retrieval with ETag caching using OSP KV interface.
  */
 
-import type { Cache } from '@osprotocol/schema/system/data'
+import type { Kv } from '@osprotocol/schema/context/kv'
 import type { GitHubClient } from './client'
 import {
   contentCacheKey,
@@ -14,7 +14,7 @@ import {
 
 export interface GetFileContentOptions {
   client: GitHubClient
-  cache: Cache
+  kv: Kv
   owner: string
   repo: string
   path: string
@@ -30,7 +30,7 @@ export interface FileContent {
 }
 
 /**
- * Get file content with ETag caching.
+ * Get file content with ETag caching using KV store.
  *
  * Uses conditional requests (If-None-Match) to avoid
  * rate limit consumption when content hasn't changed.
@@ -42,7 +42,7 @@ export interface FileContent {
  * ```ts
  * const file = await getFileContent({
  *   client,
- *   cache,
+ *   kv,
  *   owner: 'synerops',
  *   repo: 'syner',
  *   path: 'README.md',
@@ -57,11 +57,11 @@ export interface FileContent {
 export async function getFileContent(
   options: GetFileContentOptions
 ): Promise<FileContent | null> {
-  const { client, cache, owner, repo, path, ref = 'HEAD' } = options
+  const { client, kv, owner, repo, path, ref = 'HEAD' } = options
   const key = contentCacheKey(owner, repo, ref, path)
 
   return getCachedContent<FileContent>(
-    { cache, invalidationKey: `${owner}/${repo}` },
+    { kv, invalidationKey: `${owner}/${repo}` },
     key,
     async (etag?: string) => {
       try {
@@ -102,25 +102,28 @@ export async function getFileContent(
 
         return result
       } catch (error: unknown) {
-        // 304 Not Modified - return null to signal "use cached"
-        if (isHttpError(error, 304)) {
+        // 304 Not Modified
+        if (
+          typeof error === 'object' &&
+          error !== null &&
+          'status' in error &&
+          error.status === 304
+        ) {
+          return null // Use cached
+        }
+
+        // 404 Not Found
+        if (
+          typeof error === 'object' &&
+          error !== null &&
+          'status' in error &&
+          error.status === 404
+        ) {
           return null
         }
-        // 404 Not Found - file doesn't exist
-        if (isHttpError(error, 404)) {
-          return null
-        }
+
         throw error
       }
     }
-  )
-}
-
-function isHttpError(error: unknown, status: number): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'status' in error &&
-    (error as { status: number }).status === status
   )
 }

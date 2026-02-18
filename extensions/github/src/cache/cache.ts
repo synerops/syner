@@ -1,11 +1,11 @@
 /**
- * GitHub Cached Fetch
+ * GitHub Cached Fetch with KV Store
  *
- * ETag-based cache revalidation for GitHub API requests.
+ * ETag-based cache revalidation for GitHub API requests using OSP KV interface.
  * Optimizes rate limit usage by returning cached data on 304 Not Modified.
  */
 
-import type { Cache } from '@osprotocol/schema/system/data'
+import type { Kv } from '@osprotocol/schema/context/kv'
 
 /** Default TTL: 30 days in seconds */
 const DEFAULT_TTL = 30 * 24 * 60 * 60
@@ -20,10 +20,21 @@ export interface CachedFetchResult<T> {
 }
 
 /**
+ * Cached data structure stored in KV
+ */
+interface CachedData<T> {
+  data: T
+  etag?: string
+  lastModified?: string
+  invalidationKey?: string
+  cachedAt: number
+}
+
+/**
  * Options for cached fetch operations
  */
 export interface CachedFetchOptions {
-  cache: Cache
+  kv: Kv
   /** TTL in seconds (default: 30 days) */
   ttl?: number
   /** Key for bulk invalidation (e.g., "owner/repo" for GitHub) */
@@ -31,16 +42,16 @@ export interface CachedFetchOptions {
 }
 
 /**
- * Fetch with ETag-based cache revalidation.
+ * Fetch with ETag-based cache revalidation using KV store.
  *
  * Flow:
- * 1. Check cache for existing entry
+ * 1. Check KV store for existing entry
  * 2. If cached, make conditional request with If-None-Match
  * 3. On 304 Not Modified, return cached data (no rate limit cost)
  * 4. On 200, update cache and return new data
  * 5. On cache miss, fetch fresh and cache
  *
- * @param options - Cache options (cache instance and TTL)
+ * @param options - Cache options (KV instance and TTL)
  * @param key - Cache key
  * @param fetcher - Function that performs the API request
  *   - Receives optional ETag for conditional request
@@ -50,7 +61,7 @@ export interface CachedFetchOptions {
  * @example
  * ```ts
  * const data = await getCachedContent(
- *   { cache },
+ *   { kv },
  *   'github:content:owner/repo:main:README.md',
  *   async (etag) => {
  *     const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
@@ -70,35 +81,30 @@ export async function getCachedContent<T>(
   key: string,
   fetcher: (etag?: string) => Promise<CachedFetchResult<T> | null>
 ): Promise<T | null> {
-  const { cache, ttl = DEFAULT_TTL, invalidationKey } = options
+  const { kv, ttl = DEFAULT_TTL, invalidationKey } = options
 
-  // Build metadata for cache entry
-  const metadata = invalidationKey ? { invalidationKey } : undefined
-
-  // Check cache for existing entry
-  const cached = await cache.get<T>(key)
+  // Check KV store for existing entry
+  const cached = await kv.get<CachedData<T>>(key)
 
   if (cached) {
     // Try revalidation with ETag
-    const result = await fetcher(cached.etag)
+    const result = await fetcher(cached.value.etag)
 
     if (result === null) {
       // 304 Not Modified - return cached data
-      return cached.data
+      return cached.value.data
     }
 
     // New content - update cache
-    await cache.set(
-      key,
-      {
-        data: result.data,
-        etag: result.etag,
-        lastModified: result.lastModified,
-        metadata,
-      },
-      ttl
-    )
-
+    const newData: CachedData<T> = {
+      data: result.data,
+      etag: result.etag,
+      lastModified: result.lastModified,
+      invalidationKey,
+      cachedAt: Date.now(),
+    }
+    
+    await kv.set(key, newData)
     return result.data
   }
 
@@ -106,20 +112,44 @@ export async function getCachedContent<T>(
   const result = await fetcher()
 
   if (result) {
-    await cache.set(
-      key,
-      {
-        data: result.data,
-        etag: result.etag,
-        lastModified: result.lastModified,
-        metadata,
-      },
-      ttl
-    )
+    const newData: CachedData<T> = {
+      data: result.data,
+      etag: result.etag,
+      lastModified: result.lastModified,
+      invalidationKey,
+      cachedAt: Date.now(),
+    }
+    
+    await kv.set(key, newData)
     return result.data
   }
 
   return null
+}
+
+/**
+ * Invalidate all cache entries matching an invalidation key pattern.
+ * 
+ * @param kv - KV store instance
+ * @param pattern - Invalidation key pattern (e.g., "owner/repo")
+ * @returns Number of entries invalidated
+ */
+export async function invalidateCache(
+  kv: Kv,
+  pattern: string
+): Promise<number> {
+  // List all keys matching the pattern
+  const keys = await kv.list(`github:${pattern}`)
+  
+  // Remove all matching keys
+  let count = 0
+  for (const key of keys) {
+    if (await kv.remove(key)) {
+      count++
+    }
+  }
+  
+  return count
 }
 
 /**

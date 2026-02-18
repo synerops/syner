@@ -9,7 +9,7 @@ import { generateText, stepCountIs } from 'ai'
 import { NextResponse } from 'next/server'
 import { env } from '@syner/sdk'
 import { loadSynerIdentity, buildSystemPrompt } from '../../../../lib/identity'
-import { initializeSkills } from '../../../../lib/skills'
+import { getTools, getToolDescriptions } from '../../../../lib/tools'
 import {
   createLoopState,
   createStepFinishHandler,
@@ -40,15 +40,15 @@ export async function POST(req: Request) {
       console.log('[chat] Loaded identity:', identity.agent.metadata.name)
     }
 
-    // 2. Initialize skills and tools
-    const { tools, descriptions, loadedSkills } = await initializeSkills()
+    // 2. Get tools
+    const tools = getTools()
+    const descriptions = getToolDescriptions()
 
     if (verbose) {
-      console.log('[chat] Loaded skills:', loadedSkills.map((s) => s.definition.metadata.name))
       console.log('[chat] Available tools:', Object.keys(tools))
     }
 
-    // 3. Build system prompt with identity and skills
+    // 3. Build system prompt with identity and tools
     const system = buildSystemPrompt(identity, descriptions)
 
     if (verbose) {

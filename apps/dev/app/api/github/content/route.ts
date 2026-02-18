@@ -2,16 +2,20 @@
  * GitHub Content API
  *
  * Fetches file content from GitHub repositories using the authenticated user's token.
- * Uses in-memory cache with ETag revalidation.
+ * Uses in-memory KV store with ETag revalidation.
  */
 
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { createMemoryCache } from '@syner/sdk/system/data/cache'
+import { createMemoryKv } from '@syner/sdk'
 import { createGitHubClient, getFileContent } from '@syner/github'
 
-// In-memory cache instance (shared across requests in the same process)
-const cache = createMemoryCache({ maxSize: 100 })
+// In-memory KV instance (shared across requests in the same process)
+const kv = createMemoryKv({ maxSize: 100 })
+
+// Stats tracking (since KV doesn't have built-in stats)
+let hits = 0
+let misses = 0
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -39,9 +43,19 @@ export async function GET(request: Request) {
 
   try {
     const client = createGitHubClient({ accessToken })
+    
+    // Track cache hits/misses
+    const cacheKey = `github:content:${owner}/${repo}:${ref}:${path}`
+    const cached = await kv.get(cacheKey)
+    if (cached) {
+      hits++
+    } else {
+      misses++
+    }
+    
     const file = await getFileContent({
       client,
-      cache,
+      kv,
       owner,
       repo,
       path,
@@ -55,17 +69,17 @@ export async function GET(request: Request) {
       )
     }
 
-    // Return file content and cache stats for debugging
-    const stats = await cache.stats()
+    // Get approximate cache size
+    const keys = await kv.list()
 
     return NextResponse.json({
       content: file.content,
       sha: file.sha,
       path: file.path,
       cache: {
-        hits: stats.hits,
-        misses: stats.misses,
-        size: stats.size,
+        hits,
+        misses,
+        size: keys.length,
       },
     })
   } catch (error) {

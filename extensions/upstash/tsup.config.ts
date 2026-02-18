@@ -5,7 +5,7 @@ import { defineConfig } from 'tsup'
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
-    'system/data/cache': 'src/system/data/cache/index.ts',
+    'context/kv': 'src/context/kv/index.ts',
   },
   format: ['cjs', 'esm'],
   // DTS disabled - manual type declarations provided in src/*.d.ts

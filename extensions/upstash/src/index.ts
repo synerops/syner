@@ -2,7 +2,7 @@
  * @syner/upstash
  *
  * Upstash Redis integration for Syner OS.
- * Provides distributed caching with Set-based invalidation.
+ * Provides KV store implementation using Redis.
  */
 
-export * from './system/data/cache'
+export * from './context/kv'
