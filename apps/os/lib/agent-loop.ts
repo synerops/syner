@@ -5,7 +5,7 @@
  * Provides hooks for the AI SDK's step callbacks.
  */
 
-import type { StepResult, ToolCallPart, ToolResultPart } from 'ai'
+import type { StepResult, ToolCallPart, Tool, TypedToolResult } from 'ai'
 import { env } from '@syner/sdk'
 
 /**
@@ -16,8 +16,8 @@ export interface LoopState {
   stepCount: number
   /** Tool calls made */
   toolCalls: ToolCallPart[]
-  /** Tool results received */
-  toolResults: ToolResultPart[]
+  /** Tool results received - typed properly for AI SDK v6 */
+  toolResults: TypedToolResult<Record<string, Tool>>[]
   /** Timestamps for each step */
   timestamps: number[]
   /** Current sandbox ID if any */
@@ -67,15 +67,19 @@ export function readContext(state: LoopState): LoopContext {
  */
 export function validateToolResult(
   toolName: string,
-  result: ToolResultPart
+  result: TypedToolResult<Record<string, Tool>>
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = []
 
-  // Check for error results
-  if (typeof result.result === 'object' && result.result !== null) {
-    const resultObj = result.result as Record<string, unknown>
-    if (resultObj.error) {
-      errors.push(`Tool ${toolName} returned error: ${resultObj.error}`)
+  // Check for error results in the tool output
+  // TypedToolResult has an 'output' field that contains the actual result
+  if ('output' in result && result.output !== undefined) {
+    const output = result.output
+    if (typeof output === 'object' && output !== null) {
+      const outputObj = output as Record<string, unknown>
+      if (outputObj.error) {
+        errors.push(`Tool ${toolName} returned error: ${outputObj.error}`)
+      }
     }
   }
 
@@ -98,7 +102,7 @@ export function createStepFinishHandler(
 ) {
   const { verbose = false } = options
 
-  return async (step: StepResult<Record<string, unknown>>): Promise<void> => {
+  return async (step: StepResult<Record<string, Tool>>): Promise<void> => {
     state.stepCount++
     state.timestamps.push(Date.now())
 
@@ -109,7 +113,9 @@ export function createStepFinishHandler(
 
         if (verbose) {
           console.log(`[step ${state.stepCount}] Tool call: ${toolCall.toolName}`)
-          console.log(`  Args: ${JSON.stringify(toolCall.args)}`)
+          // TypedToolCall might have 'input' or 'args' depending on the type
+          const args = 'args' in toolCall ? toolCall.args : 'input' in toolCall ? toolCall.input : {}
+          console.log(`  Args: ${JSON.stringify(args)}`)
         }
       }
     }
@@ -129,12 +135,15 @@ export function createStepFinishHandler(
         }
 
         // Update sandbox tracking
-        if (result.toolName === 'createSandbox' && typeof result.result === 'object') {
-          const resultObj = result.result as Record<string, unknown>
-          if (resultObj.sandboxId) {
-            state.sandboxId = resultObj.sandboxId as string
-            if (verbose) {
-              console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
+        if (result.toolName === 'createSandbox' && 'output' in result && result.output !== undefined) {
+          const output = result.output
+          if (typeof output === 'object' && output !== null) {
+            const outputObj = output as Record<string, unknown>
+            if (outputObj.sandboxId) {
+              state.sandboxId = outputObj.sandboxId as string
+              if (verbose) {
+                console.log(`[step ${state.stepCount}] Sandbox created: ${state.sandboxId}`)
+              }
             }
           }
         }
@@ -142,7 +151,8 @@ export function createStepFinishHandler(
         if (verbose) {
           console.log(`[step ${state.stepCount}] Tool result: ${result.toolName}`)
           // Truncate long results
-          const resultStr = JSON.stringify(result.result) ?? 'undefined'
+          const resultOutput = 'output' in result ? result.output : undefined
+          const resultStr = JSON.stringify(resultOutput) ?? 'undefined'
           console.log(
             `  Result: ${resultStr.length > 200 ? resultStr.slice(0, 200) + '...' : resultStr}`
           )

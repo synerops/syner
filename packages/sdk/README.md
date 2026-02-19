@@ -2,7 +2,7 @@
 
 ## What is @syner/sdk?
 
-The SDK is the TypeScript implementation of the [OS Protocol](https://github.com/synerops/protocol) specification. It provides the building blocks for creating AI agents that operate within a structured, predictable framework.
+The SDK is the TypeScript implementation of the [OS Protocol](https://github.com/synerops/osprotocol) specification. It provides the building blocks for creating AI agents that operate within a structured, predictable framework.
 
 The SDK sits in the middle layer of the architecture: Protocol defines the contracts, SDK provides default implementations, and Extensions replace specific capabilities with vendor integrations.
 
@@ -15,11 +15,14 @@ bun add @syner/sdk
 ## Usage
 
 ```typescript
-import { Routing, env, createMemoryCache } from '@syner/sdk'
-import { discoverSkills } from '@syner/sdk/lib'
+import { Routing, env, createMemoryKv } from '@syner/sdk'
 
-// Discover available skills
-const skills = await discoverSkills('./skills')
+// Create in-memory KV store
+const kv = createMemoryKv({ maxSize: 100 })
+
+// Store and retrieve data
+await kv.set('user:123', { name: 'Alice' })
+const user = await kv.get('user:123')
 
 // Create a routing workflow
 const router = new Routing({
@@ -45,23 +48,21 @@ const result = await router.run('I need help with my account')
 | `Parallelization` | Split into subtasks, run in parallel, merge |
 | `EvaluatorOptimizer` | Generate, evaluate, iteratively improve |
 
-### Data
+### KV Store
 
 | Function | Purpose |
 |----------|---------|
-| `createMemoryCache()` | In-memory cache with LRU eviction |
+| `createMemoryKv()` | In-memory KV store with LRU eviction |
+
+### Environment
+
+| Function | Purpose |
+|----------|---------|
 | `env.getSandbox()` | Get current sandbox from environment |
-
-### Skills
-
-| Function | Purpose |
-|----------|---------|
-| `discoverSkills(path)` | Find SKILL.md files recursively |
-| `parseSkillFile(content)` | Parse YAML frontmatter from skill |
-| `loadSkillTools(skill)` | Dynamically load skill's tools |
+| `env.setSandbox()` | Set sandbox in environment |
 
 ## Related
 
-- [OS Protocol](https://github.com/synerops/protocol) - The specification
-- [@syner/upstash](../../extensions/upstash) - Distributed cache implementation
+- [OS Protocol](https://github.com/synerops/osprotocol) - The specification
+- [@syner/upstash](../../extensions/upstash) - Distributed KV implementation
 - [@syner/vercel](../../extensions/vercel) - Sandbox implementation

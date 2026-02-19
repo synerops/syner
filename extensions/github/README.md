@@ -1,21 +1,23 @@
 # @syner/github
 
-GitHub OAuth and API integration for Syner OS. Enables users to connect their GitHub account and provides cached access to repository content.
+GitHub OAuth and API integration for Syner OS. Enables users to connect their GitHub account and provides KV-cached access to repository content.
 
 ## Overview
 
 This extension provides two main capabilities for Syner OS agents:
 
 1. **OAuth Flow**: Connect users' GitHub accounts via syner.dev
-2. **Content API**: Read repository files with ETag-based caching
+2. **Content API**: Read repository files with ETag-based caching using KV store
 
 Agents use this to fetch markdown files from GitHub while respecting rate limits through intelligent caching.
 
 ```typescript
 import { createGitHubClient, getFileContent } from '@syner/github'
+import { createUpstashKv } from '@syner/upstash/context/kv'
 
 const client = createGitHubClient({ accessToken })
-const file = await getFileContent({ client, cache, owner, repo, path })
+const kv = createUpstashKv()
+const file = await getFileContent({ client, kv, owner, repo, path })
 ```
 
 ## Setup
@@ -61,14 +63,14 @@ bun add @syner/github
 | Function | Description |
 |----------|-------------|
 | `createGitHubClient(options)` | Create Octokit client with rate limiting |
-| `getFileContent(options)` | Fetch file with ETag caching |
+| `getFileContent(options)` | Fetch file with ETag caching via KV |
 
-### Cache Utilities
+### KV Cache Utilities
 
 | Function | Description |
 |----------|-------------|
-| `contentCacheKey(owner, repo, ref, path)` | Generate cache key |
-| `getCachedContent(options, key, fetcher)` | ETag revalidation wrapper |
+| `contentCacheKey(owner, repo, ref, path)` | Generate KV key |
+| `getCachedContent(options, key, fetcher)` | ETag revalidation with KV |
 
 ## License
 

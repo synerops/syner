@@ -1,23 +1,23 @@
 # @syner/upstash
 
-Upstash Redis integration for Syner OS. Provides a distributed cache implementation with efficient Set-based invalidation.
+Upstash Redis integration for Syner OS. Provides a distributed KV (Key-Value) store implementation following the OS Protocol.
 
 ## Overview
 
-This extension provides a distributed `Cache` implementation for Syner OS agents. Agents use the cache to:
+This extension provides a distributed `Kv` implementation for Syner OS agents using Upstash Redis. Agents use the KV store to:
 
-- **Store API responses** with ETag/Last-Modified for conditional requests
-- **Bulk invalidate** related entries (e.g., all cache for `owner/repo`) via `invalidationKey` metadata
-- **Reduce rate limit consumption** by returning cached data on 304 Not Modified
+- **Store and retrieve data** by key with automatic expiration
+- **List keys** by prefix for efficient querying
+- **Cache API responses** with metadata for conditional requests
 
-The `@syner/github` extension uses this cache for GitHub API responses.
+The `@syner/github` extension uses this KV store for GitHub API response caching.
 
 ```typescript
-import { createUpstashCache } from '@syner/upstash/system/data/cache'
+import { createUpstashKv } from '@syner/upstash/context/kv'
 import { getFileContent } from '@syner/github'
 
-const cache = createUpstashCache()
-const file = await getFileContent({ client, cache, owner, repo, path })
+const kv = createUpstashKv()
+const file = await getFileContent({ client, kv, owner, repo, path })
 ```
 
 ## Setup
@@ -52,91 +52,86 @@ UPSTASH_REDIS_REST_TOKEN=your-token-here
 bun add @syner/upstash
 ```
 
-> **Vercel Users**: You can use the [Upstash Integration](https://vercel.com/integrations/upstash) to automatically provision a database and inject environment variables into your project.
-
 ## Usage
 
+### Basic KV Operations
+
 ```typescript
-import { createUpstashCache } from '@syner/upstash/system/data/cache'
+import { createUpstashKv } from '@syner/upstash/context/kv'
 
-const cache = createUpstashCache()
+const kv = createUpstashKv()
 
-// Store a cache entry
-await cache.set('github:content:owner/repo:main:README.md', {
-  data: { content: '# Hello' },
-  etag: '"abc123"',
-  metadata: { invalidationKey: 'owner/repo' },
+// Store a value
+await kv.set('user:123', { 
+  name: 'Alice', 
+  role: 'admin' 
 })
 
-// Retrieve
-const entry = await cache.get('github:content:owner/repo:main:README.md')
+// Retrieve a value
+const entry = await kv.get('user:123')
+console.log(entry?.value) // { name: 'Alice', role: 'admin' }
 
-// Invalidate all entries for a repo (uses Set-based index)
-const count = await cache.invalidate('owner/repo')
+// Remove a value
+const removed = await kv.remove('user:123')
+console.log(removed) // true if existed
 
-// Check stats
-const stats = await cache.stats()
-console.log(`Hits: ${stats.hits}, Misses: ${stats.misses}`)
+// List keys by prefix
+const userKeys = await kv.list('user:')
+console.log(userKeys) // ['user:123', 'user:456', ...]
 ```
 
-### Custom Redis Client
+### Advanced Configuration
 
 ```typescript
+import { createUpstashKv } from '@syner/upstash/context/kv'
 import { Redis } from '@upstash/redis'
-import { createUpstashCache } from '@syner/upstash/system/data/cache'
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-})
-
-const cache = createUpstashCache({
-  redis,
-  defaultTtl: 60 * 60 * 24, // 1 day
-  prefix: 'myapp:cache:',
+const kv = createUpstashKv({
+  redis: new Redis({ /* custom config */ }),
+  defaultTtl: 60 * 60, // 1 hour in seconds
+  prefix: 'myapp:kv:', // Custom key prefix
 })
 ```
 
-## API
+## API Reference
 
-### `createUpstashCache(options?)`
+### `createUpstashKv(options?)`
 
-Creates a `Cache` instance backed by Upstash Redis.
+Creates a `Kv` instance backed by Upstash Redis implementing the OS Protocol KV interface.
 
-**Options:**
+#### Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `redis` | `Redis` | `Redis.fromEnv()` | Upstash Redis client |
+| `redis` | `Redis` | `Redis.fromEnv()` | Custom Redis client instance |
 | `defaultTtl` | `number` | `2592000` (30 days) | Default TTL in seconds |
-| `prefix` | `string` | `"cache:"` | Key prefix for all entries |
+| `prefix` | `string` | `"kv:"` | Key prefix for all entries |
 
-### Cache Methods
+### KV Methods
 
 | Method | Description |
 |--------|-------------|
-| `get<T>(key)` | Get a cache entry |
-| `set<T>(key, entry, ttl?)` | Store an entry |
-| `delete(key)` | Delete an entry |
-| `has(key)` | Check if key exists |
-| `invalidate(pattern)` | Invalidate by key or glob pattern |
-| `stats()` | Get cache statistics |
+| `get<T>(key)` | Get a value by key |
+| `set<T>(key, value)` | Store a value (create or update) |
+| `remove(key)` | Remove an entry |
+| `list(prefix?)` | List keys matching a prefix |
 
-## Invalidation Strategy
+## Implementation Details
 
-The cache uses Set-based indexing for efficient invalidation:
+The KV store uses Redis with automatic expiration:
 
-1. **Fast path**: When `metadata.invalidationKey` is provided, entries are indexed in a Redis Set
-2. **Invalidation**: `cache.invalidate('owner/repo')` looks up the Set and deletes all indexed keys
-3. **Slow path**: Glob patterns (containing `*` or `?`) fall back to SCAN
+1. **Storage**: Values are JSON-serialized and stored with expiration
+2. **Metadata**: Each entry includes creation time and expiration in metadata
+3. **Prefix filtering**: `list()` uses Redis SCAN for efficient prefix queries
 
-### Redis Key Structure
+### Key Structure
 
 ```
-cache:{key}              → JSON-serialized CacheEntry
-cache:index:{invKey}     → Set of cache keys with that invalidationKey
+kv:{key}              → JSON-serialized KvEntry
 ```
 
-## License
+## Related
 
-MIT
+- [@syner/sdk](../../packages/sdk) - Core SDK with in-memory KV implementation
+- [@syner/github](../github) - GitHub integration that uses KV for caching
+- [OS Protocol](https://github.com/synerops/osprotocol) - Protocol specification

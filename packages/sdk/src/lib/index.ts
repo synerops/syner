@@ -4,12 +4,7 @@
 
 // Types
 export type {
-  ProtocolDomain,
-  SkillMetadata,
-  SkillDefinition,
-  LoadedSkill,
   ToolResult,
-  SkillRegistryEntry,
   RuntimeConfig,
 } from './types'
 
@@ -27,18 +22,4 @@ export {
   assertWithinAllowedPaths,
 } from './security'
 
-// Runtime
-export {
-  discoverSkills,
-  discoverSkillsByDomain,
-  discoverSkillsAuto,
-  parseSkillFile,
-  parseSkillContent,
-  loadSkill,
-  loadSkillFromRegistry,
-  loadSkills,
-  loadSkillsSecure,
-  getToolsFromSkills,
-  getToolsBySkill,
-  type LoadToolsOptions,
-} from './runtime'
+// Runtime - removed (SKILL.md no longer exists in OSP)

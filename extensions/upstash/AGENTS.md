@@ -1,33 +1,36 @@
 # @syner/upstash
 
-Upstash Redis cache implementing `Cache` from `@osprotocol/schema/system/data`.
+Upstash Redis KV store implementing `Kv` from `@osprotocol/schema/context/kv`.
 
 ## Usage
 
 ```typescript
-import { createUpstashCache } from '@syner/upstash/system/data/cache'
+import { createUpstashKv } from '@syner/upstash/context/kv'
 
-const cache = createUpstashCache()
+const kv = createUpstashKv()
 
-// Set with invalidation key for bulk invalidation
-await cache.set('github:content:owner/repo:main:README.md', {
-  data: { content: '# Hello' },
-  metadata: { invalidationKey: 'owner/repo' },
+// Set a value
+await kv.set('user:123', { 
+  name: 'Alice',
+  role: 'admin' 
 })
 
-// Get
-const entry = await cache.get<MyType>('my-key')
+// Get a value
+const entry = await kv.get<User>('user:123')
 
-// Invalidate all entries for a repo
-await cache.invalidate('owner/repo')
+// Remove a value
+await kv.remove('user:123')
+
+// List keys by prefix
+const userKeys = await kv.list('user:')
 ```
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `src/system/data/cache/upstash.ts` | `createUpstashCache()` implementation |
-| `src/system/data/cache/index.ts` | Exports |
+| `src/context/kv/upstash.ts` | `createUpstashKv()` implementation |
+| `src/context/kv/index.ts` | Exports |
 
 ## Environment
 

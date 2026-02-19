@@ -19,8 +19,8 @@ app/
 │   └── workflows/         # Workflow test endpoints
 │       └── routing/       # Routing classification test
 └── lib/
-    ├── identity.ts        # Load agent identity (AGENT.md, PERSONALITY.md, RULES.md)
-    ├── skills.ts          # Skill discovery and tool loading
+    ├── identity.ts        # Load agent identity (PERSONALITY.md, RULES.md)
+    ├── tools.ts           # Direct tool loading
     └── agent-loop.ts      # Loop state and step handlers
 ```
 
@@ -48,8 +48,8 @@ curl -s -X POST http://localhost:3000/api/workflows/routing \
 
 The chat endpoint implements the OS Protocol agent loop:
 
-1. **Load Identity** - AGENT.md, PERSONALITY.md, RULES.md from `syner` package
-2. **Initialize Skills** - Discover SKILL.md files and load tools
-3. **Build System Prompt** - Combine identity with skill descriptions
+1. **Load Identity** - PERSONALITY.md, RULES.md from `syner` package
+2. **Get Tools** - Load tools directly (no discovery)
+3. **Build System Prompt** - Combine identity with tool descriptions
 4. **Execute Loop** - context → actions → checks → repeat
 5. **Return Response** - Text, steps summary, sandbox state

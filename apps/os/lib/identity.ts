@@ -179,9 +179,9 @@ export async function loadSynerIdentity(basePath?: string): Promise<SynerIdentit
 }
 
 /**
- * Build the system prompt from identity and skill descriptions
+ * Build the system prompt from identity and tool descriptions
  */
-export function buildSystemPrompt(identity: SynerIdentity, skillDescriptions: string): string {
+export function buildSystemPrompt(identity: SynerIdentity, toolDescriptions: string): string {
   const sections: string[] = []
 
   // Identity section
@@ -203,11 +203,11 @@ ${identity.rules}
 </rules>`)
   }
 
-  // Skills section
-  if (skillDescriptions) {
-    sections.push(`<available-skills>
-${skillDescriptions}
-</available-skills>`)
+  // Tools section
+  if (toolDescriptions) {
+    sections.push(`<available-tools>
+${toolDescriptions}
+</available-tools>`)
   }
 
   return sections.join('\n\n')

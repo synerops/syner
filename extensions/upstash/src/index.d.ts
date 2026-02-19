@@ -5,9 +5,12 @@
  */
 
 export {
-  createUpstashCache,
-  type UpstashCacheOptions,
-  type Cache,
-  type CacheEntry,
-  type CacheStats,
-} from './system/data/cache'
+  createUpstashKv,
+  createKvContext,
+  createKvActions,
+  type UpstashKvOptions,
+  type Kv,
+  type KvEntry,
+  type KvContext,
+  type KvActions,
+} from './context/kv'

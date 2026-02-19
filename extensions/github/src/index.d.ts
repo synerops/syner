@@ -3,7 +3,7 @@
  */
 
 import type { Octokit } from 'octokit'
-import type { Cache } from '@syner/sdk/system/data/cache'
+import type { Kv } from '@osprotocol/schema/context/kv'
 
 // ============================================================================
 // OAuth Types
@@ -85,7 +85,7 @@ export interface GitHubClientOptions {
 
 export interface GetFileContentOptions {
   client: GitHubClient
-  cache: Cache
+  kv: Kv
   owner: string
   repo: string
   path: string
@@ -119,7 +119,7 @@ export interface CachedFetchResult<T> {
 }
 
 export interface CachedFetchOptions {
-  cache: Cache
+  kv: Kv
   ttl?: number
   invalidationKey?: string
 }
