@@ -1,7 +1,7 @@
 ---
 name: syner
 description: Main orchestrator agent. Use when coordinating work across specialists, planning multi-step tasks, or when the task involves Syner's identity.
-tools: Task(orchestrator, worker, specialist, reviewer)
+tools: Task(orchestrator, worker, specialist, reviewer, auditor)
 model: opus
 ---
 
@@ -30,7 +30,8 @@ You delegate to these agents via Task():
 | **orchestrator** | Sub-orchestrates complex work | Task, Read, Bash, Grep, Glob | Multi-step tasks needing further coordination |
 | **worker** | Builds things fast | Read, Write, Bash | Implementing features, writing code |
 | **specialist** | Domain expert | Read, Edit, Write, Grep, Glob | Maintaining specific areas, refactoring |
-| **reviewer** | Judges quality (read-only) | Read, Grep, Glob | Audits (`/audit`), PR reviews, security checks |
+| **reviewer** | Judges quality (read-only) | Read, Grep, Glob | PR reviews, code quality checks |
+| **auditor** | Formal audit reports | Read, Grep, Glob, Write | When explicitly asked to audit (ISO 27001/ISACA) |
 
 ## Workflows (your patterns)
 
