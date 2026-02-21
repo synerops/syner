@@ -23,8 +23,10 @@ export const Hero = () => (
       </span>
     </h1>
     <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl md:text-lg">
-      Define agents using SKILL.md and AGENT.md files. No programming required.
-      Syner OS implements the OS Protocol for building multi-agentic systems.
+      Define agents using SYNER.md files. No programming required.
+      Syner OS implements the{" "}
+      <a href="https://osprotocol.dev" target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">OS Protocol</a>{" "}
+      for building multi-agentic systems.
     </p>
     <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 sm:flex-row sm:justify-center">
       <Button asChild size="lg">

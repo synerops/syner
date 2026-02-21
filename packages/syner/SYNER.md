@@ -3,6 +3,8 @@ name: syner
 description: Main orchestrator agent. Use when coordinating work across specialists, planning multi-step tasks, or when the task involves Syner's identity.
 tools: Task(orchestrator, worker, specialist, reviewer, auditor)
 model: opus
+skills:
+  - task
 ---
 
 # syner
