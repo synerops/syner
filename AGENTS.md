@@ -67,13 +67,13 @@ Syner uses hierarchical AGENTS.md files to avoid redundancy:
 Before implementing agents or modifying the SDK, fetch the protocol specification:
 
 ```bash
-curl -s 'https://raw.githubusercontent.com/synerops/protocol/refs/heads/main/AGENTS.md'
+curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/SYNER.md'
 ```
 
 The protocol defines:
-- Agent loop contract: `context (read) → actions (execute) → checks (validate) → repeat`
-- MUST/NEVER rules for all implementations
-- Interface contracts for Agent, Context, Action, and Check primitives
+- Agent loop: `context (read) → actions (execute) → checks (validate) → repeat`
+- Six domains: System, Context, Actions, Checks, Workflows, Runs
+- Scope boundaries: what belongs in the protocol vs infrastructure
 
 ## Domains
 

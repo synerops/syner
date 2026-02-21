@@ -160,3 +160,32 @@ curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/A
 2. **SDK provides defaults**: Extensions replace SDK implementations
 3. **Direct tool loading**: No discovery system, tools are loaded directly
 4. **KV not Cache**: Use Kv interface from OSP, not legacy Cache
+
+## Syner Runtime
+
+### `.syner/` Directory
+
+Project-scoped runtime data (like `.git/`). Convention, not configurable:
+
+```
+.syner/
+├── audits/     # Audit reports from /audit skill
+└── runs/       # Execution logs (future)
+```
+
+### Skills vs Workflows vs Checks
+
+| Concept | What it is | Examples |
+|---------|------------|----------|
+| **Workflow** | Orchestration pattern | /route, /orchestrate, /parallelize, /evaluate |
+| **Skill** | Invocable capability | /audit, /docs, /commit |
+| **Check** | Verification phase | rules, judge, audit, screenshot |
+
+`/audit` is a **skill** that uses the **checks/audit** interface. It is NOT a workflow.
+
+### Protocol Validation
+
+When making claims about OS Protocol structure, delegate to `osprotocol` agent or reference:
+```bash
+curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/SYNER.md'
+```
