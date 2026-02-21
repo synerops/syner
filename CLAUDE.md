@@ -132,11 +132,11 @@ UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
 ```
 
-## External Dependencies
+## Protocol Reference
 
 Before implementing agents or modifying SDK core:
 ```bash
-curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/AGENTS.md'
+curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/SYNER.md'
 ```
 
 ## Conventions
@@ -160,3 +160,27 @@ curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/A
 2. **SDK provides defaults**: Extensions replace SDK implementations
 3. **Direct tool loading**: No discovery system, tools are loaded directly
 4. **KV not Cache**: Use Kv interface from OSP, not legacy Cache
+
+## Syner Runtime
+
+### `.syner/` Directory
+
+Project-scoped runtime data (like `.git/`). Convention, not configurable:
+
+```
+.syner/
+├── audits/     # Audit reports from /audit skill
+└── runs/       # Execution logs (future)
+```
+
+### Skills vs Workflows vs Checks
+
+| Concept | What it is | Output type | Examples |
+|---------|------------|-------------|----------|
+| **Workflow** | Orchestration pattern | Coordinates agents | /route, /orchestrate, /parallelize, /evaluate |
+| **Skill** | Invocable capability | Varies | /audit, /docs, /commit |
+| **Check** | Verification phase | Evidence artifacts | rules, judge, audit, screenshot |
+
+`/audit` is a **skill** that uses the **checks/audit** interface. It is NOT a workflow.
+
+**Checks produce evidence, not deliverables.** Audit reports, screenshots, rule violations — these document verification, not business output. That's why audit belongs in `checks/` even though it writes files.

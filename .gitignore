@@ -49,6 +49,9 @@ npm-debug.log*
 .claude/*
 !.claude/skills/
 
+# Syner runtime
+.syner/
+
 # Planning files (local only)
 *.md
 !README.md
