@@ -9,7 +9,7 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "clean": "git clean -xdf .cache .next .turbo node_modules"
+    "clean": "rm -rf .turbo"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
