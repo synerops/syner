@@ -7,7 +7,9 @@
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
 
-import type { Workflow, Run, Timeout, Retry, Cancel } from '../runs'
+import type { Workflow, RunOptions, Timeout, Retry, Cancel } from '../runs'
+import type { Execution } from '@osprotocol/schema/runs'
+import { ExecutionImpl } from '../runs/execution'
 
 /**
  * A step in the execution plan
@@ -96,6 +98,9 @@ export interface OrchestratorWorkersConfig<Output> {
  *     writer: { name: 'writer', workflow: writeWorkflow, ... },
  *   }
  * })
+ *
+ * const execution = await orchestrator.run("Write a report on AI")
+ * const result = await execution.result
  * ```
  */
 export class OrchestratorWorkers<Output> implements Workflow<Output> {
@@ -108,21 +113,57 @@ export class OrchestratorWorkers<Output> implements Workflow<Output> {
   constructor(public config: OrchestratorWorkersConfig<Output>) {}
 
   /**
-   * Run the orchestrator workflow
+   * Execute the orchestrator workflow and return an Execution handle.
    *
    * @param prompt - The input task
    * @param options - Optional run configuration
-   * @returns The synthesized output
+   * @returns Promise resolving to an Execution handle
    */
-  async run(prompt: string, options?: Run<Output>): Promise<Output> {
-    // 1. Generate plan
-    const plan = await this.plan(prompt)
+  async run(prompt: string, options?: RunOptions<Output>): Promise<Execution<Output>> {
+    const execution = new ExecutionImpl<Output>(`orchestrator_${Date.now()}`)
 
-    // 2. Execute steps (respecting dependencies)
-    const results = await this.executeSteps(plan, options)
+    // Execute asynchronously
+    this.execute(prompt, execution, options)
 
-    // 3. Synthesize results
-    return this.synthesize(results, plan)
+    return execution
+  }
+
+  /**
+   * Internal execution logic
+   */
+  private async execute(
+    prompt: string,
+    execution: ExecutionImpl<Output>,
+    options?: RunOptions<Output>
+  ): Promise<void> {
+    try {
+      execution.log(`Planning: ${prompt.slice(0, 50)}...`)
+      execution.updateProgress(0, 3, 'Planning')
+
+      // 1. Generate plan
+      const plan = await this.plan(prompt)
+      execution.log(`Plan generated with ${plan.steps.length} steps`)
+      execution.updateProgress(1, 3, 'Executing steps')
+
+      // 2. Execute steps (respecting dependencies)
+      const results = await this.executeSteps(plan, execution)
+      execution.updateProgress(2, 3, 'Synthesizing results')
+
+      // 3. Synthesize results
+      const result = await this.synthesize(results, plan)
+
+      execution.updateProgress(3, 3, 'Completed')
+      execution.complete(result)
+
+      options?.onComplete?.(result)
+      this.onComplete?.(result)
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      execution.fail(err)
+
+      options?.onFailed?.(err)
+      this.onFailed?.(err)
+    }
   }
 
   /**
@@ -139,10 +180,9 @@ export class OrchestratorWorkers<Output> implements Workflow<Output> {
    * Delegate a step to the appropriate worker
    *
    * @param step - The plan step to execute
-   * @param options - Optional run configuration
    * @returns The worker's result
    */
-  async delegate(step: PlanStep, _options?: Run<Output>): Promise<WorkerResult> {
+  async delegate(step: PlanStep): Promise<WorkerResult> {
     const worker = this.config.workers[step.worker]
 
     if (!worker) {
@@ -155,8 +195,8 @@ export class OrchestratorWorkers<Output> implements Workflow<Output> {
     }
 
     try {
-      // Note: options are not passed to workers - they have their own configurations
-      const data = await worker.workflow.run(step.input)
+      const workerExecution = await worker.workflow.run(step.input)
+      const data = await workerExecution.result
       return {
         stepId: step.id,
         worker: step.worker,
@@ -189,7 +229,7 @@ export class OrchestratorWorkers<Output> implements Workflow<Output> {
    */
   private async executeSteps(
     plan: Plan,
-    _options?: Run<Output>
+    execution: ExecutionImpl<Output>
   ): Promise<WorkerResult[]> {
     const results: WorkerResult[] = []
     const completed = new Set<string>()
@@ -209,6 +249,7 @@ export class OrchestratorWorkers<Output> implements Workflow<Output> {
         continue
       }
 
+      execution.log(`Executing step: ${step.description}`)
       const result = await this.delegate(step)
       results.push(result)
 

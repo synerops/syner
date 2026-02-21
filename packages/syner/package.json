@@ -1,7 +1,7 @@
 {
   "name": "syner",
   "version": "0.0.0-dev.1",
-  "description": "Syner - Agentic Workflow Implementations for Syner OS",
+  "description": "Syner - The Orchestrator Agent for Syner OS",
   "type": "module",
   "private": false,
   "sideEffects": false,
@@ -32,13 +32,11 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "clean": "rm -rf dist .turbo"
-  },
-  "dependencies": {
-    "@syner/sdk": "workspace:*"
+    "clean": "rm -rf dist .turbo",
+    "detect": "bun run tools/detect.ts",
+    "dispatch": "bun run tools/dispatch.ts"
   },
   "peerDependencies": {
-    "ai": "catalog:aisdk",
     "zod": "catalog:aisdk"
   },
   "devDependencies": {

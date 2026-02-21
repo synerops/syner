@@ -172,9 +172,6 @@
     "packages/syner": {
       "name": "syner",
       "version": "0.0.0-dev.1",
-      "dependencies": {
-        "@syner/sdk": "workspace:*",
-      },
       "devDependencies": {
         "@syner/eslint": "workspace:*",
         "@syner/prettier": "workspace:*",
@@ -186,7 +183,6 @@
         "typescript": "catalog:",
       },
       "peerDependencies": {
-        "ai": "catalog:aisdk",
         "zod": "catalog:aisdk",
       },
     },
@@ -285,7 +281,7 @@
       "react-dom": "^19.2.3",
     },
     "osprotocol": {
-      "@osprotocol/schema": "latest",
+      "@osprotocol/schema": "^0.2.4",
     },
     "ui": {
       "sonner": "^2.0.7",
@@ -607,7 +603,7 @@
 
     "@orama/orama": ["@orama/orama@3.1.18", "", {}, "sha512-a61ljmRVVyG5MC/698C8/FfFDw5a8LOIvyOLW5fztgUXqUpc1jOfQzOitSCbge657OgXXThmY3Tk8fpiDb4UcA=="],
 
-    "@osprotocol/schema": ["@osprotocol/schema@0.2.3", "", {}, "sha512-ZseQHwZxpNEGDae4rxAf5VQtYudFCXQi3iS80zhB//tzgnm6y09YJNhxpalYPxF+8ytPQbtZ8mJngA5pgFE1sQ=="],
+    "@osprotocol/schema": ["@osprotocol/schema@0.2.4", "", {}, "sha512-y00vdHXrNG7zNuOumn+9kFVt4QUFVxo7+2/BsZ5dXDQxoruofKpzFY76Cu9LlNCBaReaSGxyKnD2UmrSnG+8sg=="],
 
     "@radix-ui/number": ["@radix-ui/number@1.1.1", "", {}, "sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g=="],
 
@@ -2100,8 +2096,6 @@
     "@radix-ui/react-primitive/@radix-ui/react-slot": ["@radix-ui/react-slot@1.2.3", "", { "dependencies": { "@radix-ui/react-compose-refs": "1.1.2" }, "peerDependencies": { "@types/react": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react"] }, "sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A=="],
 
     "@radix-ui/react-tooltip/@radix-ui/react-slot": ["@radix-ui/react-slot@1.2.3", "", { "dependencies": { "@radix-ui/react-compose-refs": "1.1.2" }, "peerDependencies": { "@types/react": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react"] }, "sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A=="],
-
-    "@syner/upstash/@osprotocol/schema": ["@osprotocol/schema@0.2.2", "", {}, "sha512-YnCoep7iBE1g2ZeLFl2c7ujwSYSLpemrPLEjPsw/RDTJoEA28pGEGT6UCSwf0wiLY+OoMfFI6EtdpZ90EUD8jg=="],
 
     "@tailwindcss/oxide-wasm32-wasi/@emnapi/core": ["@emnapi/core@1.8.1", "", { "dependencies": { "@emnapi/wasi-threads": "1.1.0", "tslib": "^2.4.0" }, "bundled": true }, "sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg=="],
 

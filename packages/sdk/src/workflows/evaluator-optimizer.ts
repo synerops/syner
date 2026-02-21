@@ -7,7 +7,9 @@
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
 
-import type { Workflow, Run, Timeout, Retry, Cancel } from '../runs'
+import type { Workflow, RunOptions, Timeout, Retry, Cancel } from '../runs'
+import type { Execution } from '@osprotocol/schema/runs'
+import { ExecutionImpl } from '../runs/execution'
 
 /**
  * Result for a single evaluation criterion
@@ -94,6 +96,9 @@ export interface EvaluatorOptimizerConfig<Output> {
  *   threshold: 0.8,
  *   maxIterations: 3,
  * })
+ *
+ * const execution = await evalOpt.run("Write a compelling intro")
+ * const result = await execution.result
  * ```
  */
 export class EvaluatorOptimizer<Output> implements Workflow<Output> {
@@ -106,38 +111,76 @@ export class EvaluatorOptimizer<Output> implements Workflow<Output> {
   constructor(public config: EvaluatorOptimizerConfig<Output>) {}
 
   /**
-   * Run the evaluator-optimizer workflow
+   * Execute the evaluator-optimizer workflow and return an Execution handle.
    *
    * @param prompt - The input prompt
    * @param options - Optional run configuration
-   * @returns The optimized output
+   * @returns Promise resolving to an Execution handle
    */
-  async run(prompt: string, _options?: Run<Output>): Promise<Output> {
+  async run(prompt: string, options?: RunOptions<Output>): Promise<Execution<Output>> {
+    const execution = new ExecutionImpl<Output>(`evalopt_${Date.now()}`)
+
+    // Execute asynchronously
+    this.execute(prompt, execution, options)
+
+    return execution
+  }
+
+  /**
+   * Internal execution logic
+   */
+  private async execute(
+    prompt: string,
+    execution: ExecutionImpl<Output>,
+    options?: RunOptions<Output>
+  ): Promise<void> {
     const threshold = this.config.threshold ?? 0.8
     const maxIterations = this.config.maxIterations ?? 3
 
-    // 1. Generate initial output
-    let output = await this.generate(prompt)
-    let iteration = 0
+    try {
+      execution.log(`Generating initial output for: ${prompt.slice(0, 50)}...`)
+      execution.updateProgress(0, maxIterations + 1, 'Generating')
 
-    // 2. Evaluate and optimize loop
-    while (iteration < maxIterations) {
-      iteration++
-      const evaluation = await this.evaluate(output, prompt, iteration)
+      // 1. Generate initial output
+      let output = await this.generate(prompt)
+      let iteration = 0
 
-      if (evaluation.passed || evaluation.score >= threshold) {
-        return output
+      // 2. Evaluate and optimize loop
+      while (iteration < maxIterations) {
+        iteration++
+        execution.log(`Iteration ${iteration}: Evaluating output`)
+        execution.updateProgress(iteration, maxIterations + 1, `Iteration ${iteration}`)
+
+        const evaluation = await this.evaluate(output, prompt, iteration)
+
+        if (evaluation.passed || evaluation.score >= threshold) {
+          execution.log(`Passed with score ${evaluation.score}`)
+          execution.updateProgress(maxIterations + 1, maxIterations + 1, 'Completed')
+          execution.complete(output)
+
+          options?.onComplete?.(output)
+          this.onComplete?.(output)
+          return
+        }
+
+        execution.log(`Score ${evaluation.score} < ${threshold}, optimizing...`)
+        output = await this.optimize(output, evaluation, prompt)
       }
 
-      // Optimize based on feedback
-      output = await this.optimize(output, evaluation, prompt)
-    }
+      // Return best effort after max iterations
+      execution.log(`Max iterations (${maxIterations}) reached`)
+      execution.updateProgress(maxIterations + 1, maxIterations + 1, 'Completed (max iterations)')
+      execution.complete(output)
 
-    // Return best effort after max iterations
-    console.warn(
-      `EvaluatorOptimizer: Max iterations (${maxIterations}) reached without passing threshold`
-    )
-    return output
+      options?.onComplete?.(output)
+      this.onComplete?.(output)
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      execution.fail(err)
+
+      options?.onFailed?.(err)
+      this.onFailed?.(err)
+    }
   }
 
   /**

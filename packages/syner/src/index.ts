@@ -1,44 +1,31 @@
 /**
- * Syner - Default Orchestrator for Syner OS
+ * Syner - Brain of Syner OS
  *
- * This package provides AI SDK-specific implementations of the
- * workflow patterns defined in @syner/sdk.
+ * Intent classification and orchestration primitives.
  */
 
-// Tools (AI SDK tool factories)
-export { route, type RouteConfig, type RouteMetadata } from './tools'
-
-// Workflows (AI SDK-specific implementations)
-export { Routing, type RoutingConfig, type InferRoutingOutput } from './workflows/routing'
-
-// Agents
-export { Router } from './agents/router'
-
-// Re-export SDK base workflows for extensibility
-// Users can extend these with their own implementations
+// Intent classification
 export {
-  // Base workflow classes
-  Routing as BaseRouting,
-  OrchestratorWorkers,
-  Parallelization,
-  EvaluatorOptimizer,
-  // Configuration types
-  type RoutingConfig as BaseRoutingConfig,
-  type RoutingWorkflowEntry,
-  type RouteConfig as BaseRouteConfig,
-  type OrchestratorWorkersConfig,
-  type ParallelizationConfig,
-  type EvaluatorOptimizerConfig,
-  // Plan types
-  type Plan,
-  type PlanStep,
-  type WorkerResult,
-  type WorkerConfig,
-  // Parallelization types
-  type Subtask,
-  type SubtaskResult,
-  // Evaluation types
-  type Evaluation,
-  type EvaluationCriterion,
-  type CriterionResult,
-} from '@syner/sdk/workflows'
+  // Schemas
+  IntentTypeSchema,
+  ComplexityLevelSchema,
+  WorkflowTypeSchema,
+  AgentTypeSchema,
+  ActionTypeSchema,
+  IntentSchema,
+  ComplexitySchema,
+  StrategySchema,
+  NextActionSchema,
+  IntentClassificationSchema,
+  // Types
+  type IntentType,
+  type ComplexityLevel,
+  type WorkflowType,
+  type AgentType,
+  type ActionType,
+  type Intent,
+  type Complexity,
+  type Strategy,
+  type NextAction,
+  type IntentClassification,
+} from '../intent'
