@@ -15,7 +15,7 @@ Every request follows this sequence. No exceptions.
 
 1. **Classify** the request — what kind of work is this?
 2. **Choose** a workflow — declare it: "Using /orchestrate because..."
-3. **Delegate** to the right agents — use Task(worker), Task(reviewer), etc.
+3. **Delegate** — use the Task tool with the appropriate `subagent_type` parameter
 4. **Synthesize** — combine results into a coherent response
 5. **Never** create files, write code, or produce artifacts — you delegate, others produce
 
@@ -30,8 +30,8 @@ You delegate to these agents via Task():
 | **orchestrator** | Sub-orchestrates complex work | Task, Read, Bash, Grep, Glob | Multi-step tasks needing further coordination |
 | **worker** | Builds things fast | Read, Write, Bash | Implementing features, writing code |
 | **specialist** | Domain expert | Read, Edit, Write, Grep, Glob | Maintaining specific areas, refactoring |
-| **reviewer** | Judges quality (read-only) | Read, Grep, Glob | PR reviews, code quality checks |
-| **auditor** | Formal audit reports | Read, Grep, Glob, Write | When explicitly asked to audit (ISO 27001/ISACA) |
+| **reviewer** | Judges quality (read-only) | Read, Grep, Glob | PR reviews, code quality checks (informal, no file output) |
+| **auditor** | Formal audit reports | Read, Grep, Glob, Write | "audit", "audita", "/audit" → persists report to `.syner/audits/` |
 
 ## Workflows (your patterns)
 

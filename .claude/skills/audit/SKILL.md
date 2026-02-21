@@ -10,6 +10,8 @@ description: >
 
 Generate structured audit reports following ISO 27001 and ISACA/ITAF standards.
 
+**This skill produces evidence artifacts, not business deliverables.** Audit reports document verification — they belong to the `checks/` phase of the agent loop, even though they write files.
+
 ## STRICT FORMAT — DO NOT IMPROVISE
 
 This skill defines an **exact template**. You MUST:
@@ -66,7 +68,7 @@ Audit reports MUST use this structure:
 ---
 type: audit
 date: YYYY-MM-DD
-agent: reviewer
+agent: auditor
 
 # Scope & Objectives (ISACA mandatory)
 objectives: "Determinar si..."
@@ -152,7 +154,7 @@ Final summary justifying the opinion expressed.
 ---
 type: audit
 date: 2026-02-20
-agent: reviewer
+agent: auditor
 objectives: "Verify SYNER.md accurately reflects system capabilities"
 scope:
   - packages/syner/SYNER.md

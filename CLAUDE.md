@@ -132,11 +132,11 @@ UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
 ```
 
-## External Dependencies
+## Protocol Reference
 
 Before implementing agents or modifying SDK core:
 ```bash
-curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/AGENTS.md'
+curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/SYNER.md'
 ```
 
 ## Conventions
@@ -175,17 +175,12 @@ Project-scoped runtime data (like `.git/`). Convention, not configurable:
 
 ### Skills vs Workflows vs Checks
 
-| Concept | What it is | Examples |
-|---------|------------|----------|
-| **Workflow** | Orchestration pattern | /route, /orchestrate, /parallelize, /evaluate |
-| **Skill** | Invocable capability | /audit, /docs, /commit |
-| **Check** | Verification phase | rules, judge, audit, screenshot |
+| Concept | What it is | Output type | Examples |
+|---------|------------|-------------|----------|
+| **Workflow** | Orchestration pattern | Coordinates agents | /route, /orchestrate, /parallelize, /evaluate |
+| **Skill** | Invocable capability | Varies | /audit, /docs, /commit |
+| **Check** | Verification phase | Evidence artifacts | rules, judge, audit, screenshot |
 
 `/audit` is a **skill** that uses the **checks/audit** interface. It is NOT a workflow.
 
-### Protocol Validation
-
-When making claims about OS Protocol structure, delegate to `osprotocol` agent or reference:
-```bash
-curl -s 'https://raw.githubusercontent.com/synerops/osprotocol/refs/heads/main/SYNER.md'
-```
+**Checks produce evidence, not deliverables.** Audit reports, screenshots, rule violations — these document verification, not business output. That's why audit belongs in `checks/` even though it writes files.
