@@ -23,7 +23,25 @@ export { createMemoryKv, type MemoryKvOptions } from './context/kv'
 export type { Agent, Annotations, Metadata } from './agents'
 
 // Runs (protocol/runs/*)
-export type { Workflow, Run, Execution, Status, Timeout, Retry, Cancel, Backoff, Approval } from './runs'
+// Import types from @osprotocol/schema
+export type {
+  RunOptions,
+  RunStatus,
+  Execution,
+  ExecutionProgress,
+  Timeout,
+  TimeoutAction,
+  Retry,
+  Backoff,
+  Cancel,
+  Approval,
+  ApprovalConfig,
+  ApprovalRequest,
+} from './runs'
+
+// Workflow interface from protocol, ExecutionImpl from SDK
+export type { Workflow, InferWorkflowOutput } from './runs'
+export { ExecutionImpl } from './runs'
 
 // Agents (meta-agents for orchestration)
 export * as agents from './agents'

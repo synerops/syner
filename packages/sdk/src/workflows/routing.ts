@@ -6,7 +6,9 @@
  * @see https://www.anthropic.com/engineering/building-effective-agents
  */
 
-import type { Workflow, Run, Timeout, Retry, Cancel } from '../runs'
+import type { Workflow, RunOptions, Timeout, Retry, Cancel } from '../runs'
+import type { Execution } from '@osprotocol/schema/runs'
+import { ExecutionImpl } from '../runs/execution'
 
 /**
  * Configuration for a single route
@@ -64,6 +66,9 @@ export interface RoutingConfig<Output> {
  *     support: { workflow: supportWorkflow, route: { description: '...' } },
  *   }
  * })
+ *
+ * const execution = await routing.run("I need help with my invoice")
+ * const result = await execution.result
  * ```
  */
 export class Routing<Output> implements Workflow<Output> {
@@ -83,21 +88,59 @@ export class Routing<Output> implements Workflow<Output> {
   }
 
   /**
-   * Run the routing workflow
+   * Execute the routing workflow and return an Execution handle.
    *
    * @param prompt - The input prompt to classify and route
    * @param options - Optional run configuration
-   * @returns The output from the selected workflow
+   * @returns Promise resolving to an Execution handle
    */
-  async run(prompt: string, options?: Run<Output>): Promise<Output> {
-    const selected = await this.classify(prompt)
-    const entry = this.config.workflows[selected]
+  async run(prompt: string, options?: RunOptions<Output>): Promise<Execution<Output>> {
+    const execution = new ExecutionImpl<Output>(`routing_${Date.now()}`)
 
-    if (!entry?.workflow) {
-      throw new Error(`Workflow "${selected}" not found`)
+    // Execute asynchronously
+    this.execute(prompt, execution, options)
+
+    return execution
+  }
+
+  /**
+   * Internal execution logic
+   */
+  private async execute(
+    prompt: string,
+    execution: ExecutionImpl<Output>,
+    options?: RunOptions<Output>
+  ): Promise<void> {
+    try {
+      execution.log(`Classifying prompt: ${prompt.slice(0, 50)}...`)
+      execution.updateProgress(0, 2, 'Classifying')
+
+      const selected = await this.classify(prompt)
+      const entry = this.config.workflows[selected]
+
+      if (!entry?.workflow) {
+        throw new Error(`Workflow "${selected}" not found`)
+      }
+
+      execution.log(`Routing to: ${selected}`)
+      execution.updateProgress(1, 2, `Delegating to ${selected}`)
+
+      // Delegate to selected workflow
+      const delegateExecution = await entry.workflow.run(prompt, options)
+      const result = await delegateExecution.result
+
+      execution.updateProgress(2, 2, 'Completed')
+      execution.complete(result)
+
+      options?.onComplete?.(result)
+      this.onComplete?.(result)
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      execution.fail(err)
+
+      options?.onFailed?.(err)
+      this.onFailed?.(err)
     }
-
-    return entry.workflow.run(prompt, options)
   }
 
   /**
