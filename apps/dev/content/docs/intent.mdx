@@ -1,0 +1,80 @@
+---
+title: Intent
+description: How Syner classifies user requests
+---
+
+# Intent
+
+> The Intent object represents Syner's classification of a user request,
+> determining the optimal path for execution.
+
+## Initial State
+
+When a user sends a request, Syner produces an IntentClassification
+before taking any action.
+
+## Intent Types
+
+| Type | Description | Next Action |
+|------|-------------|-------------|
+| `direct` | Simple question, no tools needed | Respond inline |
+| `execute` | Clear task, single agent | Route to worker |
+| `plan` | Complex, needs exploration | Enter plan mode |
+| `delegate` | Requires specialist | Route to appropriate agent |
+| `clarify` | Ambiguous request | Ask for clarification |
+
+## Complexity Assessment
+
+```json
+{
+  "depth": 3,
+  "width": 2,
+  "estimated": "moderate"
+}
+```
+
+### Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `depth` | `number` | Sequential steps estimated (1-5) |
+| `width` | `number` | Specialties required (1-5) |
+| `estimated` | `string` | `simple`, `moderate`, or `complex` |
+
+## Routing
+
+Based on intent and complexity, Syner chooses:
+
+| Condition | Action |
+|-----------|--------|
+| `direct` | Respond inline |
+| `execute` | `/route` → worker |
+| `plan` | `EnterPlanMode` |
+| `delegate` + simple | `/route` |
+| `delegate` + complex | `/orchestrate` |
+
+## Full Schema
+
+See [`intent.ts`](https://github.com/synerops/syner/blob/main/packages/syner/intent.ts)
+
+## Related
+
+- [/task skill](/docs/task) — Skill that produces IntentClassification
+- [Workflows](/workflows) — Patterns triggered by routing
+
+## Sources
+
+### Anthropic
+
+- [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Official patterns for routing, orchestration, and evaluation
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code) — EnterPlanMode and complexity criteria
+
+### Frameworks
+
+- [LangGraph: Routing](https://langchain-ai.github.io/langgraph/concepts/agentic_concepts/#routing) — Classification and delegation patterns
+- [OpenAI Cookbook: Orchestrating Agents](https://cookbook.openai.com/examples/orchestrating_agents) — Multi-agent routing examples
+
+### Research
+
+- [ReAct: Synergizing Reasoning and Acting](https://arxiv.org/abs/2210.03629) — Foundation of the agent loop (reason → act → observe)
+- [Chain-of-Thought Prompting](https://arxiv.org/abs/2201.11903) — Theoretical basis for evaluating reasoning depth

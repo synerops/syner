@@ -44,7 +44,7 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "clean": "git clean -xdf .cache .turbo dist node_modules"
+    "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
     "@osprotocol/schema": "catalog:osprotocol",

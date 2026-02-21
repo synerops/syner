@@ -5,7 +5,7 @@
     "build": "turbo --no-update-notifier run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo lint",
-    "clean": "turbo clean",
+    "clean": "turbo clean && rm -rf .turbo",
     "typecheck": "turbo typecheck",
     "format": "turbo format"
   },
