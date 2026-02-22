@@ -1,0 +1,54 @@
+{
+  "name": "@syner/slack",
+  "description": "Slack integration for Syner OS",
+  "version": "0.0.0-dev.1",
+  "type": "module",
+  "private": false,
+  "sideEffects": false,
+  "license": "MIT",
+  "prettier": "@syner/prettier",
+  "author": {
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "extensions/slack"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "dist",
+    "src/index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@slack/web-api": "^7"
+  },
+  "devDependencies": {
+    "@syner/eslint": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/bun": "*",
+    "tsup": "^8.5.0",
+    "typescript": "catalog:"
+  }
+}

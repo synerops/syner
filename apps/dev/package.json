@@ -12,6 +12,7 @@
   "dependencies": {
     "@syner/github": "workspace:*",
     "@syner/sdk": "workspace:*",
+    "@syner/slack": "workspace:*",
     "@syner/ui": "workspace:*",
     "@vercel/analytics": "catalog:vercel",
     "clsx": "^2.1.1",
