@@ -20,6 +20,11 @@
  * const handler = createHandler({ signingSecret: '...' })
  * const response = await handler(request)
  * ```
+ *
+ * Note: Callbacks are fire-and-forget — the handler returns 200
+ * immediately to meet Slack's 3-second deadline. On serverless
+ * platforms, use `after()` or `waitUntil()` inside callbacks
+ * to keep the function alive until async work completes.
  */
 
 import { createHmac, timingSafeEqual } from 'node:crypto'
@@ -105,10 +110,10 @@ export function createHandler(options: SlackHandlerOptions) {
       })
     }
 
-    // Event callback — dispatch to handlers
+    // Event callback — fire and forget, respond 200 immediately.
+    // Slack enforces a 3-second timeout on event acknowledgment.
     if (payload.type === 'event_callback') {
-      // Acknowledge immediately, then dispatch
-      await dispatch(options, payload)
+      Promise.resolve(dispatch(options, payload)).catch(console.error)
     }
 
     return new Response('ok', { status: 200 })
