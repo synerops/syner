@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     beforeFiles: [
       {
         source: "/:path*",
-        destination: "/markdown/:path*",
+        destination: "/api/markdown/:path*",
         has: [
           {
             type: "header",
