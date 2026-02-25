@@ -16,7 +16,7 @@ function Breadcrumb({ slug }: { slug?: string[] }) {
         notes
       </Link>
       {slug.map((segment, i) => (
-        <span key={i}>
+        <span key={slug.slice(0, i + 1).join("/")}>
           <span style={{ margin: "0 8px", color: "#999" }}>/</span>
           {i === slug.length - 1 ? (
             <span>{segment}</span>
