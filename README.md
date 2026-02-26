@@ -43,11 +43,7 @@ This gives Syner the context it needs to understand your notes properly.
 
 ### Knowledge
 
-- `/state` - Load your full life + work state
-- `/trace` - See how an idea evolved over months
-- `/connect` - Bridge two domains you've been circling
-- `/ideas` - Generate startup ideas from your vault
-- `/graduate` - Promote daily thoughts into real assets
+- `/state` - Load your full notes state
 
 ### Apps
 
