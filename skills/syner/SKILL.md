@@ -7,7 +7,7 @@ skills:
   - state
 metadata:
   author: syner
-  version: "0.0.3"
+  version: "0.0.4"
 ---
 
 # Syner Skill
@@ -17,6 +17,7 @@ Execute tasks following: **Gather Context → Take Action → Verify → Repeat*
 ## References
 
 - [AI Apps Checklist](ai-apps-checklist.md) - Guidelines for building AI-powered applications
+- [Planning Reference](planning.md) - Workflow patterns for decision-making
 
 ## Phase 1: Gather Context
 
@@ -30,18 +31,38 @@ If no task provided, use `AskUserQuestion` to ask what the user wants to accompl
 
 ## Phase 2: Take Action
 
-Execute the task using appropriate tools:
+Before executing, check if a specialized skill should handle the task:
 
-| Task Type | Tools |
-|-----------|-------|
+### Skill Routing
+
+| Pattern | Skill | When |
+|---------|-------|------|
+| **Knowledge** |||
+| "load state", "my context" | `/state` | Need full context |
+| "trace", "how did X evolve" | `/trace` | Idea evolution |
+| "connect X and Y" | `/connect` | Bridge domains |
+| "generate ideas" | `/ideas` | Brainstorm from notes |
+| "graduate", "make proper doc" | `/graduate` | Promote thoughts |
+| **Apps** |||
+| "create app", "scaffold", "nueva app" | `/create-syner-app` | New application |
+| "update app", "add shadcn" | `/update-syner-app` | Sync to stack |
+| **Backlog** |||
+| "triage backlog", "what's pending" | `/backlog-triager` | Check items |
+| "review backlog", "clean backlog" | `/backlog-reviewer` | Audit health |
+| **Skills** |||
+| "improve skill", "enhance" | `/enhance` | Upgrade skill |
+| **Code Quality** |||
+| React/Next.js review | `/vercel-react-best-practices` | Performance |
+| UI/Design review | `/web-design-guidelines` | Accessibility |
+
+**No match?** Execute directly:
+
+| Action | Tool |
+|--------|------|
 | Code changes | `Edit`, `Write` |
-| Run commands | `Bash` |
-| Explore codebase | `Task` with `subagent_type=Explore` |
-| Code review | `Task` with `subagent_type=code-reviewer` |
-| React/Next.js review | `/vercel-react-best-practices` |
-| UI/Design review | `/web-design-guidelines` |
-| Parallel subtasks | Multiple `Task` calls |
-| External info | `WebFetch`, `WebSearch` |
+| Commands | `Bash` |
+| Explore | `Task` subagent_type=Explore |
+| Review | `Task` subagent_type=code-reviewer |
 
 **Principles:**
 - Start with simplest approach
