@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source srcset="https://github.com/user-attachments/assets/cbf55457-a101-4547-9155-2fcc6ac08eaa" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/656eb187-0313-435b-bb44-e80f23924924" alt="Syner" height="96"/>
+  </picture>
+</p>
+
 # Syner
 
 A Personal Knowledge System
@@ -55,10 +62,6 @@ This gives Syner the context it needs to understand your notes properly.
 ### Skills Meta
 
 - `/enhance` - Improve existing skills with best practices
-
-### Creating New Skills
-
-Use https://skills.sh/anthropics/skills/skill-creator to create custom skills for your specific workflows.
 
 ## Agents
 
