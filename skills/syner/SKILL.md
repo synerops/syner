@@ -1,9 +1,13 @@
 ---
 name: syner
 description: Execute tasks using the Anthropic feedback loop pattern. Gathers your full context from notes, takes action, verifies work, and repeats until complete. Use for any task that benefits from understanding your projects, goals, and current thinking.
+context: fork
+agent: general-purpose
+skills:
+  - state
 metadata:
   author: syner
-  version: "1.2"
+  version: "0.0.3"
 ---
 
 # Syner Skill
@@ -16,7 +20,9 @@ Execute tasks following: **Gather Context → Take Action → Verify → Repeat*
 
 ## Phase 1: Gather Context
 
-1. Execute `/state` skill (use `Glob` with `skills/state/SKILL.md` to locate it)
+The `/state` skill is preloaded via frontmatter. On startup:
+
+1. Read all notes from `apps/notes/content/**/*.md`
 2. Filter context to what's relevant for the current task
 3. Note any `/skill-name` references that might apply
 
