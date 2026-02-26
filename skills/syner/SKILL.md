@@ -1,23 +1,30 @@
 ---
 name: syner
-description: Execute tasks using the Anthropic feedback loop pattern. Gathers your full context from notes, takes action, verifies work, and repeats until complete. Use for any task that benefits from understanding your projects, goals, and current thinking.
+description: Orchestrator that understands your context and guides execution. Gathers your full context from notes, decides what to do, and delegates complex execution to syner-worker. Use for any task that benefits from understanding your projects, goals, and current thinking.
 context: fork
 agent: general-purpose
 skills:
   - state
 metadata:
   author: syner
-  version: "0.0.4"
+  version: "0.0.5"
 ---
 
 # Syner Skill
 
-Execute tasks following: **Gather Context → Take Action → Verify → Repeat**
+**Orchestrator**: Decides WHAT to do based on your context. Delegates HOW to specialized skills or syner-worker.
 
 ## References
 
 - [AI Apps Checklist](ai-apps-checklist.md) - Guidelines for building AI-powered applications
-- [Planning Reference](planning.md) - Workflow patterns for decision-making
+
+## Task Input
+
+The user's task is provided via arguments:
+
+**Task:** $ARGUMENTS
+
+If no arguments provided, use `AskUserQuestion` to ask what the user wants to accomplish.
 
 ## Phase 1: Gather Context
 
@@ -26,12 +33,11 @@ The `/state` skill is preloaded via frontmatter. On startup:
 1. Read all notes from `apps/notes/content/**/*.md`
 2. Filter context to what's relevant for the current task
 3. Note any `/skill-name` references that might apply
+4. Extract relevant preferences, patterns, and constraints
 
-If no task provided, use `AskUserQuestion` to ask what the user wants to accomplish.
+## Phase 2: Route or Delegate
 
-## Phase 2: Take Action
-
-Before executing, check if a specialized skill should handle the task:
+Check if a specialized skill should handle the task:
 
 ### Skill Routing
 
@@ -55,48 +61,44 @@ Before executing, check if a specialized skill should handle the task:
 | React/Next.js review | `/vercel-react-best-practices` | Performance |
 | UI/Design review | `/web-design-guidelines` | Accessibility |
 
-**No match?** Execute directly:
+### Delegation
 
-| Action | Tool |
-|--------|------|
-| Code changes | `Edit`, `Write` |
-| Commands | `Bash` |
-| Explore | `Task` subagent_type=Explore |
-| Review | `Task` subagent_type=code-reviewer |
+**No skill match?** Delegate based on complexity:
 
-**Principles:**
-- Start with simplest approach
-- Make incremental changes
-- Use existing codebase patterns
+| Complexity | Action |
+|------------|--------|
+| Simple query | Execute directly with Read, Glob, Grep |
+| Simple edit | Execute directly with Edit, Write |
+| Exploration | `Task` subagent_type=Explore |
+| Code review | `Task` subagent_type=code-reviewer |
+| **Complex execution** | `Task` subagent_type=syner-worker |
 
-## Phase 3: Verify
+### When to use syner-worker
 
-Validate results:
+Delegate to `syner-worker` when the task requires:
+- Multiple file changes with verification
+- Iterative refinement (code → review → fix)
+- Following workflow patterns (chaining, parallelization)
+- Tasks that benefit from Action → Verify → Repeat loop
 
-1. **Lint**: Run `Bash` with project's lint command (check `package.json` scripts)
-2. **Tests**: Run `Bash` with test command if tests exist
-3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` to review the changes made
-4. **Specialized Review** (when applicable):
-   - React/Next.js code → `/vercel-react-best-practices`
-   - UI/Design changes → `/web-design-guidelines`
-5. **Self-check**: Does output match the request?
+**How to delegate:**
 
-## Phase 4: Repeat or Complete
+```
+Task(subagent_type=syner-worker, prompt="
+  Task: [Clear description of what to accomplish]
+  Context: [Relevant info from notes - technologies, files, patterns]
+  Preferences: [User preferences extracted from state]
+  Success criteria: [How to verify completion]
+")
+```
 
-**Continue if:**
-- Verification found issues
-- Task partially complete
-- Quality can improve
+## Phase 3: Summarize
 
-**Complete when:**
-- All checks pass
-- Requirements satisfied
+After delegation completes, summarize results for the main context:
 
-## Output Format
-
-ALWAYS provide:
-
-- **Done**: Brief summary of actions
+- **Done**: Brief summary of actions taken
 - **Files**: List of modified/created files
 - **Verified**: Test/lint results
 - **Next** (optional): Follow-up suggestions
+
+Keep the summary concise - raw notes and detailed context stay in the forked context.
