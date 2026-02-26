@@ -61,3 +61,5 @@ Provide a structured summary with sections:
 - **Key Themes**: Recurring ideas and interests
 - **Open Loops**: Unresolved questions or decisions
 - **Context Window**: Recent vs historical activity patterns
+
+> **Philosophy reminder:** Notes are personal and free-form. Skills read for context, not for data extraction.

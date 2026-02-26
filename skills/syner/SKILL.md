@@ -1,104 +1,91 @@
 ---
 name: syner
-description: Orchestrator that understands your context and guides execution. Gathers your full context from notes, decides what to do, and delegates complex execution to syner-worker. Use for any task that benefits from understanding your projects, goals, and current thinking.
+description: Your interface to your own knowledge. Reads all your notes, understands your context, and routes to the right skill or executes directly. Use when you don't know which skill to use, or when the task benefits from understanding your full situation.
 context: fork
 agent: general-purpose
 skills:
   - state
 metadata:
   author: syner
-  version: "0.0.5"
+  version: "0.1.0"
 ---
 
-# Syner Skill
+# Syner
 
-**Orchestrator**: Decides WHAT to do based on your context. Delegates HOW to specialized skills or syner-worker.
+The entry point when you don't know which skill to use.
 
-## References
+See [README.md](README.md) for philosophy and examples.
 
-- [AI Apps Checklist](ai-apps-checklist.md) - Guidelines for building AI-powered applications
+## What I Do
 
-## Task Input
+1. Load your context (all notes via `/state`)
+2. Understand your intent
+3. Route to a specialist skill OR execute directly OR delegate to syner-worker
 
-The user's task is provided via arguments:
+## Task
 
-**Task:** $ARGUMENTS
+**Input:** $ARGUMENTS
 
-If no arguments provided, use `AskUserQuestion` to ask what the user wants to accomplish.
+If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
-## Phase 1: Gather Context
+## Step 1: Context
 
-The `/state` skill is preloaded via frontmatter. On startup:
+The `/state` skill is preloaded. From your notes, extract:
+- What's relevant to this specific task
+- Your preferences that apply
+- Any `/skill-name` references in your notes
 
-1. Read all notes from `apps/notes/content/**/*.md`
-2. Filter context to what's relevant for the current task
-3. Note any `/skill-name` references that might apply
-4. Extract relevant preferences, patterns, and constraints
+## Step 2: Route or Execute
 
-## Phase 2: Route or Delegate
+### Route to Specialist
 
-Check if a specialized skill should handle the task:
+| Signal | Skill |
+|--------|-------|
+| idea evolution, history | `/trace` |
+| connect two topics | `/connect` |
+| generate ideas | `/ideas` |
+| promote to proper doc | `/graduate` |
+| create app, scaffold | `/create-syner-app` |
+| update app stack | `/update-syner-app` |
+| triage backlog | `/backlog-triager` |
+| backlog health | `/backlog-reviewer` |
+| improve a skill | `/enhance` |
 
-### Skill Routing
+### Execute Directly
 
-| Pattern | Skill | When |
-|---------|-------|------|
-| **Knowledge** |||
-| "load state", "my context" | `/state` | Need full context |
-| "trace", "how did X evolve" | `/trace` | Idea evolution |
-| "connect X and Y" | `/connect` | Bridge domains |
-| "generate ideas" | `/ideas` | Brainstorm from notes |
-| "graduate", "make proper doc" | `/graduate` | Promote thoughts |
-| **Apps** |||
-| "create app", "scaffold", "nueva app" | `/create-syner-app` | New application |
-| "update app", "add shadcn" | `/update-syner-app` | Sync to stack |
-| **Backlog** |||
-| "triage backlog", "what's pending" | `/backlog-triager` | Check items |
-| "review backlog", "clean backlog" | `/backlog-reviewer` | Audit health |
-| **Skills** |||
-| "improve skill", "enhance" | `/enhance` | Upgrade skill |
-| **Code Quality** |||
-| React/Next.js review | `/vercel-react-best-practices` | Performance |
-| UI/Design review | `/web-design-guidelines` | Accessibility |
+Simple tasks that don't need delegation:
+- Read files, search code (Read, Glob, Grep)
+- Small edits (Edit, Write)
+- Quick questions about context
 
-### Delegation
+### Delegate to syner-worker
 
-**No skill match?** Delegate based on complexity:
-
-| Complexity | Action |
-|------------|--------|
-| Simple query | Execute directly with Read, Glob, Grep |
-| Simple edit | Execute directly with Edit, Write |
-| Exploration | `Task` subagent_type=Explore |
-| Code review | `Task` subagent_type=code-reviewer |
-| **Complex execution** | `Task` subagent_type=syner-worker |
-
-### When to use syner-worker
-
-Delegate to `syner-worker` when the task requires:
+Complex execution that needs:
 - Multiple file changes with verification
-- Iterative refinement (code → review → fix)
-- Following workflow patterns (chaining, parallelization)
-- Tasks that benefit from Action → Verify → Repeat loop
-
-**How to delegate:**
+- Iterative refinement (code, review, fix)
+- Action, Verify, Repeat loop
 
 ```
 Task(subagent_type=syner-worker, prompt="
-  Task: [Clear description of what to accomplish]
-  Context: [Relevant info from notes - technologies, files, patterns]
-  Preferences: [User preferences extracted from state]
-  Success criteria: [How to verify completion]
+  Task: [What to accomplish]
+  Context: [From notes - tech, patterns, files]
+  Preferences: [User preferences]
+  Success: [How to verify]
 ")
 ```
 
-## Phase 3: Summarize
+## Step 3: Summarize
 
-After delegation completes, summarize results for the main context:
+After completion:
 
-- **Done**: Brief summary of actions taken
-- **Files**: List of modified/created files
-- **Verified**: Test/lint results
-- **Next** (optional): Follow-up suggestions
+- **Done**: What was accomplished
+- **Files**: Modified/created
+- **Verified**: Results (if applicable)
+- **Next**: Suggestions (optional)
 
-Keep the summary concise - raw notes and detailed context stay in the forked context.
+Keep it concise. This runs in a forked context - details stay here.
+
+## References
+
+- [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce
+- [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
