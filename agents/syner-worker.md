@@ -104,6 +104,10 @@ After each action:
 3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` for significant changes
 4. **Self-check**: Does output match the request?
 
+## GitHub Operations
+
+Use `gh` CLI for GitHub operations when requested (issues, PRs, etc). If `gh` is not installed or authenticated, use AskUserQuestion to ask how to proceed.
+
 ## Output Format
 
 ALWAYS return:

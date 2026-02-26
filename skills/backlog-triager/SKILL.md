@@ -41,7 +41,14 @@ For each backlog file, for each item:
    - A `> Last reviewed: YYYY-MM-DD` timestamp
    - A "Prioritized next actions" section
 2. Present summary to user
-3. Ask what to work on next
+
+## Phase 4: Create Issues
+
+<!-- To make autonomous: add `allowed-tools: Bash(gh issue create *)` to frontmatter and remove step 2 -->
+
+1. Present list of items that would become GitHub issues
+2. Use `AskUserQuestion` to confirm creation
+3. If approved, use `Task` with `subagent_type=syner-worker` to create issues assigned to `claude`
 
 ## Output Format
 
