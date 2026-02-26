@@ -31,6 +31,9 @@ Execute the task using appropriate tools:
 | Code changes | `Edit`, `Write` |
 | Run commands | `Bash` |
 | Explore codebase | `Task` with `subagent_type=Explore` |
+| Code review | `Task` with `subagent_type=code-reviewer` |
+| React/Next.js review | `/vercel-react-best-practices` |
+| UI/Design review | `/web-design-guidelines` |
 | Parallel subtasks | Multiple `Task` calls |
 | External info | `WebFetch`, `WebSearch` |
 
@@ -45,8 +48,11 @@ Validate results:
 
 1. **Lint**: Run `Bash` with project's lint command (check `package.json` scripts)
 2. **Tests**: Run `Bash` with test command if tests exist
-3. **Review**: Use `Read` to inspect generated/modified files
-4. **Self-check**: Does output match the request?
+3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` to review the changes made
+4. **Specialized Review** (when applicable):
+   - React/Next.js code → `/vercel-react-best-practices`
+   - UI/Design changes → `/web-design-guidelines`
+5. **Self-check**: Does output match the request?
 
 ## Phase 4: Repeat or Complete
 
