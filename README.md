@@ -44,6 +44,7 @@ This gives Syner the context it needs to understand your notes properly.
 ### Knowledge
 
 - `/state` - Load your full notes state
+- `/syner-arc` - Track idea evolution (proactive + manual)
 
 ### Apps
 
