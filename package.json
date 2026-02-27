@@ -2,11 +2,12 @@
   "name": "syner",
   "private": true,
   "packageManager": "bun@1.3.2",
-  "workspaces": ["apps/*"],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "start": "turbo start"
+    "start": "turbo start",
+    "github": "bun packages/github/bin/syner-agent-github"
   },
   "devDependencies": {
     "turbo": "^2"

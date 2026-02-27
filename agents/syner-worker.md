@@ -106,7 +106,13 @@ After each action:
 
 ## GitHub Operations
 
-Use `gh` CLI for GitHub operations when requested (issues, PRs, etc).
+Use `@syner/github` package for authenticated GitHub operations. Run gh commands via:
+
+```bash
+bun run github exec -- gh <command>
+```
+
+This injects `GH_TOKEN` via the GitHub App, avoiding personal access tokens.
 
 **Issues:**
 - Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
@@ -118,7 +124,7 @@ Use `gh` CLI for GitHub operations when requested (issues, PRs, etc).
 - Assign PRs to syner (synerops) for review
 - Reference related issue numbers in the PR description
 
-If `gh` is not installed or authenticated, use `AskUserQuestion` to ask how to proceed.
+If authentication fails, see `packages/github/README.md` for setup instructions.
 
 ## Output Format
 
