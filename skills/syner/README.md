@@ -8,22 +8,20 @@ Syner is the entry point when you don't know which skill to use. It reads your n
 
 ## What I Actually Do
 
-1. **Load your context** - Via `/state`, I read all your notes to understand your projects, goals, current thinking, and preferences
-2. **Understand your intent** - I figure out what you're trying to accomplish
+1. **Understand your intent** - I figure out what you're trying to accomplish
+2. **Load context proportionally** - None for greetings, targeted for single-project tasks, full `/state` only when needed
 3. **Route or execute** - I either handle it myself (simple tasks) or delegate to the right skill/agent
 
 ## When to Use Me
 
 - You have a task but don't know which skill applies
-- You want the AI to understand your full situation before acting
-- You're starting a session and want everything in context
-- The task touches multiple areas of your knowledge or codebase
+- The task spans multiple areas of your knowledge or codebase
+- You want me to figure out the right approach
 
 ## When NOT to Use Me
 
 - You know exactly which skill you need (use it directly)
-- Simple commands that don't need context (just ask Claude)
-- You want fast, focused execution without context overhead
+- Simple greetings or casual chat (just talk to Claude directly)
 
 ## How I Work
 
@@ -62,19 +60,22 @@ From `PHILOSOPHY.md`:
 - **Suggest, don't enforce** - I recommend, you decide
 - **Execute with verification** - Action, Verify, Repeat
 
-## Example
+## Examples
+
+```
+/syner hola
+```
+→ Responds conversationally. No context loaded.
 
 ```
 /syner add dark mode to the notes app
 ```
+→ Loads targeted context (apps/notes/ only), delegates to syner-worker.
 
-What happens:
-1. I load your full context (notes, projects, preferences)
-2. I identify this is a code task in `apps/notes`
-3. I check your preferences (maybe you prefer Tailwind dark: variants)
-4. I delegate to `syner-worker` with full context
-5. Worker executes, verifies, reports back
-6. I summarize to you
+```
+/syner connect my ideas about AI agents with the backlog
+```
+→ Loads full /state (multi-domain synthesis needed), then executes.
 
 ## What I'm Not
 

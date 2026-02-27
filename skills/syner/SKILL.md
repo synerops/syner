@@ -1,14 +1,12 @@
 ---
 name: syner
-description: Your interface to your own knowledge. Reads all your notes, understands your context, and routes to the right skill or executes directly. Use when you don't know which skill to use, or when the task benefits from understanding your full situation.
+description: Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.
 context: fork
 agent: general-purpose
 tools: Read, Glob, Grep, Task, Skill, AskUserQuestion
-skills:
-  - state
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Syner
@@ -19,9 +17,8 @@ See [README.md](README.md) for philosophy and examples.
 
 ## What I Do
 
-1. Load your context (all notes via `/state`)
-2. Understand your intent
-3. Route to a specialist skill OR execute directly OR delegate to syner-worker
+1. Understand intent and load context proportionally
+2. Route to a specialist skill OR execute directly OR delegate to syner-worker
 
 ## Task
 
@@ -29,9 +26,36 @@ See [README.md](README.md) for philosophy and examples.
 
 If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
-## Step 1: Context
+## Step 1: Understand & Load Context
 
-The `/state` skill is preloaded. From your notes, extract:
+Determine how much context this request needs:
+
+| Scope | When | Action |
+|-------|------|--------|
+| **None** | Casual conversation, greetings | Respond directly |
+| **Targeted** | Question about specific thing, single-project task | Use Glob/Grep/Read for that area |
+| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="state")` |
+
+### How to Decide
+
+Ask yourself:
+- Is this conversational? → None
+- Does this touch ONE specific area? → Targeted (load only that)
+- Does this need to connect or synthesize across areas? → Full
+
+Don't pattern match on keywords. Understand the intent naturally.
+
+### Examples (for reference, not rules)
+
+- "hola" → None (conversational)
+- "what's in my backlog?" → Targeted (load backlog notes only)
+- "add dark mode to notes app" → Targeted (load apps/notes/)
+- "connect my ideas about X with project Y" → Full (multi-domain)
+- "what should I build next?" → Full (needs complete context)
+
+### When Full Context is Loaded
+
+From your notes, extract:
 - What's relevant to this specific task
 - Your preferences that apply
 - Any `/skill-name` references in your notes
@@ -40,18 +64,18 @@ The `/state` skill is preloaded. From your notes, extract:
 
 ### Route to Specialist
 
-| Signal | Skill |
-|--------|-------|
-| idea evolution, history | `/syner-track-idea` |
-| connect two topics | `/connect` |
-| generate ideas | `/ideas` |
-| promote to proper doc | `/graduate` |
-| create app, scaffold | `/create-syner-app` |
-| update app stack | `/update-syner-app` |
-| triage backlog | `/backlog-triager` |
-| backlog health | `/backlog-reviewer` |
-| improve a skill | `/syner-enhance-skills` |
-| research topic, learn about | `/syner-researcher` |
+| Skill | What it does |
+|-------|--------------|
+| `/syner-track-idea` | Track how an idea evolved over time |
+| `/connect` | Find bridges between two different domains |
+| `/ideas` | Generate ideas from your knowledge |
+| `/graduate` | Promote a thought into a proper document |
+| `/create-syner-app` | Scaffold a new application |
+| `/update-syner-app` | Update app to current stack |
+| `/backlog-triager` | Triage backlog against codebase |
+| `/backlog-reviewer` | Audit backlog health |
+| `/syner-enhance-skills` | Improve an existing skill |
+| `/syner-researcher` | Research a topic |
 
 ### Execute Directly
 
