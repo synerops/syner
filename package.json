@@ -7,7 +7,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "start": "turbo start",
-    "github": "bun packages/github/bin/syner-agent-github"
+    "agent-github": "bun packages/github/bin/syner-agent-github"
   },
   "devDependencies": {
     "turbo": "^2"

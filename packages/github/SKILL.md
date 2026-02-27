@@ -1,6 +1,6 @@
 # GitHub Authentication
 
-Use `bun run github exec -- gh <command>` for all GitHub operations.
+Use `bun run agent-github exec -- gh <command>` for all GitHub operations.
 
 This wraps the `gh` CLI with GitHub App authentication, injecting `GH_TOKEN` automatically.
 
@@ -8,15 +8,15 @@ This wraps the `gh` CLI with GitHub App authentication, injecting `GH_TOKEN` aut
 
 ```bash
 # Issues
-bun run github exec -- gh issue create --title "Bug" --body "Description"
-bun run github exec -- gh issue comment 123 --body "Comment text"
+bun run agent-github exec -- gh issue create --title "Bug" --body "Description"
+bun run agent-github exec -- gh issue comment 123 --body "Comment text"
 
 # Pull Requests
-bun run github exec -- gh pr create --title "Feature" --body "Changes"
-bun run github exec -- gh pr view 456
+bun run agent-github exec -- gh pr create --title "Feature" --body "Changes"
+bun run agent-github exec -- gh pr view 456
 
 # API calls
-bun run github exec -- gh api /user
+bun run agent-github exec -- gh api /user
 ```
 
 ## Why

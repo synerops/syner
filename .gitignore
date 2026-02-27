@@ -8,6 +8,8 @@ dist/
 .env
 .env.local
 
+CLAUDE.md
+
 # Notes content (personal knowledge base)
 apps/notes/content/*
 !apps/notes/content/.gitkeep

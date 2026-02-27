@@ -5,8 +5,8 @@ metadata:
   author: syner
   version: "1.1"
 allowed-tools:
-  - Bash(bun run github exec -- gh issue create *)
-  - Bash(bun run github exec -- gh issue comment *)
+  - Bash(bun run agent-github exec -- gh issue create *)
+  - Bash(bun run agent-github exec -- gh issue comment *)
 ---
 
 # Backlog Triager
@@ -51,7 +51,7 @@ For each backlog file, for each item:
 2. Use `AskUserQuestion` to confirm creation
 3. Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
 4. For each approved item:
-   a. Create issue with `bun run github exec -- gh issue create --assignee <agent>`
+   a. Create issue with `bun run agent-github exec -- gh issue create --assignee <agent>`
    b. Capture the issue number from output
    c. Add a contextual comment mentioning the agent:
       - Reference the specific issue context

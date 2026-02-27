@@ -3,6 +3,7 @@ name: syner
 description: Your interface to your own knowledge. Reads all your notes, understands your context, and routes to the right skill or executes directly. Use when you don't know which skill to use, or when the task benefits from understanding your full situation.
 context: fork
 agent: general-purpose
+tools: Read, Glob, Grep, Task, Skill, AskUserQuestion
 skills:
   - state
 metadata:
@@ -54,9 +55,8 @@ The `/state` skill is preloaded. From your notes, extract:
 
 ### Execute Directly
 
-Simple tasks that don't need delegation:
+Read-only operations only:
 - Read files, search code (Read, Glob, Grep)
-- Small edits (Edit, Write)
 - Quick questions about context
 
 ### Delegate to syner-worker

@@ -69,6 +69,17 @@ const { data: user } = await octokit.users.getAuthenticated();
 | `GITHUB_APP_PRIVATE_KEY` | One of these | The private key contents (PEM format) |
 | `GITHUB_APP_PEM_PATH` | One of these | Path to the private key file |
 
+## Setup
+
+1. Install the GitHub App on your org/profile
+2. Get your `GITHUB_APP_INSTALLATION_ID` from the URL after installation:
+   ```
+   https://github.com/settings/installations/12345678
+                                              ^^^^^^^^
+                                              this is your installation ID
+   ```
+3. Configure the environment variables
+
 ## Why GitHub App Auth?
 
 - **Security**: No personal access tokens stored or exposed
@@ -89,8 +100,8 @@ bun run typecheck
 bun run build
 
 # Run locally (from monorepo root)
-bun run github token
-bun run github exec -- gh api /user
+bun run agent-github token
+bun run agent-github exec -- gh api /user
 ```
 
 ## Integration with Syner
@@ -103,5 +114,5 @@ This package is used by skills and agents that need GitHub access:
 When `gh` CLI is used within syner, prefer running it through this package to ensure proper authentication:
 
 ```bash
-bun run github exec -- gh <command>
+bun run agent-github exec -- gh <command>
 ```

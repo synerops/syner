@@ -109,7 +109,7 @@ After each action:
 Use `@syner/github` package for authenticated GitHub operations. Run gh commands via:
 
 ```bash
-bun run github exec -- gh <command>
+bun run agent-github exec -- gh <command>
 ```
 
 This injects `GH_TOKEN` via the GitHub App, avoiding personal access tokens.
