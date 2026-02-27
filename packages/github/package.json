@@ -6,7 +6,7 @@
     "syner-agent-github": "./bin/syner-agent-github"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/lib/octokit.ts"
   },
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
