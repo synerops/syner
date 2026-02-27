@@ -106,7 +106,19 @@ After each action:
 
 ## GitHub Operations
 
-Use `gh` CLI for GitHub operations when requested (issues, PRs, etc). If `gh` is not installed or authenticated, use AskUserQuestion to ask how to proceed.
+Use `gh` CLI for GitHub operations when requested (issues, PRs, etc).
+
+**Issues:**
+- Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
+- Never use `@me` — gh runs as a GitHub App which cannot be assigned to issues
+- Comments should be contextual, not generic messages
+- Give the assigned agent initiative to investigate and act
+
+**PRs:**
+- Assign PRs to syner (synerops) for review
+- Reference related issue numbers in the PR description
+
+If `gh` is not installed or authenticated, use `AskUserQuestion` to ask how to proceed.
 
 ## Output Format
 

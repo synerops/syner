@@ -24,11 +24,13 @@ Before reviewing, detect what type of code changed:
 |---------|-----------|--------|
 | `*.tsx`, `*.jsx`, React hooks, components | React/Next.js | Invoke `/vercel-react-best-practices` |
 | UI components, CSS, styles, accessibility attrs | UI/Design | Invoke `/web-design-guidelines` |
+| `SKILL.md`, `skills/**`, `.claude/skills/**` | Skill definition | Invoke `/syner-enhance-skills` |
 | Any code | General | Apply checklist below |
 
 **Detection rules:**
 - If diff contains `.tsx` or `.jsx` files → React code
 - If diff contains `className`, `style`, CSS files, or UI component patterns → UI code
+- If diff contains `SKILL.md` files or changes in `skills/` directories → Skill code
 - Multiple specializations can apply to the same review
 
 ## Specialized Review Invocation
@@ -41,6 +43,9 @@ Skill: vercel-react-best-practices
 
 # For UI/Design code
 Skill: web-design-guidelines
+
+# For Skill definitions
+Skill: syner-enhance-skills
 ```
 
 Pass the relevant context (file paths, diff sections) to each skill. Collect their findings.

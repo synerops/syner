@@ -41,7 +41,7 @@ The `/state` skill is preloaded. From your notes, extract:
 
 | Signal | Skill |
 |--------|-------|
-| idea evolution, history | `/syner-arc` |
+| idea evolution, history | `/syner-track-idea` |
 | connect two topics | `/connect` |
 | generate ideas | `/ideas` |
 | promote to proper doc | `/graduate` |
@@ -49,7 +49,7 @@ The `/state` skill is preloaded. From your notes, extract:
 | update app stack | `/update-syner-app` |
 | triage backlog | `/backlog-triager` |
 | backlog health | `/backlog-reviewer` |
-| improve a skill | `/enhance` |
+| improve a skill | `/syner-enhance-skills` |
 | research topic, learn about | `/syner-researcher` |
 
 ### Execute Directly

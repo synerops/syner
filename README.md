@@ -44,7 +44,7 @@ This gives Syner the context it needs to understand your notes properly.
 ### Knowledge
 
 - `/state` - Load your full notes state
-- `/syner-arc` - Track idea evolution (proactive + manual)
+- `/syner-track-idea` - Track idea evolution (proactive + manual)
 
 ### Apps
 
@@ -58,7 +58,7 @@ This gives Syner the context it needs to understand your notes properly.
 
 ### Skills Meta
 
-- `/enhance` - Improve existing skills with best practices
+- `/syner-enhance-skills` - Improve existing skills with best practices
 
 ## Agents
 

@@ -3,7 +3,10 @@ name: backlog-triager
 description: Triage backlog items against the current codebase. Compares each item to actual code state, marks as fixed/partial/open, assigns priorities, and updates the backlog note. Use when starting a session without a task, or to check what's pending.
 metadata:
   author: syner
-  version: "1.0"
+  version: "1.1"
+allowed-tools:
+  - Bash(gh issue create *)
+  - Bash(gh issue comment *)
 ---
 
 # Backlog Triager
@@ -44,11 +47,19 @@ For each backlog file, for each item:
 
 ## Phase 4: Create Issues
 
-<!-- To make autonomous: add `allowed-tools: Bash(gh issue create *)` to frontmatter and remove step 2 -->
-
 1. Present list of items that would become GitHub issues
 2. Use `AskUserQuestion` to confirm creation
-3. If approved, use `Task` with `subagent_type=syner-worker` to create issues assigned to `claude`
+3. Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
+4. For each approved item:
+   a. Create issue with `gh issue create --assignee <agent>`
+   b. Capture the issue number from output
+   c. Add a contextual comment mentioning the agent:
+      - Reference the specific issue context
+      - Give the agent initiative to investigate and act
+      - Example: `@<agent> This issue affects X. Please investigate and open a PR when ready.`
+5. When creating PRs related to issues:
+   - Assign PRs to syner (synerops) for review
+   - Reference the issue number in the PR description
 
 ## Output Format
 

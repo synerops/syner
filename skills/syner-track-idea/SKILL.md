@@ -1,5 +1,5 @@
 ---
-name: syner-arc
+name: syner-track-idea
 description: Track idea evolution - proactively surfaces evolved ideas worth revisiting, or traces a specific concept manually.
 context: fork
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "2.1"
 ---
 
-# Syner-Arc Skill
+# Syner-Track-Idea Skill
 
 ## Purpose
 
@@ -25,7 +25,7 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ## Instructions
 
-### Proactive Mode (`/syner-arc` without arguments)
+### Proactive Mode (`/syner-track-idea` without arguments)
 
 1. Locate `apps/notes/content/` from the project root
 2. Use `Glob` tool to find all `.md` files
@@ -41,7 +41,7 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
    - Commit activity summary
 7. Ask user if they want a full trace of any idea
 
-### Manual Mode (`/syner-arc [concept]`)
+### Manual Mode (`/syner-track-idea [concept]`)
 
 1. Locate `apps/notes/content/` from the project root
 2. Use `Glob` tool to find all `.md` files
@@ -87,6 +87,6 @@ ALWAYS use this structure:
 ## Usage
 
 ```
-/syner-arc                    # Proactive: detect evolved ideas
-/syner-arc building in public # Manual: trace specific concept
+/syner-track-idea                    # Proactive: detect evolved ideas
+/syner-track-idea building in public # Manual: trace specific concept
 ```
