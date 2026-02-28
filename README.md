@@ -7,62 +7,41 @@
 
 # Syner
 
-A Personal Knowledge System
+A personal knowledge runtime — agent skills that think with your notes.
 
-## Overview
+## How it works
 
-Syner is an AI-powered personal knowledge system that understands how you think, follows your rules, and learns from your experiences to help you make better decisions.
+Everything starts with your notes. Write markdown in `apps/notes/content/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
 
-Your notes become a living context that AI can read, trace, and connect - turning scattered thoughts into actionable insights.
+Skills read that context and act on it — find ideas, connect domains, grow a thought into a full document. You invoke them directly or let the orchestrator route for you. When a task needs multiple steps, agents take over organically, executing with verification loops until the job is done.
 
-See [PHILOSOPHY.md](PHILOSOPHY.md) for the design principles behind Syner.
-
-## Memory
-
-Markdown is the language of agents.
-
-Create notes in `apps/notes/` with any structure you like. The project starts blank with no predefined notes.
-
-Each folder is an organization of notes. To give Syner context about a folder, create an `index.md` file that describes what that folder contains and how to interpret its contents.
-
-### The index.md Convention
-
-When Syner reads a folder, it first looks for an `index.md` file. This file should explain:
-- What this folder is about
-- How notes in this folder are organized
-- Any special conventions or terminology used
-- How to interpret the content
-
-This gives Syner the context it needs to understand your notes properly.
+```
+/syner anything new worth exploring?
+```
 
 ## Skills
 
-### Orchestration
-
-- `/syner` - Main orchestrator that understands your context and delegates to specialized skills or agents
-
-### Knowledge
-
-- `/state` - Load your full notes state
-- `/syner-track-idea` - Track idea evolution (proactive + manual)
-
-### Apps
-
-- `/create-syner-app` - Scaffold new applications with the standard stack (Next.js + TypeScript + Tailwind + shadcn)
-- `/update-syner-app` - Update existing apps to match current stack standards
-
-### Backlog
-
-- `/backlog-triager` - Triage backlog items against current codebase state
-- `/backlog-reviewer` - Audit backlog health (stale items, duplicates, hidden TODOs)
-
-### Skills Meta
-
-- `/syner-enhance-skills` - Improve existing skills with best practices
+| Skill | What it does |
+|-------|-------------|
+| `/syner` | Orchestrator — routes to the right skill or executes directly |
+| `/syner-load-all` | Load your full notes state |
+| `/syner-find-ideas` | Generate ideas from your knowledge |
+| `/syner-find-links` | Find bridges between two domains |
+| `/syner-grow-note` | Promote a thought into a document |
+| `/syner-track-idea` | Track how an idea evolved over time |
+| `/create-syner-app` | Scaffold new app with standard stack |
+| `/update-syner-app` | Update app to current standards |
+| `/backlog-triager` | Triage backlog against codebase |
+| `/backlog-reviewer` | Audit backlog health |
+| `/syner-enhance-skills` | Improve an existing skill |
+| `/syner-researcher` | Research a topic from any source |
 
 ## Agents
 
-Agents handle complex execution with verification loops.
+- **syner-worker** — Executes tasks with workflow patterns (chaining, parallelization, routing)
+- **code-reviewer** — Reviews code for quality, security, and best practices
 
-- **code-reviewer** - Reviews code for quality, security, and best practices. Detects code type and applies specialized reviews (React/Next.js, UI/accessibility)
-- **syner-worker** - Executes tasks with verification using workflow patterns (chaining, parallelization, routing). Action → Verify → Repeat
+## References
+
+- [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
+- [note-conventions.md](skills/syner/note-conventions.md) — How skills read your notes

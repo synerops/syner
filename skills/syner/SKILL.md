@@ -34,7 +34,7 @@ Determine how much context this request needs:
 |-------|------|--------|
 | **None** | Casual conversation, greetings | Respond directly |
 | **Targeted** | Question about specific thing, single-project task | Use Glob/Grep/Read for that area |
-| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="state")` |
+| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="syner-load-all")` |
 
 ### How to Decide
 
@@ -67,9 +67,9 @@ From your notes, extract:
 | Skill | What it does |
 |-------|--------------|
 | `/syner-track-idea` | Track how an idea evolved over time |
-| `/connect` | Find bridges between two different domains |
-| `/ideas` | Generate ideas from your knowledge |
-| `/graduate` | Promote a thought into a proper document |
+| `/syner-find-links` | Find bridges between two different domains |
+| `/syner-find-ideas` | Generate ideas from your knowledge |
+| `/syner-grow-note` | Promote a thought into a proper document |
 | `/create-syner-app` | Scaffold a new application |
 | `/update-syner-app` | Update app to current stack |
 | `/backlog-triager` | Triage backlog against codebase |

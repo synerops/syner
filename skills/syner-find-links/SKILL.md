@@ -1,12 +1,12 @@
 ---
-name: connect
+name: syner-find-links
 description: Bridge two domains you've been circling. Find unexpected connections between two different areas, topics, or projects in your notes. Use when you sense a link but can't articulate it, or to discover non-obvious relationships.
 metadata:
   author: syner
-  version: "1.0"
+  version: "1.1"
 ---
 
-# Connect Skill
+# Syner Find Links
 
 ## Purpose
 
@@ -14,26 +14,8 @@ Discover and articulate connections between two seemingly separate domains in th
 
 ## How to Read Notes
 
-1. Find the project root (the directory containing `apps/`)
-2. Use `Glob` tool with pattern `apps/notes/content/**/*.md` to discover all markdown files
-3. **Important**: For each folder, check if an `index.md` exists and read it first - it provides context for interpreting that folder's contents
-4. Use `Read` tool to load file contents
-
-## Note Format Conventions
-
-### Internal Links
-Notes reference other notes using markdown links:
-- `[display text](./relative-path.md)` - Link to another note
-- Follow these links to understand relationships between notes
-
-### External Documentation Links
-Notes may reference external documentation, especially llms.txt endpoints:
-- `[tool](https://example.com/docs/llms.txt)` - LLM-friendly documentation
-- These indicate tools/technologies relevant to the note
-
-### Skill References
-Notes may reference skills using slash notation:
-- `/skill-name` - Indicates a workflow or tool to use in that context
+Follow conventions in `skills/syner/note-conventions.md`.
+Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
@@ -64,7 +46,7 @@ Notes may reference skills using slash notation:
 ## Usage
 
 ```
-/connect [domain A] [domain B]
+/syner-find-links [domain A] [domain B]
 ```
 
-Example: `/connect meditation productivity-systems`
+Example: `/syner-find-links meditation productivity-systems`
