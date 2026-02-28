@@ -83,7 +83,7 @@ ALWAYS use this structure:
 
 **Fix**: Use skill name or absolute pattern:
 ```markdown
-Execute `/state` skill (found via `Glob` pattern `skills/state/SKILL.md`)
+Execute `/syner-load-all` skill (found via `Glob` pattern `skills/syner-load-all/SKILL.md`)
 ```
 
 ### 7. Frontmatter Completeness
@@ -101,7 +101,7 @@ Example:
 context: fork
 agent: general-purpose
 skills:
-  - state
+  - syner-load-all
 ```
 
 ### 8. Philosophy Alignment
@@ -118,15 +118,14 @@ skills:
 
 **Problem**: Skill copy-pastes common patterns (e.g., "How to Read Notes" block).
 
-**Fix**: Reference conventions instead of duplicating:
+**Fix**: Reference the shared conventions file:
 ```markdown
-Follow note conventions from `apps/notes/content/index.md`:
-- Read `index.md` first in each folder for context
-- Use internal links, external docs (llms.txt), skill references (/skill-name)
+Follow conventions in `skills/syner/note-conventions.md`.
+Use `Read` tool to load it before processing notes.
 ```
 
 **Known duplications** (22 lines repeated in 5 skills):
-- state, ideas, connect, graduate, trace
+- syner-load-all, syner-find-ideas, syner-find-links, syner-grow-note, syner-track-idea
 
 ### 10. Worker Delegation
 
