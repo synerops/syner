@@ -7,7 +7,7 @@
 
 # Syner
 
-Your notes accumulate knowledge. Syner reads them as context and helps you connect, synthesize, and act on what you already know.
+The open-source PKMS that reads your notes and helps you think, connect, and ship.
 
 Write markdown in `apps/notes/content/`. No schemas, no config. Then:
 
