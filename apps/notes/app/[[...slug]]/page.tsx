@@ -11,17 +11,20 @@ function Breadcrumb({ slug }: { slug?: string[] }) {
   if (!slug || slug.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" style={{ marginBottom: 16, fontSize: 14 }}>
-      <Link href="/" style={{ color: "#666" }}>
+    <nav aria-label="Breadcrumb" className="mb-4 text-sm">
+      <Link href="/" className="text-muted-foreground hover:text-foreground">
         notes
       </Link>
       {slug.map((segment, i) => (
         <span key={slug.slice(0, i + 1).join("/")}>
-          <span style={{ margin: "0 8px", color: "#999" }}>/</span>
+          <span className="mx-2 text-muted-foreground/60">/</span>
           {i === slug.length - 1 ? (
-            <span>{segment}</span>
+            <span className="text-foreground">{segment}</span>
           ) : (
-            <Link href={`/${slug.slice(0, i + 1).join("/")}`} style={{ color: "#666" }}>
+            <Link
+              href={`/${slug.slice(0, i + 1).join("/")}`}
+              className="text-muted-foreground hover:text-foreground"
+            >
               {segment}
             </Link>
           )}
@@ -51,13 +54,18 @@ export default async function Page({ params }: PageProps) {
 
   if (result.type === "list") {
     return (
-      <main style={{ maxWidth: 800, margin: "0 auto", padding: 20 }}>
+      <main className="mx-auto max-w-3xl p-5">
         <Breadcrumb slug={slug} />
-        <h1>{slug ? slug[slug.length - 1] : "Notes"}</h1>
-        <ul>
+        <h1 className="text-2xl font-bold mb-4">{slug ? slug[slug.length - 1] : "Notes"}</h1>
+        <ul className="space-y-2">
           {result.items.map((item) => (
             <li key={item.slug}>
-              <Link href={`${basePath}/${item.slug}`}>{item.title}</Link>
+              <Link
+                href={`${basePath}/${item.slug}`}
+                className="text-foreground hover:text-muted-foreground underline underline-offset-2"
+              >
+                {item.title}
+              </Link>
             </li>
           ))}
         </ul>
@@ -66,9 +74,9 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: 20 }}>
+    <main className="mx-auto max-w-3xl p-5">
       <Breadcrumb slug={slug} />
-      <article>
+      <article className="prose prose-neutral dark:prose-invert max-w-none">
         <ReactMarkdown>{result.content}</ReactMarkdown>
       </article>
     </main>
