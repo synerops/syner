@@ -7,7 +7,7 @@
 
 # Syner
 
-Your notes are your external brain. Syner makes them actionable.
+Your notes accumulate knowledge. Syner reads them as context and helps you connect, synthesize, and act on what you already know.
 
 Write markdown in `apps/notes/content/`. No schemas, no config. Then:
 
@@ -15,11 +15,11 @@ Write markdown in `apps/notes/content/`. No schemas, no config. Then:
 /syner what should I work on next?
 ```
 
-## Principles
+## Features
 
-- **Notes are personal** — free-form, no enforced structure ([PHILOSOPHY.md](PHILOSOPHY.md))
-- **Suggest, don't enforce** — skills recommend, you decide
-- **Action, Verify, Repeat** — agents execute with verification loops
+- **Knowledge as context** — your notes feed every skill, connections surface automatically
+- **Synthesis on demand** — generate ideas, find bridges between domains, grow scattered thoughts into documents
+- **Agentic execution** — tasks run with verification loops, not blind automation ([PHILOSOPHY.md](PHILOSOPHY.md))
 
 ## Skills
 
