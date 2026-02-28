@@ -7,61 +7,43 @@
 
 # Syner
 
-Your notes are your external brain. Syner is the interface that makes them actionable.
+Your notes are your external brain. Syner makes them actionable.
 
-## Why
+Write markdown in `apps/notes/content/`. No schemas, no config. Then:
 
-You accumulate knowledge across notes, ideas, and projects — but it stays scattered. Syner reads your notes as context, understands your situation, and helps you act on what you already know. No schemas, no config files, no enforced structure. Just markdown.
-
-## Quick Start
-
-```bash
-# 1. Write notes in markdown
-apps/notes/content/
-
-# 2. Ask syner anything
-/syner what should I work on next?
-
-# 3. Or use a skill directly
-/syner-find-ideas developer-tools
 ```
-
-That's it. The more you write, the more Syner understands.
+/syner what should I work on next?
+```
 
 ## Principles
 
-- **Notes are personal** — no enforced schema, no structured metadata. Syner reads for context, not data extraction
+- **Notes are personal** — free-form, no enforced structure ([PHILOSOPHY.md](PHILOSOPHY.md))
 - **Suggest, don't enforce** — skills recommend, you decide
-- **Execute with verification** — Action, Verify, Repeat
-
-See [PHILOSOPHY.md](PHILOSOPHY.md) for the full rationale.
-
-## Notes
-
-Markdown is the language of agents. Create notes in `apps/notes/content/` with any structure you like.
-
-To give Syner context about a folder, add an `index.md`. See [note-conventions.md](skills/syner/note-conventions.md) for the full reading conventions.
+- **Action, Verify, Repeat** — agents execute with verification loops
 
 ## Skills
 
-| Skill | What it does | Category |
-|-------|-------------|----------|
-| `/syner` | Orchestrator — understands context, routes to specialists or executes directly | Core |
-| `/syner-load-all` | Load your full notes state | Knowledge |
-| `/syner-track-idea` | Track idea evolution (proactive + manual) | Knowledge |
-| `/syner-find-ideas` | Generate ideas from your knowledge | Synthesis |
-| `/syner-find-links` | Find bridges between two different domains | Synthesis |
-| `/syner-grow-note` | Promote a thought into a proper document | Synthesis |
-| `/create-syner-app` | Scaffold new app with standard stack | Apps |
-| `/update-syner-app` | Update existing app to current standards | Apps |
-| `/backlog-triager` | Triage backlog items against codebase | Backlog |
-| `/backlog-reviewer` | Audit backlog health (stale, duplicates, hidden TODOs) | Backlog |
-| `/syner-enhance-skills` | Improve existing skills with best practices | Meta |
-| `/syner-researcher` | Research a topic from any source | Meta |
+| Skill | What it does |
+|-------|-------------|
+| `/syner` | Orchestrator — routes to specialists or executes directly |
+| `/syner-load-all` | Load your full notes state |
+| `/syner-find-ideas` | Generate ideas from your knowledge |
+| `/syner-find-links` | Find bridges between two domains |
+| `/syner-grow-note` | Promote a thought into a document |
+| `/syner-track-idea` | Track how an idea evolved over time |
+| `/create-syner-app` | Scaffold new app with standard stack |
+| `/update-syner-app` | Update app to current standards |
+| `/backlog-triager` | Triage backlog against codebase |
+| `/backlog-reviewer` | Audit backlog health |
+| `/syner-enhance-skills` | Improve an existing skill |
+| `/syner-researcher` | Research a topic from any source |
 
 ## Agents
 
-Agents handle complex execution with verification loops.
-
-- **syner-worker** — Executes tasks using workflow patterns (chaining, parallelization, routing). Action, Verify, Repeat
+- **syner-worker** — Executes tasks with workflow patterns (chaining, parallelization, routing)
 - **code-reviewer** — Reviews code for quality, security, and best practices
+
+## References
+
+- [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
+- [note-conventions.md](skills/syner/note-conventions.md) — How skills read your notes
