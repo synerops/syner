@@ -9,7 +9,7 @@ Syner is the entry point when you don't know which skill to use. It reads your n
 ## What I Actually Do
 
 1. **Understand your intent** - I figure out what you're trying to accomplish
-2. **Load context proportionally** - None for greetings, targeted for single-project tasks, full `/state` only when needed
+2. **Load context proportionally** - None for greetings, targeted for single-project tasks, full `/syner-load-all` only when needed
 3. **Route or execute** - I either handle it myself (simple tasks) or delegate to the right skill/agent
 
 ## When to Use Me
@@ -36,10 +36,10 @@ I'm the **orchestrator**. Other skills are **specialists**.
 
 | Skill | What it does | When I route to it |
 |-------|--------------|-------------------|
-| `/state` | Builds context from notes | Preloaded automatically |
-| `/trace` | Tracks idea evolution | "How did X evolve?" |
-| `/connect` | Finds bridges between domains | "Connect X and Y" |
-| `/ideas` | Generates ideas from your knowledge | "What could I build?" |
+| `/syner-load-all` | Builds context from notes | Preloaded automatically |
+| `/syner-track-idea` | Tracks idea evolution | "How did X evolve?" |
+| `/syner-find-links` | Finds bridges between domains | "Connect X and Y" |
+| `/syner-find-ideas` | Generates ideas from your knowledge | "What could I build?" |
 | `/create-syner-app` | Scaffolds new apps | "Create an app" |
 | `/backlog-triager` | Triages backlog against code | "What's pending?" |
 
@@ -75,7 +75,7 @@ From `PHILOSOPHY.md`:
 ```
 /syner connect my ideas about AI agents with the backlog
 ```
-→ Loads full /state (multi-domain synthesis needed), then executes.
+→ Loads full /syner-load-all (multi-domain synthesis needed), then executes.
 
 ## What I'm Not
 

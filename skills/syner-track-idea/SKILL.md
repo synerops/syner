@@ -17,9 +17,8 @@ Two modes:
 
 ## How to Read Notes
 
-Follow note conventions from `apps/notes/content/index.md`:
-- Read `index.md` first in each folder for context
-- Use internal links, external docs (llms.txt), skill references (/skill-name)
+Follow conventions in `skills/syner/note-conventions.md`.
+Use `Read` tool to load it before processing notes.
 
 Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit history per file.
 

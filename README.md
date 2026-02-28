@@ -43,13 +43,19 @@ This gives Syner the context it needs to understand your notes properly.
 
 ### Knowledge
 
-- `/state` - Load your full notes state
+- `/syner-load-all` - Load your full notes state
 - `/syner-track-idea` - Track idea evolution (proactive + manual)
 
 ### Apps
 
 - `/create-syner-app` - Scaffold new applications with the standard stack (Next.js + TypeScript + Tailwind + shadcn)
 - `/update-syner-app` - Update existing apps to match current stack standards
+
+### Synthesis
+
+- `/syner-find-ideas` - Generate ideas from your knowledge
+- `/syner-find-links` - Find bridges between two different domains
+- `/syner-grow-note` - Promote a thought into a proper document
 
 ### Backlog
 
