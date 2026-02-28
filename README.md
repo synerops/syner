@@ -7,25 +7,25 @@
 
 # Syner
 
-The open-source PKMS that reads your notes and helps you think, connect, and ship.
+A runtime for your personal knowledge — notes go in, thinking and action come out.
 
-Write markdown in `apps/notes/content/`. No schemas, no config. Then:
+## How it works
+
+Everything starts with your notes. Write markdown in `apps/notes/content/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
+
+Skills read that context and do specific things with it: find ideas, connect domains, grow a thought into a full document. You invoke them directly or let the orchestrator route for you.
+
+Agents handle the heavy lifting. When a task needs multiple steps, they execute with verification loops — action, verify, repeat — until the job is done.
 
 ```
 /syner what should I work on next?
 ```
 
-## Features
-
-- **Knowledge as context** — your notes feed every skill, connections surface automatically
-- **Synthesis on demand** — generate ideas, find bridges between domains, grow scattered thoughts into documents
-- **Agentic execution** — tasks run with verification loops, not blind automation ([PHILOSOPHY.md](PHILOSOPHY.md))
-
 ## Skills
 
 | Skill | What it does |
 |-------|-------------|
-| `/syner` | Orchestrator — routes to specialists or executes directly |
+| `/syner` | Orchestrator — routes to the right skill or executes directly |
 | `/syner-load-all` | Load your full notes state |
 | `/syner-find-ideas` | Generate ideas from your knowledge |
 | `/syner-find-links` | Find bridges between two domains |
