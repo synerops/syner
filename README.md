@@ -7,18 +7,16 @@
 
 # Syner
 
-A runtime for your personal knowledge — notes go in, thinking and action come out.
+A personal knowledge runtime — agent skills that think with your notes.
 
 ## How it works
 
 Everything starts with your notes. Write markdown in `apps/notes/content/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
 
-Skills read that context and do specific things with it: find ideas, connect domains, grow a thought into a full document. You invoke them directly or let the orchestrator route for you.
-
-Agents handle the heavy lifting. When a task needs multiple steps, they execute with verification loops — action, verify, repeat — until the job is done.
+Skills read that context and act on it — find ideas, connect domains, grow a thought into a full document. You invoke them directly or let the orchestrator route for you. When a task needs multiple steps, agents take over organically, executing with verification loops until the job is done.
 
 ```
-/syner what should I work on next?
+/syner anything new worth exploring?
 ```
 
 ## Skills
