@@ -7,68 +7,61 @@
 
 # Syner
 
-A Personal Knowledge System
+Your notes are your external brain. Syner is the interface that makes them actionable.
 
-## Overview
+## Why
 
-Syner is an AI-powered personal knowledge system that understands how you think, follows your rules, and learns from your experiences to help you make better decisions.
+You accumulate knowledge across notes, ideas, and projects — but it stays scattered. Syner reads your notes as context, understands your situation, and helps you act on what you already know. No schemas, no config files, no enforced structure. Just markdown.
 
-Your notes become a living context that AI can read, trace, and connect - turning scattered thoughts into actionable insights.
+## Quick Start
 
-See [PHILOSOPHY.md](PHILOSOPHY.md) for the design principles behind Syner.
+```bash
+# 1. Write notes in markdown
+apps/notes/content/
 
-## Memory
+# 2. Ask syner anything
+/syner what should I work on next?
 
-Markdown is the language of agents.
+# 3. Or use a skill directly
+/syner-find-ideas developer-tools
+```
 
-Create notes in `apps/notes/` with any structure you like. The project starts blank with no predefined notes.
+That's it. The more you write, the more Syner understands.
 
-Each folder is an organization of notes. To give Syner context about a folder, create an `index.md` file that describes what that folder contains and how to interpret its contents.
+## Principles
 
-### The index.md Convention
+- **Notes are personal** — no enforced schema, no structured metadata. Syner reads for context, not data extraction
+- **Suggest, don't enforce** — skills recommend, you decide
+- **Execute with verification** — Action, Verify, Repeat
 
-When Syner reads a folder, it first looks for an `index.md` file. This file should explain:
-- What this folder is about
-- How notes in this folder are organized
-- Any special conventions or terminology used
-- How to interpret the content
+See [PHILOSOPHY.md](PHILOSOPHY.md) for the full rationale.
 
-This gives Syner the context it needs to understand your notes properly.
+## Notes
+
+Markdown is the language of agents. Create notes in `apps/notes/content/` with any structure you like.
+
+To give Syner context about a folder, add an `index.md`. See [note-conventions.md](skills/syner/note-conventions.md) for the full reading conventions.
 
 ## Skills
 
-### Orchestration
-
-- `/syner` - Main orchestrator that understands your context and delegates to specialized skills or agents
-
-### Knowledge
-
-- `/syner-load-all` - Load your full notes state
-- `/syner-track-idea` - Track idea evolution (proactive + manual)
-
-### Apps
-
-- `/create-syner-app` - Scaffold new applications with the standard stack (Next.js + TypeScript + Tailwind + shadcn)
-- `/update-syner-app` - Update existing apps to match current stack standards
-
-### Synthesis
-
-- `/syner-find-ideas` - Generate ideas from your knowledge
-- `/syner-find-links` - Find bridges between two different domains
-- `/syner-grow-note` - Promote a thought into a proper document
-
-### Backlog
-
-- `/backlog-triager` - Triage backlog items against current codebase state
-- `/backlog-reviewer` - Audit backlog health (stale items, duplicates, hidden TODOs)
-
-### Skills Meta
-
-- `/syner-enhance-skills` - Improve existing skills with best practices
+| Skill | What it does | Category |
+|-------|-------------|----------|
+| `/syner` | Orchestrator — understands context, routes to specialists or executes directly | Core |
+| `/syner-load-all` | Load your full notes state | Knowledge |
+| `/syner-track-idea` | Track idea evolution (proactive + manual) | Knowledge |
+| `/syner-find-ideas` | Generate ideas from your knowledge | Synthesis |
+| `/syner-find-links` | Find bridges between two different domains | Synthesis |
+| `/syner-grow-note` | Promote a thought into a proper document | Synthesis |
+| `/create-syner-app` | Scaffold new app with standard stack | Apps |
+| `/update-syner-app` | Update existing app to current standards | Apps |
+| `/backlog-triager` | Triage backlog items against codebase | Backlog |
+| `/backlog-reviewer` | Audit backlog health (stale, duplicates, hidden TODOs) | Backlog |
+| `/syner-enhance-skills` | Improve existing skills with best practices | Meta |
+| `/syner-researcher` | Research a topic from any source | Meta |
 
 ## Agents
 
 Agents handle complex execution with verification loops.
 
-- **code-reviewer** - Reviews code for quality, security, and best practices. Detects code type and applies specialized reviews (React/Next.js, UI/accessibility)
-- **syner-worker** - Executes tasks with verification using workflow patterns (chaining, parallelization, routing). Action → Verify → Repeat
+- **syner-worker** — Executes tasks using workflow patterns (chaining, parallelization, routing). Action, Verify, Repeat
+- **code-reviewer** — Reviews code for quality, security, and best practices
