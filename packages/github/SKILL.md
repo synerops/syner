@@ -1,26 +1,34 @@
-# GitHub Authentication
+# GitHub CLI
 
-Use `bun run agent-github exec -- gh <command>` for all GitHub operations.
+Use `gh` directly for all GitHub operations.
 
-This wraps the `gh` CLI with GitHub App authentication, injecting `GH_TOKEN` automatically.
+## Authentication
+
+If `gh` fails with an authentication error:
+
+```bash
+bunx @syner/github create-app-token | gh auth login --with-token
+```
+
+Then retry the command.
 
 ## Examples
 
 ```bash
 # Issues
-bun run agent-github exec -- gh issue create --title "Bug" --body "Description"
-bun run agent-github exec -- gh issue comment 123 --body "Comment text"
+gh issue create --title "Bug" --body "Description"
+gh issue comment 123 --body "Comment text"
 
 # Pull Requests
-bun run agent-github exec -- gh pr create --title "Feature" --body "Changes"
-bun run agent-github exec -- gh pr view 456
+gh pr create --title "Feature" --body "Changes"
+gh pr view 456
 
 # API calls
-bun run agent-github exec -- gh api /user
+gh api /user
 ```
 
-## Why
+## Why GitHub App Auth?
 
-- Avoids storing personal access tokens
-- Uses fine-grained GitHub App permissions
-- Actions are attributed to the app, not a user
+- No personal access tokens stored
+- Fine-grained permissions per installation
+- Actions attributed to the app, not a user
