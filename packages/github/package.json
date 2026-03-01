@@ -2,9 +2,7 @@
   "name": "@syner/github",
   "version": "0.1.0",
   "type": "module",
-  "bin": {
-    "syner-agent-github": "./bin/syner-agent-github"
-  },
+  "bin": "./src/index.ts",
   "exports": {
     ".": "./src/lib/octokit.ts"
   },

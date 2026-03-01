@@ -106,13 +106,15 @@ After each action:
 
 ## GitHub Operations
 
-Use `@syner/github` package for authenticated GitHub operations. Run gh commands via:
+Use `gh` directly for all GitHub operations.
+
+If `gh` fails with an authentication error, authenticate via:
 
 ```bash
-bun run agent-github exec -- gh <command>
+bunx @syner/github create-app-token | gh auth login --with-token
 ```
 
-This injects `GH_TOKEN` via the GitHub App, avoiding personal access tokens.
+Then retry the command.
 
 **Issues:**
 - Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
