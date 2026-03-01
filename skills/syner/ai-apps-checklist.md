@@ -4,7 +4,7 @@ When building AI-powered applications, apply these guidelines:
 
 ## Markdown Rendering
 
-If the app renders Markdown, check `apps/notes/content/projects/syner.md` for patterns used in this monorepo.
+If the app renders Markdown, check `apps/notes/vaults/syner/apps/syner.md` for patterns used in this monorepo.
 
 ## React Applications
 

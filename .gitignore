@@ -10,6 +10,7 @@ dist/
 
 CLAUDE.md
 
-# Notes content (personal knowledge base)
-apps/notes/content/*
-!apps/notes/content/.gitkeep
+# Notes vaults (personal knowledge base)
+apps/notes/vaults/*
+!apps/notes/vaults/.gitkeep
+!apps/notes/vaults/syner/

@@ -20,7 +20,7 @@ Use `Read` tool to load it before processing notes.
 ## Instructions
 
 1. Accept two domains/topics from the user
-2. Locate `apps/notes/content/` from the project root
+2. Locate `apps/notes/vaults/syner/` from the project root
 3. Use Glob to find all `.md` files recursively
 4. For each folder, read `index.md` first if it exists to understand folder context
 5. Analyze notes related to each domain

@@ -19,7 +19,7 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
-1. Locate `apps/notes/content/` from the project root
+1. Locate `apps/notes/vaults/syner/` from the project root
 2. Use Glob to find all `.md` files recursively
 3. For each folder, read `index.md` first if it exists to understand folder context
 4. Follow external documentation links (especially llms.txt) to understand technical context

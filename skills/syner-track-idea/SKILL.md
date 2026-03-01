@@ -26,7 +26,7 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ### Proactive Mode (`/syner-track-idea` without arguments)
 
-1. Locate `apps/notes/content/` from the project root
+1. Locate `apps/notes/vaults/syner/` from the project root
 2. Use `Glob` tool to find all `.md` files
 3. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
 4. Identify candidates using these criteria (in order of priority):
@@ -42,7 +42,7 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ### Manual Mode (`/syner-track-idea [concept]`)
 
-1. Locate `apps/notes/content/` from the project root
+1. Locate `apps/notes/vaults/syner/` from the project root
 2. Use `Glob` tool to find all `.md` files
 3. Use `Grep` tool to search all notes for mentions of the concept
 4. For each file with matches, use `Bash` tool with `git log --oneline --follow -- [file]`

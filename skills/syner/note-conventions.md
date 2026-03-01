@@ -5,7 +5,7 @@ How to discover and read notes in the syner vault.
 ## How to Read Notes
 
 1. Find the project root (the directory containing `apps/`)
-2. Use `Glob` tool with pattern `apps/notes/content/**/*.md` to discover all markdown files
+2. Use `Glob` tool with pattern `apps/notes/vaults/syner/**/*.md` to discover all markdown files
 3. **Important**: For each folder, check if an `index.md` exists and read it first - it provides context for interpreting that folder's contents
 4. Use `Read` tool to load file contents
 
