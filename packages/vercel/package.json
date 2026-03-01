@@ -1,0 +1,6 @@
+{
+  "name": "@syner/vercel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vercel integration for syner - deployment context and actions"
+}

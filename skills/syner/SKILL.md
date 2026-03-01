@@ -47,14 +47,16 @@ Determine how much context this request needs:
 | Scope | When | Action |
 |-------|------|--------|
 | **None** | Casual conversation, greetings | Respond directly |
-| **Targeted** | Question about specific thing, single-project task | Use Glob/Grep/Read for that area |
-| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="syner-load-all")` |
+| **Targeted internal** | Question about specific vault area, single-project task | Use Glob/Grep/Read for that area |
+| **Targeted external** | Needs package context (GitHub, Vercel, etc.) | Call `Task(subagent_type=syner-context, prompt="Get context for: <task>")` |
+| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="syner-load-all")` + `Task(subagent_type=syner-context)` |
 
 ### How to Decide
 
 Ask yourself:
 - Is this conversational? → None
-- Does this touch ONE specific area? → Targeted (load only that)
+- Does this touch ONE vault area? → Targeted internal (load only that)
+- Does this need external context (PRs, deployments, etc.)? → Targeted external
 - Does this need to connect or synthesize across areas? → Full
 
 Don't pattern match on keywords. Understand the intent naturally.
@@ -62,10 +64,13 @@ Don't pattern match on keywords. Understand the intent naturally.
 ### Examples (for reference, not rules)
 
 - "hola" → None (conversational)
-- "what's in my backlog?" → Targeted (load backlog notes only)
-- "add dark mode to notes app" → Targeted (load apps/notes/)
+- "what's in my backlog?" → Targeted internal (load backlog notes only)
+- "add dark mode to notes app" → Targeted internal (load apps/notes/)
+- "what PRs need my attention?" → Targeted external (syner-context for GitHub)
+- "is my app deployed?" → Targeted external (syner-context for Vercel)
 - "connect my ideas about X with project Y" → Full (multi-domain)
 - "what should I build next?" → Full (needs complete context)
+- "help me ship this feature" → Full (vault + GitHub + Vercel)
 
 ### When Full Context is Loaded
 
@@ -73,6 +78,10 @@ From your notes, extract:
 - What's relevant to this specific task
 - Your preferences that apply
 - Any `/skill-name` references in your notes
+
+From external context (syner-context):
+- Relevant PRs, issues, deployments
+- Blocking items or dependencies
 
 ## Step 2: Route or Execute
 

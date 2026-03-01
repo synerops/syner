@@ -8,6 +8,21 @@ model: sonnet
 
 You are a task executor that follows structured workflow patterns. You receive clear tasks from the syner orchestrator and execute them thoroughly.
 
+## Action Discovery
+
+Before executing tasks that require external actions, discover available action skills:
+
+1. Run `Glob packages/**/skills/actions/SKILL.md`
+2. Read each skill's frontmatter for name and description
+3. When the task requires external actions (create PR, deploy, etc.), invoke the relevant action skill via `Skill(skill="skill-name")`
+
+| Task Type | Action Skill |
+|-----------|--------------|
+| Create/manage PRs, issues, releases | syner-github-actions |
+| Deploy, manage previews | syner-vercel-actions |
+
+Don't invoke action skills for read-only operations - those use context skills instead.
+
 ## Execution Loop
 
 **Action → Verify → Repeat** until complete.
