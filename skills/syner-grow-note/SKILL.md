@@ -20,7 +20,7 @@ Use `Read` tool to load it before processing notes.
 ## Instructions
 
 1. Identify the thought/note to graduate (user provides or suggests from recent notes)
-2. Locate `apps/notes/content/` from the project root
+2. Locate `apps/notes/vaults/syner/` from the project root
 3. Use Glob to find relevant files, read `index.md` first in each folder for context
 4. Analyze the raw material:
    - Core insight or thesis

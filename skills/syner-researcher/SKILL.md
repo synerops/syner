@@ -67,8 +67,8 @@ The subagent has access to Claude Code documentation and can answer questions ab
 
 ### For Internal Topics
 
-1. Find the vault: `apps/notes/content/`
-2. Use `Glob` with pattern `apps/notes/content/**/*.md`
+1. Find the vault: `apps/notes/vaults/syner/`
+2. Use `Glob` with pattern `apps/notes/vaults/syner/**/*.md`
 3. Use `Grep` to find files mentioning the topic
 4. Use `Read` to load relevant files
 5. Follow internal links between notes (`[text](./path.md)`)
@@ -90,7 +90,7 @@ Present the compiled research.
 
 If the user included "save" or "guardar" in the request:
 1. Use `AskUserQuestion` to confirm filename
-2. Save to `apps/notes/content/research/[topic-slug].md`
+2. Save to `apps/notes/vaults/syner/research/[topic-slug].md`
 3. Include frontmatter with date and sources
 
 Otherwise, output directly to the conversation.

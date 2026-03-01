@@ -1,6 +1,6 @@
 ---
 name: syner-load-all
-description: Load your full life + work state. Reads all notes in apps/notes/content/ and builds a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
+description: Load your full life + work state. Reads all notes in apps/notes/vaults/syner/ and builds a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
 metadata:
   author: syner
   version: "1.1"
@@ -19,7 +19,7 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
-1. Locate `apps/notes/content/` from the project root
+1. Locate `apps/notes/vaults/syner/` from the project root
 2. Use Glob to find all `.md` files recursively
 3. For each folder encountered, check for and read `index.md` first to understand folder context
 4. Read all files using the Read tool

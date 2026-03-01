@@ -26,7 +26,7 @@ Navigate upward from the current working directory until you find a directory co
 
 ### 2. Read Current Stack
 
-Use the `Read` tool to load `apps/notes/content/projects/common-stack.md`.
+Use the `Read` tool to load `apps/notes/vaults/syner/common-stack.md`.
 
 This step is mandatory - the skill ALWAYS reads common-stack.md before acting. This allows the stack to evolve without modifying the skill.
 
