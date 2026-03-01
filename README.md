@@ -1,13 +1,15 @@
 <p align="center">
   <picture>
-    <source srcset="https://github.com/user-attachments/assets/cbf55457-a101-4547-9155-2fcc6ac08eaa" media="(prefers-color-scheme: dark)">
-    <img src="https://github.com/user-attachments/assets/656eb187-0313-435b-bb44-e80f23924924" alt="Syner" height="96"/>
+    <source srcset="https://github.com/user-attachments/assets/70cee063-9701-479d-a61e-f1da868c0957" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="96"/>
   </picture>
 </p>
 
 # Syner
 
-A personal knowledge runtime — agent skills that think with your notes.
+Syner Agent is an orchestrator for your Personal Knowledge Management. Turns into life your notes, projects, ideas, etc. and execute your plans.
+
+Built using [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview). 
 
 ## How it works
 
