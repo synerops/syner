@@ -13,3 +13,4 @@ CLAUDE.md
 # Notes vaults (personal knowledge base)
 apps/notes/vaults/*
 !apps/notes/vaults/.gitkeep
+!apps/notes/vaults/syner/
