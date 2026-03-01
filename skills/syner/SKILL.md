@@ -11,14 +11,28 @@ metadata:
 
 # Syner
 
-The entry point when you don't know which skill to use.
+This skill helps you accomplish tasks that requires more specific context than a general-purpose skill can provide.
 
 See [README.md](README.md) for philosophy and examples.
 
-## What I Do
+## How this skill works
 
 1. Understand intent and load context proportionally
 2. Route to a specialist skill OR execute directly OR delegate to syner-worker
+
+## When to Use this Skill
+
+Use this skill when the user:
+
+1. **Doesn't know which skill to use** - They have a task but aren't sure where to start. Syner figures out the right approach and routes accordingly.
+
+2. **Needs multi-domain synthesis** - The task spans different areas (ideas + projects, notes + backlog, personal context + codebase). Syner connects the dots.
+
+3. **Wants context-aware execution** - They want their notes, preferences, and personal context taken into account, not just generic assistance.
+
+4. **Asks open-ended questions** - "What should I build next?", "What's blocking my progress?", "How do my ideas connect?" These require understanding their full situation.
+
+5. **References their notes or vault** - Any request that would benefit from reading their vault, understanding their projects, or knowing their preferences.
 
 ## Task
 
@@ -74,7 +88,7 @@ From your notes, extract:
 | `/update-syner-app` | Update app to current stack |
 | `/backlog-triager` | Triage backlog against codebase |
 | `/backlog-reviewer` | Audit backlog health |
-| `/syner-enhance-skills` | Improve an existing skill |
+| `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
 | `/syner-researcher` | Research a topic |
 
 ### Execute Directly
