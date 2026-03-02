@@ -94,8 +94,8 @@ Only fork when the task genuinely requires isolation or parallel work.
 | `/syner-grow-note` | Promote a thought into a proper document |
 | `/create-syner-app` | Scaffold a new application |
 | `/update-syner-app` | Update app to current stack |
-| `/backlog-triager` | Triage backlog against codebase |
-| `/backlog-reviewer` | Audit backlog health |
+| `/syner-backlog-triager` | Triage backlog against codebase |
+| `/syner-backlog-reviewer` | Audit backlog health |
 | `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
 | `/syner-researcher` | Research a topic |
 

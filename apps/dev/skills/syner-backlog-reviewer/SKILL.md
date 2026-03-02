@@ -1,5 +1,5 @@
 ---
-name: backlog-reviewer
+name: syner-backlog-reviewer
 description: Health audit for the backlog itself. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately. Use to keep the backlog clean and actionable.
 metadata:
   author: syner
@@ -61,7 +61,7 @@ Run these checks across all backlog items:
 4. Apply approved changes using `Edit`
 5. Update the `> Last reviewed: YYYY-MM-DD` timestamp on every modified backlog note
 
-> After reviewing, run the `backlog-triager` skill (found via `Glob` pattern `skills/backlog-triager/SKILL.md`) to validate surviving items against the actual codebase.
+> After reviewing, run the `syner-backlog-triager` skill (found via `Glob` pattern `skills/syner-backlog-triager/SKILL.md`) to validate surviving items against the actual codebase.
 
 ## Output Format
 
