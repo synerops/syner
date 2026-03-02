@@ -47,3 +47,4 @@ Skills read that context and act on it — find ideas, connect domains, grow a t
 
 - [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
 - [note-conventions.md](skills/syner/note-conventions.md) — How skills read your notes
+- [apps/bot/README.md](apps/bot/README.md) — GitHub Actions setup and secrets
