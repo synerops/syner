@@ -17,3 +17,6 @@ apps/notes/vaults/*
 
 # Dev vaults (local development notes)
 apps/dev/vaults/
+
+# Syner local data
+.syner/

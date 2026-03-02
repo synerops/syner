@@ -1,9 +1,8 @@
 ---
 name: syner
 description: Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.
-context: fork
 agent: general-purpose
-tools: Read, Glob, Grep, Task, Skill, AskUserQuestion
+tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
 metadata:
   author: syner
   version: "0.2.0"
@@ -74,7 +73,16 @@ From your notes, extract:
 - Your preferences that apply
 - Any `/skill-name` references in your notes
 
-## Step 2: Route or Execute
+## Step 2: Decide Fork & Route
+
+### Decide Fork
+
+| Caso | Fork? |
+|------|-------|
+| Conversacional, lookups rápidos, queries read-only | No - ejecutar directo en contexto actual |
+| Multi-archivo, iterativo, full context load | Sí - usar Task con subagent |
+
+Only fork when the task genuinely requires isolation or parallel work.
 
 ### Route to Specialist
 
@@ -104,14 +112,32 @@ Complex execution that needs:
 - Iterative refinement (code, review, fix)
 - Action, Verify, Repeat loop
 
+**Before delegating:**
+1. Run `Glob("packages/*/SKILL.md")` to discover available packages
+2. Read SKILL.md for packages relevant to the task
+3. **Follow package prerequisites** - if the package says "check X before using", check it and include the setup commands if needed
+4. **Gather task context** - don't make worker explore:
+   - For PRs: run `git log`, `git diff --stat`, get exact commit messages
+   - For code changes: read the relevant files first
+5. Build exact command sequence and include everything in the worker prompt
+
 ```
 Task(subagent_type=syner-worker, prompt="
-  Task: [What to accomplish]
-  Context: [From notes - tech, patterns, files]
-  Preferences: [User preferences]
-  Success: [How to verify]
+  Task: [Specific action]
+
+  Commands (exact sequence):
+  1. [first command]
+  2. [second command]
+  ...
+
+  Context (for reference):
+  [git log output, PR body content, etc.]
+
+  Success: [what to verify]
 ")
 ```
+
+**Key principle:** Syner explores, checks state, builds exact commands. Worker just runs them.
 
 ## Step 3: Summarize
 
@@ -123,6 +149,41 @@ After completion:
 - **Next**: Suggestions (optional)
 
 Keep it concise. This runs in a forked context - details stay here.
+
+## Step 4: Write Audit (Conditional)
+
+Write an audit file to `.syner/audits/` **ONLY when:**
+- Route was `worker` or `specialist`
+- Files were modified/created
+
+**Skip audit for:** conversational responses, read-only queries, quick lookups.
+
+**Filename format:** `YYYY-MM-DDTHH-MM-SS.md` (e.g., `2026-03-02T14-32-05.md`)
+
+**Template:**
+
+```markdown
+# Audit: {ISO timestamp}
+
+## Request
+{original user request}
+
+## Routing
+- Entry: /syner
+- Context loaded: {none | targeted | full}
+- Route: {direct | specialist:{skill-name} | worker}
+
+## Tools Used
+{list of tools and their purpose}
+
+## Result
+{success | failure} - {brief description}
+
+## Duration
+{approximate duration}
+```
+
+When writing audits, include failure details if applicable.
 
 ## References
 

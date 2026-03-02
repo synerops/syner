@@ -104,29 +104,15 @@ After each action:
 3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` for significant changes
 4. **Self-check**: Does output match the request?
 
-## GitHub Operations
+## Execution Context
 
-Use `gh` directly for all GitHub operations.
+You receive tasks with full context from the syner orchestrator, including:
+- What to accomplish
+- Relevant package instructions (if any)
+- User preferences
+- Success criteria
 
-If `gh` fails with an authentication error, authenticate via:
-
-```bash
-bunx @syner/github create-app-token | gh auth login --with-token
-```
-
-Then retry the command.
-
-**Issues:**
-- Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
-- Never use `@me` — gh runs as a GitHub App which cannot be assigned to issues
-- Comments should be contextual, not generic messages
-- Give the assigned agent initiative to investigate and act
-
-**PRs:**
-- Assign PRs to syner (synerops) for review
-- Reference related issue numbers in the PR description
-
-If authentication fails, see `packages/github/README.md` for setup instructions.
+Follow the instructions provided in the task prompt. The orchestrator has already done package discovery and included relevant instructions.
 
 ## Output Format
 
