@@ -1,5 +1,5 @@
 ---
-name: backlog-triager
+name: syner-backlog-triager
 description: Triage backlog items against the current codebase. Compares each item to actual code state, marks as fixed/partial/open, assigns priorities, and updates the backlog note. Use when starting a session without a task, or to check what's pending.
 metadata:
   author: syner

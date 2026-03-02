@@ -33,8 +33,8 @@ Skills read that context and act on it — find ideas, connect domains, grow a t
 | `/syner-track-idea` | Track how an idea evolved over time |
 | `/create-syner-app` | Scaffold new app with standard stack |
 | `/update-syner-app` | Update app to current standards |
-| `/backlog-triager` | Triage backlog against codebase |
-| `/backlog-reviewer` | Audit backlog health |
+| `/syner-backlog-triager` | Triage backlog against codebase |
+| `/syner-backlog-reviewer` | Audit backlog health |
 | `/syner-enhance-skills` | Improve an existing skill |
 | `/syner-researcher` | Research a topic from any source |
 

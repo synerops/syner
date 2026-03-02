@@ -41,7 +41,7 @@ I'm the **orchestrator**. Other skills are **specialists**.
 | `/syner-find-links` | Finds bridges between domains | "Connect X and Y" |
 | `/syner-find-ideas` | Generates ideas from your knowledge | "What could I build?" |
 | `/create-syner-app` | Scaffolds new apps | "Create an app" |
-| `/backlog-triager` | Triages backlog against code | "What's pending?" |
+| `/syner-backlog-triager` | Triages backlog against code | "What's pending?" |
 
 ## My Relationship with syner-worker
 
