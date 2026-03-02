@@ -1,11 +1,16 @@
 {
   "name": "@syner/github",
   "version": "0.1.0",
+  "description": "GitHub App authentication utilities for Syner",
+  "license": "MIT",
   "type": "module",
   "bin": "./src/index.ts",
   "exports": {
     ".": "./src/lib/octokit.ts"
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
     "typecheck": "tsc --noEmit"
@@ -17,5 +22,14 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/syner.git",
+    "directory": "packages/github"
   }
 }
