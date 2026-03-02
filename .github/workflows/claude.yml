@@ -27,6 +27,19 @@ jobs:
       id-token: write
 
     steps:
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ] && [ -z "${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}" ]; then
+            echo "::error::Missing required secret: ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN"
+            echo ""
+            echo "To fix this:"
+            echo "1. Go to Settings → Secrets and variables → Actions"
+            echo "2. Add ANTHROPIC_API_KEY with your API key from https://console.anthropic.com"
+            echo ""
+            echo "See apps/bot/README.md for more details."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:

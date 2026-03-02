@@ -121,6 +121,25 @@ apps/bot/
 - bun runtime
 - packages: `@syner/github`, `@syner/slack`
 
+## github configuration
+
+the repository uses GitHub Actions for automation. configure these secrets in **Settings → Secrets and variables → Actions**:
+
+| secret | required | used by | description |
+|--------|----------|---------|-------------|
+| `ANTHROPIC_API_KEY` | yes* | `claude.yml` | API key from [console.anthropic.com](https://console.anthropic.com) |
+| `CLAUDE_CODE_OAUTH_TOKEN` | yes* | `claude.yml` | alternative: OAuth token for Claude Code |
+| `NPM_TOKEN` | yes | `release.yml` | npm publish token from [npmjs.com](https://www.npmjs.com/settings/~/tokens) |
+
+*one of `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN` is required for Claude Assistant.
+
+### workflows
+
+| workflow | trigger | purpose |
+|----------|---------|---------|
+| `claude.yml` | `@claude` mention, assignment, label | Claude responds to issues/PRs |
+| `release.yml` | push to main | creates release PRs and publishes to npm |
+
 ## local development
 
 ```bash
