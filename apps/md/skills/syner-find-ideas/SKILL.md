@@ -4,6 +4,7 @@ description: Generate startup ideas from your vault. Synthesize your unique know
 metadata:
   author: syner
   version: "1.1"
+tools: Glob, Read
 ---
 
 # Syner Find Ideas
@@ -32,7 +33,6 @@ Use `Read` tool to load it before processing notes.
    - Workflows they've hacked together
 6. Cross-reference with user's skills and interests
 7. Generate ideas that leverage their unfair advantages
-8. Score ideas on feasibility and founder-market fit
 
 ## Output Format
 
