@@ -115,16 +115,11 @@ Complex execution that needs:
 **Before delegating:**
 1. Run `Glob("packages/*/SKILL.md")` to discover available packages
 2. Read SKILL.md for packages relevant to the task
-3. **Check prerequisite state** for those packages:
-   - GitHub: run `gh auth status` to check if authenticated
-   - Other packages: check whatever state they depend on
-4. **Build exact commands** based on current state:
-   - If gh is not authenticated → first command is auth, then the operation
-   - Don't pass "if X fails, do Y" → pass the exact sequence needed NOW
-5. **Gather task context** - don't make worker explore:
+3. **Follow package prerequisites** - if the package says "check X before using", check it and include the setup commands if needed
+4. **Gather task context** - don't make worker explore:
    - For PRs: run `git log`, `git diff --stat`, get exact commit messages
    - For code changes: read the relevant files first
-6. Include everything in the worker prompt
+5. Build exact command sequence and include everything in the worker prompt
 
 ```
 Task(subagent_type=syner-worker, prompt="

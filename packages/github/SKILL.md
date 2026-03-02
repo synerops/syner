@@ -2,15 +2,19 @@
 
 Use `gh` directly for all GitHub operations.
 
-## Authentication
+## Prerequisites
 
-If `gh` fails with an authentication error:
+Before using `gh`, check auth status:
+
+```bash
+gh auth status
+```
+
+If not authenticated (or token invalid), authenticate first:
 
 ```bash
 bunx @syner/github create-app-token | gh auth login --with-token
 ```
-
-Then retry the command.
 
 ## Examples
 
