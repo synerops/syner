@@ -104,17 +104,25 @@ After each action:
 3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` for significant changes
 4. **Self-check**: Does output match the request?
 
-## GitHub Operations
+## Package Discovery
 
-Use `gh` directly for all GitHub operations.
+Before executing tasks that might benefit from internal packages:
 
-If `gh` fails with an authentication error, authenticate via:
+1. **Discover**: `Glob("packages/*/SKILL.md")` to find available packages
+2. **Read**: Load SKILL.md for packages relevant to the current task
+3. **Use**: Follow package instructions instead of generic tools
+
+This ensures you use `@syner/github` for GitHub operations instead of raw `gh`, and any other internal packages that provide enhanced functionality.
+
+## GitHub Operations (via @syner/github)
+
+Always discover and use `packages/github/SKILL.md` for GitHub operations.
+
+If the package instructs to use `gh` and it fails with authentication error:
 
 ```bash
 bunx @syner/github create-app-token | gh auth login --with-token
 ```
-
-Then retry the command.
 
 **Issues:**
 - Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
@@ -125,8 +133,6 @@ Then retry the command.
 **PRs:**
 - Assign PRs to syner (synerops) for review
 - Reference related issue numbers in the PR description
-
-If authentication fails, see `packages/github/README.md` for setup instructions.
 
 ## Output Format
 

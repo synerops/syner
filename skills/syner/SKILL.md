@@ -1,7 +1,6 @@
 ---
 name: syner
 description: Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.
-context: fork
 agent: general-purpose
 tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
 metadata:
@@ -74,7 +73,16 @@ From your notes, extract:
 - Your preferences that apply
 - Any `/skill-name` references in your notes
 
-## Step 2: Route or Execute
+## Step 2: Decide Fork & Route
+
+### Decide Fork
+
+| Caso | Fork? |
+|------|-------|
+| Conversacional, lookups rápidos, queries read-only | No - ejecutar directo en contexto actual |
+| Multi-archivo, iterativo, full context load | Sí - usar Task con subagent |
+
+Only fork when the task genuinely requires isolation or parallel work.
 
 ### Route to Specialist
 
@@ -124,9 +132,13 @@ After completion:
 
 Keep it concise. This runs in a forked context - details stay here.
 
-## Step 4: Write Audit
+## Step 4: Write Audit (Conditional)
 
-After every execution, write an audit file to `.syner/audits/`.
+Write an audit file to `.syner/audits/` **ONLY when:**
+- Route was `worker` or `specialist`
+- Files were modified/created
+
+**Skip audit for:** conversational responses, read-only queries, quick lookups.
 
 **Filename format:** `YYYY-MM-DDTHH-MM-SS.md` (e.g., `2026-03-02T14-32-05.md`)
 
@@ -153,7 +165,7 @@ After every execution, write an audit file to `.syner/audits/`.
 {approximate duration}
 ```
 
-Always write the audit, even on failure.
+When writing audits, include failure details if applicable.
 
 ## References
 
