@@ -3,7 +3,7 @@ name: syner
 description: Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.
 context: fork
 agent: general-purpose
-tools: Read, Glob, Grep, Task, Skill, AskUserQuestion
+tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
 metadata:
   author: syner
   version: "0.2.0"
@@ -123,6 +123,37 @@ After completion:
 - **Next**: Suggestions (optional)
 
 Keep it concise. This runs in a forked context - details stay here.
+
+## Step 4: Write Audit
+
+After every execution, write an audit file to `.syner/audits/`.
+
+**Filename format:** `YYYY-MM-DDTHH-MM-SS.md` (e.g., `2026-03-02T14-32-05.md`)
+
+**Template:**
+
+```markdown
+# Audit: {ISO timestamp}
+
+## Request
+{original user request}
+
+## Routing
+- Entry: /syner
+- Context loaded: {none | targeted | full}
+- Route: {direct | specialist:{skill-name} | worker}
+
+## Tools Used
+{list of tools and their purpose}
+
+## Result
+{success | failure} - {brief description}
+
+## Duration
+{approximate duration}
+```
+
+Always write the audit, even on failure.
 
 ## References
 
