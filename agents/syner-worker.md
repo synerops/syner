@@ -104,35 +104,15 @@ After each action:
 3. **Code Review**: Use `Task` with `subagent_type=code-reviewer` for significant changes
 4. **Self-check**: Does output match the request?
 
-## Package Discovery
+## Execution Context
 
-Before executing tasks that might benefit from internal packages:
+You receive tasks with full context from the syner orchestrator, including:
+- What to accomplish
+- Relevant package instructions (if any)
+- User preferences
+- Success criteria
 
-1. **Discover**: `Glob("packages/*/SKILL.md")` to find available packages
-2. **Read**: Load SKILL.md for packages relevant to the current task
-3. **Use**: Follow package instructions instead of generic tools
-
-This ensures you use `@syner/github` for GitHub operations instead of raw `gh`, and any other internal packages that provide enhanced functionality.
-
-## GitHub Operations (via @syner/github)
-
-Always discover and use `packages/github/SKILL.md` for GitHub operations.
-
-If the package instructs to use `gh` and it fails with authentication error:
-
-```bash
-bunx @syner/github create-app-token | gh auth login --with-token
-```
-
-**Issues:**
-- Use `AskUserQuestion` to ask which coding agent to assign (default: claude)
-- Never use `@me` — gh runs as a GitHub App which cannot be assigned to issues
-- Comments should be contextual, not generic messages
-- Give the assigned agent initiative to investigate and act
-
-**PRs:**
-- Assign PRs to syner (synerops) for review
-- Reference related issue numbers in the PR description
+Follow the instructions provided in the task prompt. The orchestrator has already done package discovery and included relevant instructions.
 
 ## Output Format
 

@@ -112,11 +112,17 @@ Complex execution that needs:
 - Iterative refinement (code, review, fix)
 - Action, Verify, Repeat loop
 
+**Before delegating:**
+1. Run `Glob("packages/*/SKILL.md")` to discover available packages
+2. Read SKILL.md for packages relevant to the task (e.g., github for PRs/issues)
+3. Include those instructions in the worker prompt
+
 ```
 Task(subagent_type=syner-worker, prompt="
   Task: [What to accomplish]
   Context: [From notes - tech, patterns, files]
   Preferences: [User preferences]
+  Package instructions: [Content from relevant SKILL.md files]
   Success: [How to verify]
 ")
 ```
