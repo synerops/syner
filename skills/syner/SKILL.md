@@ -114,32 +114,35 @@ Complex execution that needs:
 
 **Before delegating:**
 1. Run `Glob("packages/*/SKILL.md")` to discover available packages
-2. Read SKILL.md for packages relevant to the task (e.g., github for PRs/issues)
-3. **Gather all relevant context** - don't make worker explore:
+2. Read SKILL.md for packages relevant to the task
+3. **Check prerequisite state** for those packages:
+   - GitHub: run `gh auth status` to check if authenticated
+   - Other packages: check whatever state they depend on
+4. **Build exact commands** based on current state:
+   - If gh is not authenticated → first command is auth, then the operation
+   - Don't pass "if X fails, do Y" → pass the exact sequence needed NOW
+5. **Gather task context** - don't make worker explore:
    - For PRs: run `git log`, `git diff --stat`, get exact commit messages
    - For code changes: read the relevant files first
-   - For any task: provide specific file paths, current state, expected outcome
-4. Include everything in the worker prompt
+6. Include everything in the worker prompt
 
 ```
 Task(subagent_type=syner-worker, prompt="
-  Task: [Specific action with exact details]
+  Task: [Specific action]
 
-  Current state:
-  [Concrete data - git log output, file contents, etc.]
+  Commands (exact sequence):
+  1. [first command]
+  2. [second command]
+  ...
 
-  Expected outcome:
-  [Exact result - PR title/body, file changes, etc.]
+  Context (for reference):
+  [git log output, PR body content, etc.]
 
-  Package instructions:
-  [Content from relevant SKILL.md files]
-
-  Commands to run:
-  [Suggested sequence if known]
+  Success: [what to verify]
 ")
 ```
 
-**Key principle:** Explore here so worker only executes. Be verbose in the prompt—include raw data (git log output, file contents, exact commands), not summaries.
+**Key principle:** Syner explores, checks state, builds exact commands. Worker just runs them.
 
 ## Step 3: Summarize
 
