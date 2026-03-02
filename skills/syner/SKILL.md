@@ -115,17 +115,31 @@ Complex execution that needs:
 **Before delegating:**
 1. Run `Glob("packages/*/SKILL.md")` to discover available packages
 2. Read SKILL.md for packages relevant to the task (e.g., github for PRs/issues)
-3. Include those instructions in the worker prompt
+3. **Gather all relevant context** - don't make worker explore:
+   - For PRs: run `git log`, `git diff --stat`, get exact commit messages
+   - For code changes: read the relevant files first
+   - For any task: provide specific file paths, current state, expected outcome
+4. Include everything in the worker prompt
 
 ```
 Task(subagent_type=syner-worker, prompt="
-  Task: [What to accomplish]
-  Context: [From notes - tech, patterns, files]
-  Preferences: [User preferences]
-  Package instructions: [Content from relevant SKILL.md files]
-  Success: [How to verify]
+  Task: [Specific action with exact details]
+
+  Current state:
+  [Concrete data - git log output, file contents, etc.]
+
+  Expected outcome:
+  [Exact result - PR title/body, file changes, etc.]
+
+  Package instructions:
+  [Content from relevant SKILL.md files]
+
+  Commands to run:
+  [Suggested sequence if known]
 ")
 ```
+
+**Key principle:** Explore here so worker only executes. Be verbose in the prompt—include raw data (git log output, file contents, exact commands), not summaries.
 
 ## Step 3: Summarize
 
