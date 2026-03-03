@@ -2,7 +2,7 @@ name: Lint
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Diario 9am UTC
+    - cron: '0 9 * * *' # Daily at 9am UTC
   push:
     branches: [main]
   workflow_dispatch:
@@ -41,12 +41,12 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          # Detectar app afectada del output
+          # Detect affected app from output
           APP=$(grep -oE 'apps/[^/]+' lint-output.txt | head -1 | cut -d'/' -f2)
           LABEL="domain:${APP:-unknown}"
-          TITLE="Lint: errores detectados en ${APP:-proyecto}"
+          TITLE="Lint: errors detected in ${APP:-project}"
 
-          # Verificar si ya existe issue abierto
+          # Check if open issue already exists
           EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number -q '.[0].number')
 
           if [ -z "$EXISTING" ]; then
