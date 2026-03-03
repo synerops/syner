@@ -1,5 +1,5 @@
 ---
-"@syner/github": minor
+"@syner/github": patch
 ---
 
 Add webhook events, actions, and AI SDK tools for syner.bot
