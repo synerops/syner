@@ -69,5 +69,5 @@ jobs:
           EOF
           )"
           else
-            gh issue comment "$EXISTING" --body "Still failing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            gh issue comment "$EXISTING" --body "@claude Still failing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           fi
