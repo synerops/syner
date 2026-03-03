@@ -1,0 +1,69 @@
+name: Lint
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Diario 9am UTC
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.2
+
+      - run: bun install
+
+      - name: Run lint
+        id: lint
+        run: bun run lint 2>&1 | tee lint-output.txt
+        continue-on-error: true
+
+      - name: Generate GitHub App token
+        if: steps.lint.outcome == 'failure'
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Create issue if lint failed
+        if: steps.lint.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          # Detectar app afectada del output
+          APP=$(grep -oE 'apps/[^/]+' lint-output.txt | head -1 | cut -d'/' -f2)
+          LABEL="domain:${APP:-unknown}"
+          TITLE="Lint: errores detectados en ${APP:-proyecto}"
+
+          # Verificar si ya existe issue abierto
+          EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number -q '.[0].number')
+
+          if [ -z "$EXISTING" ]; then
+            gh label create "$LABEL" --description "Domain: $APP" --color "d73a4a" 2>/dev/null || true
+            gh issue create \
+              --title "$TITLE" \
+              --label "$LABEL" \
+              --body "$(cat <<EOF
+          ## Lint Failed
+
+          \`\`\`
+          $(cat lint-output.txt)
+          \`\`\`
+
+          **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EOF
+          )"
+          else
+            gh issue comment "$EXISTING" --body "Still failing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi

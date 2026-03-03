@@ -19,6 +19,9 @@
       "cache": false,
       "persistent": true,
       "dependsOn": ["build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
     }
   }
 }
