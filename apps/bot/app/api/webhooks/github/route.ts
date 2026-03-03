@@ -49,17 +49,30 @@ interface RepoContext {
 // Access Control
 // =============================================================================
 
-async function isCollaborator(
+async function hasRepoAccess(
   octokit: Octokit,
   owner: string,
   repo: string,
   username: string
 ): Promise<boolean> {
   try {
-    await octokit.repos.checkCollaborator({ owner, repo, username })
-    return true // 204 = is collaborator
+    // Check user's permission level on the repo
+    const { data } = await octokit.repos.getCollaboratorPermissionLevel({
+      owner,
+      repo,
+      username,
+    })
+    // Allow admin, maintain, write, or triage (not just "read")
+    const allowedPermissions = ['admin', 'maintain', 'write', 'triage']
+    return allowedPermissions.includes(data.permission)
   } catch {
-    return false // 404 = not a collaborator
+    // If permission check fails, check org membership as fallback
+    try {
+      await octokit.orgs.checkMembershipForUser({ org: owner, username })
+      return true // Is org member
+    } catch {
+      return false
+    }
   }
 }
 
@@ -336,7 +349,7 @@ export async function POST(request: NextRequest) {
 
       // Check if sender has access
       console.log(`Checking access for ${ctx.sender}...`)
-      const hasAccess = await isCollaborator(octokit, ctx.owner, ctx.repo, ctx.sender)
+      const hasAccess = await hasRepoAccess(octokit, ctx.owner, ctx.repo, ctx.sender)
       if (!hasAccess) {
         console.log(`Access denied for ${ctx.sender}`)
         return
