@@ -10,7 +10,7 @@
     "agent-github": "bun packages/github/bin/syner-agent-github",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "bun run build && changeset publish",
+    "release": "turbo build --filter='./packages/*' && changeset publish",
     "lint": "turbo typecheck"
   },
   "devDependencies": {
