@@ -95,6 +95,32 @@ Generate, evaluate, refine until quality criteria met.
 
 Combining patterns is common: Orchestrator can use Parallelization for workers, Prompt Chaining can include Routing steps.
 
+## Package Discovery
+
+Before using external CLIs (`gh`, `vercel`, etc.), discover available packages:
+
+```bash
+# Find package skills
+ls packages/*/skills/*/SKILL.md 2>/dev/null
+```
+
+If a package exists for the CLI you need:
+1. Read its `SKILL.md` for prerequisites
+2. Run prerequisites first (e.g., auth commands)
+3. Then proceed with the task
+
+**Example: Using `gh`**
+
+```bash
+# Check if github package exists
+cat packages/github/skills/syner-gh-auth/SKILL.md
+```
+
+If auth needed:
+```bash
+gh auth status || bunx @syner/github create-app-token | gh auth login --with-token
+```
+
 ## Verification
 
 After each action:
@@ -112,7 +138,7 @@ You receive tasks with full context from the syner orchestrator, including:
 - User preferences
 - Success criteria
 
-Follow the instructions provided in the task prompt. The orchestrator has already done package discovery and included relevant instructions.
+Follow the instructions provided in the task prompt. If package instructions weren't included, run Package Discovery yourself before using external CLIs.
 
 ## Output Format
 
