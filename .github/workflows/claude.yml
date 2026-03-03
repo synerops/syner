@@ -52,3 +52,4 @@ jobs:
           trigger_phrase: "@claude"
           assignee_trigger: "claude"
           label_trigger: "claude"
+          allowed_bots: "synerbot[bot]"
