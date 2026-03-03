@@ -405,3 +405,6 @@ export async function POST(request: NextRequest) {
   console.log(`Webhook completed for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
   return NextResponse.json({ accepted: true, deliveryId })
 }
+
+// TODO: Delete this line - intentional type error to test lint workflow
+const testError: string = 123
