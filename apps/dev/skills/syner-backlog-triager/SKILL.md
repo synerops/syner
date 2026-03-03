@@ -16,8 +16,8 @@ Triage backlog items against the current state of the codebase.
 ## Phase 1: Context
 
 1. Find project root (directory containing `apps/` or `package.json`)
-2. Use `Glob` from project root with pattern `apps/notes/vaults/syner/backlog/**/*.md` to discover backlog files
-3. If no backlog folder found, use `AskUserQuestion` to ask where the backlog lives
+2. Discover all vaults: `apps/*/vaults/**/backlog*.md` or `apps/*/vaults/**/backlog/**/*.md`
+3. If no backlog found, use `AskUserQuestion` to ask where the backlog lives
 4. For the backlog folder, use `Read` to load `index.md` first if it exists (contains folder-level context)
 5. Use `Read` to load all backlog item files
 

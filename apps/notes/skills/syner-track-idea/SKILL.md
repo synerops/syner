@@ -26,9 +26,8 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ### Proactive Mode (`/syner-track-idea` without arguments)
 
-1. Locate `apps/notes/vaults/syner/` from the project root
-2. Use `Glob` tool to find all `.md` files
-3. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
+1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
+2. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
 4. Identify candidates using these criteria (in order of priority):
    - **High activity**: Files with >5 commits across different months
    - **Dormant but significant**: Files with >3 commits that haven't been touched in >30 days
@@ -42,9 +41,8 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ### Manual Mode (`/syner-track-idea [concept]`)
 
-1. Locate `apps/notes/vaults/syner/` from the project root
-2. Use `Glob` tool to find all `.md` files
-3. Use `Grep` tool to search all notes for mentions of the concept
+1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
+2. Use `Grep` tool to search all notes for mentions of the concept
 4. For each file with matches, use `Bash` tool with `git log --oneline --follow -- [file]`
 5. Order findings chronologically using git commit dates
 6. For each mention, capture:

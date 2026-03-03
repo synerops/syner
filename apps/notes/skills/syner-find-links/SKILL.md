@@ -20,10 +20,9 @@ Use `Read` tool to load it before processing notes.
 ## Instructions
 
 1. Accept two domains/topics from the user
-2. Locate `apps/notes/vaults/syner/` from the project root
-3. Use Glob to find all `.md` files recursively
-4. For each folder, read `index.md` first if it exists to understand folder context
-5. Analyze notes related to each domain
+2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
+3. For each folder, read `index.md` first if it exists to understand folder context
+4. Analyze notes related to each domain
 6. Look for connection patterns:
    - Explicit internal links between notes (strongest evidence of connection)
    - Shared concepts or vocabulary

@@ -53,3 +53,6 @@ jobs:
           assignee_trigger: "claude"
           label_trigger: "claude"
           allowed_bots: "synerbot[bot]"
+          claude_args: |
+            --agent syner
+            --max-turns 30

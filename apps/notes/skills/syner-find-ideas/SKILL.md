@@ -20,11 +20,10 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
-1. Locate `apps/notes/vaults/syner/` from the project root
-2. Use Glob to find all `.md` files recursively
-3. For each folder, read `index.md` first if it exists to understand folder context
-4. Follow external documentation links (especially llms.txt) to understand technical context
-5. Analyze all notes and extract idea seeds:
+1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
+2. For each folder, read `index.md` first if it exists to understand folder context
+3. Follow external documentation links (especially llms.txt) to understand technical context
+4. Analyze all notes and extract idea seeds:
    - Problems the user has complained about
    - Inefficiencies they've observed
    - "Someone should build..." moments

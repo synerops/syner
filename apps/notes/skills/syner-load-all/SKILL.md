@@ -1,39 +1,65 @@
 ---
 name: syner-load-all
-description: Load your full life + work state. Reads all notes in apps/notes/vaults/syner/ and builds a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
+description: Load your full life + work state. Discovers and reads all notes across all app vaults, building a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
 metadata:
   author: syner
-  version: "1.1"
+  version: "2.0"
 ---
 
 # Syner Load All
 
 ## Purpose
 
-Build a comprehensive understanding of the user's current state by analyzing all their notes.
-
-## How to Read Notes
-
-Follow conventions in `skills/syner/note-conventions.md`.
-Use `Read` tool to load it before processing notes.
+Build a comprehensive understanding of the user's current state by analyzing all their notes across all vaults.
 
 ## Instructions
 
-1. Locate `apps/notes/vaults/syner/` from the project root
-2. Use Glob to find all `.md` files recursively
-3. For each folder encountered, check for and read `index.md` first to understand folder context
-4. Read all files using the Read tool
-5. Extract and follow internal links between notes to map relationships
-6. Identify and extract:
-   - Active projects and their status
-   - Current goals (short-term and long-term)
-   - Recurring themes and interests
-   - Open questions and uncertainties
-   - Key relationships and collaborators
-   - Recent learnings and insights
-7. Synthesize into a structured context summary
-8. Highlight any tensions or contradictions found
-9. Note what areas have recent activity vs dormant areas
+### Step 1: Discover All Vaults
+
+Use Glob to find all vaults across all apps:
+
+```
+apps/*/vaults/**/*.md
+```
+
+This discovers notes in:
+- `apps/notes/vaults/` - knowledge, ideas, writings
+- `apps/bot/vaults/` - bot context and config
+- `apps/dev/vaults/` - development notes
+- Any other app with vaults
+
+### Step 2: Group by App
+
+Organize discovered notes by their app:
+
+```
+notes/
+  vaults/syner/backlog.md
+  vaults/syner/ideas.md
+bot/
+  vaults/bot/index.md
+dev/
+  vaults/dev/index.md
+```
+
+### Step 3: Read with Context
+
+For each vault:
+1. Check for and read `index.md` first - it provides context for that vault
+2. Read remaining files
+3. Follow internal links to map relationships
+
+### Step 4: Synthesize
+
+Extract and synthesize:
+- Active projects and their status
+- Current goals (short-term and long-term)
+- Recurring themes and interests
+- Open questions and uncertainties
+- Key relationships and collaborators
+- Recent learnings and insights
+
+Highlight tensions or contradictions. Note what areas have recent activity vs dormant.
 
 ## Output Format
 

@@ -46,15 +46,28 @@ Determine how much context this request needs:
 | Scope | When | Action |
 |-------|------|--------|
 | **None** | Casual conversation, greetings | Respond directly |
-| **Targeted** | Question about specific thing, single-project task | Use Glob/Grep/Read for that area |
+| **App** | Task within a single app | Load that app's vault: `apps/{app}/vaults/**/*.md` |
+| **Targeted** | Question about specific thing | Use Glob/Grep/Read for that area only |
 | **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="syner-load-all")` |
+
+### Vault Discovery
+
+Each app can have its own vault. The filesystem IS the configuration:
+
+```
+apps/*/vaults/**/*.md    # All vaults across all apps
+apps/{app}/vaults/**/*.md  # Single app's vaults
+```
+
+Local machine has more context than repo (vaults are gitignored by default).
 
 ### How to Decide
 
 Ask yourself:
 - Is this conversational? → None
-- Does this touch ONE specific area? → Targeted (load only that)
-- Does this need to connect or synthesize across areas? → Full
+- Is this about a specific app? → App (load that app's vault)
+- Does this touch ONE specific file/topic? → Targeted (load only that)
+- Does this need to connect or synthesize across apps? → Full
 
 Don't pattern match on keywords. Understand the intent naturally.
 
@@ -62,7 +75,8 @@ Don't pattern match on keywords. Understand the intent naturally.
 
 - "hola" → None (conversational)
 - "what's in my backlog?" → Targeted (load backlog notes only)
-- "add dark mode to notes app" → Targeted (load apps/notes/)
+- "add dark mode to notes app" → App (load `apps/notes/vaults/`)
+- "fix bot webhook" → App (load `apps/bot/vaults/`)
 - "connect my ideas about X with project Y" → Full (multi-domain)
 - "what should I build next?" → Full (needs complete context)
 
