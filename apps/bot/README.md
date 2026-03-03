@@ -140,111 +140,38 @@ the repository uses GitHub Actions for automation. configure these secrets in **
 | `claude.yml` | `@claude` mention, assignment, label | Claude responds to issues/PRs |
 | `release.yml` | push to main | creates release PRs and publishes to npm |
 
-## environment variables
+## setup
 
 copy `.env.example` to `.env.local` and fill in the values.
 
-### required
+### anthropic
 
 | variable | where to get it |
 |----------|-----------------|
-| `ANTHROPIC_API_KEY` | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) → Create Key |
-| `GITHUB_APP_ID` | [github.com/settings/apps/synerbot](https://github.com/settings/apps/synerbot) → App ID (top of page) |
-| `GITHUB_APP_INSTALLATION_ID` | After installing app, check URL: `github.com/settings/installations/<ID>` |
+| `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com/settings/keys) → Create Key |
+
+### github
+
+| variable | where to get it |
+|----------|-----------------|
+| `GITHUB_APP_ID` | [App settings](https://github.com/settings/apps/synerbot) → top of page |
+| `GITHUB_APP_INSTALLATION_ID` | URL after installing: `/installations/<ID>` |
 | `GITHUB_APP_PRIVATE_KEY` | App settings → Private keys → Generate |
-| `GITHUB_WEBHOOK_SECRET` | App settings → Webhook → Secret |
+| `GITHUB_WEBHOOK_SECRET` | `openssl rand -hex 32` → add to [app webhook settings](https://github.com/settings/apps/synerbot) AND Vercel |
 
-### optional
+### slack (optional)
 
 | variable | where to get it |
 |----------|-----------------|
-| `SLACK_WEBHOOK_URL` | [api.slack.com/apps](https://api.slack.com/apps) → Your App → Incoming Webhooks |
-| `CRON_SECRET` | Generate with `openssl rand -hex 32` |
+| `SLACK_WEBHOOK_URL` | [api.slack.com/apps](https://api.slack.com/apps) → Incoming Webhooks |
 
-### webhook secret setup
+### vercel
 
-`GITHUB_WEBHOOK_SECRET` is a shared secret used to verify that webhooks come from GitHub, not an attacker.
+| variable | where to get it |
+|----------|-----------------|
+| `CRON_SECRET` | `openssl rand -hex 32` |
 
-**It must be configured in TWO places with the SAME value:**
-
-```
-┌─────────────────┐         ┌─────────────────┐
-│   GitHub App    │         │     Vercel      │
-│                 │         │                 │
-│  Webhook Secret │ ══════> │ Env Variable    │
-│  (signs payload)│  SAME   │ (verifies sig)  │
-└─────────────────┘         └─────────────────┘
-```
-
-**Step 1: Generate the secret**
-
-```bash
-openssl rand -hex 32
-```
-
-Save this value - you'll need it twice.
-
-**Step 2: Add to Vercel**
-
-```bash
-vercel env add GITHUB_WEBHOOK_SECRET production
-# paste the secret when prompted
-```
-
-Or via Dashboard: Project Settings → Environment Variables → Add `GITHUB_WEBHOOK_SECRET`
-
-**Step 3: Add to GitHub App**
-
-1. Go to [github.com/settings/apps/synerbot](https://github.com/settings/apps/synerbot)
-2. Scroll to **Webhook** section
-3. Paste the same secret in **Webhook secret** field
-4. Save changes
-
-**How it works:**
-
-```
-GitHub receives event (issue comment, PR, etc.)
-    ↓
-Signs payload: HMAC-SHA256(payload, secret)
-    ↓
-Sends to your webhook URL with X-Hub-Signature-256 header
-    ↓
-Vercel function verifies signature using same secret
-    ↓
-If valid → process event
-If invalid → 401 Unauthorized (blocks attackers)
-```
-
-### vercel deployment
-
-1. link project: `vercel link`
-2. add env vars in [Vercel Dashboard](https://vercel.com/synerops/functions/settings/environment-variables)
-3. or via CLI:
-   ```bash
-   vercel env add ANTHROPIC_API_KEY production
-   vercel env add GITHUB_APP_ID production
-   vercel env add GITHUB_APP_INSTALLATION_ID production
-   vercel env add GITHUB_APP_PRIVATE_KEY production
-   vercel env add GITHUB_WEBHOOK_SECRET production
-   ```
-
-### github app setup
-
-if you need to create a new GitHub App:
-
-1. go to [github.com/settings/apps/new](https://github.com/settings/apps/new)
-2. configure:
-   - **name**: synerbot (or your preferred name)
-   - **homepage**: https://syner.bot
-   - **webhook url**: https://syner.bot/api/webhooks/github
-   - **webhook secret**: generate and save for `GITHUB_WEBHOOK_SECRET`
-3. permissions:
-   - **repository**: contents (read), issues (read/write), pull requests (read/write)
-   - **organization**: members (read)
-4. subscribe to events: `issues`, `issue_comment`, `pull_request`
-5. generate private key → save for `GITHUB_APP_PRIVATE_KEY`
-6. install on your org/repos
-7. get installation ID from URL after install
+deploy: `vercel link` then add env vars via dashboard or `vercel env add <VAR> production`
 
 ## local development
 
