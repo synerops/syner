@@ -25,7 +25,9 @@ jobs:
 
       - name: Run lint
         id: lint
-        run: bun run lint 2>&1 | tee lint-output.txt
+        run: |
+          set -o pipefail
+          bun run lint 2>&1 | tee lint-output.txt
         continue-on-error: true
 
       - name: Generate GitHub App token
