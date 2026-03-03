@@ -20,3 +20,5 @@ apps/dev/vaults/
 
 # Syner local data
 .syner/
+.vercel
+.env*.local

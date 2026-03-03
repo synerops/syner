@@ -1,7 +1,5 @@
 {
-  "functions": {
-    "api/webhooks/github.ts": {
-      "maxDuration": 60
-    }
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "bun install",
+  "framework": "nextjs"
 }
