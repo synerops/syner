@@ -69,5 +69,15 @@ jobs:
           EOF
           )"
           else
-            gh issue comment "$EXISTING" --body "@claude Still failing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            # Check if there's pending work from Claude (branch or PR)
+            CLAUDE_BRANCH=$(git ls-remote --heads origin "claude/issue-${EXISTING}-*" 2>/dev/null | head -1)
+            PENDING_PR=$(gh pr list --state open --json number,body -q ".[] | select(.body | contains(\"#${EXISTING}\")) | .number" | head -1)
+
+            if [ -n "$CLAUDE_BRANCH" ] || [ -n "$PENDING_PR" ]; then
+              # Don't invoke Claude, just notify about pending work
+              gh issue comment "$EXISTING" --body "Still failing. Pending work awaiting review. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            else
+              # No pending work, invoke Claude
+              gh issue comment "$EXISTING" --body "@claude Still failing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            fi
           fi
