@@ -308,9 +308,12 @@ export async function POST(request: NextRequest) {
   // For Node.js runtime, we start async processing and return immediately
 
   const processWebhook = async () => {
+    console.log('Starting webhook processing...')
     try {
+      console.log('Creating Octokit client...')
       const octokit = createThrottledOctokit()
 
+      console.log('Creating thinking comment...')
       const thinkingCommentId = await createComment({
         octokit,
         owner: ctx.owner,
@@ -318,7 +321,9 @@ export async function POST(request: NextRequest) {
         issueNumber: ctx.number,
         body: THINKING_MESSAGE,
       })
+      console.log(`Created thinking comment: ${thinkingCommentId}`)
 
+      console.log('Loading context...')
       const repoCtx = await loadContext(octokit, ctx)
       const tools = createAllTools({ octokit })
       const userMessage = ctx.body.replace(BOT_TRIGGER, '').trim()
@@ -343,8 +348,16 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Start processing without awaiting
-  processWebhook()
+  // Process webhook - await to ensure completion in serverless environment
+  // Note: This may cause GitHub to see a slow response, but ensures processing completes
+  console.log(`Processing webhook for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
+
+  // Don't await - use background processing, but add logging
+  processWebhook().then(() => {
+    console.log(`Webhook processing completed for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
+  }).catch((error) => {
+    console.error(`Webhook processing failed for ${ctx.owner}/${ctx.repo}#${ctx.number}:`, error)
+  })
 
   return NextResponse.json({ accepted: true, deliveryId })
 }
