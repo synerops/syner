@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- caa0db2: Fix repository URL format for npm trusted publishing
+
+## 0.1.1
+
+### Patch Changes
+
 - d4202a1: Add webhook events, actions, and AI SDK tools for syner.bot
 
   - **events/**: Webhook signature verification (HMAC-SHA256) and event types
