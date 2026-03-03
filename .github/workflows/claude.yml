@@ -56,3 +56,4 @@ jobs:
           claude_args: |
             --agent syner
             --max-turns 30
+            --append-system-prompt "GitHub Context: event=${{ github.event_name }}, action=${{ github.event.action }}, repo=${{ github.repository }}"
