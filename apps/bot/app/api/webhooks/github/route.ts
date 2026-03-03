@@ -18,7 +18,7 @@ import {
   verifyWebhookSignature,
   createThrottledOctokit,
   createComment,
-  updateComment,
+  addReaction,
   createAllTools,
   type IssueEvent,
   type IssueCommentEvent,
@@ -26,7 +26,6 @@ import {
 } from '@syner/github'
 
 const BOT_TRIGGER = '@synerbot'
-const THINKING_MESSAGE = '...'
 
 interface WebhookContext {
   owner: string
@@ -36,6 +35,7 @@ interface WebhookContext {
   title: string
   isPullRequest: boolean
   commentId?: number
+  sender: string
 }
 
 interface RepoContext {
@@ -43,6 +43,24 @@ interface RepoContext {
   instructionsSource?: string
   changedFiles?: string[]
   conversationHistory?: Array<{ author: string; body: string }>
+}
+
+// =============================================================================
+// Access Control
+// =============================================================================
+
+async function isCollaborator(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  username: string
+): Promise<boolean> {
+  try {
+    await octokit.repos.checkCollaborator({ owner, repo, username })
+    return true // 204 = is collaborator
+  } catch {
+    return false // 404 = not a collaborator
+  }
 }
 
 // =============================================================================
@@ -170,6 +188,7 @@ function extractContext(
       body: p.comment.body,
       isPullRequest: 'pull_request' in p.issue,
       commentId: p.comment.id,
+      sender: p.sender.login,
     }
   }
 
@@ -185,6 +204,7 @@ function extractContext(
       title: p.issue.title,
       body: p.issue.body,
       isPullRequest: false,
+      sender: p.sender.login,
     }
   }
 
@@ -200,6 +220,7 @@ function extractContext(
       title: p.pull_request.title,
       body: p.pull_request.body,
       isPullRequest: true,
+      sender: p.sender.login,
     }
   }
 
@@ -313,21 +334,33 @@ export async function POST(request: NextRequest) {
       console.log('Creating Octokit client...')
       const octokit = createThrottledOctokit()
 
-      console.log('Creating thinking comment...')
-      const thinkingCommentId = await createComment({
-        octokit,
-        owner: ctx.owner,
-        repo: ctx.repo,
-        issueNumber: ctx.number,
-        body: THINKING_MESSAGE,
-      })
-      console.log(`Created thinking comment: ${thinkingCommentId}`)
+      // Check if sender has access
+      console.log(`Checking access for ${ctx.sender}...`)
+      const hasAccess = await isCollaborator(octokit, ctx.owner, ctx.repo, ctx.sender)
+      if (!hasAccess) {
+        console.log(`Access denied for ${ctx.sender}`)
+        return
+      }
+      console.log(`Access granted for ${ctx.sender}`)
+
+      // Add 👀 reaction to show we're working on it
+      if (ctx.commentId) {
+        console.log('Adding eyes reaction...')
+        await addReaction({
+          octokit,
+          owner: ctx.owner,
+          repo: ctx.repo,
+          commentId: ctx.commentId,
+          reaction: 'eyes',
+        })
+      }
 
       console.log('Loading context...')
       const repoCtx = await loadContext(octokit, ctx)
       const tools = createAllTools({ octokit })
       const userMessage = ctx.body.replace(BOT_TRIGGER, '').trim()
 
+      console.log('Calling Claude...')
       const result = await generateText({
         model: anthropic('claude-3-5-sonnet-20241022'),
         system: buildSystemPrompt(ctx, repoCtx),
@@ -336,13 +369,16 @@ export async function POST(request: NextRequest) {
         maxSteps: 10,
       })
 
-      await updateComment({
+      // Post response as new comment
+      console.log('Posting response...')
+      await createComment({
         octokit,
         owner: ctx.owner,
         repo: ctx.repo,
-        commentId: thinkingCommentId,
+        issueNumber: ctx.number,
         body: result.text,
       })
+      console.log('Response posted successfully')
     } catch (error) {
       console.error('Error processing webhook:', error)
     }
