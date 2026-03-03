@@ -348,16 +348,11 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Process webhook - await to ensure completion in serverless environment
-  // Note: This may cause GitHub to see a slow response, but ensures processing completes
+  // Process webhook - await to ensure completion
   console.log(`Processing webhook for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
 
-  // Don't await - use background processing, but add logging
-  processWebhook().then(() => {
-    console.log(`Webhook processing completed for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
-  }).catch((error) => {
-    console.error(`Webhook processing failed for ${ctx.owner}/${ctx.repo}#${ctx.number}:`, error)
-  })
+  await processWebhook()
 
+  console.log(`Webhook completed for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
   return NextResponse.json({ accepted: true, deliveryId })
 }
