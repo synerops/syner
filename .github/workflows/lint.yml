@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           # Detect affected app from output
-          APP=$(grep -oE 'apps/[^/]+' lint-output.txt | head -1 | cut -d'/' -f2)
+          APP=$(grep -oE 'apps/[a-zA-Z0-9_-]+' lint-output.txt | head -1 | cut -d'/' -f2)
           LABEL="domain:${APP:-unknown}"
           TITLE="Lint: errors detected in ${APP:-project}"
 
