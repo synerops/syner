@@ -53,10 +53,11 @@ jobs:
 
           if [ -z "$EXISTING" ]; then
             gh label create "$LABEL" --description "Domain: $APP" --color "d73a4a" 2>/dev/null || true
+            gh label create "claude" --description "Triggers Claude assistant" --color "7c3aed" 2>/dev/null || true
             gh issue create \
               --title "$TITLE" \
               --label "$LABEL" \
-              --assignee claude \
+              --label "claude" \
               --body "$(cat <<EOF
           ## Lint Failed
 
