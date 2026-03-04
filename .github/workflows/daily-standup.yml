@@ -24,11 +24,11 @@ jobs:
         run: |
           mkdir -p .syner/context/daily-standup
           date +%Y-%m-%d > .syner/context/daily-standup/today.txt
-          gh issue list --assignee @me --state open --json number,title,updatedAt,labels > .syner/context/daily-standup/issues-open.json
-          gh pr list --author @me --state open --json number,title,createdAt > .syner/context/daily-standup/prs-open.json
-          gh pr list --search "review-requested:@me" --json number,title,author,createdAt > .syner/context/daily-standup/prs-review.json
-          gh issue list --assignee @me --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-standup/issues-closed.json
-          gh pr list --author @me --state merged --json number,title,mergedAt --limit 20 > .syner/context/daily-standup/prs-merged.json
+          gh issue list --state open --json number,title,updatedAt,labels,assignees > .syner/context/daily-standup/issues-open.json
+          gh pr list --state open --json number,title,createdAt,author > .syner/context/daily-standup/prs-open.json
+          gh pr list --search "review:required" --json number,title,author,createdAt > .syner/context/daily-standup/prs-review.json
+          gh issue list --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-standup/issues-closed.json
+          gh pr list --state merged --json number,title,mergedAt,author --limit 20 > .syner/context/daily-standup/prs-merged.json
           mkdir -p reports
 
       - name: Generate standup report
