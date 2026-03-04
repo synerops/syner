@@ -1,0 +1,44 @@
+name: Daily Standup
+
+on:
+  schedule:
+    - cron: '0 14 * * 1-5'  # 9am EST (UTC-5)
+  workflow_dispatch:
+
+jobs:
+  standup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run standup
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/syner-daily-standup"
+          claude_args: |
+            --agent syner
+            --max-turns 15
+
+      - name: Create issue from report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          REPORT="reports/standup-${TODAY}.md"
+
+          if [ -f "$REPORT" ]; then
+            gh issue create \
+              --title "🌅 Standup ${TODAY}" \
+              --body-file "$REPORT" \
+              --label "standup"
+          else
+            echo "No report found at $REPORT, skipping issue creation"
+          fi
