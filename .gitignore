@@ -17,6 +17,9 @@ apps/notes/vaults/*
 !apps/notes/vaults/.gitkeep
 !apps/notes/vaults/syner/
 
+# Obsidian config (local editor preferences)
+**/.obsidian/
+
 # Dev vaults (local development notes)
 apps/dev/vaults/
 
