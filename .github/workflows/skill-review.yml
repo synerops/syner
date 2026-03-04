@@ -41,7 +41,6 @@ jobs:
       - name: Handle review results
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           REPORT="reports/skill-review.md"
           TITLE="Skill Review: inconsistencies detected"
@@ -52,17 +51,17 @@ jobs:
             exit 0
           fi
 
+          # Check if report has actionable findings
           HAS_FINDINGS=false
-          if grep -qE "^- \[" "$REPORT" || grep -q "### @claude" "$REPORT"; then
+          if grep -q "### @claude" "$REPORT"; then
             HAS_FINDINGS=true
           fi
 
           # Ensure labels exist
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
           gh label create "needs-planning" --description "Needs planning before execution" --color "d4a017" 2>/dev/null || true
-          gh label create "claude" --description "Ready for Claude execution" --color "7c3aed" 2>/dev/null || true
 
-          # Check for existing issue
+          # Check for existing open issue
           EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
 
           if [ -z "$EXISTING" ]; then
@@ -75,33 +74,20 @@ jobs:
                 --label "needs-planning" \
                 --body-file "$REPORT"
             else
-              echo "No findings, no existing issue. All clean."
+              echo "No findings. All clean."
             fi
           else
             echo "Found existing issue #$EXISTING"
 
-            # Always update issue body with latest report
-            echo "Updating issue body with latest report..."
+            # Update issue body with latest report
             gh issue edit "$EXISTING" --body-file "$REPORT"
 
             if [ "$HAS_FINDINGS" = "false" ]; then
-              # No more findings - close the issue
               echo "No more findings, closing issue..."
               gh issue close "$EXISTING" --comment "All inconsistencies resolved. Closing."
-              exit 0
-            fi
-
-            # Check current state
-            HAS_PLAN=$(gh issue view "$EXISTING" --json body --jq '.body' | grep -c "## Plan" || true)
-            HAS_CLAUDE_LABEL=$(gh issue view "$EXISTING" --json labels --jq '.labels[].name' | grep -c "^claude$" || true)
-
-            if [ "$HAS_PLAN" -gt 0 ] && [ "$HAS_CLAUDE_LABEL" -eq 0 ]; then
-              # Has plan but no claude label - add it to continue execution
-              echo "Issue has plan, adding claude label to continue..."
-              gh issue edit "$EXISTING" --add-label "claude"
-            elif [ "$HAS_PLAN" -eq 0 ]; then
-              # No plan yet - ensure needs-planning label
-              echo "No plan yet, ensuring needs-planning label..."
-              gh issue edit "$EXISTING" --add-label "needs-planning"
+            else
+              # Ensure needs-planning is set (autonomous loop handles the rest)
+              echo "Findings detected, ensuring needs-planning label..."
+              gh issue edit "$EXISTING" --add-label "needs-planning" 2>/dev/null || true
             fi
           fi

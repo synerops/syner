@@ -4,6 +4,20 @@ Items pendientes para Syner.
 
 ## Pending
 
+### Planning mode como skill local
+
+Mover planning de `.github/prompts/planning.md` a un skill invocable (`/syner-planning`).
+
+**Beneficio**: Poder probar planning localmente sin triggear workflows.
+
+**Implementación**:
+- Crear `skills/syner/planning/SKILL.md`
+- `.github/prompts/planning.md` referencia al skill o es symlink
+- Input: issue body (desde contexto o argumento)
+- Output: Acceptance Criteria checklist
+
+---
+
 ### Follow-up automático de issues asignados
 
 Syner debería poder hacer follow-up de issues que asignó:
