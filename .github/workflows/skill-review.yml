@@ -1,0 +1,115 @@
+name: Skill Review
+
+on:
+  schedule:
+    - cron: '0 0,8,16 * * *'  # Every 8 hours: 12am, 8am, 4pm UTC
+  workflow_dispatch:
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Run skill review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Run /syner-skill-reviewer (no argument = batch mode).
+            Write the report to reports/skill-review.md
+          claude_args: |
+            --max-turns 15
+            --allowedTools Read,Write,Glob
+
+      - name: Handle review results
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          REPORT="reports/skill-review.md"
+          TITLE="Skill Review: inconsistencies detected"
+
+          # Exit if no report
+          if [ ! -f "$REPORT" ]; then
+            echo "No report found, skipping"
+            exit 0
+          fi
+
+          HAS_FINDINGS=false
+          if grep -q "### @claude" "$REPORT"; then
+            HAS_FINDINGS=true
+          fi
+
+          # Check for existing issue
+          EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
+
+          if [ -z "$EXISTING" ]; then
+            # No existing issue
+            if [ "$HAS_FINDINGS" = "true" ]; then
+              echo "Creating new issue..."
+              gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
+              gh label create "claude" --description "Needs Claude attention" --color "7c3aed" 2>/dev/null || true
+              gh issue create \
+                --title "$TITLE" \
+                --label "skill-review" \
+                --label "claude" \
+                --body-file "$REPORT"
+            else
+              echo "No findings, no existing issue. All clean."
+            fi
+          else
+            echo "Found existing issue #$EXISTING"
+
+            # Always update issue body with latest report
+            echo "Updating issue body with latest report..."
+            gh issue edit "$EXISTING" --body-file "$REPORT"
+
+            if [ "$HAS_FINDINGS" = "false" ]; then
+              # No more findings - close the issue
+              echo "No more findings, closing issue..."
+              gh issue close "$EXISTING" --comment "All inconsistencies resolved. Closing."
+              exit 0
+            fi
+
+            # Still has findings - check for Claude's work
+            CLAUDE_BRANCH=$(git ls-remote --heads origin "claude/issue-${EXISTING}-*" 2>/dev/null | head -1)
+            PENDING_PR=$(gh pr list --state open --json number,body --jq ".[] | select(.body | contains(\"#${EXISTING}\")) | .number" | head -1)
+
+            if [ -n "$CLAUDE_BRANCH" ] && [ -z "$PENDING_PR" ]; then
+              # Branch exists but no PR - create PR
+              BRANCH_NAME=$(echo "$CLAUDE_BRANCH" | awk '{print $2}' | sed 's|refs/heads/||')
+              echo "Found Claude's branch $BRANCH_NAME, creating PR..."
+
+              gh pr create \
+                --head "$BRANCH_NAME" \
+                --title "fix: skill inconsistencies (#${EXISTING})" \
+                --body "Closes #${EXISTING} - Auto-generated from Claude's fix. [synerbot](https://github.com/apps/synerbot)"
+              gh issue comment "$EXISTING" --body "PR created from Claude's branch \`$BRANCH_NAME\`. Awaiting review."
+
+            elif [ -n "$PENDING_PR" ]; then
+              # PR exists - just notify
+              echo "PR #$PENDING_PR already exists, commenting status..."
+              gh issue comment "$EXISTING" --body "Still has findings. PR #${PENDING_PR} awaiting review. Run: $WORKFLOW_URL"
+
+            else
+              # No pending work - invoke Claude
+              echo "No pending work found, mentioning @claude..."
+              gh issue comment "$EXISTING" --body "@claude Still has findings. Please fix. Run: $WORKFLOW_URL"
+            fi
+          fi
