@@ -30,10 +30,6 @@ Read these files to understand current state and recent activity.
 
 ## Step 2: Write the report
 
-```bash
-mkdir -p reports
-```
-
 Write to `reports/standup-{date}.md`:
 
 ```markdown

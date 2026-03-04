@@ -29,6 +29,7 @@ jobs:
           gh pr list --search "review-requested:@me" --json number,title,author,createdAt > .syner/context/daily-standup/prs-review.json
           gh issue list --assignee @me --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-standup/issues-closed.json
           gh pr list --author @me --state merged --json number,title,mergedAt --limit 20 > .syner/context/daily-standup/prs-merged.json
+          mkdir -p reports
 
       - name: Generate standup report
         uses: anthropics/claude-code-action@v1
@@ -38,6 +39,7 @@ jobs:
             Read GitHub data from .syner/context/daily-standup/ and write a standup report.
             Output to reports/standup-{date}.md with: Yesterday (completed), Today (priorities), Blockers.
             Max 15 lines.
+          allowed_tools: "Read,Write"
           claude_args: "--max-turns 10"
 
       - name: Create issue from report
@@ -46,12 +48,18 @@ jobs:
         run: |
           TODAY=$(date +%Y-%m-%d)
           REPORT="reports/standup-${TODAY}.md"
+          TITLE="🌅 Standup ${TODAY}"
 
-          if [ -f "$REPORT" ]; then
-            gh issue create \
-              --title "🌅 Standup ${TODAY}" \
-              --body-file "$REPORT" \
-              --label "standup"
+          if [ ! -f "$REPORT" ]; then
+            echo "No report found at $REPORT, skipping"
+            exit 0
+          fi
+
+          # Check if issue already exists
+          EXISTING=$(gh issue list --label standup --search "$TITLE" --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            echo "Issue #$EXISTING already exists, updating body"
+            gh issue edit "$EXISTING" --body-file "$REPORT"
           else
-            echo "No report found at $REPORT, skipping issue creation"
+            gh issue create --title "$TITLE" --body-file "$REPORT" --label "standup"
           fi
