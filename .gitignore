@@ -1,7 +1,6 @@
 node_modules/
 .next/
 .turbo/
-.claude/
 dist/
 *.log
 *.tsbuildinfo
@@ -9,6 +8,9 @@ dist/
 .DS_Store
 .env
 .env.local
+
+# Claude Code local settings (user preferences)
+.claude/settings.local.json
 
 CLAUDE.md
 
