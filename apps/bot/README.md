@@ -86,35 +86,6 @@ syner.bot/
     └── agent.ts                # context loading + response
 ```
 
-## implementation plan
-
-### phase 1: migrate legacy extensions
-
-adapt code from `~/synerops/legacy/extensions/` to new structure.
-
-### phase 2: scaffold minimal api
-
-```
-apps/bot/
-├── package.json
-├── tsconfig.json
-├── vercel.json
-└── api/
-    └── webhooks/github.ts
-```
-
-### phase 3: github webhook
-
-- endpoint: `POST /api/webhooks/github`
-- events: `issues`, `pull_request`, `issue_comment`
-- handler: use `@syner/github/events`
-
-### phase 4: agent processing
-
-1. verify webhook signature
-2. load context (notes, repo state)
-3. decide + respond
-
 ## stack
 
 - vercel serverless functions
@@ -180,12 +151,3 @@ bun run dev --filter=bot
 ```
 
 runs on `localhost:3001`
-
-## legacy code reference
-
-valuable code in `~/synerops/legacy/extensions/`:
-
-| legacy path | features | migrate to |
-|-------------|----------|------------|
-| `extensions/github` | app client with throttling, ETag cache, 5 tools | `@syner/github` |
-| `extensions/slack` | webhook handler, signature verification, event dispatch | `@syner/slack` |
