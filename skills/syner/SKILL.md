@@ -5,7 +5,7 @@ agent: general-purpose
 tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Syner
@@ -32,6 +32,8 @@ Use this skill when the user:
 4. **Asks open-ended questions** - "What should I build next?", "What's blocking my progress?", "How do my ideas connect?" These require understanding their full situation.
 
 5. **References their notes or vault** - Any request that would benefit from reading their vault, understanding their projects, or knowing their preferences.
+
+6. **Needs to plan complex work** - Multiple findings or analysis results that should become a structured execution plan. See [planning.md](planning.md).
 
 ## Task
 
@@ -97,6 +99,15 @@ From your notes, extract:
 | Multi-archivo, iterativo, full context load | Sí - usar Task con subagent |
 
 Only fork when the task genuinely requires isolation or parallel work.
+
+### Planning Mode
+
+When user requests planning or analysis produces multiple actionable findings:
+1. Load [planning.md](planning.md) for the full mode instructions
+2. Evaluate, classify, and decide (plan / skip / clarify)
+3. Output checklist or explanation
+
+This converts analysis output into atomic, executable items.
 
 ### Route to Specialist
 
@@ -203,3 +214,4 @@ When writing audits, include failure details if applicable.
 
 - [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce
 - [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
+- [planning.md](planning.md) - Planning mode for breaking down complex work
