@@ -35,12 +35,10 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read GitHub data from .syner/context/daily-standup/ and write a standup report.
-            Output to reports/standup-{date}.md with: Yesterday (completed), Today (priorities), Blockers.
-            Max 15 lines.
-          allowed_tools: "Read,Write"
-          claude_args: "--max-turns 10"
+          prompt: "/syner-daily-standup"
+          claude_args: |
+            --agent syner
+            --max-turns 10
 
       - name: Create issue from report
         env:
