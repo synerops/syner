@@ -18,6 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup skills symlinks
+        run: |
+          mkdir -p .claude/skills
+          ln -s ../../apps/dev/skills/syner-daily-standup .claude/skills/syner-daily-standup
+
       - name: Run standup
         uses: anthropics/claude-code-action@v1
         with:
