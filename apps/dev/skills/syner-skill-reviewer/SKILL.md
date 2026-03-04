@@ -3,7 +3,7 @@ name: syner-skill-reviewer
 description: Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on "review this skill", "audit skill", "check skill quality", "is this skill safe", or when evaluating skills before publishing.
 metadata:
   author: syner
-  version: "2.0.0"
+  version: "0.0.4"
 ---
 
 # Skill Reviewer
@@ -12,12 +12,12 @@ Audit a skill and report what needs attention — the user decides what to fix.
 
 ## Process
 
-1. **Locate** the target skill using `Glob` with `skills/**/SKILL.md` or `.claude/skills/**/SKILL.md`
-2. **Read** the SKILL.md completely
+1. **Locate** target skill(s):
+   - With argument: find that specific skill
+   - Without argument: discover ALL skills using `Glob` with `**/SKILL.md` and `**/skill.md`
+2. **Read** each SKILL.md completely
 3. **Pick review depth** based on context (see below)
-4. **Report** findings — only sections with issues, starting with the most important one
-
-If no skill specified, list available skills and ask user to choose.
+4. **Report** findings per skill, then ecosystem consistency
 
 ## Review Depth
 
@@ -27,9 +27,10 @@ Not every review needs every check. Pick the right depth:
 |-------|------|--------|
 | **Quick** | "quick check", "is this safe?", sanity check | Safety & Voice only |
 | **Standard** | "review this skill", general audit | Safety + Technical |
-| **Deep** | "full audit", "before publishing", thorough review | All three dimensions |
+| **Deep** | "full audit", "before publishing", thorough review | All dimensions |
+| **Batch** | No argument, reviewing all skills | Standard per skill + Ecosystem |
 
-Default to Standard. The user can request a specific depth, or the context makes it obvious — a one-line question about safety doesn't need a full convention audit.
+Default: Standard for single skill, Batch when no argument.
 
 ---
 
@@ -133,6 +134,41 @@ When a skill specifies a complex approach (scoring formulas, git-diff-based hist
 
 ---
 
+## D. Ecosystem Consistency
+
+These checks only apply in Batch mode — they detect inconsistencies across skills.
+
+### D1. File Naming
+
+All skill files should use the same naming convention: `SKILL.md` (uppercase).
+
+Flag: Any skill using `skill.md` (lowercase).
+
+### D2. Frontmatter Fields
+
+Field names should be consistent across all skills:
+- `tools` not `allowed-tools`
+- `metadata.version` not `version` at root level
+
+Flag: Skills using non-standard field names.
+
+### D3. Version Format
+
+Versions should follow `"0.x.x"` format during early development (e.g., `"0.0.3"`, `"0.1.0"`).
+
+Flag: Skills using inflated versions like `"1.0.0"` or `"2.0.0"` (project is pre-1.0).
+
+### D4. Required Fields
+
+Every skill should have:
+- `name` in frontmatter
+- `description` in frontmatter
+- `metadata.version`
+
+Flag: Skills missing required fields.
+
+---
+
 ## Reporting
 
 Only report sections that have findings — don't list passing checks. Start with the most impactful issue.
@@ -142,7 +178,7 @@ Use severity to communicate priority:
 - **Warning** — reduces reliability (vague tools, fragile paths)
 - **Suggestion** — improvement opportunity (conventions, frontmatter)
 
-Format:
+### Single Skill Format
 
 ```
 ## Skill Review: `[name]`
@@ -155,10 +191,39 @@ Format:
 - **[B2]**: Paths assume current directory
   - Suggest anchoring to project root
 
-### Start here
+### @claude
 → Fix the first-person headings first — they affect how the model interprets everything else.
 ```
 
 If the skill is clean, just say so: "Reviewed [name] at [depth] depth. No issues found."
+
+### Batch Report Format
+
+```
+## Ecosystem Review
+
+### Consistency Issues
+- **[D1]**: 2 skills use `skill.md` instead of `SKILL.md`
+  - `vercel-setup`, `syner-daily-standup`
+- **[D3]**: 3 skills use inflated versions (>= 1.0.0)
+  - `syner-skill-reviewer`, `vercel-setup`, `create-syner-app`
+
+### Per-Skill Issues
+| Skill | Critical | Warnings | Suggestions |
+|-------|----------|----------|-------------|
+| syner | 0 | 1 | 2 |
+| syner-find-ideas | 0 | 0 | 1 |
+| ... | ... | ... | ... |
+
+### Summary
+- **Total skills**: 17
+- **With issues**: 8
+- **Clean**: 9
+
+### @claude
+→ Rename `skill.md` to `SKILL.md` in `vercel-setup` and `syner-daily-standup`.
+```
+
+**Note:** The `### @claude` section is optional — only include it when there are actionable issues. Omit entirely if all skills are clean.
 
 End with a reminder: this reviewer reports and suggests. The user decides what matters and what to change.
