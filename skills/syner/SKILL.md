@@ -5,7 +5,7 @@ agent: general-purpose
 tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
 metadata:
   author: syner
-  version: "0.2.1"
+  version: "0.3.0"
 ---
 
 # Syner
@@ -103,9 +103,11 @@ Only fork when the task genuinely requires isolation or parallel work.
 ### Planning Mode
 
 When user requests planning or analysis produces multiple actionable findings:
-1. Load [planning.md](planning.md) for the full mode instructions
-2. Evaluate, classify, and decide (plan / skip / clarify)
-3. Output checklist or explanation
+
+1. Load [planning.md](planning.md) for the core planning logic
+2. If operating on issues/PRs, also load `packages/github/planning.md` for implementation details
+3. Evaluate, classify, and decide (plan / skip / clarify)
+4. Output checklist with Target/Context/Action/Verify per item
 
 This converts analysis output into atomic, executable items.
 

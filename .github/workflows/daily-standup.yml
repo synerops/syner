@@ -90,25 +90,46 @@ jobs:
             exit 0
           fi
 
-          # Check if report needs Claude action
+          # Ensure labels exist
+          gh label create "standup" --description "Daily standup report" --color "0e8a16" 2>/dev/null || true
+          gh label create "needs-planning" --description "Needs planning before execution" --color "d4a017" 2>/dev/null || true
+          gh label create "claude" --description "Ready for Claude execution" --color "7c3aed" 2>/dev/null || true
+
+          # Check if report needs action
           if grep -q "## @claude" "$REPORT"; then
-            LABELS="standup,claude"
+            NEEDS_ACTION=true
           else
-            LABELS="standup"
+            NEEDS_ACTION=false
           fi
 
           # Check if issue already exists
           EXISTING=$(gh issue list --label standup --search "$TITLE in:title" --json number --jq '.[0].number')
+
           if [ -n "$EXISTING" ]; then
             echo "Issue #$EXISTING already exists, updating"
             gh issue edit "$EXISTING" --body-file "$REPORT"
-            # Update labels
+
+            # Update labels based on content
+            gh issue edit "$EXISTING" --remove-label "needs-planning" 2>/dev/null || true
             gh issue edit "$EXISTING" --remove-label "claude" 2>/dev/null || true
-            if [ "$LABELS" = "standup,claude" ]; then
-              gh issue edit "$EXISTING" --add-label "claude"
+
+            if [ "$NEEDS_ACTION" = "true" ]; then
+              # Check if already has a plan
+              HAS_PLAN=$(gh issue view "$EXISTING" --json body --jq '.body' | grep -c "## Plan" || true)
+              if [ "$HAS_PLAN" -gt 0 ]; then
+                echo "Issue has plan, adding claude label..."
+                gh issue edit "$EXISTING" --add-label "claude"
+              else
+                echo "Issue needs planning..."
+                gh issue edit "$EXISTING" --add-label "needs-planning"
+              fi
             fi
           else
-            gh label create "standup" --description "Daily standup report" --color "0e8a16" 2>/dev/null || true
-            gh label create "claude" --description "Needs Claude attention" --color "7c3aed" 2>/dev/null || true
-            gh issue create --title "$TITLE" --body-file "$REPORT" --label "$LABELS"
+            if [ "$NEEDS_ACTION" = "true" ]; then
+              echo "Creating issue with needs-planning label..."
+              gh issue create --title "$TITLE" --body-file "$REPORT" --label "standup" --label "needs-planning"
+            else
+              echo "Creating informational standup issue..."
+              gh issue create --title "$TITLE" --body-file "$REPORT" --label "standup"
+            fi
           fi

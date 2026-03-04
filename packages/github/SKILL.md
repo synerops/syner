@@ -36,3 +36,7 @@ gh api /user
 - No personal access tokens stored
 - Fine-grained permissions per installation
 - Actions attributed to the app, not a user
+
+## References
+
+- [planning.md](planning.md) - How planning mode works with issues and PRs

@@ -13,12 +13,13 @@ on:
 jobs:
   claude:
     runs-on: ubuntu-latest
-    # Only run if triggered by @claude mention, assignment, or label
+    # Only run if triggered by @claude mention, assignment, or relevant labels
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (github.event.action == 'assigned' || github.event.action == 'labeled'))
+      (github.event_name == 'issues' && github.event.action == 'assigned') ||
+      (github.event_name == 'issues' && github.event.action == 'labeled' && (github.event.label.name == 'claude' || github.event.label.name == 'needs-planning'))
 
     permissions:
       contents: write
@@ -51,9 +52,9 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           trigger_phrase: "@claude"
           assignee_trigger: "claude"
-          label_trigger: "claude"
+          label_trigger: "claude,needs-planning"
           allowed_bots: "synerbot[bot]"
           claude_args: |
             --agent syner
             --max-turns 30
-            --append-system-prompt "GitHub Context: event=${{ github.event_name }}, action=${{ github.event.action }}, repo=${{ github.repository }}"
+            --append-system-prompt "GitHub Context: event=${{ github.event_name }}, action=${{ github.event.action }}, repo=${{ github.repository }}, label=${{ github.event.label.name }}"

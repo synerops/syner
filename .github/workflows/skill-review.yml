@@ -53,9 +53,14 @@ jobs:
           fi
 
           HAS_FINDINGS=false
-          if grep -q "### @claude" "$REPORT"; then
+          if grep -qE "^- \[" "$REPORT" || grep -q "### @claude" "$REPORT"; then
             HAS_FINDINGS=true
           fi
+
+          # Ensure labels exist
+          gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
+          gh label create "needs-planning" --description "Needs planning before execution" --color "d4a017" 2>/dev/null || true
+          gh label create "claude" --description "Ready for Claude execution" --color "7c3aed" 2>/dev/null || true
 
           # Check for existing issue
           EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
@@ -63,13 +68,11 @@ jobs:
           if [ -z "$EXISTING" ]; then
             # No existing issue
             if [ "$HAS_FINDINGS" = "true" ]; then
-              echo "Creating new issue..."
-              gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
-              gh label create "claude" --description "Needs Claude attention" --color "7c3aed" 2>/dev/null || true
+              echo "Creating new issue with needs-planning label..."
               gh issue create \
                 --title "$TITLE" \
                 --label "skill-review" \
-                --label "claude" \
+                --label "needs-planning" \
                 --body-file "$REPORT"
             else
               echo "No findings, no existing issue. All clean."
@@ -88,29 +91,17 @@ jobs:
               exit 0
             fi
 
-            # Still has findings - check for Claude's work
-            CLAUDE_BRANCH=$(git ls-remote --heads origin "claude/issue-${EXISTING}-*" 2>/dev/null | head -1)
-            PENDING_PR=$(gh pr list --state open --json number,body --jq ".[] | select(.body | contains(\"#${EXISTING}\")) | .number" | head -1)
+            # Check current state
+            HAS_PLAN=$(gh issue view "$EXISTING" --json body --jq '.body' | grep -c "## Plan" || true)
+            HAS_CLAUDE_LABEL=$(gh issue view "$EXISTING" --json labels --jq '.labels[].name' | grep -c "^claude$" || true)
 
-            if [ -n "$CLAUDE_BRANCH" ] && [ -z "$PENDING_PR" ]; then
-              # Branch exists but no PR - create PR
-              BRANCH_NAME=$(echo "$CLAUDE_BRANCH" | awk '{print $2}' | sed 's|refs/heads/||')
-              echo "Found Claude's branch $BRANCH_NAME, creating PR..."
-
-              gh pr create \
-                --head "$BRANCH_NAME" \
-                --title "fix: skill inconsistencies (#${EXISTING})" \
-                --body "Closes #${EXISTING} - Auto-generated from Claude's fix. [synerbot](https://github.com/apps/synerbot)"
-              gh issue comment "$EXISTING" --body "PR created from Claude's branch \`$BRANCH_NAME\`. Awaiting review."
-
-            elif [ -n "$PENDING_PR" ]; then
-              # PR exists - just notify
-              echo "PR #$PENDING_PR already exists, commenting status..."
-              gh issue comment "$EXISTING" --body "Still has findings. PR #${PENDING_PR} awaiting review. Run: $WORKFLOW_URL"
-
-            else
-              # No pending work - invoke Claude
-              echo "No pending work found, mentioning @claude..."
-              gh issue comment "$EXISTING" --body "@claude Still has findings. Please fix. Run: $WORKFLOW_URL"
+            if [ "$HAS_PLAN" -gt 0 ] && [ "$HAS_CLAUDE_LABEL" -eq 0 ]; then
+              # Has plan but no claude label - add it to continue execution
+              echo "Issue has plan, adding claude label to continue..."
+              gh issue edit "$EXISTING" --add-label "claude"
+            elif [ "$HAS_PLAN" -eq 0 ]; then
+              # No plan yet - ensure needs-planning label
+              echo "No plan yet, ensuring needs-planning label..."
+              gh issue edit "$EXISTING" --add-label "needs-planning"
             fi
           fi
