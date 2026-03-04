@@ -55,22 +55,18 @@ jobs:
             - [Any blockers, or "None"]
 
             ## @claude (ONLY if action needed)
-            Include this section ONLY if there are:
+            Include ONLY if there are items requiring investigation:
             - Stale items (>7 days without activity)
             - PRs waiting review >2 days
             - Blockers that need investigation
 
-            Format: "→ [specific actionable instruction for Claude]"
-            Example: "→ Investigate why PR #123 is stale and comment with findings"
+            Format: "→ [specific actionable item]"
             Omit this section entirely if all is clear.
 
             ## Analysis rules
-            1. **Stale**: Flag items >7 days. Check if stale PR blocks stale issue.
-            2. **Velocity**: If open items > recently merged, note "accumulating backlog".
-            3. **Reviews**: Flag PRs waiting review >2 days as bottleneck.
-            4. **Fragmentation**: If items span 4+ different areas (from titles), warn about context switching.
-
-            ## Other rules
+            - **Stale**: Flag items >7 days
+            - **Velocity**: If open > merged, note "accumulating backlog"
+            - **Reviews**: Flag PRs waiting >2 days
             - Skip items with labels: blocked, waiting-external
             - Max 20 lines. If nothing notable: "✅ All clear"
           claude_args: |
@@ -93,13 +89,11 @@ jobs:
           # Ensure labels exist
           gh label create "standup" --description "Daily standup report" --color "0e8a16" 2>/dev/null || true
           gh label create "needs-planning" --description "Needs planning before execution" --color "d4a017" 2>/dev/null || true
-          gh label create "claude" --description "Ready for Claude execution" --color "7c3aed" 2>/dev/null || true
 
           # Check if report needs action
+          NEEDS_ACTION=false
           if grep -q "## @claude" "$REPORT"; then
             NEEDS_ACTION=true
-          else
-            NEEDS_ACTION=false
           fi
 
           # Check if issue already exists
@@ -109,20 +103,9 @@ jobs:
             echo "Issue #$EXISTING already exists, updating"
             gh issue edit "$EXISTING" --body-file "$REPORT"
 
-            # Update labels based on content
-            gh issue edit "$EXISTING" --remove-label "needs-planning" 2>/dev/null || true
-            gh issue edit "$EXISTING" --remove-label "claude" 2>/dev/null || true
-
             if [ "$NEEDS_ACTION" = "true" ]; then
-              # Check if already has a plan
-              HAS_PLAN=$(gh issue view "$EXISTING" --json body --jq '.body' | grep -c "## Plan" || true)
-              if [ "$HAS_PLAN" -gt 0 ]; then
-                echo "Issue has plan, adding claude label..."
-                gh issue edit "$EXISTING" --add-label "claude"
-              else
-                echo "Issue needs planning..."
-                gh issue edit "$EXISTING" --add-label "needs-planning"
-              fi
+              echo "Action needed, ensuring needs-planning label..."
+              gh issue edit "$EXISTING" --add-label "needs-planning" 2>/dev/null || true
             fi
           else
             if [ "$NEEDS_ACTION" = "true" ]; then

@@ -1,57 +1,79 @@
 # Planning Mode
 
-Transform findings into Acceptance Criteria (checklist).
+Transform `@claude` findings into Acceptance Criteria. **Do NOT read or verify files.**
 
-## Instructions
+## Input
 
-1. Read the issue body
-2. Locate the findings/analysis section
-3. Transform each finding → verifiable checklist item
-4. Update the issue body:
-   - Keep original content intact
-   - Append `## Acceptance Criteria` section
+Issue body containing `### @claude` section with prioritized findings.
+
+## Process
+
+1. The issue body is already in your context (from the trigger)
+2. Find the `### @claude` section - this has the prioritized action items
+3. Transform each item → one checklist item (max 10)
+4. Update the issue using `gh issue edit`
 5. Swap labels: remove `needs-planning`, add `claude`
+
+## Rules
+
+- **NO file reading** — trust the findings as written
+- **ONE item per finding** — keep atomic for single PRs
+- **Include issue codes** — (B3), (D2), etc. for traceability
+- **Max 10 items** — if more, take top priorities only
+
+## Commands
+
+```bash
+# Get issue number from context
+ISSUE_NUMBER=<from GitHub event context>
+
+# Read current body
+BODY=$(gh issue view $ISSUE_NUMBER --json body --jq '.body')
+
+# Append Acceptance Criteria and update
+gh issue edit $ISSUE_NUMBER --body "${BODY}
+
+## Acceptance Criteria
+
+- [ ] item 1
+- [ ] item 2
+"
+
+# Swap labels
+gh issue edit $ISSUE_NUMBER --remove-label "needs-planning" --add-label "claude"
+```
 
 ## Acceptance Criteria Format
 
 ```markdown
 ## Acceptance Criteria
 
-- [ ] Criterion that can be verified (done or not done)
-- [ ] Another verifiable criterion
-- [ ] Each item should be achievable in one PR
+- [ ] `skill-name`: description of fix (CODE)
+- [ ] `skill-name`: description of fix (CODE)
 ```
-
-**Good criteria:**
-- `[ ] All skills use SKILL.md (not skill.md)`
-- `[ ] All versions follow 0.x.x format`
-- `[ ] No hardcoded paths in skills`
-
-**Bad criteria:**
-- `[ ] Improve code quality` ← vague
-- `[ ] Consider refactoring` ← not actionable
-
-## Fallback
-
-If the issue has no findings or actionable content:
-1. Comment: "No actionable findings to plan."
-2. Remove `needs-planning` label
-3. Do not add `claude` label
 
 ## Example
 
-**Input (findings):**
+**Input (`### @claude` section):**
 ```
-## Findings
-- 2 skills use skill.md instead of SKILL.md
-- 12 skills use non-standard version format
+→ Highest-value fixes:
+1. `syner-find-links` [B4] — missing input guard
+2. `syner-daily-standup` [B2] — output path not anchored
+3. `syner-backlog-reviewer` [B3] — fragile skill reference
 ```
 
 **Output (append to issue):**
 ```markdown
 ## Acceptance Criteria
 
-- [ ] `vercel-setup` uses SKILL.md
-- [ ] `syner-daily-standup` uses SKILL.md
-- [ ] All skill versions follow 0.x.x format
+- [ ] `syner-find-links`: add AskUserQuestion fallback when no arguments (B4)
+- [ ] `syner-daily-standup`: anchor output path to project root (B2)
+- [ ] `syner-backlog-reviewer`: use `/skill-name` instead of Glob path (B3)
 ```
+
+## Fallback
+
+If no `### @claude` section or empty:
+1. Comment on issue: "No actionable findings to plan."
+2. Remove `needs-planning` label
+3. Do NOT add `claude` label
