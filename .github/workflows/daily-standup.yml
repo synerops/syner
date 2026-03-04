@@ -58,7 +58,9 @@ jobs:
             ## Other rules
             - Skip items with labels: blocked, waiting-external
             - Max 20 lines. If nothing notable: "✅ All clear"
-          claude_args: "--max-turns 10"
+          claude_args: |
+            --max-turns 10
+            --allowedTools Read,Write,Glob
 
       - name: Create issue from report
         env:
