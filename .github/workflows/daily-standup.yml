@@ -18,19 +18,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup skills symlinks
+      - name: Gather GitHub data
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p .claude/skills
-          ln -s ../../apps/dev/skills/syner-daily-standup .claude/skills/syner-daily-standup
+          mkdir -p .syner/context/daily-standup
+          date +%Y-%m-%d > .syner/context/daily-standup/today.txt
+          gh issue list --assignee @me --state open --json number,title,updatedAt,labels > .syner/context/daily-standup/issues-open.json
+          gh pr list --author @me --state open --json number,title,createdAt > .syner/context/daily-standup/prs-open.json
+          gh pr list --search "review-requested:@me" --json number,title,author,createdAt > .syner/context/daily-standup/prs-review.json
+          gh issue list --assignee @me --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-standup/issues-closed.json
+          gh pr list --author @me --state merged --json number,title,mergedAt --limit 20 > .syner/context/daily-standup/prs-merged.json
 
-      - name: Run standup
+      - name: Generate standup report
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Run the /syner-daily-standup skill to generate today's standup report"
-          claude_args: |
-            --agent syner
-            --max-turns 15
+          prompt: |
+            Read GitHub data from .syner/context/daily-standup/ and write a standup report.
+            Output to reports/standup-{date}.md with: Yesterday (completed), Today (priorities), Blockers.
+            Max 15 lines.
+          claude_args: "--max-turns 10"
 
       - name: Create issue from report
         env:
