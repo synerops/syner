@@ -35,10 +35,30 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "/syner-daily-standup"
-          claude_args: |
-            --agent syner
-            --max-turns 10
+          prompt: |
+            Read .syner/context/daily-standup/ files and write reports/standup-{date}.md
+
+            ## Format
+            # Standup YYYY-MM-DD
+            ## Yesterday
+            - [Completed: closed issues, merged PRs]
+            ## Today
+            - [Open issues/PRs, reviews needed]
+            ## Blockers
+            - [Any blockers, or "None"]
+            ## Alerts
+            - [Only if issues found, otherwise omit section]
+
+            ## Analysis rules
+            1. **Stale**: Flag items >7 days. Check if stale PR blocks stale issue.
+            2. **Velocity**: If open items > recently merged, note "accumulating backlog".
+            3. **Reviews**: Flag PRs waiting review >2 days as bottleneck.
+            4. **Fragmentation**: If items span 4+ different areas (from titles), warn about context switching.
+
+            ## Other rules
+            - Skip items with labels: blocked, waiting-external
+            - Max 20 lines. If nothing notable: "✅ All clear"
+          claude_args: "--max-turns 10"
 
       - name: Create issue from report
         env:
