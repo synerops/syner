@@ -3,8 +3,8 @@ name: syner-daily-standup
 description: Generate daily standup reports from pre-gathered GitHub data. Use when asked for "standup", "daily status", or on scheduled CI runs. Data is in .syner/context/daily-standup/.
 metadata:
   author: syner
-  version: "1.3"
-allowed-tools:
+  version: "0.1.3"
+tools:
   - Read
   - Write
   - Glob

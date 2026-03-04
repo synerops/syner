@@ -3,7 +3,7 @@ name: syner-grow-note
 description: Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.
 metadata:
   author: syner
-  version: "1.1"
+  version: "0.1.1"
 ---
 
 # Syner Grow Note

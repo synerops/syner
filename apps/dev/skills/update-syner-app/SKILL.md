@@ -1,4 +1,11 @@
-# Skill: update-syner-app
+---
+name: update-syner-app
+description: Update existing applications to match the current syner standard stack. Ensures all apps maintain the same foundation and tooling.
+metadata:
+  author: syner
+  version: "0.1.0"
+tools: Read, Bash, Write, Glob, AskUserQuestion
+---
 
 # Update Syner App
 

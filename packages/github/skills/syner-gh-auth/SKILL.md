@@ -4,7 +4,7 @@ description: Authenticate gh CLI using GitHub App tokens. Use BEFORE any gh comm
 tools: Bash
 metadata:
   author: syner
-  version: "1.0.0"
+  version: "0.1.0"
 ---
 
 # GitHub CLI Authentication
