@@ -27,7 +27,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "/syner-daily-standup"
+          prompt: "Run the /syner-daily-standup skill to generate today's standup report"
           claude_args: |
             --agent syner
             --max-turns 15
