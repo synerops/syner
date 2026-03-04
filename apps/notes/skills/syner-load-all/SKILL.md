@@ -3,7 +3,7 @@ name: syner-load-all
 description: Load your full life + work state. Discovers and reads all notes across all app vaults, building a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
 metadata:
   author: syner
-  version: "2.0"
+  version: "0.2.0"
 ---
 
 # Syner Load All

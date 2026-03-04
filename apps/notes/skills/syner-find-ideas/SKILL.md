@@ -3,7 +3,7 @@ name: syner-find-ideas
 description: Generate startup ideas from your vault. Synthesize your unique knowledge, experiences, and observations into actionable startup or project ideas. Use when you want to explore what you could build based on your accumulated insights.
 metadata:
   author: syner
-  version: "1.1"
+  version: "0.1.1"
 tools: Glob, Read
 ---
 

@@ -4,7 +4,7 @@ description: Track idea evolution - proactively surfaces evolved ideas worth rev
 context: fork
 metadata:
   author: syner
-  version: "2.1"
+  version: "0.2.1"
 ---
 
 # Syner-Track-Idea Skill

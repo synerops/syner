@@ -3,7 +3,7 @@ name: syner-backlog-reviewer
 description: Health audit for the backlog itself. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately. Use to keep the backlog clean and actionable.
 metadata:
   author: syner
-  version: "1.0"
+  version: "0.1.0"
 ---
 
 # Backlog Reviewer

@@ -3,7 +3,7 @@ name: syner-researcher
 description: Research topics and compile findings. Routes to the right source based on topic type - Claude Code docs for CLI/agent questions, web search for technologies/libraries, or your personal vault for internal knowledge.
 metadata:
   author: syner
-  version: "1.0"
+  version: "0.1.0"
 ---
 
 # Syner Researcher

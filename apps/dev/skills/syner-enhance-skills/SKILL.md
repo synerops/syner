@@ -3,7 +3,7 @@ name: syner-enhance-skills
 description: Improve an existing skill by auditing and applying fixes. Use when asked to "enhance skill", "improve skill", "fix skill issues", or when code-reviewer detects skill file changes. Delegates to syner-skill-reviewer for audit, then proposes and applies fixes with user confirmation.
 metadata:
   author: syner
-  version: "1.0.0"
+  version: "0.1.0"
 tools: Read, Glob, Grep, Edit, AskUserQuestion, Skill
 ---
 

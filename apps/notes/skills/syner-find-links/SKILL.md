@@ -3,7 +3,7 @@ name: syner-find-links
 description: Bridge two domains you've been circling. Find unexpected connections between two different areas, topics, or projects in your notes. Use when you sense a link but can't articulate it, or to discover non-obvious relationships.
 metadata:
   author: syner
-  version: "1.1"
+  version: "0.1.1"
 ---
 
 # Syner Find Links

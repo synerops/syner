@@ -5,7 +5,7 @@ agent: general-purpose
 tools: Read, Bash, AskUserQuestion
 metadata:
   author: syner
-  version: "1.0.0"
+  version: "0.1.0"
 ---
 
 # Vercel Setup
@@ -43,8 +43,10 @@ If empty, run the full setup flow. If provided (e.g., "check", "add SLACK_WEBHOO
 
 ## Step 1: Check Current State
 
+Navigate to the bot app directory (find project root containing `apps/`, then `cd apps/bot`):
+
 ```bash
-cd /Users/ronny/synerops/syner/apps/bot
+cd apps/bot
 vercel env ls --scope synerops
 ```
 
@@ -65,10 +67,10 @@ openssl rand -hex 32
 
 ## Step 3: Add Variables to Vercel
 
-For each missing variable, run:
+For each missing variable, run from `apps/bot`:
 
 ```bash
-cd /Users/ronny/synerops/syner/apps/bot
+cd apps/bot
 
 # Required
 vercel env add ANTHROPIC_API_KEY production --scope synerops
