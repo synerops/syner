@@ -1,20 +1,27 @@
+import { Hero } from '@/components/hero'
+import { SkillsCatalog } from '@/components/skills-catalog'
+import { getSkillsByCategory } from '@/lib/skills'
+
 export default function Home() {
+  const skillsByCategory = getSkillsByCategory()
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <main className="flex flex-col items-center gap-8 px-8 text-center">
-        <div className="flex flex-col items-center gap-4">
-          <h1 className="text-5xl font-bold tracking-tight text-black dark:text-white">
-            syner<span className="text-zinc-400">.dev</span>
-          </h1>
-          <p className="max-w-md text-lg text-zinc-600 dark:text-zinc-400">
-            Build with AI-powered workflows.
-          </p>
-        </div>
-        <div className="flex flex-col items-center gap-2 text-sm text-zinc-500 dark:text-zinc-500">
-          <p>Developer tools and skills for the syner ecosystem.</p>
-          <p className="font-mono text-xs">Coming soon</p>
-        </div>
+    <div className="flex min-h-screen flex-col items-center bg-zinc-50 dark:bg-black">
+      <main className="flex w-full flex-col items-center">
+        <Hero />
+        <SkillsCatalog skillsByCategory={skillsByCategory} />
+        <section className="w-full max-w-4xl px-8 pb-20">
+          <h2 className="text-2xl font-semibold mb-6 text-center text-black dark:text-white">
+            Install
+          </h2>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-6 overflow-x-auto">
+            <pre className="text-sm text-green-400 font-mono">
+              <code>{`git clone https://github.com/synerops/syner
+cp -r syner/.claude/skills/[skill-name] your-project/.claude/skills/`}</code>
+            </pre>
+          </div>
+        </section>
       </main>
     </div>
-  );
+  )
 }
