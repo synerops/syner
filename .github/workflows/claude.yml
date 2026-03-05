@@ -66,7 +66,7 @@ jobs:
               echo "prompt=Read .github/prompts/planning.md and follow those instructions." >> $GITHUB_OUTPUT
             elif [ "$LABEL" == "claude" ]; then
               echo "mode=execution" >> $GITHUB_OUTPUT
-              echo "prompt=Read packages/github/planning.md and execute the next item from this issue's plan." >> $GITHUB_OUTPUT
+              echo "prompt=Read .github/prompts/execute-issue.md and follow those instructions." >> $GITHUB_OUTPUT
             else
               echo "mode=interactive" >> $GITHUB_OUTPUT
               echo "prompt=Respond to the labeled issue." >> $GITHUB_OUTPUT
@@ -86,8 +86,8 @@ jobs:
           allowed_bots: "synerbot[bot]"
           prompt: ${{ steps.mode.outputs.prompt }}
           claude_args: |
-            --agent syner
             --max-turns 30
+            --allowedTools Read,Edit,Write,Bash,Glob,Grep
             --append-system-prompt "GitHub Context: event=${{ github.event_name }}, action=${{ github.event.action }}, repo=${{ github.repository }}, mode=${{ steps.mode.outputs.mode }}"
 
       - name: Create PR if commits exist

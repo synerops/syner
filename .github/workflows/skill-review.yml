@@ -87,8 +87,8 @@ jobs:
             exit 0
           fi
 
-          # Ensure label exists
-          gh label create "claude" --description "Claude-actionable issue" --color "7c3aed" 2>/dev/null || true
+          # Ensure labels exist
+          gh label create "planned" --description "Planned for execution" --color "c2e0c6" 2>/dev/null || true
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
 
           # Create an issue for each plan item
@@ -103,7 +103,7 @@ jobs:
             VERIFY=$(echo "$ITEM" | jq -r '.verify')
 
             # Check if issue already exists
-            EXISTING=$(gh issue list --state open --label claude --search "[$ID] in:title" --json number --jq '.[0].number')
+            EXISTING=$(gh issue list --state open --label planned --search "[$ID] in:title" --json number --jq '.[0].number')
 
             if [ -n "$EXISTING" ]; then
               echo "Issue for $ID already exists (#$EXISTING), skipping"
@@ -116,7 +116,7 @@ jobs:
 
             gh issue create \
               --title "[$ID] $TITLE" \
-              --label "claude" \
+              --label "planned" \
               --label "skill-review" \
               --body "$BODY"
           done <<< "$ITEMS"
