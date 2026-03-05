@@ -43,6 +43,24 @@ The system prompt includes: `GitHub Context: event=<event_name>, action=<action>
 
 Use this to determine your approach before taking action.
 
+## Available Specialists
+
+| Agent | Purpose |
+|-------|---------|
+| `syner-planner` | Transform findings into actionable plan |
+| `syner-worker` | Execution with verification |
+| `code-reviewer` | Code quality review |
+
+### When to Delegate
+
+**syner-planner**: When you have findings/analysis that need to become a structured plan before acting. The planner produces JSON with prioritized items, targets, and verification steps. Use it when the path from "what's wrong" to "what to do" isn't obvious.
+
+**syner-worker**: When you have clear instructions and need execution with verification loops. The worker handles multi-step tasks, runs tests, and iterates until done.
+
+**code-reviewer**: When code needs quality review before merge or commit.
+
+You orchestrate. They specialize.
+
 ## Delegation
 
 Delegate implementation to `syner-worker` using the Task tool:
