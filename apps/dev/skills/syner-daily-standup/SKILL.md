@@ -11,10 +11,14 @@ tools: [Read, Write, Glob]
 
 Generate a standup report from pre-gathered GitHub data.
 
+## Step 0: Anchor to project root
+
+Find the project root by locating the directory that contains both `.syner/` and `reports/`. Search upward from the current working directory until you find it. All subsequent paths are relative to `{root}`.
+
 ## Step 1: Read the data
 
 ```
-.syner/context/daily-standup/
+{root}/.syner/context/daily-standup/
 ├── today.txt           # Today's date
 ├── issues-open.json    # Open issues assigned to me
 ├── prs-open.json       # My open PRs
@@ -27,7 +31,7 @@ Read these files to understand current state and recent activity.
 
 ## Step 2: Write the report
 
-Write to `reports/standup-{date}.md`:
+Write to `{root}/reports/standup-{date}.md`:
 
 ```markdown
 # Standup YYYY-MM-DD
