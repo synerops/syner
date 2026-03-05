@@ -1,6 +1,7 @@
 ---
 name: test-syner-agent
 description: Test syner agents using output-first methodology. Use when testing an agent, validating behavior, or debugging agent output.
+tools: [Task, Edit, Read]
 metadata:
   author: syner
   version: "0.1.0"

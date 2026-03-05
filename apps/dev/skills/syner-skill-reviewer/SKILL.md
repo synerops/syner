@@ -1,6 +1,7 @@
 ---
 name: syner-skill-reviewer
 description: Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on "review this skill", "audit skill", "check skill quality", "is this skill safe", or when evaluating skills before publishing.
+tools: [Glob, Read, AskUserQuestion]
 metadata:
   author: syner
   version: "0.0.5"
