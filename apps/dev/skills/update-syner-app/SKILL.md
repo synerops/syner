@@ -22,7 +22,11 @@ Update existing applications to match the current syner standard stack. This ens
 
 ## Instructions
 
-### 1. Identify Target App
+### 1. Find Project Root
+
+Navigate upward from the current working directory until you find a directory containing `apps/`. Use `ls` to verify. If no `apps/` directory exists, ask the user where the project root is.
+
+### 2. Identify Target App
 
 If app name not provided as argument, ask the user:
 ```
@@ -31,13 +35,13 @@ Which app would you like to update?
 
 List available apps from the `apps/` directory to help the user choose.
 
-### 2. Read Current Stack
+### 3. Read Current Stack
 
-Use the `Read` tool to load `apps/notes/vaults/syner/common-stack.md`.
+Anchor to project root (directory containing `apps/`), then use the `Read` tool to load `{root}/apps/notes/vaults/syner/common-stack.md`.
 
 This step is mandatory - the skill ALWAYS reads common-stack.md before acting. This ensures we apply the latest stack standards.
 
-### 3. Analyze Current App State
+### 4. Analyze Current App State
 
 Check what the app currently has:
 - Read `apps/[name]/package.json` to check dependencies
@@ -46,7 +50,7 @@ Check what the app currently has:
 - Check for `apps/[name]/lib/utils.ts` (shadcn utility)
 - List any other relevant configuration files
 
-### 4. Determine Missing Components
+### 5. Determine Missing Components
 
 Based on the common stack, identify what's missing:
 - Tailwind CSS
@@ -55,7 +59,7 @@ Based on the common stack, identify what's missing:
 - ESLint configuration
 - Other stack components
 
-### 5. Update Dependencies
+### 6. Update Dependencies
 
 #### If Tailwind is missing:
 ```bash
@@ -76,7 +80,7 @@ This will:
 - Create `lib/utils.ts`
 - Update `tailwind.config.ts`
 
-### 6. Fix Common Issues
+### 7. Fix Common Issues
 
 After adding shadcn, common fixes needed:
 
@@ -97,21 +101,21 @@ Ensure the following paths exist:
 }
 ```
 
-### 7. Add Example Component (Optional)
+### 8. Add Example Component (Optional)
 
 Ask the user if they want to add an example shadcn component to verify the setup:
 ```bash
 cd apps/[name] && bunx shadcn@latest add button
 ```
 
-### 8. Verify Installation
+### 9. Verify Installation
 
 Run these checks:
 - `cd apps/[name] && bun dev` - Ensure the app starts
 - Check that Tailwind styles are applied
 - If example component was added, verify it renders correctly
 
-### 9. Report Results
+### 10. Report Results
 
 Output using the format below.
 
