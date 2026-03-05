@@ -160,9 +160,9 @@ jobs:
           # Remove claude label (frees up queue)
           gh issue edit "$ISSUE_NUMBER" --remove-label claude 2>/dev/null || true
 
-          # Add completed label if job succeeded
+          # Add ready for review label if job succeeded
           if [ "${{ job.status }}" == "success" ]; then
-            gh issue edit "$ISSUE_NUMBER" --add-label completed 2>/dev/null || true
+            gh issue edit "$ISSUE_NUMBER" --add-label "ready for review" 2>/dev/null || true
           else
             # Re-add planned label if failed (can retry)
             gh issue edit "$ISSUE_NUMBER" --add-label planned 2>/dev/null || true
