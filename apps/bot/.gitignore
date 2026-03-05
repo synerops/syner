@@ -3,3 +3,6 @@
 
 vaults/*
 !vaults/bot
+
+# Local development only - not deployed
+app/api/chat
