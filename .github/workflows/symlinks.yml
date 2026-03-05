@@ -1,0 +1,81 @@
+name: Symlinks
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # Daily at 9pm UTC (4pm EST / 5pm COL)
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Check symlinks
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Run /syner-fix-symlinks (check mode).
+            Write results to reports/symlinks.md:
+
+            # Symlinks Check
+
+            ## Status
+            ok | issues
+
+            ## Issues
+            - list or "None"
+          claude_args: |
+            --max-turns 5
+            --allowedTools Bash,Glob,Read,Write
+
+      - name: Handle results
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          REPORT="reports/symlinks.md"
+          TITLE="Symlinks: broken or missing"
+
+          if [ ! -f "$REPORT" ]; then
+            echo "No report generated"
+            exit 0
+          fi
+
+          if grep -A1 "## Status" "$REPORT" | grep -q "ok"; then
+            echo "✓ All symlinks valid"
+
+            # Close existing issue if any
+            EXISTING=$(gh issue list --state open --label symlinks --json number --jq '.[0].number')
+            if [ -n "$EXISTING" ]; then
+              gh issue close "$EXISTING" --comment "All symlinks valid. Closing."
+            fi
+            exit 0
+          fi
+
+          # Has issues
+          gh label create "symlinks" --description "Skill symlink issues" --color "d73a4a" 2>/dev/null || true
+          gh label create "claude" --color "7c3aed" 2>/dev/null || true
+
+          EXISTING=$(gh issue list --state open --label symlinks --json number --jq '.[0].number')
+
+          if [ -z "$EXISTING" ]; then
+            gh issue create \
+              --title "$TITLE" \
+              --label "symlinks" \
+              --label "claude" \
+              --body-file "$REPORT"
+          else
+            gh issue edit "$EXISTING" --body-file "$REPORT"
+          fi
