@@ -48,4 +48,4 @@ gh api /user
 
 ## References
 
-- [planning.md](planning.md) - How planning mode works with issues and PRs
+- [plan.md](plan.md) - How planning mode works with issues and PRs
