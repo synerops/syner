@@ -1,6 +1,6 @@
 ---
 name: syner-readme-enhancer
-description: Enhance app READMEs by analyzing actual code, not just metadata. Detects if an app is a placeholder or has real functionality. Generates honest, focused READMEs. Use when creating or updating README files for syner apps.
+description: Enhance READMEs for apps and packages by analyzing actual code. Detects maturity level, special capabilities (plan mode), and generates honest, focused READMEs. Use when creating or updating README files.
 tools:
   - Glob
   - Read
@@ -9,12 +9,12 @@ tools:
   - AskUserQuestion
 metadata:
   author: syner
-  version: "0.8.0"
+  version: "0.9.0"
 ---
 
 # Syner README Enhancer
 
-Generate honest READMEs by analyzing what the app **actually does**.
+Generate honest READMEs by analyzing what the component **actually does**.
 
 ## The Three Questions
 
@@ -24,9 +24,56 @@ Every README must answer:
 2. **Why does it exist?** - The value it provides
 3. **How do I try it?** - Commands + what I'll actually see
 
-## Context Hierarchy (internal)
+## Phase 1: Input & Detection
 
-Use this to understand what each app reads from, but don't expose it in the README:
+**Input:** $ARGUMENTS
+
+Parse the target name and detect type:
+
+```
+apps/{name}     → type: app
+packages/{name} → type: package
+```
+
+**Valid apps:** `notes`, `dev`, `bot`, `design`
+**Valid packages:** `github` (and any in `packages/`)
+
+If empty, use `AskUserQuestion` to ask which target.
+
+---
+
+## Phase 2A: Analyze Apps
+
+**Skip this if type is `package`.**
+
+### 2A.1 Discover & Read
+
+```
+Glob: apps/$APP/app/**/*.tsx
+Glob: apps/$APP/app/**/*.ts
+Read: apps/$APP/app/page.tsx
+Read: apps/$APP/package.json
+```
+
+For API routes, read them to understand what the app does.
+
+### 2A.2 Classify App Maturity
+
+- **Placeholder** - Single page, "coming soon", no API routes
+- **MVP** - 2-3 routes, basic functionality
+- **Functional** - Multiple routes, real features, API integration
+- **Production** - Full features, error handling, auth
+
+### 2A.3 Check for Skills & Existing README
+
+```
+Glob: apps/$APP/skills/*/SKILL.md
+Read: apps/$APP/README.md (if exists)
+```
+
+If existing README is complex (>50 lines), read `references/separation.md` for guidance.
+
+### Context Hierarchy (internal, don't expose)
 
 ```
 notes          ← base (no dependencies)
@@ -38,48 +85,50 @@ dev / design   ← reads from notes + bot
 app (future)   ← reads from all above
 ```
 
-## Phase 1: Input
+---
 
-**Input:** $ARGUMENTS
+## Phase 2B: Analyze Packages
 
-Parse the app name. Valid: `notes`, `dev`, `bot`, `design`.
+**Skip this if type is `app`.**
 
-If empty, use `AskUserQuestion` to ask which app.
-
-## Phase 2: Analyze the Actual App
-
-**Read the actual code** to understand what's implemented.
-
-All paths are relative to project root. Use `Glob` and `Read` with full paths.
-
-### 2.1 Discover & Read
+### 2B.1 Discover & Read Package
 
 ```
-Glob: apps/$APP/app/**/*.tsx
-Glob: apps/$APP/app/**/*.ts
-Read: apps/$APP/app/page.tsx
-Read: apps/$APP/package.json
+Read: packages/$PKG/package.json      → name, exports, bin, description
+Read: packages/$PKG/src/exports.ts    → public API
+Read: packages/$PKG/src/index.ts      → CLI if has bin
+Glob: packages/$PKG/src/**/*.ts       → implementation
 ```
 
-For API routes, read them to understand what the app does.
-
-### 2.2 Classify App Maturity
-
-- **Placeholder** - Single page, "coming soon", no API routes
-- **MVP** - 2-3 routes, basic functionality
-- **Functional** - Multiple routes, real features, API integration
-- **Production** - Full features, error handling, auth
-
-### 2.3 Check for Skills & Existing README
+### 2B.2 Check for Special Capabilities
 
 ```
-Glob: apps/$APP/skills/*/SKILL.md
-Read: apps/$APP/README.md (if exists)
+Read: packages/$PKG/plan.md           → has plan mode?
+Glob: packages/$PKG/skills/*/SKILL.md → associated skills
 ```
 
-If existing README is complex (>50 lines), read `references/separation.md` for guidance.
+**Plan mode:** If `plan.md` exists, the package can materialize syner plans into platform-specific actions (e.g., GitHub issues).
 
-## Phase 3: Generate README
+### 2B.3 Understand Ecosystem Context
+
+```
+Read: apps/dev/README.md              → dev workflow context
+Read: skills/syner/plan.md            → how planning works system-wide
+Glob: agents/*.md                     → which agents use this package
+```
+
+### 2B.4 Classify Package Role
+
+- **Auth** - Provides authentication (tokens, credentials)
+- **Platform** - Integrates with external platform (GitHub, Vercel, etc.)
+- **Tools** - Provides AI SDK tools for agents
+- **Utilities** - Shared utilities for other packages/apps
+
+A package can have multiple roles.
+
+---
+
+## Phase 3A: Generate App README
 
 ### Template for Functional Apps
 
@@ -119,8 +168,6 @@ run `/skill-name` or see [setup guide](link).
 
 ### Template for Placeholder Apps
 
-Use "what it will be" instead of "why" and "how it works":
-
 ```markdown
 # syner.{ext}
 
@@ -147,20 +194,77 @@ bun run dev --filter={app}
 what you'll see (be honest).
 ```
 
-### Guidelines
+---
 
-- Use lists, not tables
-- Max 50 lines
-- "why" explains value, "how it works" explains mechanics
-- Link to details instead of including them
-- Only document THIS app, not its dependencies
+## Phase 3B: Generate Package README
+
+### Template for Packages
+
+```markdown
+# @syner/{name}
+
+one line: what problem it solves.
+
+## what it does
+
+- capability 1 (informative, not technical)
+- capability 2
+- capability 3
+
+## how it fits
+
+[diagram showing where this package lives in the flow]
+
+\`\`\`
+example flow showing this package's role
+\`\`\`
+
+## plan mode (only if has plan.md)
+
+what "plan mode" means for this package:
+- what it reads
+- what it creates
+- why it works that way
+
+## usage
+
+\`\`\`bash
+# cli usage (if has bin)
+bunx @syner/{name} command
+\`\`\`
+
+\`\`\`typescript
+// programmatic (brief)
+import { something } from "@syner/{name}"
+\`\`\`
+
+## setup
+
+- `VAR_NAME` - what it's for
+- `ANOTHER_VAR` - what it's for
+
+## skills (if any)
+
+- `/skill-name` - what it does
+```
+
+### Package Guidelines
+
+- **"what it does"** - capabilities, not exports list
+- **"how it fits"** - diagram showing flow, where this lives
+- **"plan mode"** - dedicated section if `plan.md` exists
+- Explain value first, technical details second
+- Max 60 lines
+
+---
 
 ## Phase 4: Output
 
 Show the draft:
 
 ```
-**Classification:** [placeholder/mvp/functional/production]
+**Type:** [app/package]
+**Classification:** [placeholder/mvp/functional/production] or [auth/platform/tools/utilities]
 
 ## Generated README
 
