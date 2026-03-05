@@ -90,8 +90,9 @@ Present the compiled research.
 
 If the user included "save" or "guardar" in the request:
 1. Use `AskUserQuestion` to confirm filename and which vault to save to
-2. Save to the chosen vault's research folder: `apps/{app}/vaults/{vault}/research/[topic-slug].md`
-3. Include frontmatter with date and sources
+2. Resolve project root: use `Glob` to find `CLAUDE.md` or `package.json` at the root, then derive the absolute project root path
+3. Save to `{root}/apps/{app}/vaults/{vault}/research/[topic-slug].md`
+4. Include frontmatter with date and sources
 
 Otherwise, output directly to the conversation.
 
