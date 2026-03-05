@@ -4,10 +4,7 @@ description: Generate daily standup reports from pre-gathered GitHub data. Use w
 metadata:
   author: syner
   version: "0.1.3"
-tools:
-  - Read
-  - Write
-  - Glob
+tools: [Read, Write, Glob]
 ---
 
 # Daily Standup

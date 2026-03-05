@@ -4,7 +4,7 @@ description: Generate startup ideas from your vault. Synthesize your unique know
 metadata:
   author: syner
   version: "0.1.1"
-tools: Glob, Read
+tools: [Glob, Read]
 ---
 
 # Syner Find Ideas
