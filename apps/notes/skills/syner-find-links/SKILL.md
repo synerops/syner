@@ -18,7 +18,7 @@ Discover and articulate connections between two seemingly separate domains in th
 
 ## How to Read Notes
 
-Follow conventions in `skills/syner/note-conventions.md`.
+Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
 Use `Read` tool to load it before processing notes.
 
 ## Instructions
