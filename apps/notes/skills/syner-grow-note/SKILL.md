@@ -4,6 +4,11 @@ description: Promote daily thoughts into real assets. Transform scattered daily 
 metadata:
   author: syner
   version: "0.1.1"
+tools:
+  - Glob
+  - Read
+  - Write
+  - AskUserQuestion
 ---
 
 # Syner Grow Note

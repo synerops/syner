@@ -4,6 +4,10 @@ description: Bridge two domains you've been circling. Find unexpected connection
 metadata:
   author: syner
   version: "0.1.1"
+tools:
+  - Glob
+  - Read
+  - Grep
 ---
 
 # Syner Find Links
