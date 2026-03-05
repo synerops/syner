@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate GitHub App token
         id: app-token
@@ -25,6 +26,14 @@ jobs:
         with:
           app-id: ${{ vars.SYNERBOT_APP_ID }}
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Configure git with App token
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config user.name "synerbot[bot]"
+          git config user.email "synerbot[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
 
       - name: Check and fix symlinks
         id: fix
@@ -50,11 +59,6 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           REPORT="reports/symlinks.md"
-
-          # Configure git to use gh CLI credentials
-          gh auth setup-git
-          git config user.name "synerbot[bot]"
-          git config user.email "synerbot[bot]@users.noreply.github.com"
 
           # Check if there are uncommitted changes
           if [ -n "$(git status --porcelain)" ]; then
