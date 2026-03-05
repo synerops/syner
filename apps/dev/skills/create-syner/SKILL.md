@@ -4,6 +4,11 @@ description: Scaffold syner components. Orchestrates creation of skills, agents,
 metadata:
   author: syner
   version: "0.0.1"
+tools:
+  - Skill
+  - Glob
+  - Grep
+  - Read
 ---
 
 # Create Syner

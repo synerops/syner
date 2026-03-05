@@ -4,7 +4,13 @@ description: Triage backlog items against the current codebase. Compares each it
 metadata:
   author: syner
   version: "0.1.1"
-tools: [Bash(bun run agent-github exec -- gh issue create *), Bash(bun run agent-github exec -- gh issue comment *)]
+tools:
+  - Read
+  - Glob
+  - Grep
+  - Edit
+  - AskUserQuestion
+  - Bash
 ---
 
 # Backlog Triager

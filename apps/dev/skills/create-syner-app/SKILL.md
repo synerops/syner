@@ -4,6 +4,9 @@ description: Scaffold new applications following the syner common stack. Use whe
 metadata:
   author: syner
   version: "0.0.2"
+tools:
+  - Read
+  - Bash
 ---
 
 # Create Syner App

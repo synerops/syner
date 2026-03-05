@@ -4,6 +4,13 @@ description: Health audit for the backlog itself. Detects stale items, duplicate
 metadata:
   author: syner
   version: "0.1.0"
+tools:
+  - Read
+  - Glob
+  - Grep
+  - Bash
+  - Edit
+  - AskUserQuestion
 ---
 
 # Backlog Reviewer
