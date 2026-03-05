@@ -2,7 +2,7 @@
 name: vercel-setup
 description: Configure Vercel environment variables for syner.bot. Use when deploying the bot, setting up env vars, or troubleshooting deployment issues.
 agent: general-purpose
-tools: Read, Bash, AskUserQuestion
+tools: [Read, Bash, AskUserQuestion]
 metadata:
   author: syner
   version: "0.1.0"
