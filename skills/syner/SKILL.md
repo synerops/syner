@@ -93,10 +93,10 @@ From your notes, extract:
 
 ### Decide Fork
 
-| Caso | Fork? |
+| Case | Fork? |
 |------|-------|
-| Conversacional, lookups rápidos, queries read-only | No - ejecutar directo en contexto actual |
-| Multi-archivo, iterativo, full context load | Sí - usar Task con subagent |
+| Conversational, quick lookups, read-only queries | No - execute directly in current context |
+| Multi-file, iterative, requires full context | Yes - use Task with subagent |
 
 Only fork when the task genuinely requires isolation or parallel work.
 
