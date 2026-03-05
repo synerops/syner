@@ -4,7 +4,7 @@ description: Improve an existing skill by auditing and applying fixes. Use when 
 metadata:
   author: syner
   version: "0.1.0"
-tools: Read, Glob, Grep, Edit, AskUserQuestion, Skill
+tools: [Read, Glob, Grep, Edit, AskUserQuestion, Skill]
 ---
 
 # Skill Enhancer

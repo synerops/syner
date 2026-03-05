@@ -68,7 +68,7 @@ Run these checks across all backlog items:
 4. Apply approved changes using `Edit`
 5. Update the `> Last reviewed: YYYY-MM-DD` timestamp on every modified backlog note
 
-> After reviewing, run the `syner-backlog-triager` skill (found via `Glob` pattern `skills/syner-backlog-triager/SKILL.md`) to validate surviving items against the actual codebase.
+> After reviewing, run the `/syner-backlog-triager` skill to validate surviving items against the actual codebase.
 
 ## Output Format
 

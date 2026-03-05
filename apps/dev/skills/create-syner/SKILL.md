@@ -48,9 +48,9 @@ What do you want to create?
 ### 2. Gather Context (Implicit + Parallel)
 
 While user talks, in parallel:
-- Search codebase for related components
-- Search notes for context about what user is building
-- Read existing patterns (other skills/agents)
+- Use Glob and Grep to search codebase for related components
+- Use Glob + Read to search notes for context about what user is building
+- Use Read to load existing patterns (other skills/agents)
 
 ## Live Mode
 

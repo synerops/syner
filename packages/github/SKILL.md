@@ -1,3 +1,12 @@
+---
+name: github-cli
+description: Use gh CLI directly for all GitHub operations including issues, PRs, and API calls. Use when interacting with GitHub from the command line.
+tools: Bash
+metadata:
+  author: syner
+  version: "0.1.0"
+---
+
 # GitHub CLI
 
 Use `gh` directly for all GitHub operations.

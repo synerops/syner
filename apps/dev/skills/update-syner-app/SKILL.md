@@ -4,7 +4,7 @@ description: Update existing applications to match the current syner standard st
 metadata:
   author: syner
   version: "0.1.0"
-tools: Read, Bash, Write, Glob, AskUserQuestion
+tools: [Read, Bash, Write, Glob, AskUserQuestion]
 ---
 
 # Update Syner App

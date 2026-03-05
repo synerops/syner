@@ -2,7 +2,7 @@
 name: syner
 description: Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.
 agent: general-purpose
-tools: Read, Glob, Grep, Task, Skill, AskUserQuestion, Write
+tools: [Read, Glob, Grep, Task, Skill, AskUserQuestion, Write]
 metadata:
   author: syner
   version: "0.3.0"

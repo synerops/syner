@@ -1,7 +1,7 @@
 ---
 name: syner-gh-auth
 description: Authenticate gh CLI using GitHub App tokens. Use BEFORE any gh command (issues, PRs, API calls). Use when gh auth fails, when "not logged in" errors appear, or proactively before GitHub operations.
-tools: Bash
+tools: [Bash]
 metadata:
   author: syner
   version: "0.1.0"
