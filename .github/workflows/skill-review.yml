@@ -106,27 +106,14 @@ jobs:
             fi
 
             echo "Creating issue for $ID: $TITLE"
+
+            BODY=$(printf '## Target\n%s\n\n## Context\n%s\n\n## Action\n%s\n\n## Verify\n%s\n\n---\n_Generated from skill-review plan_' "$TARGET" "$CONTEXT" "$ACTION" "$VERIFY")
+
             gh issue create \
               --title "[$ID] $TITLE" \
               --label "claude" \
               --label "skill-review" \
-              --body "$(cat <<EOF
-## Target
-$TARGET
-
-## Context
-$CONTEXT
-
-## Action
-$ACTION
-
-## Verify
-$VERIFY
-
----
-_Generated from skill-review plan_
-EOF
-)"
+              --body "$BODY"
           done <<< "$ITEMS"
 
           echo "Done creating issues from plan"
