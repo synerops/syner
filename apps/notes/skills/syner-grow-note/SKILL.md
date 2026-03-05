@@ -24,7 +24,9 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
-1. Identify the thought/note to graduate (user provides or suggests from recent notes)
+1. Identify the thought/note to graduate:
+   - If the user provided a note title or topic as an argument, use that
+   - If no argument was provided, use AskUserQuestion to ask: "Which note or thought would you like to graduate? (provide a title, topic, or path)"
 2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
 3. Use Glob to find relevant files, read `index.md` first in each folder for context
 4. Analyze the raw material:
