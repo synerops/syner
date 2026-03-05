@@ -32,7 +32,9 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt_file: .github/prompts/skill-review.md
+          prompt: |
+            Run /syner-skill-reviewer (no argument = batch mode).
+            Write the report to reports/skill-review.md
           claude_args: |
             --max-turns 15
             --allowedTools Read,Write,Glob
@@ -56,7 +58,10 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt_file: .github/prompts/skill-review-planner.md
+          prompt: |
+            Read reports/skill-review.md and transform the @claude findings into a plan.
+            Write JSON to .syner/plan.json with format:
+            {"status":"planned","items":[{"id":"X","title":"...","target":["path"],"context":"...","action":"...","verify":"...","priority":1}]}
           claude_args: |
             --agent syner-planner
             --max-turns 10
