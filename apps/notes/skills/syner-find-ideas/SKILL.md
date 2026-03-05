@@ -30,8 +30,8 @@ Use `Read` tool to load it before processing notes.
    - Unique knowledge combinations
    - Underserved communities they belong to
    - Workflows they've hacked together
-6. Cross-reference with user's skills and interests
-7. Generate ideas that leverage their unfair advantages
+5. Cross-reference with user's skills and interests
+6. Generate ideas that leverage their unfair advantages
 
 ## Output Format
 
