@@ -1,9 +1,13 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - '.changeset/*.md'
+      - '!.changeset/README.md'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
