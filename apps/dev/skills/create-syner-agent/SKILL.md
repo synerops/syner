@@ -49,9 +49,19 @@ While user talks:
 
 DO NOT ask a questionnaire. Listen, search, write.
 
-### 2. Scaffold
+### 2. Anchor to Project Root
 
-Location: `agents/{name}.md`
+Before writing any files, determine the project root:
+
+```bash
+git rev-parse --show-toplevel
+```
+
+If that fails (not a git repo), walk up from the current directory until you find a directory containing `agents/`. All file paths must be absolute or relative to this root.
+
+### 3. Scaffold
+
+Location: `{root}/agents/{name}.md`
 
 ```markdown
 ---
@@ -83,7 +93,7 @@ model: {model}
 - {Rule 2}
 ```
 
-### 3. Model Selection
+### 4. Model Selection
 
 | Model | When |
 |-------|------|
@@ -91,7 +101,7 @@ model: {model}
 | `sonnet` | Complex reasoning, multi-step |
 | `opus` | Orchestration, high judgment |
 
-### 4. Tool Selection
+### 5. Tool Selection
 
 Principle: **minimum necessary tools, but ALL necessary tools**
 
@@ -115,7 +125,7 @@ Write plan to `.syner/plan.json`
 
 **Verify**: If instructions say "write X" → needs Write. If "edit X" → needs Edit.
 
-### 5. Test Loop (Expect Iteration)
+### 6. Test Loop (Expect Iteration)
 
 **One-shot is the exception, not the rule.** Plan for multiple iterations.
 
