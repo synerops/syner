@@ -1,6 +1,7 @@
 ---
 name: create-syner-agent
 description: Create syner agents. Use when creating new agents, or when user says "crear agente", "new agent", "subagent".
+tools: [Read, Write, Bash, Task]
 metadata:
   author: syner
   version: "0.1.0"

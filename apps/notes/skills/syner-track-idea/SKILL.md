@@ -2,6 +2,7 @@
 name: syner-track-idea
 description: Track idea evolution - proactively surfaces evolved ideas worth revisiting, or traces a specific concept manually.
 context: fork
+tools: [Bash, Glob, Grep, Read]
 metadata:
   author: syner
   version: "0.2.1"
