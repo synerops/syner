@@ -4,6 +4,11 @@ description: Create syner skills. Use when creating new skills, or when user say
 metadata:
   author: syner
   version: "0.0.1"
+tools:
+  - Read
+  - Glob
+  - Write
+  - Bash
 ---
 
 # Create Syner Skill

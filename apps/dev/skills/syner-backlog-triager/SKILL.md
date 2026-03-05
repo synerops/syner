@@ -5,8 +5,12 @@ metadata:
   author: syner
   version: "0.1.1"
 tools:
-  - Bash(bun run agent-github exec -- gh issue create *)
-  - Bash(bun run agent-github exec -- gh issue comment *)
+  - Read
+  - Glob
+  - Grep
+  - Edit
+  - AskUserQuestion
+  - Bash
 ---
 
 # Backlog Triager
