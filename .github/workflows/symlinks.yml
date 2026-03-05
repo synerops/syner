@@ -65,9 +65,29 @@ jobs:
             exit 0
           fi
 
-          # Has issues
+          # Has issues - create issue with instructions for Claude
           gh label create "symlinks" --description "Skill symlink issues" --color "d73a4a" 2>/dev/null || true
           gh label create "claude" --color "7c3aed" 2>/dev/null || true
+
+          # Build issue body with report + instructions
+          ISSUE_BODY=$(cat <<'EOF'
+          ## Action Required
+
+          @claude Fix these symlink issues:
+
+          1. Read `skills/syner/skills-architecture.md` to understand the symlink architecture
+          2. Run `/syner-fix-symlinks --fix` to repair broken/missing symlinks
+          3. Commit the fixes with message: `fix(skills): repair symlinks`
+          4. Push to main
+
+          ---
+
+          EOF
+          )
+
+          # Combine instructions + report
+          echo "$ISSUE_BODY" > /tmp/issue-body.md
+          cat "$REPORT" >> /tmp/issue-body.md
 
           EXISTING=$(gh issue list --state open --label symlinks --json number --jq '.[0].number')
 
@@ -76,7 +96,7 @@ jobs:
               --title "$TITLE" \
               --label "symlinks" \
               --label "claude" \
-              --body-file "$REPORT"
+              --body-file /tmp/issue-body.md
           else
-            gh issue edit "$EXISTING" --body-file "$REPORT"
+            gh issue edit "$EXISTING" --body-file /tmp/issue-body.md
           fi
