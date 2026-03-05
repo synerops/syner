@@ -100,7 +100,7 @@ DON'T:
 | Type | Delegate To |
 |------|-------------|
 | `skill` | `/create-syner-skill` |
-| `agent` | `/create-syner-subagent` |
+| `agent` | `/create-syner-agent` |
 | `app` | `/create-syner-app` |
 
 Use the `Skill` tool to invoke the specialized skill with gathered context.
