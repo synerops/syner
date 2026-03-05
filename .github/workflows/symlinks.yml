@@ -42,7 +42,7 @@ jobs:
                - ## Status: ok | fixed | error
                - ## Changes: list of what was fixed (or "None")
           claude_args: |
-            --max-turns 15
+            --max-turns 20
             --allowedTools Bash,Glob,Read,Write
 
       - name: Push and create PR if changes
