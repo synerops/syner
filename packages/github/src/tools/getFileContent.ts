@@ -24,7 +24,7 @@ export function getFileContentTool(options: GetFileContentToolOptions) {
 
   return tool({
     description: 'Read a file from a GitHub repository',
-    parameters: inputSchema,
+    inputSchema,
     execute: async ({ owner, repo, path, ref }) => {
       try {
         const { data } = await octokit.repos.getContent({

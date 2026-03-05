@@ -20,11 +20,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/anthropic": "^3.0.58",
     "@octokit/auth-app": "^7.0.0",
     "@octokit/plugin-throttling": "^9.0.0",
     "@octokit/rest": "^21.0.0",
-    "ai": "^4.0.0",
+    "ai": "^6.0.116",
     "zod": "^3.23.0"
   },
   "devDependencies": {

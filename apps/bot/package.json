@@ -9,14 +9,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/anthropic": "^3.0.58",
     "@octokit/rest": "^21.0.0",
     "@syner/github": "workspace:*",
-    "ai": "^4.0.0",
+    "@t3-oss/env-nextjs": "^0.13.0",
+    "ai": "^6.0.116",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@t3-oss/env-nextjs": "^0.13.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {

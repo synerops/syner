@@ -24,7 +24,7 @@ export function listDirectoryTool(options: ListDirectoryToolOptions) {
 
   return tool({
     description: 'List files and folders in a GitHub repository directory',
-    parameters: inputSchema,
+    inputSchema,
     execute: async ({ owner, repo, path = '', ref }) => {
       try {
         const { data } = await octokit.repos.getContent({
