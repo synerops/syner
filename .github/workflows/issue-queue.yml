@@ -1,0 +1,72 @@
+name: Issue Queue
+
+on:
+  # Run after claude.yml completes
+  workflow_run:
+    workflows: ["Claude Assistant"]
+    types: [completed]
+  # Manual trigger
+  workflow_dispatch:
+  # Or on schedule
+  schedule:
+    - cron: '*/30 * * * *'  # Every 30 minutes
+
+jobs:
+  process-queue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Process next issue in queue
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          echo "=== Issue Queue Processor ==="
+
+          # Check if any issue is currently being processed (has 'claude' label)
+          IN_PROGRESS=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label claude \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$IN_PROGRESS" -gt 0 ]; then
+            echo "An issue is already being processed. Waiting..."
+            exit 0
+          fi
+
+          # Find next planned issue (oldest first)
+          NEXT_ISSUE=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label planned \
+            --state open \
+            --json number,title,createdAt \
+            --jq 'sort_by(.createdAt) | .[0]')
+
+          if [ -z "$NEXT_ISSUE" ] || [ "$NEXT_ISSUE" == "null" ]; then
+            echo "No planned issues in queue. All done!"
+            exit 0
+          fi
+
+          ISSUE_NUMBER=$(echo "$NEXT_ISSUE" | jq -r '.number')
+          ISSUE_TITLE=$(echo "$NEXT_ISSUE" | jq -r '.title')
+
+          echo "Processing issue #$ISSUE_NUMBER: $ISSUE_TITLE"
+
+          # Add claude label to trigger execution
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo ${{ github.repository }} \
+            --add-label claude \
+            --remove-label planned
+
+          echo "Added 'claude' label to #$ISSUE_NUMBER"
+          echo "Claude Assistant workflow will now process this issue."
