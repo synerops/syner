@@ -85,6 +85,7 @@ jobs:
           label_trigger: "claude,needs-planning"
           allowed_bots: "synerbot[bot]"
           prompt: ${{ steps.mode.outputs.prompt }}
+          track_progress: true
           claude_args: |
             --max-turns 30
             --allowedTools Read,Edit,Write,Bash,Glob,Grep
