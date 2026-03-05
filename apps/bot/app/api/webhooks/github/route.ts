@@ -275,17 +275,11 @@ ${history}`)
 
   sections.push(`## Tools Available
 
-### GitHub Tools
 - getRepoInfo: Get repository metadata
 - listDirectory: List files in a directory
 - getFileContent: Read file contents
 - searchCode: Search for code
 - createPullRequest: Create a pull request
-
-### Server Tools (Anthropic executes)
-- code_execution: Execute Python code for analysis and computation
-- web_search: Search the internet for current information
-- web_fetch: Fetch content from specific URLs
 
 ## Guidelines
 
@@ -374,17 +368,8 @@ export async function POST(request: NextRequest) {
 
       logger.debug('Loading context', meta)
       const repoCtx = await loadContext(octokit, ctx)
-      const githubTools = createAllTools({ octokit })
+      const tools = createAllTools({ octokit })
       const userMessage = ctx.body.replace(BOT_TRIGGER, '').trim()
-
-      // Combine GitHub tools with Anthropic server tools
-      const tools = {
-        ...githubTools,
-        // Server tools (Anthropic executes these)
-        code_execution: anthropic.tools.codeExecution_20260120(),
-        web_search: anthropic.tools.webSearch_20250305(),
-        web_fetch: anthropic.tools.webFetch_20250910(),
-      }
 
       logger.info('Calling AI model', meta)
       const result = await generateText({
