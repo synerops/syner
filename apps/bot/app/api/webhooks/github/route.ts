@@ -24,6 +24,8 @@ import {
   type IssueCommentEvent,
   type PullRequestEvent,
 } from '@syner/github'
+import { env } from '@/lib/env'
+import { logger } from '@/lib/logger'
 
 const BOT_TRIGGER = '@synerbot'
 
@@ -305,23 +307,19 @@ export async function POST(request: NextRequest) {
   const deliveryId = request.headers.get('x-github-delivery')
 
   if (!signature || !eventType || !deliveryId) {
+    logger.warn('Missing required headers', { deliveryId })
     return NextResponse.json({ error: 'Missing required headers' }, { status: 400 })
   }
 
   // Verify signature
-  const secret = process.env.GITHUB_WEBHOOK_SECRET
-  if (!secret) {
-    console.error('GITHUB_WEBHOOK_SECRET not configured')
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
-  }
-
   const isValid = verifyWebhookSignature({
     payload: rawBody,
     signature,
-    secret,
+    secret: env.GITHUB_WEBHOOK_SECRET,
   })
 
   if (!isValid) {
+    logger.warn('Invalid webhook signature', { deliveryId })
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
@@ -342,23 +340,23 @@ export async function POST(request: NextRequest) {
   // For Node.js runtime, we start async processing and return immediately
 
   const processWebhook = async () => {
-    console.log('Starting webhook processing...')
+    const meta = { owner: ctx.owner, repo: ctx.repo, number: ctx.number, deliveryId }
+    logger.info('Starting webhook processing', meta)
+
     try {
-      console.log('Creating Octokit client...')
       const octokit = createThrottledOctokit()
 
       // Check if sender has access
-      console.log(`Checking access for ${ctx.sender}...`)
+      logger.debug('Checking access', { ...meta, sender: ctx.sender })
       const hasAccess = await hasRepoAccess(octokit, ctx.owner, ctx.repo, ctx.sender)
       if (!hasAccess) {
-        console.log(`Access denied for ${ctx.sender}`)
+        logger.warn('Access denied', { ...meta, sender: ctx.sender })
         return
       }
-      console.log(`Access granted for ${ctx.sender}`)
+      logger.debug('Access granted', { ...meta, sender: ctx.sender })
 
       // Add 👀 reaction to show we're working on it
       if (ctx.commentId) {
-        console.log('Adding eyes reaction...')
         await addReaction({
           octokit,
           owner: ctx.owner,
@@ -368,14 +366,14 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      console.log('Loading context...')
+      logger.debug('Loading context', meta)
       const repoCtx = await loadContext(octokit, ctx)
       const tools = createAllTools({ octokit })
       const userMessage = ctx.body.replace(BOT_TRIGGER, '').trim()
 
-      console.log('Calling Claude...')
+      logger.info('Calling AI model', meta)
       const result = await generateText({
-        model: anthropic('claude-3-5-sonnet-20241022'),
+        model: anthropic('claude-sonnet-4-20250514'),
         system: buildSystemPrompt(ctx, repoCtx),
         prompt: userMessage,
         tools,
@@ -383,7 +381,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Post response as new comment
-      console.log('Posting response...')
+      logger.debug('Posting response', meta)
       await createComment({
         octokit,
         owner: ctx.owner,
@@ -391,17 +389,17 @@ export async function POST(request: NextRequest) {
         issueNumber: ctx.number,
         body: result.text,
       })
-      console.log('Response posted successfully')
+      logger.info('Webhook completed successfully', meta)
     } catch (error) {
-      console.error('Error processing webhook:', error)
+      logger.error('Error processing webhook', {
+        ...meta,
+        error: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
   // Process webhook - await to ensure completion
-  console.log(`Processing webhook for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
-
   await processWebhook()
 
-  console.log(`Webhook completed for ${ctx.owner}/${ctx.repo}#${ctx.number}`)
   return NextResponse.json({ accepted: true, deliveryId })
 }

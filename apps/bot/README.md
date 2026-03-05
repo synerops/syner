@@ -36,4 +36,23 @@ runs on localhost:3001. to test webhooks, use ngrok or deploy.
 
 ## setup
 
-run `/vercel-setup` or copy `.env.example` to `.env.local`.
+1. copy [`.env.example`](.env.example) to `.env.local`
+2. fill in the values (see below)
+3. run `bun run dev`
+
+## environment variables
+
+**Required:**
+
+- `ANTHROPIC_API_KEY` - [Get from Anthropic Console](https://console.anthropic.com/settings/keys)
+- `GITHUB_APP_ID` - From your GitHub App settings
+- `GITHUB_APP_INSTALLATION_ID` - From installation URL after installing the app
+- `GITHUB_APP_PRIVATE_KEY` - Generate in GitHub App settings → Private keys
+- `GITHUB_WEBHOOK_SECRET` - Set in GitHub App settings → Webhook → Secret
+
+**Optional:**
+
+- `SLACK_WEBHOOK_URL` - For Slack notifications
+- `CRON_SECRET` - Protects cron endpoints
+
+See [`.env.example`](.env.example) for detailed instructions on where to find each value.
