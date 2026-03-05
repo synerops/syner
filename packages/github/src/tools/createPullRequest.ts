@@ -27,7 +27,7 @@ export function createPullRequestTool(options: CreatePullRequestToolOptions) {
 
   return tool({
     description: 'Create a pull request in a GitHub repository',
-    parameters: inputSchema,
+    inputSchema,
     execute: async ({ owner, repo, title, body, head, base, draft }) => {
       try {
         const { data } = await octokit.pulls.create({

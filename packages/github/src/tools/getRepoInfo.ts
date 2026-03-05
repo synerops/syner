@@ -22,7 +22,7 @@ export function getRepoInfoTool(options: GetRepoInfoToolOptions) {
 
   return tool({
     description: 'Get repository metadata (description, language, default branch, topics)',
-    parameters: inputSchema,
+    inputSchema,
     execute: async ({ owner, repo }) => {
       try {
         const { data } = await octokit.repos.get({ owner, repo })

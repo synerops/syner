@@ -23,7 +23,7 @@ export function searchCodeTool(options: SearchCodeToolOptions) {
 
   return tool({
     description: 'Search for code in a GitHub repository',
-    parameters: inputSchema,
+    inputSchema,
     execute: async ({ query, owner, repo }) => {
       try {
         const { data } = await octokit.search.code({

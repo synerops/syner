@@ -12,7 +12,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import type { Octokit } from '@octokit/rest'
-import { generateText } from 'ai'
+import { generateText, stepCountIs } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import {
   verifyWebhookSignature,
@@ -377,7 +377,7 @@ export async function POST(request: NextRequest) {
         system: buildSystemPrompt(ctx, repoCtx),
         prompt: userMessage,
         tools,
-        maxSteps: 10,
+        stopWhen: stepCountIs(15),
       })
 
       // Post response as new comment
