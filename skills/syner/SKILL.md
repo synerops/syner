@@ -33,7 +33,7 @@ Use this skill when the user:
 
 5. **References their notes or vault** - Any request that would benefit from reading their vault, understanding their projects, or knowing their preferences.
 
-6. **Needs to plan complex work** - Multiple findings or analysis results that should become a structured execution plan. See [planning.md](planning.md).
+6. **Needs to plan complex work** - Multiple findings or analysis results that should become a structured execution plan. See [plan.md](plan.md).
 
 ## Task
 
@@ -104,8 +104,8 @@ Only fork when the task genuinely requires isolation or parallel work.
 
 When user requests planning or analysis produces multiple actionable findings:
 
-1. Load [planning.md](planning.md) for the core planning logic
-2. If operating on issues/PRs, also load `packages/github/planning.md` for implementation details
+1. Load [plan.md](plan.md) for the core planning logic
+2. If operating on issues/PRs, also load `packages/github/plan.md` for implementation details
 3. Evaluate, classify, and decide (plan / skip / clarify)
 4. Output checklist with Target/Context/Action/Verify per item
 
@@ -216,6 +216,6 @@ When writing audits, include failure details if applicable.
 
 - [README.md](README.md) - Philosophy and examples
 - [skills-architecture.md](skills-architecture.md) - **Skill architecture** (symlinks, directories, where skills live)
-- [planning.md](planning.md) - Planning mode for breaking down complex work
+- [plan.md](plan.md) - Planning mode for breaking down complex work
 - [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
 - [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce
