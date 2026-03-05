@@ -3,7 +3,7 @@ name: syner-fix-symlinks
 description: Fix skill symlinks in skills/. Use when symlinks are broken, skills not showing up, or after creating new skills.
 metadata:
   author: syner
-  version: "0.0.5"
+  version: "0.0.6"
 tools: [Glob, Bash]
 ---
 
@@ -34,6 +34,17 @@ skills/
 4. Always `rm -f` before `ln -s` (prevents creating link inside existing dir)
 
 ## Process
+
+### 0. Anchor to project root
+
+Before running any commands, ensure cwd is the project root (the directory containing both `apps/` and `skills/`):
+
+```bash
+# Verify we are at project root
+[ -d apps ] && [ -d skills ] || echo "ERROR: not at project root — cd to the directory containing apps/ and skills/ first"
+```
+
+If not at project root, stop and instruct the user to run the skill from the project root directory.
 
 ### Check (default)
 
