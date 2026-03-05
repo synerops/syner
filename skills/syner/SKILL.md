@@ -214,6 +214,8 @@ When writing audits, include failure details if applicable.
 
 ## References
 
-- [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce
-- [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
+- [README.md](README.md) - Philosophy and examples
+- [skills-architecture.md](skills-architecture.md) - **Skill architecture** (symlinks, directories, where skills live)
 - [planning.md](planning.md) - Planning mode for breaking down complex work
+- [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
+- [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce

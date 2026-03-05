@@ -28,66 +28,142 @@ jobs:
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
 
       - name: Run skill review
+        id: review
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Run /syner-skill-reviewer (no argument = batch mode).
-            Write the report to reports/skill-review.md
+          prompt_file: .github/prompts/skill-review.md
           claude_args: |
             --max-turns 15
             --allowedTools Read,Write,Glob
 
-      - name: Handle review results
+      - name: Check for findings
+        id: check
+        run: |
+          REPORT="reports/skill-review.md"
+          if [ ! -f "$REPORT" ]; then
+            echo "has_findings=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if grep -q "### @claude" "$REPORT"; then
+            echo "has_findings=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_findings=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate plan from findings
+        if: steps.check.outputs.has_findings == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt_file: .github/prompts/skill-review-planner.md
+          claude_args: |
+            --agent syner-planner
+            --max-turns 10
+            --allowedTools Read,Write
+
+      - name: Create issues from plan
+        if: steps.check.outputs.has_findings == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          PLAN_FILE=".syner/plan.json"
+
+          if [ ! -f "$PLAN_FILE" ]; then
+            echo "No plan file found, skipping issue creation"
+            exit 0
+          fi
+
+          PLAN=$(cat "$PLAN_FILE")
+          STATUS=$(echo "$PLAN" | jq -r '.status')
+
+          if [ "$STATUS" != "planned" ]; then
+            echo "Plan status: $STATUS (not 'planned'), skipping"
+            exit 0
+          fi
+
+          # Ensure label exists
+          gh label create "claude" --description "Claude-actionable issue" --color "7c3aed" 2>/dev/null || true
+          gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
+
+          # Create an issue for each plan item
+          ITEMS=$(echo "$PLAN" | jq -c '.items[]')
+
+          while IFS= read -r ITEM; do
+            ID=$(echo "$ITEM" | jq -r '.id')
+            TITLE=$(echo "$ITEM" | jq -r '.title')
+            TARGET=$(echo "$ITEM" | jq -r '.target | join(", ")')
+            CONTEXT=$(echo "$ITEM" | jq -r '.context')
+            ACTION=$(echo "$ITEM" | jq -r '.action')
+            VERIFY=$(echo "$ITEM" | jq -r '.verify')
+
+            # Check if issue already exists
+            EXISTING=$(gh issue list --state open --label claude --search "[$ID] in:title" --json number --jq '.[0].number')
+
+            if [ -n "$EXISTING" ]; then
+              echo "Issue for $ID already exists (#$EXISTING), skipping"
+              continue
+            fi
+
+            echo "Creating issue for $ID: $TITLE"
+            gh issue create \
+              --title "[$ID] $TITLE" \
+              --label "claude" \
+              --label "skill-review" \
+              --body "$(cat <<EOF
+## Target
+$TARGET
+
+## Context
+$CONTEXT
+
+## Action
+$ACTION
+
+## Verify
+$VERIFY
+
+---
+_Generated from skill-review plan_
+EOF
+)"
+          done <<< "$ITEMS"
+
+          echo "Done creating issues from plan"
+
+      - name: Update tracking issue
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           REPORT="reports/skill-review.md"
           TITLE="Skill Review: inconsistencies detected"
 
-          # Exit if no report
           if [ ! -f "$REPORT" ]; then
             echo "No report found, skipping"
             exit 0
           fi
 
-          # Check if report has actionable findings
-          HAS_FINDINGS=false
-          if grep -q "### @claude" "$REPORT"; then
-            HAS_FINDINGS=true
-          fi
+          HAS_FINDINGS="${{ steps.check.outputs.has_findings }}"
 
-          # Ensure labels exist
-          gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
-          gh label create "needs-planning" --description "Needs planning before execution" --color "d4a017" 2>/dev/null || true
-
-          # Check for existing open issue
+          # Check for existing open tracking issue
           EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
 
           if [ -z "$EXISTING" ]; then
-            # No existing issue
             if [ "$HAS_FINDINGS" = "true" ]; then
-              echo "Creating new issue with needs-planning label..."
+              echo "Creating tracking issue..."
               gh issue create \
                 --title "$TITLE" \
                 --label "skill-review" \
-                --label "needs-planning" \
                 --body-file "$REPORT"
             else
               echo "No findings. All clean."
             fi
           else
-            echo "Found existing issue #$EXISTING"
-
-            # Update issue body with latest report
+            echo "Found existing tracking issue #$EXISTING"
             gh issue edit "$EXISTING" --body-file "$REPORT"
 
             if [ "$HAS_FINDINGS" = "false" ]; then
-              echo "No more findings, closing issue..."
+              echo "No more findings, closing tracking issue..."
               gh issue close "$EXISTING" --comment "All inconsistencies resolved. Closing."
-            else
-              # Ensure needs-planning is set (autonomous loop handles the rest)
-              echo "Findings detected, ensuring needs-planning label..."
-              gh issue edit "$EXISTING" --add-label "needs-planning" 2>/dev/null || true
             fi
           fi

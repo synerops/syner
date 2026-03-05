@@ -3,7 +3,7 @@ name: syner-skill-reviewer
 description: Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on "review this skill", "audit skill", "check skill quality", "is this skill safe", or when evaluating skills before publishing.
 metadata:
   author: syner
-  version: "0.0.4"
+  version: "0.0.5"
 ---
 
 # Skill Reviewer
@@ -14,10 +14,20 @@ Audit a skill and report what needs attention — the user decides what to fix.
 
 1. **Locate** target skill(s):
    - With argument: find that specific skill
-   - Without argument: discover ALL skills using `Glob` with `**/SKILL.md` and `**/skill.md`
-2. **Read** each SKILL.md completely
+   - Without argument: discover ALL skills using `Glob` with `**/SKILL.md`
+2. **Read** each SKILL.md completely — batch all Read calls in parallel
 3. **Pick review depth** based on context (see below)
 4. **Report** findings per skill, then ecosystem consistency
+
+## How to Find Skills
+
+```
+Always: Glob with `**/SKILL.md`
+Never: `**/*.md` (includes auxiliary files like README, planning docs)
+
+One skill = one folder with SKILL.md inside
+Standard is SKILL.md (uppercase), not skill.md
+```
 
 ## Review Depth
 
