@@ -70,3 +70,131 @@ jobs:
 
           echo "Added 'claude' label to #$ISSUE_NUMBER"
           echo "Claude Assistant workflow will now process this issue."
+
+  process-pr-attention:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: read
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Find PRs needing attention and assign to Copilot
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+          OWNER_LOGIN: rbadillap
+        run: |
+          echo "=== PR Attention Processor ==="
+
+          # Get all open PRs not already assigned to copilot
+          PRS=$(gh pr list \
+            --repo "$REPO" \
+            --state open \
+            --json number,title,url,body,assignees,mergeable,reviews \
+            --jq '[.[] | select(.assignees | map(.login) | contains(["copilot"]) | not)]')
+
+          PR_COUNT=$(echo "$PRS" | jq 'length')
+          echo "Found $PR_COUNT open PRs not yet assigned to copilot"
+
+          if [ "$PR_COUNT" -eq 0 ]; then
+            echo "No PRs to process"
+            exit 0
+          fi
+
+          echo "$PRS" | jq -c '.[]' | while IFS= read -r pr; do
+            PR_NUMBER=$(echo "$pr" | jq -r '.number')
+            PR_TITLE=$(echo "$pr" | jq -r '.title')
+            PR_URL=$(echo "$pr" | jq -r '.url')
+            PR_BODY=$(echo "$pr" | jq -r '.body // ""')
+            MERGEABLE=$(echo "$pr" | jq -r '.mergeable')
+
+            # Determine latest review state from the owner
+            LATEST_REVIEW=$(echo "$pr" | jq -r --arg login "$OWNER_LOGIN" \
+              '[.reviews[] | select(.author.login == $login)] | sort_by(.submittedAt) | last | .state // "null"')
+
+            if [ -z "$LATEST_REVIEW" ] || [ "$LATEST_REVIEW" == "null" ]; then
+              echo "PR #$PR_NUMBER: No review from $OWNER_LOGIN, skipping"
+              continue
+            fi
+
+            SCENARIO=""
+
+            if [ "$LATEST_REVIEW" == "APPROVED" ] && [ "$MERGEABLE" == "CONFLICTING" ]; then
+              SCENARIO="merge_conflict"
+            elif [ "$LATEST_REVIEW" == "CHANGES_REQUESTED" ]; then
+              SCENARIO="changes_requested"
+            fi
+
+            if [ -z "$SCENARIO" ]; then
+              echo "PR #$PR_NUMBER: review=$LATEST_REVIEW mergeable=$MERGEABLE — no attention needed"
+              continue
+            fi
+
+            echo "PR #$PR_NUMBER needs attention: $SCENARIO"
+
+            # Build linked issues section from PR body (Fixes/Closes/Resolves #N)
+            LINKED_ISSUES=$(echo "$PR_BODY" | grep -oiE '(fixes|closes|resolves) #[0-9]+' | grep -oE '[0-9]+' || true)
+            LINKED_SECTION=""
+            for ISSUE_NUM in $LINKED_ISSUES; do
+              ISSUE_TITLE_TEXT=$(gh issue view "$ISSUE_NUM" \
+                --repo "$REPO" \
+                --json title \
+                --jq '.title' 2>/dev/null || echo "Issue #$ISSUE_NUM")
+              LINKED_SECTION="${LINKED_SECTION}
+- [#${ISSUE_NUM}: ${ISSUE_TITLE_TEXT}](https://github.com/${REPO}/issues/${ISSUE_NUM})"
+            done
+
+            if [ -n "$LINKED_SECTION" ]; then
+              LINKED_SECTION="
+
+**Linked Issues:**${LINKED_SECTION}"
+            fi
+
+            if [ "$SCENARIO" == "merge_conflict" ]; then
+              WHAT_TO_DO="### What to do
+1. Fetch the latest \`main\` branch
+2. Rebase or merge \`main\` into this branch to resolve the conflicts
+3. Push the updated branch
+4. If the conflict resolution required significant changes, re-request a review from @${OWNER_LOGIN} — otherwise the existing approval still applies"
+              COMMENT=$(printf '%s\n\n%s\n\n**PR:** [#%s: %s](%s)%s\n\n%s\n\n---\n%s' \
+                "## 🔀 Merge Conflicts Need Resolution" \
+                "This PR has been **approved** by @${OWNER_LOGIN} and is ready to merge, but it currently has **merge conflicts** with \`main\` that must be resolved first." \
+                "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$LINKED_SECTION" \
+                "$WHAT_TO_DO" \
+                "*This PR was flagged automatically by the Issue Queue workflow.*")
+            else
+              REVIEW_BODY=$(echo "$pr" | jq -r --arg login "$OWNER_LOGIN" \
+                '[.reviews[] | select(.author.login == $login and .state == "CHANGES_REQUESTED")] | sort_by(.submittedAt) | last | .body // "No specific comment provided."')
+              WHAT_TO_DO="### What to do
+1. Read the review feedback above carefully
+2. Make the requested changes to the code
+3. Push the updated commits and re-request a review"
+              COMMENT=$(printf '%s\n\n%s\n\n**PR:** [#%s: %s](%s)%s\n\n%s\n\n> %s\n\n%s\n\n---\n%s' \
+                "## 🔁 Changes Requested — Action Required" \
+                "@${OWNER_LOGIN} has **requested changes** on this PR that must be addressed before it can be merged." \
+                "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$LINKED_SECTION" \
+                "### Review Feedback" \
+                "$REVIEW_BODY" \
+                "$WHAT_TO_DO" \
+                "*This PR was flagged automatically by the Issue Queue workflow.*")
+            fi
+
+            # Post context comment on the PR
+            gh pr comment "$PR_NUMBER" \
+              --repo "$REPO" \
+              --body "$COMMENT"
+
+            # Assign the PR to the Copilot coding agent
+            gh pr edit "$PR_NUMBER" \
+              --repo "$REPO" \
+              --add-assignee copilot
+
+            echo "✓ PR #$PR_NUMBER assigned to @copilot ($SCENARIO)"
+          done
