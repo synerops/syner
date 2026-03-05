@@ -1,65 +1,112 @@
 # @syner/github
 
-GitHub App authentication for syner agents. Generates installation access tokens for the `gh` CLI.
+github integration for syner agents. auth, tools, actions, and webhooks in one package.
 
-## Usage
+## what it does
 
-Use `gh` directly. If authentication fails, generate a token:
+- **auth**: generate short-lived tokens from GitHub App (no PATs to leak)
+- **tools**: AI SDK tools so agents can read repos, search code, create PRs
+- **actions**: programmatic issue/comment/reaction creation
+- **events**: webhook signature verification and typed event handling
+
+## how it fits
+
+```
+agent prompt
+    ↓
+┌─────────────────────────────────────────────┐
+│               @syner/github                 │
+├─────────────┬─────────────┬─────────────────┤
+│    auth     │    tools    │    actions      │
+│  (tokens)   │  (AI SDK)   │  (outbound)     │
+└──────┬──────┴──────┬──────┴────────┬────────┘
+       │             │               │
+       ▼             ▼               ▼
+   gh CLI      generateText()   octokit.rest
+```
+
+## cli
+
+authenticate `gh` CLI for any subsequent commands:
 
 ```bash
 bunx @syner/github create-app-token | gh auth login --with-token
 ```
 
-Then retry your `gh` command.
+## tools (for agents)
 
-### Examples
-
-```bash
-# Authenticate once per session
-bunx @syner/github create-app-token | gh auth login --with-token
-
-# Then use gh normally
-gh issue create --title "Bug" --body "Description"
-gh pr create --title "Feature" --body "Changes"
-gh api /user
-```
-
-### Programmatic
+give your AI agent GitHub superpowers:
 
 ```typescript
-import { getToken, createOctokit } from "@syner/github";
+import { createAllTools, createOctokit } from "@syner/github"
+import { generateText } from "ai"
 
-// Get a raw token
-const token = await getToken();
+const octokit = createOctokit()
+const tools = createAllTools({ octokit })
 
-// Or get a pre-configured Octokit instance
-const octokit = createOctokit();
-const { data: user } = await octokit.users.getAuthenticated();
+await generateText({
+  model: anthropic("claude-sonnet-4-20250514"),
+  tools,
+  prompt: "Read the README from synerops/syner and summarize it",
+})
 ```
 
-## Environment Variables
+available tools:
+- `getFileContent` - read files from any repo
+- `listDirectory` - browse repo structure
+- `getRepoInfo` - get repo metadata
+- `searchCode` - search across repos
+- `createPullRequest` - create PRs programmatically
 
-| Variable | Required | Description |
+## actions (outbound operations)
+
+create issues, comments, reactions directly:
+
+```typescript
+import { createIssue, createComment, addReaction } from "@syner/github/actions"
+
+await createIssue({ owner, repo, title, body })
+await createComment({ owner, repo, issue_number, body })
+await addReaction({ owner, repo, comment_id, content: "+1" })
+```
+
+## events (webhook handling)
+
+verify and type GitHub webhooks:
+
+```typescript
+import { verifyWebhookSignature, type IssueEvent } from "@syner/github/events"
+
+const isValid = verifyWebhookSignature(body, signature, secret)
+const event: IssueEvent = JSON.parse(body)
+```
+
+## plan mode
+
+converts syner-planner output into GitHub issues. reads `.syner/plan.json` and creates one issue at a time (iterative execution).
+
+```bash
+# after syner-planner generates a plan
+cat .syner/plan.json | jq '.items[0]'  # preview first item
+# then plan.md guides issue creation via gh CLI
+```
+
+## setup
+
+| variable | required | description |
 |----------|----------|-------------|
-| `GITHUB_APP_ID` | Yes | The GitHub App ID |
-| `GITHUB_APP_INSTALLATION_ID` | Yes | Installation ID for the target org/user |
-| `GITHUB_APP_PRIVATE_KEY` | One of these | The private key contents (PEM format) |
-| `GITHUB_APP_PEM_PATH` | One of these | Path to the private key file |
+| `GITHUB_APP_ID` | yes | your GitHub App ID |
+| `GITHUB_APP_INSTALLATION_ID` | yes | installation ID for target org |
+| `GITHUB_APP_PRIVATE_KEY` | one of | PEM key contents |
+| `GITHUB_APP_PEM_PATH` | these | path to PEM file |
 
-## Setup
+## skill
 
-1. Install the GitHub App on your org/profile
-2. Get your `GITHUB_APP_INSTALLATION_ID` from the URL after installation:
-   ```
-   https://github.com/settings/installations/12345678
-                                              ^^^^^^^^
-                                              this is your installation ID
-   ```
-3. Configure the environment variables
+- `/syner-gh-auth` - authenticate gh CLI before GitHub operations
 
-## Why GitHub App Auth?
+## why github app auth
 
-- **Security**: No personal access tokens stored or exposed
-- **Scoped permissions**: Apps have fine-grained permissions per installation
-- **Audit trail**: Actions are attributed to the app, not a user
-- **Rate limits**: App installations have higher rate limits
+- no stored tokens - generated on demand, expire fast
+- fine-grained - only permissions the app has
+- audit trail - actions attributed to app, not user
+- higher rate limits - 5000 req/hour vs 60 for unauthenticated
