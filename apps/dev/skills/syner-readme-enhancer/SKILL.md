@@ -1,6 +1,6 @@
 ---
 name: syner-readme-enhancer
-description: Enhance app READMEs by analyzing actual code, not just metadata. Detects if an app is a placeholder or has real functionality. Generates honest, focused READMEs.
+description: Enhance app READMEs by analyzing actual code, not just metadata. Detects if an app is a placeholder or has real functionality. Generates honest, focused READMEs. Use when creating or updating README files for syner apps.
 tools:
   - Glob
   - Read
@@ -9,7 +9,7 @@ tools:
   - AskUserQuestion
 metadata:
   author: syner
-  version: "0.7.0"
+  version: "0.8.0"
 ---
 
 # Syner README Enhancer
@@ -50,6 +50,8 @@ If empty, use `AskUserQuestion` to ask which app.
 
 **Read the actual code** to understand what's implemented.
 
+All paths are relative to project root. Use `Glob` and `Read` with full paths.
+
 ### 2.1 Discover & Read
 
 ```
@@ -79,7 +81,7 @@ If existing README is complex (>50 lines), read `references/separation.md` for g
 
 ## Phase 3: Generate README
 
-### Template
+### Template for Functional Apps
 
 ```markdown
 # syner.{ext}
@@ -115,19 +117,34 @@ what happens when you run it.
 run `/skill-name` or see [setup guide](link).
 ```
 
-### For Placeholder Apps
+### Template for Placeholder Apps
 
-Use "what it will be" instead of "how it works":
+Use "what it will be" instead of "why" and "how it works":
 
 ```markdown
+# syner.{ext}
+
+one line vision. **coming soon.**
+
 ## what it will be
 
 - vision point 1
 - vision point 2
+- vision point 3
 
 ## what works today
 
-- skills that work locally
+the **skills** work locally via Claude Code:
+
+- `/skill-name` - what it does
+
+## try it
+
+\`\`\`bash
+bun run dev --filter={app}
+\`\`\`
+
+what you'll see (be honest).
 ```
 
 ### Guidelines

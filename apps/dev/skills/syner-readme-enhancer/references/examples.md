@@ -2,6 +2,8 @@
 
 ## Placeholder App (syner.md)
 
+Placeholders use "what it will be" + "what works today" instead of "why" + "how it works".
+
 ```markdown
 # syner.md
 
@@ -35,6 +37,8 @@ you'll see the landing page. the real value today is skills + local vault.
 ```
 
 ## Functional App (syner.bot)
+
+Functional apps use "why" + "how it works".
 
 ```markdown
 # syner.bot
@@ -78,25 +82,32 @@ runs on localhost:3001. to test webhooks, use ngrok or deploy.
 run `/vercel-setup` or copy `.env.example` to `.env.local`.
 ```
 
-## Higher-layer App (syner.dev)
+## Placeholder with Many Skills (syner.dev)
 
 ```markdown
 # syner.dev
 
-self-driving development - agents that ship code while you sleep.
+self-driving development - agents that ship code while you sleep. **coming soon.**
 
-## why syner.dev
+## what it will be
 
-- trigger and forget - describe intent, review when ready
-- agents understand your codebase via notes
-- CI/CD that thinks, not just runs
+- developer portal for the syner ecosystem
+- documentation, guides, and tooling
+- CI/CD dashboard and agent logs
 
-## how it works
+## what works today
 
-1. create an issue or mention @claude
-2. agent loads context from notes + bot config
-3. agent implements, tests, creates PR
-4. you review when ready
+the **skills** work locally via Claude Code:
+
+### create
+
+- `/create-syner` - orchestrate creation of skills, agents, apps
+- `/create-syner-app` - scaffold new apps
+
+### analyze
+
+- `/syner-researcher` - research any topic
+- `/syner-backlog-triager` - triage backlog against codebase
 
 ## try it
 
@@ -104,9 +115,5 @@ self-driving development - agents that ship code while you sleep.
 bun run dev --filter=dev
 \`\`\`
 
-## skills
-
-- `/create-syner-app` - scaffold new apps
-- `/syner-researcher` - research any topic
-- `/syner-backlog-triager` - triage backlog against codebase
+you'll see the landing page. the real value today is the skills.
 ```

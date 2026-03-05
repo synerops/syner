@@ -5,9 +5,9 @@ When an existing README has too much content, separate concerns.
 ## Content That Stays
 
 - What is it (one line)
+- Why it exists (value)
 - How it works (the flow)
 - How to try it (commands)
-- Context hierarchy position
 - Skills list (if any)
 - Integrations status (if relevant)
 
