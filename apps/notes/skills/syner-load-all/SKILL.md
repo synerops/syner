@@ -4,6 +4,7 @@ description: Load your full life + work state. Discovers and reads all notes acr
 metadata:
   author: syner
   version: "0.2.0"
+tools: [Glob, Read]
 ---
 
 # Syner Load All
