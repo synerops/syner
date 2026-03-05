@@ -28,6 +28,8 @@ Every README must answer:
 
 **Input:** $ARGUMENTS
 
+**Project root discovery:** Run `Bash: git rev-parse --show-toplevel` to find `{root}`. Use `{root}/` to prefix all file paths in subsequent phases.
+
 Parse the target name and detect type:
 
 ```
@@ -71,7 +73,7 @@ Glob: apps/$APP/skills/*/SKILL.md
 Read: apps/$APP/README.md (if exists)
 ```
 
-If existing README is complex (>50 lines), read `references/separation.md` for guidance.
+If existing README is complex (>50 lines), read `{root}/skills/syner-readme-enhancer/references/separation.md` for guidance.
 
 ### Context Hierarchy (internal, don't expose)
 
@@ -112,9 +114,9 @@ Glob: packages/$PKG/skills/*/SKILL.md → associated skills
 ### 2B.3 Understand Ecosystem Context
 
 ```
-Read: apps/dev/README.md              → dev workflow context
-Read: skills/syner/plan.md            → how planning works system-wide
-Glob: agents/*.md                     → which agents use this package
+Read: {root}/apps/dev/README.md              → dev workflow context
+Read: {root}/skills/syner/plan.md            → how planning works system-wide
+Glob: {root}/agents/*.md                     → which agents use this package
 ```
 
 ### 2B.4 Classify Package Role
@@ -278,5 +280,7 @@ Ask for approval, write if confirmed.
 
 ## References
 
-- `references/examples.md` - Before/after examples
-- `references/separation.md` - What content stays vs moves
+These files live inside this skill's directory (`{root}/skills/syner-readme-enhancer/references/`):
+
+- `{root}/skills/syner-readme-enhancer/references/examples.md` - Before/after examples
+- `{root}/skills/syner-readme-enhancer/references/separation.md` - What content stays vs moves
