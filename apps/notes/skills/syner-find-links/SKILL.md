@@ -23,11 +23,11 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
-1. Accept two domains/topics from the user
+1. Accept two domains/topics from the user. If fewer than two domains are provided, use AskUserQuestion to prompt for them.
 2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
 3. For each folder, read `index.md` first if it exists to understand folder context
 4. Analyze notes related to each domain
-6. Look for connection patterns:
+5. Look for connection patterns:
    - Explicit internal links between notes (strongest evidence of connection)
    - Shared concepts or vocabulary
    - Similar problems or challenges
@@ -35,8 +35,8 @@ Use `Read` tool to load it before processing notes.
    - Temporal correlations (explored around same time)
    - Referenced by each other directly or indirectly
    - Common underlying principles
-7. Generate bridge hypotheses
-8. Rank connections by strength and novelty (explicit links rank highest)
+6. Generate bridge hypotheses
+7. Rank connections by strength and novelty (explicit links rank highest)
 
 ## Output Format
 
