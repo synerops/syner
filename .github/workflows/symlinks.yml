@@ -47,7 +47,7 @@ jobs:
             2. Run /syner-fix-symlinks to check for issues
             3. If issues found, run /syner-fix-symlinks --fix to repair them
             4. If fixes were made, commit with message: "fix(skills): repair symlinks"
-            5. Write final status to reports/symlinks.md:
+            5. Write final status to .syner/reports/symlinks.md:
                - ## Status: ok | fixed | error
                - ## Changes: list of what was fixed (or "None")
           claude_args: |
@@ -58,7 +58,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          REPORT="reports/symlinks.md"
+          mkdir -p .syner/reports
+          REPORT=".syner/reports/symlinks.md"
 
           # Check if there are uncommitted changes
           if [ -n "$(git status --porcelain)" ]; then
