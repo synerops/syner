@@ -22,6 +22,11 @@ Update existing applications to match the current syner standard stack. This ens
 
 ## Instructions
 
+### 0. Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ### 1. Identify Target App
 
 If app name not provided as argument, ask the user:

@@ -13,7 +13,17 @@ tools: [Glob, Read]
 
 Build a comprehensive understanding of the user's current state by analyzing all their notes across all vaults.
 
+## How to Read Notes
+
+Follow conventions in `skills/syner/note-conventions.md`.
+Use `Read` tool to load it before processing notes.
+
 ## Instructions
+
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
 
 ### Step 1: Discover All Vaults
 

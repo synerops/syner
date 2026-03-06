@@ -40,6 +40,11 @@ The agent file defines behavior for when the agent runs in its own context, not 
 
 ## Process
 
+### 0. Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ### 1. Gather Context (Silent + Parallel)
 
 While user talks:

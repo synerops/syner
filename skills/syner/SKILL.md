@@ -41,6 +41,11 @@ Use this skill when the user:
 
 If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
+## Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ## Step 1: Understand & Load Context
 
 Determine how much context this request needs:

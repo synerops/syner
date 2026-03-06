@@ -25,7 +25,7 @@ Create new applications with the syner standard stack consistently. This ensures
 
 ### 1. Find Project Root
 
-Navigate upward from the current working directory until you find a directory containing `apps/`. Use `ls` to verify. If no `apps/` directory exists, ask the user where to create the project.
+Navigate upward from the current working directory until you find a directory containing `apps/`. Use `ls` to verify. If no `apps/` directory exists, ask the user where to create the project. All subsequent paths are relative to this root.
 
 ### 2. Read Current Stack
 

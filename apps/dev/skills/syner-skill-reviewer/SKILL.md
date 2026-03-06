@@ -13,6 +13,11 @@ Audit a skill and report what needs attention — the user decides what to fix.
 
 ## Process
 
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 1. **Locate** target skill(s):
    - With argument: find that specific skill
    - Without argument: discover ALL skills using `Glob` with `**/SKILL.md`

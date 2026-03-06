@@ -24,6 +24,11 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 1. Identify the thought/note to graduate:
    - If the user provided a note title or topic as an argument, use that
    - If no argument was provided, use AskUserQuestion to ask: "Which note or thought would you like to graduate? (provide a title, topic, or path)"

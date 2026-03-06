@@ -62,6 +62,8 @@ Don't skip this. Writing without the golden = guessing.
 
 ### 1. Gather Context (Silent + Parallel)
 
+First, anchor to project root: find the directory containing both `apps/` and (optionally) `package.json`. All subsequent paths are relative to this root.
+
 While user talks:
 - Read existing skills in `apps/*/skills/*/SKILL.md`
 - Search notes for context

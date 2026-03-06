@@ -25,6 +25,11 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ## Instructions
 
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ### Proactive Mode (`/syner-track-idea` without arguments)
 
 1. Discover all vaults using pattern `apps/*/vaults/**/*.md`

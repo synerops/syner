@@ -20,6 +20,11 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
 2. For each folder, read `index.md` first if it exists to understand folder context
 3. Follow external documentation links (especially llms.txt) to understand technical context

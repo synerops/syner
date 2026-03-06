@@ -33,6 +33,11 @@ Reverse engineering from results > forward planning from requirements.
 
 ## Process
 
+### 0. Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ### 1. Detect Type
 
 If type provided, delegate immediately.

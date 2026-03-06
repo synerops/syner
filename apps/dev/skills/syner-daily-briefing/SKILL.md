@@ -11,6 +11,11 @@ tools: [Read, Write, Glob]
 
 Generate a briefing report from pre-gathered GitHub data. This is your daily dashboard - the one place to see everything that needs attention.
 
+## Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ## Step 1: Read the data
 
 ```

@@ -23,6 +23,11 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
+### Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 1. Accept two domains/topics from the user. If fewer than two domains are provided, use AskUserQuestion to prompt for them.
 2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
 3. For each folder, read `index.md` first if it exists to understand folder context

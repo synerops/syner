@@ -11,6 +11,11 @@ metadata:
 
 Research any topic by routing to the appropriate source.
 
+## Step 0: Anchor to project root
+
+Find the directory containing both `apps/` and (optionally) `package.json`.
+All subsequent paths are relative to this root.
+
 ## Phase 1: Understand
 
 Parse the input and classify the topic type.
