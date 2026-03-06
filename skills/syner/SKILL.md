@@ -5,7 +5,7 @@ agent: general-purpose
 tools: [Read, Glob, Grep, Task, Skill, AskUserQuestion, Write]
 metadata:
   author: syner
-  version: "0.3.0"
+  version: "0.4.0"
 ---
 
 # Syner
@@ -17,7 +17,7 @@ See [README.md](README.md) for philosophy and examples.
 ## How this skill works
 
 1. Understand intent and load context proportionally
-2. Route to a specialist skill OR execute directly OR delegate to syner-worker
+2. Route to a specialist skill OR execute directly OR delegate to subagent
 
 ## When to Use this Skill
 
@@ -115,7 +115,7 @@ When user requests planning or analysis produces multiple actionable findings:
 
 This converts analysis output into atomic, executable items.
 
-### Route to Specialist
+### Route to Specialist Skill
 
 | Skill | What it does |
 |-------|--------------|
@@ -128,32 +128,28 @@ This converts analysis output into atomic, executable items.
 | `/syner-backlog-triager` | Triage backlog against codebase |
 | `/syner-backlog-reviewer` | Audit backlog health |
 | `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
-| `/syner-researcher` | Research a topic |
 
-### Execute Directly
+### Delegate to Subagent
 
-Read-only operations only:
-- Read files, search code (Read, Glob, Grep)
-- Quick questions about context
+| Subagent | When | Tools |
+|----------|------|-------|
+| `syner-researcher` | Research any topic (web, vault, coding agents) | WebSearch, WebFetch, Glob, Read, Grep |
+| `syner-worker` | Complex execution with verification loops | Full toolset |
 
-### Delegate to syner-worker
-
-Complex execution that needs:
-- Multiple file changes with verification
-- Iterative refinement (code, review, fix)
-- Action, Verify, Repeat loop
-
-**Before delegating:**
-1. Run `Glob("packages/*/SKILL.md")` to discover available packages
-2. Read SKILL.md for packages relevant to the task
-3. **Follow package prerequisites** - if the package says "check X before using", check it and include the setup commands if needed
-4. **Gather task context** - don't make worker explore:
-   - For PRs: run `git log`, `git diff --stat`, get exact commit messages
-   - For code changes: read the relevant files first
-5. Build exact command sequence and include everything in the worker prompt
+**For research:**
 
 ```
-Task(subagent_type=syner-worker, prompt="
+Task(subagent_type="syner-researcher", prompt="
+  Research: [topic]
+
+  Context: [any relevant context from vault or conversation]
+")
+```
+
+**For execution:**
+
+```
+Task(subagent_type="syner-worker", prompt="
   Task: [Specific action]
 
   Commands (exact sequence):
@@ -167,6 +163,22 @@ Task(subagent_type=syner-worker, prompt="
   Success: [what to verify]
 ")
 ```
+
+### Execute Directly
+
+Read-only operations only:
+- Read files, search code (Read, Glob, Grep)
+- Quick questions about context
+
+### Before Delegating to Worker
+
+1. Run `Glob("packages/*/SKILL.md")` to discover available packages
+2. Read SKILL.md for packages relevant to the task
+3. **Follow package prerequisites** - if the package says "check X before using", check it and include the setup commands if needed
+4. **Gather task context** - don't make worker explore:
+   - For PRs: run `git log`, `git diff --stat`, get exact commit messages
+   - For code changes: read the relevant files first
+5. Build exact command sequence and include everything in the worker prompt
 
 **Key principle:** Syner explores, checks state, builds exact commands. Worker just runs them.
 
@@ -202,7 +214,7 @@ Write an audit file to `{project-root}/.syner/audits/YYYY-MM-DDTHH-MM-SS.md` **O
 ## Routing
 - Entry: /syner
 - Context loaded: {none | targeted | full}
-- Route: {direct | specialist:{skill-name} | worker}
+- Route: {direct | specialist:{skill-name} | subagent:{name} | worker}
 
 ## Tools Used
 {list of tools and their purpose}
