@@ -1,13 +1,15 @@
 # @syner/vercel
 
-AI SDK tools for syner agents.
+AI SDK tools for syner agents, running in Vercel Sandbox.
 
 ## Tools
 
 | Tool | Description |
 |------|-------------|
-| Bash | Execute commands in isolated Vercel Sandbox |
-| Fetch | Fetch URL content with Accept: text/markdown |
+| Bash | Execute commands in isolated sandbox |
+| Fetch | Fetch URL content as markdown (truncated to 50k chars) |
+
+Both tools run in Vercel Sandbox for security isolation.
 
 ## Usage
 
