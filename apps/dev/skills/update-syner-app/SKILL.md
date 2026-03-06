@@ -22,6 +22,17 @@ Update existing applications to match the current syner standard stack. This ens
 
 ## Instructions
 
+### 0. Find Project Root
+
+Find the project root (directory containing `apps/` or `package.json`). All subsequent paths are relative to this root.
+
+```bash
+# Verify we are at project root
+[ -d apps ] || echo "ERROR: not at project root — cd to the directory containing apps/ first"
+```
+
+If not at project root, stop and instruct the user to run the skill from the project root directory.
+
 ### 1. Identify Target App
 
 If app name not provided as argument, ask the user:
