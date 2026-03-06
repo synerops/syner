@@ -1,6 +1,7 @@
 ---
 name: create-syner
 description: Scaffold syner components. Orchestrates creation of skills, agents, and apps by delegating to specialized skills. Use when creating new components or when the user says "crear", "new", "scaffold".
+context: fork
 metadata:
   author: syner
   version: "0.0.1"
