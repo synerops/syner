@@ -130,7 +130,7 @@ ALWAYS use this structure:
 - **Next Steps**:
   - Run `cd apps/[name] && bun dev` to test
   - Add shadcn components with `bunx shadcn@latest add [component]`
-  - Review with `/vercel-react-best-practices`
+  - Review with `/simplify` if needed
 
 ## Usage
 
