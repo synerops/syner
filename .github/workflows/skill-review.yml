@@ -176,10 +176,14 @@ jobs:
     if: needs.review.outputs.has_needs_decision == 'true'
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v1
