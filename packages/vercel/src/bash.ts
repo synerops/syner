@@ -6,18 +6,20 @@ const inputSchema = z.object({
   command: z.string().describe('Command to execute'),
 })
 
+export async function executeBash({ command }: z.infer<typeof inputSchema>) {
+  const sandbox = await Sandbox.create({ runtime: 'node24', timeout: 60000 })
+  try {
+    const result = await sandbox.runCommand('sh', ['-c', command])
+    const stdout = await result.stdout()
+    const stderr = await result.stderr()
+    return result.exitCode === 0 ? stdout : `Exit ${result.exitCode}: ${stderr || stdout}`
+  } finally {
+    await sandbox.stop()
+  }
+}
+
 export const Bash = tool({
   description: 'Execute a command in isolated sandbox',
   inputSchema,
-  execute: async ({ command }: z.infer<typeof inputSchema>) => {
-    const sandbox = await Sandbox.create({ runtime: 'node24', timeout: 60000 })
-    try {
-      const result = await sandbox.runCommand('sh', ['-c', command])
-      const stdout = await result.stdout()
-      const stderr = await result.stderr()
-      return result.exitCode === 0 ? stdout : `Exit ${result.exitCode}: ${stderr || stdout}`
-    } finally {
-      await sandbox.stop()
-    }
-  },
+  execute: executeBash,
 })
