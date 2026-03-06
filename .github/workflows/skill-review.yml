@@ -15,10 +15,11 @@ jobs:
   review:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+      contents: read
       id-token: write
+    outputs:
+      has_fixeable: ${{ steps.check.outputs.has_fixeable }}
+      has_needs_decision: ${{ steps.check.outputs.has_needs_decision }}
 
     steps:
       - name: Checkout repository
@@ -26,18 +27,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.SYNERBOT_APP_ID }}
-          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
-
       - name: Prepare directories
         run: mkdir -p .syner/reports
 
       - name: Run skill review
-        id: review
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -45,7 +38,7 @@ jobs:
             Run /syner-skill-reviewer (no argument = batch mode).
             Write the report to .syner/reports/skill-review.md
 
-            The report groups findings by pattern: FIXEABLE vs NEEDS_DECISION.
+            The report groups findings by pattern - FIXEABLE vs NEEDS_DECISION.
           claude_args: |
             --max-turns 15
             --allowedTools Read,Write,Glob
@@ -72,83 +65,158 @@ jobs:
             echo "has_needs_decision=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports/skill-review.md
+          retention-days: 7
+
+  fix:
+    needs: review
+    if: needs.review.outputs.has_fixeable == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download report
+        uses: actions/download-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports
+
       - name: Apply fixes
-        if: steps.check.outputs.has_fixeable == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
-            Read .syner/reports/skill-review.md and apply all fixes from the FIXEABLE section.
+            Read .syner/reports/skill-review.md
 
-            1. Create branch: skill-review/fixes-$(date +%Y%m%d)
-            2. For each pattern in FIXEABLE, apply the fix to ALL affected skills
-            3. Commit with: fix(skills): <brief description>
-            4. Push the branch
+            Apply all fixes from the FIXEABLE section to the affected skills.
 
-            After pushing, write two files:
+            After applying fixes, create the PR metadata
 
             .syner/reports/skill-review-pr-title.txt
-            Just the PR title (conventional commit format, same as commit message)
+            One line, conventional commit format.
 
             .syner/reports/skill-review-pr-body.md
-            ## Summary
-            What was fixed and which skills were affected.
-
-            ## Reproducible Prompts
-            ### [Pattern Name]
-            Instructions as plain text.
-            ```markdown
-            Content to copy-paste.
-            ```
-
-            Do NOT create the PR.
+            Summary of changes + reproducible prompts for each pattern.
           claude_args: |
-            --max-turns 20
+            --max-turns 30
             --allowedTools Read,Write,Edit,Glob,Bash
 
-      - name: Create PR
-        if: steps.check.outputs.has_fixeable == 'true'
+      - name: Upload PR metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-metadata
+          path: |
+            .syner/reports/skill-review-pr-title.txt
+            .syner/reports/skill-review-pr-body.md
+          retention-days: 7
+
+  pr:
+    needs: fix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Download PR metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-metadata
+          path: .syner/reports
+
+      - name: Find Claude branch
+        id: branch
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          BRANCH=$(git branch --show-current)
+          # Find the branch Claude created (most recent claude/* branch)
+          BRANCH=$(git ls-remote --heads origin 'claude/*' | sort -t/ -k3 -r | head -1 | awk '{print $2}' | sed 's|refs/heads/||')
+          echo "name=$BRANCH" >> $GITHUB_OUTPUT
 
-          if [ "$BRANCH" == "main" ]; then
-            echo "Still on main, no changes were made"
-            exit 0
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          BRANCH="${{ steps.branch.outputs.name }}"
+
+          if [ -z "$BRANCH" ]; then
+            echo "No Claude branch found"
+            exit 1
           fi
 
           TITLE=$(cat .syner/reports/skill-review-pr-title.txt)
           BODY=$(cat .syner/reports/skill-review-pr-body.md)
 
           gh label create "skill-review" --color "0e8a16" 2>/dev/null || true
-          gh pr create --title "$TITLE" --label "skill-review" --body "$BODY"
+          gh pr create \
+            --title "$TITLE" \
+            --label "skill-review" \
+            --body "$BODY" \
+            --head "$BRANCH"
+
+  issues:
+    needs: review
+    if: needs.review.outputs.has_needs_decision == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Download report
+        uses: actions/download-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports
 
       - name: Create issues for decisions
-        if: steps.check.outputs.has_needs_decision == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           REPORT=".syner/reports/skill-review.md"
 
-          # Ensure labels exist
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
           gh label create "needs-decision" --description "Requires human decision" --color "d93f0b" 2>/dev/null || true
 
-          # Extract NEEDS_DECISION patterns and create one issue per pattern
-          # Pattern lines look like: #### [B4] Input Handling — 2 skills affected
           awk '/^## NEEDS_DECISION/,/^## Summary/' "$REPORT" | grep -E "^#### \[" | while read -r LINE; do
             CODE=$(echo "$LINE" | grep -oE '\[[A-Z][0-9]+\]')
             TITLE=$(echo "$LINE" | sed 's/^#### //')
 
-            # Skip if issue already exists
             EXISTING=$(gh issue list --state open --label needs-decision --search "$CODE in:title" --json number --jq '.[0].number')
             if [ -n "$EXISTING" ]; then
               echo "Issue for $CODE exists (#$EXISTING), skipping"
               continue
             fi
 
-            # Extract section for this pattern
             BODY=$(awk "/^#### \\$CODE/,/^####/" "$REPORT" | head -n -1)
 
             echo "Creating issue: $TITLE"
@@ -159,18 +227,3 @@ jobs:
               --assignee "rbadillap" \
               --body "$BODY"
           done
-
-      - name: Update status
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          HAS_FIXEABLE="${{ steps.check.outputs.has_fixeable }}"
-          HAS_NEEDS_DECISION="${{ steps.check.outputs.has_needs_decision }}"
-
-          if [ "$HAS_FIXEABLE" = "false" ] && [ "$HAS_NEEDS_DECISION" = "false" ]; then
-            echo "✅ All skills clean - no issues found"
-          else
-            echo "📋 Review complete:"
-            [ "$HAS_FIXEABLE" = "true" ] && echo "  - PR created for fixeable patterns"
-            [ "$HAS_NEEDS_DECISION" = "true" ] && echo "  - Issues created for decisions needed"
-          fi
