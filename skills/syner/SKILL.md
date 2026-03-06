@@ -179,7 +179,7 @@ Keep it concise. This runs in a forked context - details stay here.
 
 ## Step 4: Write Audit (Conditional)
 
-Write an audit file to `.syner/audits/` **ONLY when:**
+Write an audit file to `{project-root}/.syner/audits/YYYY-MM-DDTHH-MM-SS.md` **ONLY when:**
 - Route was `worker` or `specialist`
 - Files were modified/created
 
