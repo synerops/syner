@@ -23,7 +23,7 @@ Generate a standup report from pre-gathered GitHub data.
 └── prs-merged.json     # Recently merged PRs
 ```
 
-Read these files to understand current state and recent activity.
+Use Read to load each file in .syner/context/daily-standup/
 
 ## Step 2: Write the report
 
