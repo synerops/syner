@@ -19,7 +19,7 @@ Convert raw, daily thoughts into polished, structured documents that can be shar
 
 ## How to Read Notes
 
-Follow conventions in `skills/syner/note-conventions.md`.
+Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
 Use `Read` tool to load it before processing notes.
 
 ## Instructions
