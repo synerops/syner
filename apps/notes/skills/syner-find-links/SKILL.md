@@ -23,6 +23,7 @@ Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
+0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
 1. Accept two domains/topics from the user. If fewer than two domains are provided, use AskUserQuestion to prompt for them.
 2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
 3. For each folder, read `index.md` first if it exists to understand folder context

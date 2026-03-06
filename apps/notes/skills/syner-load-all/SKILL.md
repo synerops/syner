@@ -15,6 +15,10 @@ Build a comprehensive understanding of the user's current state by analyzing all
 
 ## Instructions
 
+### Step 0: Anchor to Project Root
+
+Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+
 ### Step 1: Discover All Vaults
 
 Use Glob to find all vaults across all apps:

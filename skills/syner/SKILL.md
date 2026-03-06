@@ -41,6 +41,10 @@ Use this skill when the user:
 
 If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
+## Step 0: Anchor to Project Root
+
+Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+
 ## Step 1: Understand & Load Context
 
 Determine how much context this request needs:
