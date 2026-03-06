@@ -13,6 +13,8 @@ Generate a standup report from pre-gathered GitHub data.
 
 ## Step 1: Read the data
 
+Find the project root (directory containing `apps/` or `package.json`), then use it as the base for all paths below.
+
 ```
 .syner/context/daily-standup/
 ├── today.txt           # Today's date
@@ -27,7 +29,7 @@ Read these files to understand current state and recent activity.
 
 ## Step 2: Write the report
 
-Write to `reports/standup-{date}.md`:
+Write to `{root}/reports/standup-{date}.md`:
 
 ```markdown
 # Standup YYYY-MM-DD
