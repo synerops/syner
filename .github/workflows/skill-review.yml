@@ -109,7 +109,7 @@ jobs:
             .syner/reports/skill-review-pr-body.md
             Summary of changes + reproducible prompts for each pattern.
           claude_args: |
-            --max-turns 30
+            --max-turns 50
             --allowedTools Read,Write,Edit,Glob,Bash
 
       - name: Upload PR metadata
@@ -207,9 +207,9 @@ jobs:
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
           gh label create "needs-decision" --description "Requires human decision" --color "d93f0b" 2>/dev/null || true
 
-          awk '/^## NEEDS_DECISION/,/^## Summary/' "$REPORT" | grep -E "^#### \[" | while read -r LINE; do
+          awk '/^## NEEDS_DECISION/,/^## Summary/' "$REPORT" | grep -E "^### \[" | while read -r LINE; do
             CODE=$(echo "$LINE" | grep -oE '\[[A-Z][0-9]+\]')
-            TITLE=$(echo "$LINE" | sed 's/^#### //')
+            TITLE=$(echo "$LINE" | sed 's/^### //')
 
             EXISTING=$(gh issue list --state open --label needs-decision --search "$CODE in:title" --json number --jq '.[0].number')
             if [ -n "$EXISTING" ]; then
@@ -217,7 +217,7 @@ jobs:
               continue
             fi
 
-            BODY=$(awk "/^#### \\$CODE/,/^####/" "$REPORT" | head -n -1)
+            BODY=$(awk "/^### \\$CODE/,/^###/" "$REPORT" | head -n -1)
 
             echo "Creating issue: $TITLE"
             gh issue create \
