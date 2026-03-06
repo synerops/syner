@@ -57,7 +57,7 @@ The subagent has access to Claude Code documentation and can answer questions ab
 
 1. Use `WebSearch` with a well-formed query:
    - Include the technology name
-   - Add "2026" for recent info (documentation, best practices)
+   - Add the current year for recent info (documentation, best practices)
    - Be specific: "React Server Components SSR hydration" not just "React"
 
 2. For each relevant result, use `WebFetch` to get details:
