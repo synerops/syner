@@ -63,6 +63,6 @@ gh api repos/{owner}/{repo}/issues
 
 If authentication fails:
 
-1. Check `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` env vars are set
+1. Check `GITHUB_APP_ID` and `GITHUB_APP_PRIVATE_KEY` env vars are set
 2. Verify the App is installed on the target repository
 3. Check App permissions include required scopes
