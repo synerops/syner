@@ -1,2 +1,2 @@
-export { Bash } from './bash'
-export { Fetch } from './fetch'
+export { Bash, executeBash } from './bash'
+export { Fetch, executeFetch } from './fetch'
