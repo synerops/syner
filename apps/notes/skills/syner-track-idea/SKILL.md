@@ -25,6 +25,10 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 
 ## Instructions
 
+### Step 0: Anchor to Project Root
+
+Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+
 ### Proactive Mode (`/syner-track-idea` without arguments)
 
 1. Discover all vaults using pattern `apps/*/vaults/**/*.md`

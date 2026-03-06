@@ -68,6 +68,7 @@ The subagent has access to Claude Code documentation and can answer questions ab
 
 ### For Internal Topics
 
+0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
 1. Discover all vaults: `apps/*/vaults/**/*.md`
 2. Use `Grep` to find files mentioning the topic across all vaults
 3. Use `Read` to load relevant files
