@@ -40,6 +40,16 @@ The agent file defines behavior for when the agent runs in its own context, not 
 
 ## Process
 
+### 0. Anchor to Project Root
+
+Before reading `agents/`, verify cwd is the project root (the directory containing both `apps/` and `agents/`):
+
+```bash
+[ -d apps ] && [ -d agents ] || echo "ERROR: not at project root — cd to the directory containing apps/ and agents/ first"
+```
+
+If not at project root, stop and instruct the user to run the skill from the project root directory.
+
 ### 1. Gather Context (Silent + Parallel)
 
 While user talks:
