@@ -79,6 +79,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    outputs:
+      branch_name: ${{ steps.apply.outputs.branch_name }}
 
     steps:
       - name: Checkout repository
@@ -93,9 +95,11 @@ jobs:
           path: .syner/reports
 
       - name: Apply fixes
+        id: apply
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          branch_name_template: "syner/skill-review-{{timestamp}}"
           prompt: |
             Read .syner/reports/skill-review.md
 
@@ -146,23 +150,14 @@ jobs:
           name: pr-metadata
           path: .syner/reports
 
-      - name: Find Claude branch
-        id: branch
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          # Find the branch Claude created (most recent claude/* branch)
-          BRANCH=$(git ls-remote --heads origin 'claude/*' | sort -t/ -k3 -r | head -1 | awk '{print $2}' | sed 's|refs/heads/||')
-          echo "name=$BRANCH" >> $GITHUB_OUTPUT
-
       - name: Create PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          BRANCH="${{ steps.branch.outputs.name }}"
+          BRANCH="${{ needs.fix.outputs.branch_name }}"
 
           if [ -z "$BRANCH" ]; then
-            echo "No Claude branch found"
+            echo "No branch from fix job"
             exit 1
           fi
 
