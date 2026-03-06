@@ -3,13 +3,23 @@ name: syner-daily-standup
 description: Generate daily standup reports from pre-gathered GitHub data. Use when asked for "standup", "daily status", or on scheduled CI runs. Data is in .syner/context/daily-standup/.
 metadata:
   author: syner
-  version: "0.1.3"
+  version: "0.1.4"
 tools: [Read, Write, Glob]
 ---
 
 # Daily Standup
 
 Generate a standup report from pre-gathered GitHub data.
+
+## Step 0: Anchor to project root
+
+Before accessing any paths, locate the project root. The project root is the directory that contains `apps/` or `.syner/`.
+
+Starting from the current working directory, walk up the directory tree until you find a directory containing `apps/` or `.syner/`. Use that directory as the base for all subsequent path operations.
+
+If neither marker is found, fail with: "Could not locate project root (no apps/ or .syner/ found in path)."
+
+All paths in the steps below are relative to this project root.
 
 ## Step 1: Read the data
 
