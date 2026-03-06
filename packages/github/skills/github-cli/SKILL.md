@@ -13,17 +13,7 @@ Use `gh` directly for all GitHub operations.
 
 ## Prerequisites
 
-Before using `gh`, check auth status:
-
-```bash
-gh auth status
-```
-
-If not authenticated (or token invalid), authenticate first:
-
-```bash
-bunx @syner/github create-app-token | gh auth login --with-token
-```
+If not authenticated, run `/syner-gh-auth` first.
 
 ## Examples
 
