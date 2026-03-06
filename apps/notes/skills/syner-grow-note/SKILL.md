@@ -19,11 +19,12 @@ Convert raw, daily thoughts into polished, structured documents that can be shar
 
 ## How to Read Notes
 
-Follow conventions in `skills/syner/note-conventions.md`.
+Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
 Use `Read` tool to load it before processing notes.
 
 ## Instructions
 
+0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
 1. Identify the thought/note to graduate:
    - If the user provided a note title or topic as an argument, use that
    - If no argument was provided, use AskUserQuestion to ask: "Which note or thought would you like to graduate? (provide a title, topic, or path)"

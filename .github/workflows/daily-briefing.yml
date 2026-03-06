@@ -1,0 +1,83 @@
+name: Daily Briefing
+
+on:
+  schedule:
+    - cron: '0 14 * * 1-5'  # 9am EST (UTC-5), weekdays
+  workflow_dispatch:
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Gather GitHub data
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          mkdir -p .syner/context/daily-briefing
+          date +%Y-%m-%d > .syner/context/daily-briefing/today.txt
+
+          # PRs ready for review (from skill-review or with ready for review label)
+          gh pr list --state open --label "skill-review" --json number,title,createdAt,author > .syner/context/daily-briefing/prs-skill-review.json
+          gh pr list --state open --json number,title,createdAt,author,labels > .syner/context/daily-briefing/prs-open.json
+
+          # Issues needing decision
+          gh issue list --state open --label "needs-decision" --json number,title,createdAt,assignees > .syner/context/daily-briefing/issues-needs-decision.json
+
+          # Completed yesterday (last 24h)
+          gh pr list --state merged --json number,title,mergedAt,author --limit 20 > .syner/context/daily-briefing/prs-merged.json
+          gh issue list --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-briefing/issues-closed.json
+
+          mkdir -p .syner/reports
+
+      - name: Generate briefing
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Run /syner-daily-briefing to generate today's briefing.
+          claude_args: |
+            --max-turns 10
+            --allowedTools Read,Write,Glob
+
+      - name: Create briefing issue
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          REPORT=".syner/reports/briefing-${TODAY}.md"
+          TITLE="Daily Briefing ${TODAY}"
+
+          if [ ! -f "$REPORT" ]; then
+            echo "No report found at $REPORT, skipping"
+            exit 0
+          fi
+
+          # Ensure label exists
+          gh label create "daily-briefing" --description "Daily briefing report" --color "0e8a16" 2>/dev/null || true
+
+          # Check if issue already exists
+          EXISTING=$(gh issue list --label daily-briefing --search "$TITLE in:title" --json number --jq '.[0].number')
+
+          if [ -n "$EXISTING" ]; then
+            echo "Issue #$EXISTING exists, updating"
+            gh issue edit "$EXISTING" --body-file "$REPORT"
+          else
+            echo "Creating briefing issue..."
+            gh issue create --title "$TITLE" --body-file "$REPORT" --label "daily-briefing"
+          fi

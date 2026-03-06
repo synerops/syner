@@ -1,8 +1,14 @@
 name: Skill Review
 
+# TODO: Implement skill cache when:
+# - skills > 100, or
+# - execution > 15 min
+# See: .syner/analysis/skill-review-refactor.md
+
 on:
+  # Testing: 3x/day to observe behavior. Change to 1x/day after validation.
   schedule:
-    - cron: '0 0,8,16 * * *'  # Every 8 hours: 12am, 8am, 4pm UTC
+    - cron: '0 0,8,16 * * *'  # 3x/day: 12am, 8am, 4pm UTC
   workflow_dispatch:
 
 jobs:
@@ -10,15 +16,137 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
-      pull-requests: write
       id-token: write
+    outputs:
+      has_fixeable: ${{ steps.check.outputs.has_fixeable }}
+      has_needs_decision: ${{ steps.check.outputs.has_needs_decision }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Prepare directories
+        run: mkdir -p .syner/reports
+
+      - name: Run skill review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Run /syner-skill-reviewer (no argument = batch mode).
+            Write the report to .syner/reports/skill-review.md
+
+            The report groups findings by pattern - FIXEABLE vs NEEDS_DECISION.
+          claude_args: |
+            --max-turns 50
+            --allowedTools Read,Write,Glob
+
+      - name: Check for findings
+        id: check
+        run: |
+          REPORT=".syner/reports/skill-review.md"
+          if [ ! -f "$REPORT" ]; then
+            echo "has_fixeable=false" >> $GITHUB_OUTPUT
+            echo "has_needs_decision=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          if grep -q "## FIXEABLE" "$REPORT"; then
+            echo "has_fixeable=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_fixeable=false" >> $GITHUB_OUTPUT
+          fi
+
+          if grep -q "## NEEDS_DECISION" "$REPORT"; then
+            echo "has_needs_decision=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_needs_decision=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports/skill-review.md
+          retention-days: 7
+
+  fix:
+    needs: review
+    if: needs.review.outputs.has_fixeable == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      branch_name: ${{ steps.branch.outputs.name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create branch
+        id: branch
+        run: |
+          BRANCH="syner/skill-review-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          echo "name=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Download report
+        uses: actions/download-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports
+
+      - name: Apply fixes
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read .syner/reports/skill-review.md
+
+            Apply all fixes from the FIXEABLE section to the affected skills.
+
+            After applying fixes:
+            1. Commit the changes with a message following conventional commits format
+            2. Create these files for PR metadata:
+               - .syner/reports/skill-review-pr-title.txt (one line, conventional commit format)
+               - .syner/reports/skill-review-pr-body.md (summary + reproducible prompts per pattern)
+          claude_args: |
+            --max-turns 50
+            --allowedTools Read,Write,Edit,Glob,Bash
+
+      - name: Push branch
+        run: |
+          if ! git diff --quiet HEAD origin/main; then
+            git push -u origin ${{ steps.branch.outputs.name }}
+          else
+            echo "No changes to push"
+          fi
+
+      - name: Upload PR metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-metadata
+          path: |
+            .syner/reports/skill-review-pr-title.txt
+            .syner/reports/skill-review-pr-body.md
+          retention-days: 7
+
+  pr:
+    needs: fix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Generate GitHub App token
         id: app-token
@@ -27,135 +155,91 @@ jobs:
           app-id: ${{ vars.SYNERBOT_APP_ID }}
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
 
-      - name: Run skill review
-        id: review
-        uses: anthropics/claude-code-action@v1
+      - name: Download PR metadata
+        uses: actions/download-artifact@v4
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Run /syner-skill-reviewer (no argument = batch mode).
-            Write the report to reports/skill-review.md
-          claude_args: |
-            --max-turns 15
-            --allowedTools Read,Write,Glob
+          name: pr-metadata
+          path: .syner/reports
 
-      - name: Check for findings
-        id: check
-        run: |
-          REPORT="reports/skill-review.md"
-          if [ ! -f "$REPORT" ]; then
-            echo "has_findings=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          if grep -q "### @claude" "$REPORT"; then
-            echo "has_findings=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_findings=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Generate plan from findings
-        if: steps.check.outputs.has_findings == 'true'
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read reports/skill-review.md and transform the @claude findings into a plan.
-            Write JSON to .syner/plan.json with format:
-            {"status":"planned","items":[{"id":"X","title":"...","target":["path"],"context":"...","action":"...","verify":"...","priority":1}]}
-          claude_args: |
-            --agent syner-planner
-            --max-turns 10
-            --allowedTools Read,Write
-
-      - name: Create issues from plan
-        if: steps.check.outputs.has_findings == 'true'
+      - name: Create PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          PLAN_FILE=".syner/plan.json"
+          BRANCH="${{ needs.fix.outputs.branch_name }}"
 
-          if [ ! -f "$PLAN_FILE" ]; then
-            echo "No plan file found, skipping issue creation"
+          if [ -z "$BRANCH" ]; then
+            echo "No branch from fix job"
+            exit 1
+          fi
+
+          # Check if branch exists remotely
+          if ! git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch $BRANCH not found on remote (no changes were pushed)"
             exit 0
           fi
 
-          PLAN=$(cat "$PLAN_FILE")
-          STATUS=$(echo "$PLAN" | jq -r '.status')
+          TITLE=$(cat .syner/reports/skill-review-pr-title.txt)
+          BODY=$(cat .syner/reports/skill-review-pr-body.md)
 
-          if [ "$STATUS" != "planned" ]; then
-            echo "Plan status: $STATUS (not 'planned'), skipping"
-            exit 0
-          fi
+          gh label create "skill-review" --color "0e8a16" 2>/dev/null || true
+          gh pr create \
+            --title "$TITLE" \
+            --label "skill-review" \
+            --body "$BODY" \
+            --head "$BRANCH"
 
-          # Ensure labels exist
-          gh label create "planned" --description "Planned for execution" --color "c2e0c6" 2>/dev/null || true
+  issues:
+    needs: review
+    if: needs.review.outputs.has_needs_decision == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Download report
+        uses: actions/download-artifact@v4
+        with:
+          name: skill-review-report
+          path: .syner/reports
+
+      - name: Create issues for decisions
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          REPORT=".syner/reports/skill-review.md"
+
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
+          gh label create "needs-decision" --description "Requires human decision" --color "d93f0b" 2>/dev/null || true
 
-          # Create an issue for each plan item
-          ITEMS=$(echo "$PLAN" | jq -c '.items[]')
+          awk '/^## NEEDS_DECISION/,/^## Summary/' "$REPORT" | grep -E "^### \[" | while read -r LINE; do
+            CODE=$(echo "$LINE" | grep -oE '\[[A-Z][0-9]+\]')
+            TITLE=$(echo "$LINE" | sed 's/^### //')
 
-          while IFS= read -r ITEM; do
-            ID=$(echo "$ITEM" | jq -r '.id')
-            TITLE=$(echo "$ITEM" | jq -r '.title')
-            TARGET=$(echo "$ITEM" | jq -r '.target | join(", ")')
-            CONTEXT=$(echo "$ITEM" | jq -r '.context')
-            ACTION=$(echo "$ITEM" | jq -r '.action')
-            VERIFY=$(echo "$ITEM" | jq -r '.verify')
-
-            # Check if issue already exists
-            EXISTING=$(gh issue list --state open --label planned --search "[$ID] in:title" --json number --jq '.[0].number')
-
+            EXISTING=$(gh issue list --state open --label needs-decision --search "$CODE in:title" --json number --jq '.[0].number')
             if [ -n "$EXISTING" ]; then
-              echo "Issue for $ID already exists (#$EXISTING), skipping"
+              echo "Issue for $CODE exists (#$EXISTING), skipping"
               continue
             fi
 
-            echo "Creating issue for $ID: $TITLE"
+            BODY=$(awk "/^### \\$CODE/,/^###/" "$REPORT" | head -n -1)
 
-            BODY=$(printf '## Target\n%s\n\n## Context\n%s\n\n## Action\n%s\n\n## Verify\n%s\n\n---\n_Generated from skill-review plan_' "$TARGET" "$CONTEXT" "$ACTION" "$VERIFY")
-
+            echo "Creating issue: $TITLE"
             gh issue create \
-              --title "[$ID] $TITLE" \
-              --label "planned" \
+              --title "$TITLE" \
               --label "skill-review" \
+              --label "needs-decision" \
+              --assignee "rbadillap" \
               --body "$BODY"
-          done <<< "$ITEMS"
-
-          echo "Done creating issues from plan"
-
-      - name: Update tracking issue
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          REPORT="reports/skill-review.md"
-          TITLE="Skill Review: inconsistencies detected"
-
-          if [ ! -f "$REPORT" ]; then
-            echo "No report found, skipping"
-            exit 0
-          fi
-
-          HAS_FINDINGS="${{ steps.check.outputs.has_findings }}"
-
-          # Check for existing open tracking issue
-          EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
-
-          if [ -z "$EXISTING" ]; then
-            if [ "$HAS_FINDINGS" = "true" ]; then
-              echo "Creating tracking issue..."
-              gh issue create \
-                --title "$TITLE" \
-                --label "skill-review" \
-                --body-file "$REPORT"
-            else
-              echo "No findings. All clean."
-            fi
-          else
-            echo "Found existing tracking issue #$EXISTING"
-            gh issue edit "$EXISTING" --body-file "$REPORT"
-
-            if [ "$HAS_FINDINGS" = "false" ]; then
-              echo "No more findings, closing tracking issue..."
-              gh issue close "$EXISTING" --comment "All inconsistencies resolved. Closing."
-            fi
-          fi
+          done

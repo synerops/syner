@@ -233,11 +233,16 @@ Read `../syner-worker/SKILL.md` and follow instructions.
 
 After creating, skill needs symlink to `.claude/skills/`:
 
+> **Run from project root** (symlinks use relative paths):
+
 ```bash
 ln -s apps/{app}/skills/{name} .claude/skills/{name}
 ```
 
 Or for shared skills:
+
+> **Run from project root** (symlinks use relative paths):
+
 ```bash
 ln -s skills/{name} .claude/skills/{name}
 ```

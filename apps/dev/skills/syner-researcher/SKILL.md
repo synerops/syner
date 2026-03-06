@@ -57,7 +57,7 @@ The subagent has access to Claude Code documentation and can answer questions ab
 
 1. Use `WebSearch` with a well-formed query:
    - Include the technology name
-   - Add "2026" for recent info (documentation, best practices)
+   - Add the current year for recent info (documentation, best practices)
    - Be specific: "React Server Components SSR hydration" not just "React"
 
 2. For each relevant result, use `WebFetch` to get details:
@@ -68,6 +68,7 @@ The subagent has access to Claude Code documentation and can answer questions ab
 
 ### For Internal Topics
 
+0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
 1. Discover all vaults: `apps/*/vaults/**/*.md`
 2. Use `Grep` to find files mentioning the topic across all vaults
 3. Use `Read` to load relevant files
@@ -90,8 +91,9 @@ Present the compiled research.
 
 If the user included "save" or "guardar" in the request:
 1. Use `AskUserQuestion` to confirm filename and which vault to save to
-2. Save to the chosen vault's research folder: `apps/{app}/vaults/{vault}/research/[topic-slug].md`
-3. Include frontmatter with date and sources
+2. Resolve project root: use `Glob` to find `CLAUDE.md` or `package.json` at the root, then derive the absolute project root path
+3. Save to `{root}/apps/{app}/vaults/{vault}/research/[topic-slug].md`
+4. Include frontmatter with date and sources
 
 Otherwise, output directly to the conversation.
 
