@@ -1,10 +1,10 @@
 ---
 name: syner-researcher
-description: Research topics from Claude Code docs or your personal vault. Web search not currently available.
-tools: [Glob, Read, Grep, Task, AskUserQuestion, Write]
+description: Research topics and compile findings. Routes to the right source based on topic type - Claude Code docs for CLI/agent questions, web search for technologies/libraries, or your personal vault for internal knowledge.
+tools: [WebSearch, WebFetch, Glob, Read, Grep, Task, AskUserQuestion, Write]
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.1.0"
 ---
 
 # Syner Researcher
@@ -23,11 +23,11 @@ If empty, use `AskUserQuestion` to ask what the user wants to research.
 
 | Type | Signals | Source |
 |------|---------|--------|
-| Claude Code | skill, hook, MCP, subagent, agent SDK, CLI, claude code | Built-in knowledge + codebase |
+| Claude Code | skill, hook, MCP, subagent, agent SDK, CLI, claude code | `claude-code-guide` subagent |
+| Web/General | library, framework, technology, API, concept, "how does X work" | `WebSearch` + `WebFetch` |
 | Internal | "my notes", "mi vault", "what I wrote", project-specific terms | `Glob` + `Read` on vault |
-| Web/General | library, framework, technology, API, concept | ⚠️ Limited - see below |
 
-Classify by scanning for signal keywords. If ambiguous, check Internal first.
+Classify by scanning for signal keywords. If ambiguous, prefer Web/General as the default.
 
 ## Phase 2: Research
 
@@ -35,7 +35,17 @@ Execute the appropriate search based on classification.
 
 ### For Claude Code Topics
 
-Use built-in knowledge about Claude Code:
+Use the `claude-code-guide` subagent:
+
+```
+Task(
+  subagent_type="claude-code-guide",
+  prompt="Research: [topic]. Provide comprehensive information about how this works in Claude Code.",
+  model="haiku"
+)
+```
+
+The subagent has access to Claude Code documentation and can answer questions about:
 - Hooks and lifecycle events
 - MCP servers and tools
 - Subagents and the Task tool
@@ -43,20 +53,18 @@ Use built-in knowledge about Claude Code:
 - Settings and configuration
 - IDE integrations
 
-Additionally, search the local codebase for examples:
-1. `Grep` for relevant patterns in `skills/`, `agents/`, `.claude/`
-2. `Read` existing skills to show real examples from this project
-
 ### For Web/General Topics
 
-⚠️ **Limitación actual**: Este skill no tiene acceso a búsqueda web.
+1. Use `WebSearch` with a well-formed query:
+   - Include the technology name
+   - Add the current year for recent info (documentation, best practices)
+   - Be specific: "React Server Components SSR hydration" not just "React"
 
-Cuando el topic sea Web/General:
-1. Informar al usuario que no hay capacidad de búsqueda web en Claude Code CLI
-2. Buscar en el vault local si hay notas sobre el tema
-3. Ofrecer alternativas:
-   - Sugerir que el usuario busque manualmente y pegue contenido
-   - Usar conocimiento interno del modelo (con disclaimer de fecha de corte)
+2. For each relevant result, use `WebFetch` to get details:
+   - Prioritize official docs, GitHub repos, and authoritative sources
+   - Extract key concepts, code examples, and gotchas
+
+3. Compile from multiple sources for completeness
 
 ### For Internal Topics
 
@@ -116,12 +124,7 @@ Sources: [list sources used]
 
 ```
 /syner-researcher hooks de claude code
+/syner-researcher react server components
 /syner-researcher what I wrote about AI agents
-/syner-researcher MCP servers
+/syner-researcher vercel edge functions save
 ```
-
-## Limitations
-
-- **No web search**: Cannot search the internet. For web topics, user must provide content or use model's internal knowledge.
-- **Vault-dependent**: Internal search only works if user has notes in their vault.
-- **Knowledge cutoff**: For Web/General topics, answers are limited to model's training data.
