@@ -1,0 +1,17 @@
+{
+  "name": "@syner/vercel",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vercel/sandbox": "^1.8.0",
+    "ai": "^6.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
