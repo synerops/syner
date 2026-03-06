@@ -4,7 +4,7 @@ description: Authenticate gh CLI using GitHub App tokens. Use BEFORE any gh comm
 tools: [Bash]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # GitHub CLI Authentication
@@ -18,27 +18,23 @@ Authenticate `gh` using secure, expirable GitHub App tokens.
 - When `gh auth status` shows no authentication
 - Proactively before creating PRs, issues, or API calls
 
-## Step 1: Check Auth Status
+## Authenticate
+
+One command that checks and fixes auth if needed:
 
 ```bash
-gh auth status
+gh auth status 2>&1 || bunx @syner/github create-app-token | gh auth login --with-token
 ```
 
-If authenticated and token valid, skip to Step 3.
+| Part | What it does |
+|------|--------------|
+| `gh auth status` | Check if authenticated |
+| `2>&1` | Redirect stderr so `\|\|` can see errors |
+| `\|\|` | If auth fails, run the next part |
+| `bunx @syner/github create-app-token` | Generate short-lived token |
+| `\| gh auth login --with-token` | Authenticate gh with that token |
 
-## Step 2: Authenticate
-
-If not authenticated or token expired:
-
-```bash
-bunx @syner/github create-app-token | gh auth login --with-token
-```
-
-This creates a short-lived token from the GitHub App installation. No personal access tokens needed.
-
-## Step 3: Proceed with gh Commands
-
-Once authenticated, use `gh` normally:
+## Then use gh normally:
 
 ```bash
 # Issues

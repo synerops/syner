@@ -4,7 +4,7 @@ description: Review skills for quality, safety, and convention compliance. Use w
 tools: [Glob, Read, AskUserQuestion]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.0.6"
 ---
 
 # Skill Reviewer
