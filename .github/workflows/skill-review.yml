@@ -72,45 +72,57 @@ jobs:
             echo "has_needs_decision=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Apply fixes and create PR
+      - name: Apply fixes
         if: steps.check.outputs.has_fixeable == 'true'
-        id: fix
         uses: anthropics/claude-code-action@v1
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
             Read .syner/reports/skill-review.md and apply all fixes from the FIXEABLE section.
 
-            For each pattern in FIXEABLE:
-            1. Apply the described fix to ALL affected skills listed
-            2. Stage the changes with git add
-
-            After all fixes applied:
             1. Create branch: skill-review/fixes-$(date +%Y%m%d)
-            2. Commit with conventional format: fix(skills): <what changed>
-            3. Push and create PR:
-               - Title: Conventional commit format describing what was fixed
-               - Body: Brief summary of what changed and which skills were affected
-               - Label: skill-review
+            2. For each pattern in FIXEABLE, apply the fix to ALL affected skills
+            3. Commit with: fix(skills): <brief description>
+            4. Push the branch
 
-            After PR is created, add a comment with this format:
+            After pushing, write two files:
+
+            .syner/reports/skill-review-pr-title.txt
+            Just the PR title (conventional commit format, same as commit message)
+
+            .syner/reports/skill-review-pr-body.md
+            ## Summary
+            What was fixed and which skills were affected.
 
             ## Reproducible Prompts
-
             ### [Pattern Name]
-
-            Instructions go here as plain text (where to add, what to replace).
-
+            Instructions as plain text.
             ```markdown
-            Only the copy-paste content inside the codeblock.
+            Content to copy-paste.
             ```
 
-            Repeat for each pattern. Instructions outside, content inside codeblock.
+            Do NOT create the PR.
           claude_args: |
-            --max-turns 25
+            --max-turns 20
             --allowedTools Read,Write,Edit,Glob,Bash
+
+      - name: Create PR
+        if: steps.check.outputs.has_fixeable == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          BRANCH=$(git branch --show-current)
+
+          if [ "$BRANCH" == "main" ]; then
+            echo "Still on main, no changes were made"
+            exit 0
+          fi
+
+          TITLE=$(cat .syner/reports/skill-review-pr-title.txt)
+          BODY=$(cat .syner/reports/skill-review-pr-body.md)
+
+          gh label create "skill-review" --color "0e8a16" 2>/dev/null || true
+          gh pr create --title "$TITLE" --label "skill-review" --body "$BODY"
 
       - name: Create issues for decisions
         if: steps.check.outputs.has_needs_decision == 'true'
