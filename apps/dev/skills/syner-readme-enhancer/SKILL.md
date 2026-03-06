@@ -278,5 +278,5 @@ Ask for approval, write if confirmed.
 
 ## References
 
-- `references/examples.md` - Before/after examples
-- `references/separation.md` - What content stays vs moves
+- `skills/syner-readme-enhancer/references/examples.md` - Before/after examples
+- `skills/syner-readme-enhancer/references/separation.md` - What content stays vs moves
