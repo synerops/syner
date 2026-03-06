@@ -86,8 +86,6 @@ ALWAYS use this structure:
 - **Stack Applied**: Next.js + TypeScript + Tailwind CSS + shadcn/ui
 - **Next Steps**:
   - `cd apps/[name] && bun dev` to start development server
-  - Use `/vercel-react-best-practices` when reviewing code
-  - Use `/web-design-guidelines` for UI/design reviews
 
 ## Usage
 
