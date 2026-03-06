@@ -5,7 +5,7 @@ agent: general-purpose
 tools: [Read, Glob, Grep, Task, Skill, AskUserQuestion, Write]
 metadata:
   author: syner
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # Syner
@@ -17,7 +17,7 @@ See [README.md](README.md) for philosophy and examples.
 ## How this skill works
 
 1. Understand intent and load context proportionally
-2. Route to a specialist skill OR execute directly OR delegate to syner-worker
+2. Route to a specialist skill OR execute directly OR delegate to subagent
 
 ## When to Use this Skill
 
@@ -128,7 +128,6 @@ This converts analysis output into atomic, executable items.
 | `/syner-backlog-triager` | Triage backlog against codebase |
 | `/syner-backlog-reviewer` | Audit backlog health |
 | `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
-| `/syner-researcher` | Research a topic |
 
 ### Execute Directly
 
@@ -153,7 +152,7 @@ Complex execution that needs:
 5. Build exact command sequence and include everything in the worker prompt
 
 ```
-Task(subagent_type=syner-worker, prompt="
+Task(subagent_type="syner-worker", prompt="
   Task: [Specific action]
 
   Commands (exact sequence):
@@ -169,6 +168,16 @@ Task(subagent_type=syner-worker, prompt="
 ```
 
 **Key principle:** Syner explores, checks state, builds exact commands. Worker just runs them.
+
+### Delegate to syner-researcher
+
+Research that needs web search or deep vault exploration:
+
+```
+Task(subagent_type="syner-researcher", prompt="
+  Research: [topic]
+")
+```
 
 ## Step 3: Summarize
 
