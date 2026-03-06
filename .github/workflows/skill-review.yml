@@ -105,13 +105,11 @@ jobs:
 
             Apply all fixes from the FIXEABLE section to the affected skills.
 
-            After applying fixes, create the PR metadata
-
-            .syner/reports/skill-review-pr-title.txt
-            One line, conventional commit format.
-
-            .syner/reports/skill-review-pr-body.md
-            Summary of changes + reproducible prompts for each pattern.
+            After applying fixes:
+            1. Commit the changes with a message following conventional commits format
+            2. Create these files for PR metadata:
+               - .syner/reports/skill-review-pr-title.txt (one line, conventional commit format)
+               - .syner/reports/skill-review-pr-body.md (summary + reproducible prompts per pattern)
           claude_args: |
             --max-turns 50
             --allowedTools Read,Write,Edit,Glob,Bash
