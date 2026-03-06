@@ -43,7 +43,7 @@ jobs:
           gh pr list --state merged --json number,title,mergedAt,author --limit 20 > .syner/context/daily-briefing/prs-merged.json
           gh issue list --state closed --json number,title,closedAt --limit 20 > .syner/context/daily-briefing/issues-closed.json
 
-          mkdir -p reports
+          mkdir -p .syner/reports
 
       - name: Generate briefing
         uses: anthropics/claude-code-action@v1
@@ -60,7 +60,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           TODAY=$(date +%Y-%m-%d)
-          REPORT="reports/briefing-${TODAY}.md"
+          REPORT=".syner/reports/briefing-${TODAY}.md"
           TITLE="Daily Briefing ${TODAY}"
 
           if [ ! -f "$REPORT" ]; then

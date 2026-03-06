@@ -201,9 +201,6 @@ Use severity to communicate priority:
 ### Warnings
 - **[B2]**: Paths assume current directory
   - Suggest anchoring to project root
-
-### @claude
-→ Fix the first-person headings first — they affect how the model interprets everything else.
 ```
 
 If the skill is clean, just say so: "Reviewed [name] at [depth] depth. No issues found."
@@ -257,11 +254,6 @@ Skills:
 - **Needs decision**: 1 pattern (2 skills)
 - **Clean**: 9 skills
 
-### @claude
-→ [B2]: Add path anchor to 12 skills
-→ [D3]: Normalize versions to 0.x.x in 3 skills
 ```
-
-**Note:** The `### @claude` section lists only FIXEABLE patterns. NEEDS_DECISION patterns become issues assigned to the user, not automated fixes.
 
 End with a reminder: this reviewer reports and suggests. The user decides what matters and what to change.

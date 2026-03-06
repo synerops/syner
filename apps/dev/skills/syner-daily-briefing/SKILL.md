@@ -27,7 +27,7 @@ Read these files to understand current state and recent activity.
 
 ## Step 2: Write the report
 
-Write to `reports/briefing-{date}.md`:
+Write to `.syner/reports/briefing-{date}.md`:
 
 ```markdown
 # Daily Briefing YYYY-MM-DD

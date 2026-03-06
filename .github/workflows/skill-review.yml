@@ -6,9 +6,9 @@ name: Skill Review
 # See: .syner/analysis/skill-review-refactor.md
 
 on:
-  # Schedule disabled during refactor - will be 1x/day when re-enabled
-  # schedule:
-  #   - cron: '0 14 * * *'  # 1x/day, 9am EST
+  # Testing: 3x/day to observe behavior. Change to 1x/day after validation.
+  schedule:
+    - cron: '0 0,8,16 * * *'  # 3x/day: 12am, 8am, 4pm UTC
   workflow_dispatch:
 
 jobs:
@@ -33,6 +33,9 @@ jobs:
           app-id: ${{ vars.SYNERBOT_APP_ID }}
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
 
+      - name: Prepare directories
+        run: mkdir -p .syner/reports
+
       - name: Run skill review
         id: review
         uses: anthropics/claude-code-action@v1
@@ -40,7 +43,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
             Run /syner-skill-reviewer (no argument = batch mode).
-            Write the report to reports/skill-review.md
+            Write the report to .syner/reports/skill-review.md
 
             The report groups findings by pattern: FIXEABLE vs NEEDS_DECISION.
           claude_args: |
@@ -50,20 +53,20 @@ jobs:
       - name: Check for findings
         id: check
         run: |
-          REPORT="reports/skill-review.md"
+          REPORT=".syner/reports/skill-review.md"
           if [ ! -f "$REPORT" ]; then
             echo "has_fixeable=false" >> $GITHUB_OUTPUT
             echo "has_needs_decision=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          if grep -q "### FIXEABLE" "$REPORT"; then
+          if grep -q "## FIXEABLE" "$REPORT"; then
             echo "has_fixeable=true" >> $GITHUB_OUTPUT
           else
             echo "has_fixeable=false" >> $GITHUB_OUTPUT
           fi
 
-          if grep -q "### NEEDS_DECISION" "$REPORT"; then
+          if grep -q "## NEEDS_DECISION" "$REPORT"; then
             echo "has_needs_decision=true" >> $GITHUB_OUTPUT
           else
             echo "has_needs_decision=false" >> $GITHUB_OUTPUT
@@ -78,7 +81,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
-            Read reports/skill-review.md and apply all fixes from the FIXEABLE section.
+            Read .syner/reports/skill-review.md and apply all fixes from the FIXEABLE section.
 
             For each pattern in FIXEABLE:
             1. Apply the described fix to ALL affected skills listed
@@ -86,18 +89,25 @@ jobs:
 
             After all fixes applied:
             1. Create branch: skill-review/fixes-$(date +%Y%m%d)
-            2. Commit: "fix(skills): apply skill review fixes"
+            2. Commit with conventional format: fix(skills): <what changed>
             3. Push and create PR:
-               - Title: "fix(skills): [CODES] - N skills fixed"
-               - Body: Summary of patterns and affected skills
+               - Title: Conventional commit format describing what was fixed
+               - Body: Brief summary of what changed and which skills were affected
                - Label: skill-review
 
-            After PR is created, add a comment with reproducible prompts:
+            After PR is created, add a comment with this format:
 
             ## Reproducible Prompts
 
-            For each pattern, include the exact prompt that would reproduce the fix.
-            This allows reviewing the logic and re-running manually if needed.
+            ### [Pattern Name]
+
+            Instructions go here as plain text (where to add, what to replace).
+
+            ```markdown
+            Only the copy-paste content inside the codeblock.
+            ```
+
+            Repeat for each pattern. Instructions outside, content inside codeblock.
           claude_args: |
             --max-turns 25
             --allowedTools Read,Write,Edit,Glob,Bash
@@ -107,7 +117,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          REPORT="reports/skill-review.md"
+          REPORT=".syner/reports/skill-review.md"
 
           # Ensure labels exist
           gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
@@ -115,7 +125,7 @@ jobs:
 
           # Extract NEEDS_DECISION patterns and create one issue per pattern
           # Pattern lines look like: #### [B4] Input Handling — 2 skills affected
-          awk '/^### NEEDS_DECISION/,/^### Summary/' "$REPORT" | grep -E "^#### \[" | while read -r LINE; do
+          awk '/^## NEEDS_DECISION/,/^## Summary/' "$REPORT" | grep -E "^#### \[" | while read -r LINE; do
             CODE=$(echo "$LINE" | grep -oE '\[[A-Z][0-9]+\]')
             TITLE=$(echo "$LINE" | sed 's/^#### //')
 
