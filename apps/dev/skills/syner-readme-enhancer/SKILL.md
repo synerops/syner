@@ -9,7 +9,7 @@ tools:
   - AskUserQuestion
 metadata:
   author: syner
-  version: "0.9.0"
+  version: "0.1.0"
 ---
 
 # Syner README Enhancer
