@@ -40,7 +40,7 @@ jobs:
 
             The report groups findings by pattern - FIXEABLE vs NEEDS_DECISION.
           claude_args: |
-            --max-turns 15
+            --max-turns 50
             --allowedTools Read,Write,Glob
 
       - name: Check for findings
