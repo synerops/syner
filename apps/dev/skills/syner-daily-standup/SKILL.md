@@ -11,6 +11,10 @@ tools: [Read, Write, Glob]
 
 Generate a standup report from pre-gathered GitHub data.
 
+## Step 0: Anchor to project root
+
+Find the project root (directory containing `apps/` or `package.json`) before accessing any paths. All subsequent paths are relative to this root.
+
 ## Step 1: Read the data
 
 ```
