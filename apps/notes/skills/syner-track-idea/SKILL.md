@@ -5,7 +5,7 @@ context: fork
 tools: [Bash, Glob, Grep, Read]
 metadata:
   author: syner
-  version: "0.2.1"
+  version: "0.2.2"
 ---
 
 # Syner-Track-Idea Skill
@@ -28,7 +28,8 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 ### Proactive Mode (`/syner-track-idea` without arguments)
 
 1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-2. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
+2. For each vault folder, read `index.md` first if it exists to understand folder context
+3. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
 4. Identify candidates using these criteria (in order of priority):
    - **High activity**: Files with >5 commits across different months
    - **Dormant but significant**: Files with >3 commits that haven't been touched in >30 days
@@ -43,7 +44,8 @@ Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit histor
 ### Manual Mode (`/syner-track-idea [concept]`)
 
 1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-2. Use `Grep` tool to search all notes for mentions of the concept
+2. For each vault folder, read `index.md` first if it exists to understand folder context
+3. Use `Grep` tool to search all notes for mentions of the concept
 4. For each file with matches, use `Bash` tool with `git log --oneline --follow -- [file]`
 5. Order findings chronologically using git commit dates
 6. For each mention, capture:
