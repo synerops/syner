@@ -40,6 +40,19 @@ The agent file defines behavior for when the agent runs in its own context, not 
 
 ## Process
 
+### 0. Find Project Root
+
+Before any file operations, locate the project root:
+
+```bash
+# Find directory containing agents/ or package.json
+git rev-parse --show-toplevel 2>/dev/null || \
+  node -e "let d=process.cwd();while(d!=='/'){if(require('fs').existsSync(d+'/agents')||require('fs').existsSync(d+'/package.json')){console.log(d);process.exit(0)}d=require('path').dirname(d)}" 2>/dev/null || \
+  pwd
+```
+
+All subsequent file paths (`agents/*.md`, `agents/{name}.md`) must be absolute paths resolved from this root.
+
 ### 1. Gather Context (Silent + Parallel)
 
 While user talks:
