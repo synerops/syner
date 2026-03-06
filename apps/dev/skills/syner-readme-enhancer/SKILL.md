@@ -71,7 +71,7 @@ Glob: apps/$APP/skills/*/SKILL.md
 Read: apps/$APP/README.md (if exists)
 ```
 
-If existing README is complex (>50 lines), read `references/separation.md` for guidance.
+If existing README is complex (>50 lines), read `apps/dev/skills/syner-readme-enhancer/references/separation.md` for guidance.
 
 ### Context Hierarchy (internal, don't expose)
 
@@ -279,4 +279,4 @@ Ask for approval, write if confirmed.
 ## References
 
 - `references/examples.md` - Before/after examples
-- `references/separation.md` - What content stays vs moves
+- `apps/dev/skills/syner-readme-enhancer/references/separation.md` - What content stays vs moves
