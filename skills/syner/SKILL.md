@@ -218,4 +218,4 @@ When writing audits, include failure details if applicable.
 - [skills-architecture.md](skills-architecture.md) - **Skill architecture** (symlinks, directories, where skills live)
 - [plan.md](plan.md) - Planning mode for breaking down complex work
 - [ai-apps-checklist.md](ai-apps-checklist.md) - When building AI apps
-- [PHILOSOPHY.md](../../PHILOSOPHY.md) - Notes are personal, suggest don't enforce
+- PHILOSOPHY.md - Notes are personal, suggest don't enforce
