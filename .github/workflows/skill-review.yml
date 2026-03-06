@@ -1,15 +1,21 @@
 name: Skill Review
 
+# TODO: Implement skill cache when:
+# - skills > 100, or
+# - execution > 15 min
+# See: .syner/analysis/skill-review-refactor.md
+
 on:
-  schedule:
-    - cron: '0 0,8,16 * * *'  # Every 8 hours: 12am, 8am, 4pm UTC
+  # Schedule disabled during refactor - will be 1x/day when re-enabled
+  # schedule:
+  #   - cron: '0 14 * * *'  # 1x/day, 9am EST
   workflow_dispatch:
 
 jobs:
   review:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       issues: write
       pull-requests: write
       id-token: write
@@ -35,6 +41,8 @@ jobs:
           prompt: |
             Run /syner-skill-reviewer (no argument = batch mode).
             Write the report to reports/skill-review.md
+
+            The report groups findings by pattern: FIXEABLE vs NEEDS_DECISION.
           claude_args: |
             --max-turns 15
             --allowedTools Read,Write,Glob
@@ -44,118 +52,103 @@ jobs:
         run: |
           REPORT="reports/skill-review.md"
           if [ ! -f "$REPORT" ]; then
-            echo "has_findings=false" >> $GITHUB_OUTPUT
+            echo "has_fixeable=false" >> $GITHUB_OUTPUT
+            echo "has_needs_decision=false" >> $GITHUB_OUTPUT
             exit 0
           fi
-          if grep -q "### @claude" "$REPORT"; then
-            echo "has_findings=true" >> $GITHUB_OUTPUT
+
+          if grep -q "### FIXEABLE" "$REPORT"; then
+            echo "has_fixeable=true" >> $GITHUB_OUTPUT
           else
-            echo "has_findings=false" >> $GITHUB_OUTPUT
+            echo "has_fixeable=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Generate plan from findings
-        if: steps.check.outputs.has_findings == 'true'
+          if grep -q "### NEEDS_DECISION" "$REPORT"; then
+            echo "has_needs_decision=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_needs_decision=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Apply fixes and create PR
+        if: steps.check.outputs.has_fixeable == 'true'
+        id: fix
         uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
-            Read reports/skill-review.md and transform the @claude findings into a plan.
-            Write JSON to .syner/plan.json with format:
-            {"status":"planned","items":[{"id":"X","title":"...","target":["path"],"context":"...","action":"...","verify":"...","priority":1}]}
+            Read reports/skill-review.md and apply all fixes from the FIXEABLE section.
+
+            For each pattern in FIXEABLE:
+            1. Apply the described fix to ALL affected skills listed
+            2. Stage the changes with git add
+
+            After all fixes applied:
+            1. Create branch: skill-review/fixes-$(date +%Y%m%d)
+            2. Commit: "fix(skills): apply skill review fixes"
+            3. Push and create PR:
+               - Title: "fix(skills): [CODES] - N skills fixed"
+               - Body: Summary of patterns and affected skills
+               - Label: skill-review
+
+            After PR is created, add a comment with reproducible prompts:
+
+            ## Reproducible Prompts
+
+            For each pattern, include the exact prompt that would reproduce the fix.
+            This allows reviewing the logic and re-running manually if needed.
           claude_args: |
-            --agent syner-planner
-            --max-turns 10
-            --allowedTools Read,Write
+            --max-turns 25
+            --allowedTools Read,Write,Edit,Glob,Bash
 
-      - name: Create issues from plan
-        if: steps.check.outputs.has_findings == 'true'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          PLAN_FILE=".syner/plan.json"
-
-          if [ ! -f "$PLAN_FILE" ]; then
-            echo "No plan file found, skipping issue creation"
-            exit 0
-          fi
-
-          PLAN=$(cat "$PLAN_FILE")
-          STATUS=$(echo "$PLAN" | jq -r '.status')
-
-          if [ "$STATUS" != "planned" ]; then
-            echo "Plan status: $STATUS (not 'planned'), skipping"
-            exit 0
-          fi
-
-          # Ensure labels exist
-          gh label create "planned" --description "Planned for execution" --color "c2e0c6" 2>/dev/null || true
-          gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
-
-          # Create an issue for each plan item
-          ITEMS=$(echo "$PLAN" | jq -c '.items[]')
-
-          while IFS= read -r ITEM; do
-            ID=$(echo "$ITEM" | jq -r '.id')
-            TITLE=$(echo "$ITEM" | jq -r '.title')
-            TARGET=$(echo "$ITEM" | jq -r '.target | join(", ")')
-            CONTEXT=$(echo "$ITEM" | jq -r '.context')
-            ACTION=$(echo "$ITEM" | jq -r '.action')
-            VERIFY=$(echo "$ITEM" | jq -r '.verify')
-
-            # Check if issue already exists
-            EXISTING=$(gh issue list --state open --label planned --search "[$ID] in:title" --json number --jq '.[0].number')
-
-            if [ -n "$EXISTING" ]; then
-              echo "Issue for $ID already exists (#$EXISTING), skipping"
-              continue
-            fi
-
-            echo "Creating issue for $ID: $TITLE"
-
-            BODY=$(printf '## Target\n%s\n\n## Context\n%s\n\n## Action\n%s\n\n## Verify\n%s\n\n---\n_Generated from skill-review plan_' "$TARGET" "$CONTEXT" "$ACTION" "$VERIFY")
-
-            gh issue create \
-              --title "[$ID] $TITLE" \
-              --label "planned" \
-              --label "skill-review" \
-              --body "$BODY"
-          done <<< "$ITEMS"
-
-          echo "Done creating issues from plan"
-
-      - name: Update tracking issue
+      - name: Create issues for decisions
+        if: steps.check.outputs.has_needs_decision == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           REPORT="reports/skill-review.md"
-          TITLE="Skill Review: inconsistencies detected"
 
-          if [ ! -f "$REPORT" ]; then
-            echo "No report found, skipping"
-            exit 0
-          fi
+          # Ensure labels exist
+          gh label create "skill-review" --description "Skill ecosystem review" --color "0e8a16" 2>/dev/null || true
+          gh label create "needs-decision" --description "Requires human decision" --color "d93f0b" 2>/dev/null || true
 
-          HAS_FINDINGS="${{ steps.check.outputs.has_findings }}"
+          # Extract NEEDS_DECISION patterns and create one issue per pattern
+          # Pattern lines look like: #### [B4] Input Handling — 2 skills affected
+          awk '/^### NEEDS_DECISION/,/^### Summary/' "$REPORT" | grep -E "^#### \[" | while read -r LINE; do
+            CODE=$(echo "$LINE" | grep -oE '\[[A-Z][0-9]+\]')
+            TITLE=$(echo "$LINE" | sed 's/^#### //')
 
-          # Check for existing open tracking issue
-          EXISTING=$(gh issue list --state open --label skill-review --search "$TITLE in:title" --json number --jq '.[0].number')
-
-          if [ -z "$EXISTING" ]; then
-            if [ "$HAS_FINDINGS" = "true" ]; then
-              echo "Creating tracking issue..."
-              gh issue create \
-                --title "$TITLE" \
-                --label "skill-review" \
-                --body-file "$REPORT"
-            else
-              echo "No findings. All clean."
+            # Skip if issue already exists
+            EXISTING=$(gh issue list --state open --label needs-decision --search "$CODE in:title" --json number --jq '.[0].number')
+            if [ -n "$EXISTING" ]; then
+              echo "Issue for $CODE exists (#$EXISTING), skipping"
+              continue
             fi
+
+            # Extract section for this pattern
+            BODY=$(awk "/^#### \\$CODE/,/^####/" "$REPORT" | head -n -1)
+
+            echo "Creating issue: $TITLE"
+            gh issue create \
+              --title "$TITLE" \
+              --label "skill-review" \
+              --label "needs-decision" \
+              --assignee "rbadillap" \
+              --body "$BODY"
+          done
+
+      - name: Update status
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          HAS_FIXEABLE="${{ steps.check.outputs.has_fixeable }}"
+          HAS_NEEDS_DECISION="${{ steps.check.outputs.has_needs_decision }}"
+
+          if [ "$HAS_FIXEABLE" = "false" ] && [ "$HAS_NEEDS_DECISION" = "false" ]; then
+            echo "✅ All skills clean - no issues found"
           else
-            echo "Found existing tracking issue #$EXISTING"
-            gh issue edit "$EXISTING" --body-file "$REPORT"
-
-            if [ "$HAS_FINDINGS" = "false" ]; then
-              echo "No more findings, closing tracking issue..."
-              gh issue close "$EXISTING" --comment "All inconsistencies resolved. Closing."
-            fi
+            echo "📋 Review complete:"
+            [ "$HAS_FIXEABLE" = "true" ] && echo "  - PR created for fixeable patterns"
+            [ "$HAS_NEEDS_DECISION" = "true" ] && echo "  - Issues created for decisions needed"
           fi

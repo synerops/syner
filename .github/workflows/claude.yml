@@ -19,7 +19,7 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && github.event.action == 'assigned') ||
-      (github.event_name == 'issues' && github.event.action == 'labeled' && (github.event.label.name == 'claude' || github.event.label.name == 'needs-planning'))
+      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'claude')
 
     permissions:
       contents: write
@@ -60,17 +60,9 @@ jobs:
           EVENT="${{ github.event_name }}"
           ACTION="${{ github.event.action }}"
 
-          if [ "$EVENT" == "issues" ] && [ "$ACTION" == "labeled" ]; then
-            if [ "$LABEL" == "needs-planning" ]; then
-              echo "mode=planning" >> $GITHUB_OUTPUT
-              echo "prompt=Read .github/prompts/planning.md and follow those instructions." >> $GITHUB_OUTPUT
-            elif [ "$LABEL" == "claude" ]; then
-              echo "mode=execution" >> $GITHUB_OUTPUT
-              echo "prompt=Read .github/prompts/execute-issue.md and follow those instructions." >> $GITHUB_OUTPUT
-            else
-              echo "mode=interactive" >> $GITHUB_OUTPUT
-              echo "prompt=Respond to the labeled issue." >> $GITHUB_OUTPUT
-            fi
+          if [ "$EVENT" == "issues" ] && [ "$ACTION" == "labeled" ] && [ "$LABEL" == "claude" ]; then
+            echo "mode=execution" >> $GITHUB_OUTPUT
+            echo "prompt=Read the issue and implement what it describes. Create a branch, make the changes, and create a PR." >> $GITHUB_OUTPUT
           else
             echo "mode=interactive" >> $GITHUB_OUTPUT
             echo "prompt=Respond to the user request." >> $GITHUB_OUTPUT
@@ -82,7 +74,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           trigger_phrase: "@claude"
           assignee_trigger: "claude"
-          label_trigger: "claude,needs-planning"
+          label_trigger: "claude"
           allowed_bots: "synerbot[bot]"
           prompt: ${{ steps.mode.outputs.prompt }}
           track_progress: true
@@ -163,7 +155,4 @@ jobs:
           # Add ready for review label if job succeeded
           if [ "${{ job.status }}" == "success" ]; then
             gh issue edit "$ISSUE_NUMBER" --add-label "ready for review" 2>/dev/null || true
-          else
-            # Re-add planned label if failed (can retry)
-            gh issue edit "$ISSUE_NUMBER" --add-label planned 2>/dev/null || true
           fi

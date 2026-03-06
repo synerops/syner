@@ -4,7 +4,7 @@ description: Review skills for quality, safety, and convention compliance. Use w
 tools: [Glob, Read, AskUserQuestion]
 metadata:
   author: syner
-  version: "0.0.5"
+  version: "0.1.0"
 ---
 
 # Skill Reviewer
@@ -210,31 +210,58 @@ If the skill is clean, just say so: "Reviewed [name] at [depth] depth. No issues
 
 ### Batch Report Format
 
+Group findings by pattern, not by skill. This enables automated fixes per pattern.
+
 ```
 ## Ecosystem Review
 
-### Consistency Issues
-- **[D1]**: 2 skills use `skill.md` instead of `SKILL.md`
-  - `vercel-setup`, `syner-daily-standup`
-- **[D3]**: 3 skills use inflated versions (>= 1.0.0)
-  - `syner-skill-reviewer`, `vercel-setup`, `create-syner-app`
+### FIXEABLE
 
-### Per-Skill Issues
-| Skill | Critical | Warnings | Suggestions |
-|-------|----------|----------|-------------|
-| syner | 0 | 1 | 2 |
-| syner-find-ideas | 0 | 0 | 1 |
-| ... | ... | ... | ... |
+These patterns have clear, mechanical fixes that can be applied automatically.
+
+#### [B2] Path Resolution — 12 skills affected
+**Fix:** Add "Step 0: Anchor to project root" before the first step.
+
+Skills:
+- `syner-daily-standup`
+- `create-syner-agent`
+- `syner-researcher`
+- ...
+
+#### [D3] Version Format — 3 skills affected
+**Fix:** Change version to `"0.x.x"` format.
+
+Skills:
+- `syner-skill-reviewer` (1.0.0 → 0.0.5)
+- `vercel-setup` (2.0.0 → 0.2.0)
+- `create-syner-app` (1.0.0 → 0.1.0)
+
+### NEEDS_DECISION
+
+These patterns require human judgment to resolve.
+
+#### [B4] Input Handling — 2 skills affected
+**Options:**
+A) Use `AskUserQuestion` when no input provided
+B) Fail with clear error message
+C) Use sensible default and proceed
+
+Skills:
+- `syner-grow-note`
+- `syner-track-idea`
 
 ### Summary
 - **Total skills**: 17
-- **With issues**: 8
-- **Clean**: 9
+- **Patterns found**: 4
+- **Fixeable**: 3 patterns (15 skills)
+- **Needs decision**: 1 pattern (2 skills)
+- **Clean**: 9 skills
 
 ### @claude
-→ Rename `skill.md` to `SKILL.md` in `vercel-setup` and `syner-daily-standup`.
+→ [B2]: Add path anchor to 12 skills
+→ [D3]: Normalize versions to 0.x.x in 3 skills
 ```
 
-**Note:** The `### @claude` section is optional — only include it when there are actionable issues. Omit entirely if all skills are clean.
+**Note:** The `### @claude` section lists only FIXEABLE patterns. NEEDS_DECISION patterns become issues assigned to the user, not automated fixes.
 
 End with a reminder: this reviewer reports and suggests. The user decides what matters and what to change.
