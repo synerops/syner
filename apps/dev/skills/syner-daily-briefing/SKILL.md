@@ -3,7 +3,7 @@ name: syner-daily-briefing
 description: Generate daily briefing from pre-gathered GitHub data. Your single dashboard showing PRs ready for review, issues needing decisions, and completed work. Use when asked for "briefing", "daily status", or on scheduled CI runs.
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.0.1"
 tools: [Read, Write, Glob]
 ---
 
