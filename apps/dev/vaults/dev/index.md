@@ -7,7 +7,7 @@ path: apps/dev
 
 # syner.dev
 
-> the agent context for the coding agents
+> 
 
 ## skills
 
