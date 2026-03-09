@@ -59,6 +59,7 @@ jobs:
         if: success()
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          BRIEFING_ASSIGNEE: ${{ vars.BRIEFING_ASSIGNEE }}
         run: |
           TODAY=$(date +%Y-%m-%d)
           REPORT=".syner/reports/briefing-${TODAY}.md"
@@ -72,6 +73,12 @@ jobs:
           # Ensure label exists
           gh label create "daily-briefing" --description "Daily briefing report" --color "0e8a16" 2>/dev/null || true
 
+          # Build assignee flag if configured
+          ASSIGNEE_FLAG=""
+          if [ -n "$BRIEFING_ASSIGNEE" ]; then
+            ASSIGNEE_FLAG="--assignee $BRIEFING_ASSIGNEE"
+          fi
+
           # Check if issue already exists
           EXISTING=$(gh issue list --label daily-briefing --search "$TITLE in:title" --json number --jq '.[0].number')
 
@@ -80,5 +87,5 @@ jobs:
             gh issue edit "$EXISTING" --body-file "$REPORT"
           else
             echo "Creating briefing issue..."
-            gh issue create --title "$TITLE" --body-file "$REPORT" --label "daily-briefing"
+            gh issue create --title "$TITLE" --body-file "$REPORT" --label "daily-briefing" $ASSIGNEE_FLAG
           fi
