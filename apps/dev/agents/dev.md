@@ -20,6 +20,7 @@ skills:
   - test-syner-agent
   - syner-readme-enhancer
   - syner-boundaries
+channel: C0AKAPUAGJF
 ---
 
 # Dev

@@ -25,6 +25,9 @@ apps/notes/vaults/*
 # Dev vaults (local development notes)
 apps/dev/vaults/
 
+# Local-only skills (not shared)
+skills/dev-find-ideas/
+
 # Syner local data
 .syner/
 .vercel

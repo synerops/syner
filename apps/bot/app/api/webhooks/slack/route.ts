@@ -1,7 +1,8 @@
 import { after, NextResponse } from 'next/server'
 import { createHandler, createSlackClient } from '@syner/slack'
 import { getAgentsByChannel, getModel } from '@/lib/agents'
-import { createToolSession, type ToolSession } from '@/lib/tools'
+import { createToolSession, createSkillTool, type ToolSession } from '@/lib/tools'
+import { loadSkills, buildInlineSkillContext } from '@/lib/skills'
 import { ToolLoopAgent, stepCountIs } from 'ai'
 import { env } from '@/lib/env'
 
@@ -77,11 +78,38 @@ export async function POST(request: Request): Promise<Response> {
             text: '_Thinking..._',
           })
 
+          // Load skills if agent has them configured
+          let skillContext = ''
+          let agentTools = session?.tools || {}
+
+          if (agent.skills && agent.skills.length > 0 && session) {
+            console.log(`[Agent:${agent.name}] Loading skills: ${agent.skills.join(', ')}`)
+
+            const skills = await loadSkills(workdir, agent.skills)
+            console.log(`[Agent:${agent.name}] Loaded ${skills.size} skills`)
+
+            // Inline mode: Add skill descriptions to system prompt
+            skillContext = buildInlineSkillContext(skills)
+
+            // Fork mode: Add Skill tool so agent can invoke skills as subagents
+            const skillTool = createSkillTool({
+              repoRoot: workdir,
+              availableSkills: agent.skills,
+              session,
+              model: agent.model,
+            })
+
+            agentTools = {
+              ...agentTools,
+              skill: skillTool,
+            }
+          }
+
           const slackAgent = new ToolLoopAgent({
             id: agent.name,
             model: getModel(agent),
-            instructions: `${agent.instructions}\n\n## Working Directory\n\nThe repository is available at: ${workdir}`,
-            tools: session?.tools,
+            instructions: `${agent.instructions}\n\n${skillContext}\n\n## Working Directory\n\nThe repository is available at: ${workdir}`,
+            tools: agentTools,
             stopWhen: stepCountIs(10),
           })
 
