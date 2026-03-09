@@ -1,9 +1,14 @@
+/**
+ * Slack Webhook Handler
+ *
+ * Receives Slack events and responds using the unified session system.
+ * Maps Slack channels to agents via agent config frontmatter.
+ */
+
 import { after, NextResponse } from 'next/server'
 import { createHandler, createSlackClient } from '@syner/slack'
-import { getAgentsByChannel, getModel } from '@/lib/agents'
-import { createToolSession, createSkillTool, type ToolSession } from '@/lib/tools'
-import { loadSkills, buildInlineSkillContext } from '@/lib/skills'
-import { ToolLoopAgent, stepCountIs } from 'ai'
+import { getAgentsByChannel } from '@/lib/agents'
+import { createSession, type Session } from '@/lib/session'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60
@@ -34,10 +39,10 @@ export async function POST(request: Request): Promise<Response> {
       if (!event.text?.trim()) return
 
       const agents = await getAgentsByChannel()
-      const agent = agents.get(event.channel)
+      const agentConfig = agents.get(event.channel)
 
       // Ignore channels without an agent configured
-      if (!agent) return
+      if (!agentConfig) return
 
       const client = createSlackClient({ botToken })
 
@@ -49,145 +54,68 @@ export async function POST(request: Request): Promise<Response> {
       })
       const messageTs = initialMsg.ts!
 
+      // Helper to update Slack message
+      const updateMessage = async (text: string) => {
+        await client.chat.update({
+          channel: event.channel,
+          ts: messageTs,
+          text,
+        })
+      }
+
       // Process in self-contained async block with its own error handling
       const processMessage = async () => {
-        let session: ToolSession | undefined
+        let session: Session | undefined
 
         try {
-          // Create tool session with shared sandbox (if agent has tools)
-          let workdir = '.'
+          console.log(`[Agent:${agentConfig.name}] Creating session`)
 
-          if (agent.tools && agent.tools.length > 0) {
-            console.log(`[Agent:${agent.name}] Creating sandbox with tools: ${agent.tools.join(', ')}`)
-
-            await client.chat.update({
-              channel: event.channel,
-              ts: messageTs,
-              text: '_Cloning repository..._',
-            })
-
-            session = await createToolSession(agent.tools)
-            workdir = session.workdir
-
-            console.log(`[Agent:${agent.name}] Sandbox ready, workdir: ${workdir}`)
-          }
-
-          await client.chat.update({
-            channel: event.channel,
-            ts: messageTs,
-            text: '_Thinking..._',
-          })
-
-          // Load skills if agent has them configured
-          let skillContext = ''
-          let agentTools = session?.tools || {}
-
-          if (agent.skills && agent.skills.length > 0 && session) {
-            console.log(`[Agent:${agent.name}] Loading skills: ${agent.skills.join(', ')}`)
-
-            const skills = await loadSkills(workdir, agent.skills)
-            console.log(`[Agent:${agent.name}] Loaded ${skills.size} skills`)
-
-            // Inline mode: Add skill descriptions to system prompt
-            skillContext = buildInlineSkillContext(skills)
-
-            // Fork mode: Add Skill tool so agent can invoke skills as subagents
-            const skillTool = createSkillTool({
-              repoRoot: workdir,
-              availableSkills: agent.skills,
-              session,
-              model: agent.model,
-            })
-
-            agentTools = {
-              ...agentTools,
-              skill: skillTool,
-            }
-          }
-
-          const slackAgent = new ToolLoopAgent({
-            id: agent.name,
-            model: getModel(agent),
-            instructions: `${agent.instructions}\n\n${skillContext}\n\n## Working Directory\n\nThe repository is available at: ${workdir}`,
-            tools: agentTools,
-            stopWhen: stepCountIs(10),
-          })
-
-          console.log(`[Agent:${agent.name}] Starting generation for prompt: "${event.text?.slice(0, 100)}..."`)
-
-          const result = await slackAgent.generate({
-            prompt: event.text,
-
-            // Tool call started
-            experimental_onToolCallStart({ toolCall }) {
-              console.log(`[Agent:${agent.name}] Tool START: ${toolCall.toolName}`)
-              console.log(`[Agent:${agent.name}]   Input:`, JSON.stringify(toolCall.input, null, 2))
+          session = await createSession({
+            agent: agentConfig.name,
+            onStatus: updateMessage,
+            onToolStart: (toolName) => {
+              console.log(`[Agent:${agentConfig.name}] Tool START: ${toolName}`)
             },
-
-            // Tool call finished
-            experimental_onToolCallFinish({ toolCall, durationMs, success, output, error }) {
-              console.log(`[Agent:${agent.name}] Tool FINISH: ${toolCall.toolName} (${durationMs}ms)`)
-              if (success) {
-                const outputStr = typeof output === 'string' ? output : JSON.stringify(output)
-                console.log(`[Agent:${agent.name}]   Output (${outputStr.length} chars):`, outputStr.slice(0, 500))
-              } else {
-                console.error(`[Agent:${agent.name}]   Error:`, error)
-              }
+            onToolFinish: (toolName, durationMs, success) => {
+              console.log(`[Agent:${agentConfig.name}] Tool FINISH: ${toolName} (${durationMs}ms, ${success ? 'ok' : 'error'})`)
             },
-
-            // Step finished
-            onStepFinish({ stepNumber, finishReason, toolCalls, usage }) {
-              console.log(`[Agent:${agent.name}] Step ${stepNumber} finished:`, {
-                finishReason,
-                tools: toolCalls?.map(tc => tc.toolName) || [],
-                tokens: usage ? `${usage.inputTokens}in/${usage.outputTokens}out` : 'n/a',
-              })
-            },
-
-            // Agent finished
-            onFinish({ totalUsage, steps }) {
-              console.log(`[Agent:${agent.name}] Generation complete:`, {
-                totalSteps: steps.length,
-                totalTokens: totalUsage?.totalTokens || 'n/a',
-              })
+            onStepFinish: (stepNumber, toolNames) => {
+              console.log(`[Agent:${agentConfig.name}] Step ${stepNumber} finished:`, toolNames)
             },
           })
 
-          await client.chat.update({
-            channel: event.channel,
-            ts: messageTs,
-            text: result.text || '_No response_',
-          })
-          console.log(`[Agent:${agent.name}] Message updated in Slack`)
+          console.log(`[Agent:${agentConfig.name}] Session ready, workdir: ${session.workdir}`)
+          console.log(`[Agent:${agentConfig.name}] Starting generation for prompt: "${event.text?.slice(0, 100)}..."`)
+
+          const result = await session.generate(event.text!)
+
+          await updateMessage(result.text || '_No response_')
+          console.log(`[Agent:${agentConfig.name}] Message updated in Slack`)
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-          console.error(`[Agent:${agent.name}] Error:`, errorMessage)
+          console.error(`[Agent:${agentConfig.name}] Error:`, errorMessage)
           if (error instanceof Error && error.stack) {
-            console.error(`[Agent:${agent.name}] Stack:`, error.stack)
+            console.error(`[Agent:${agentConfig.name}] Stack:`, error.stack)
           }
 
           try {
-            await client.chat.update({
-              channel: event.channel,
-              ts: messageTs,
-              text: `_Error: ${errorMessage}_`,
-            })
+            await updateMessage(`_Error: ${errorMessage}_`)
           } catch (e) {
-            console.error(`[Agent:${agent.name}] Failed to post error to Slack:`, e)
+            console.error(`[Agent:${agentConfig.name}] Failed to post error to Slack:`, e)
           }
         } finally {
-          // Always cleanup the sandbox
+          // Always cleanup the session
           if (session) {
-            console.log(`[Agent:${agent.name}] Cleaning up sandbox...`)
+            console.log(`[Agent:${agentConfig.name}] Cleaning up session...`)
             await session.cleanup()
-            console.log(`[Agent:${agent.name}] Sandbox cleaned up`)
+            console.log(`[Agent:${agentConfig.name}] Session cleaned up`)
           }
         }
       }
 
       // Execute with explicit catch to prevent unhandled rejections
       processMessage().catch(e => {
-        console.error(`[Agent:${agent.name}] Unhandled rejection:`, e)
+        console.error(`[Agent:${agentConfig.name}] Unhandled rejection:`, e)
       })
     },
   })
