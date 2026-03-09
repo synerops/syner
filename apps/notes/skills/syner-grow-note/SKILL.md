@@ -3,54 +3,81 @@ name: syner-grow-note
 description: Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.
 metadata:
   author: syner
-  version: "0.1.1"
-tools:
-  - Glob
-  - Read
-  - Write
-  - AskUserQuestion
+  version: "0.2.0"
+tools: [Glob, Read, Write, Bash]
 ---
 
 # Syner Grow Note
 
+> Part of **Notes** — the Context Engineer mutation of Syner.
+
+You graduate thoughts. Raw daily notes become structured documents. Fleeting ideas become actionable plans.
+
 ## Purpose
 
-Convert raw, daily thoughts into polished, structured documents that can be shared or acted upon.
+Convert raw, scattered thoughts into polished documents that can be shared or acted upon. The user points at something rough; you shape it into something useful.
 
-## How to Read Notes
+## Process
 
-Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
-Use `Read` tool to load it before processing notes.
+### 1. Identify the Thought
 
-## Instructions
+If no argument provided, ask:
+> "Which note or thought would you like to graduate? (title, topic, or path)"
 
-0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
-1. Identify the thought/note to graduate:
-   - If the user provided a note title or topic as an argument, use that
-   - If no argument was provided, use AskUserQuestion to ask: "Which note or thought would you like to graduate? (provide a title, topic, or path)"
-2. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-3. Use Glob to find relevant files, read `index.md` first in each folder for context
-4. Analyze the raw material:
-   - Core insight or thesis
-   - Supporting observations
-   - Related notes that add context
-   - Gaps that need filling
-5. Determine appropriate output format:
-   - **Article**: For shareable insights
-   - **Plan**: For actionable projects
-   - **Reference**: For reusable knowledge
-   - **Decision Doc**: For choices to be made
-6. Draft the graduated document with internal links to related notes where relevant
-7. Include external documentation links when referencing tools or technologies
-8. Suggest placement and next actions
+### 2. Discover and Read
 
-## Output Format
+```
+apps/*/vaults/**/*.md
+```
 
-- **Source Material**: What's being graduated
-- **Graduated Format**: Type of document created
-- **Draft**: The structured document
-- **Gaps Identified**: What's missing for completion
-- **Suggested Next Steps**: How to finalize and use it
+Find the source material. Read `index.md` first for context.
+
+### 3. Analyze Raw Material
+
+Extract:
+- **Core insight or thesis** — What's the main point?
+- **Supporting observations** — What evidence or examples exist?
+- **Related notes** — What else connects?
+- **Gaps** — What's missing for completion?
+
+### 4. Determine Output Format
+
+| Format | When |
+|--------|------|
+| **Article** | Shareable insight for others |
+| **Plan** | Actionable project with steps |
+| **Reference** | Reusable knowledge for future self |
+| **Decision Doc** | Choice to be made with options |
+
+### 5. Draft the Document
+
+Structure based on format. Include:
+- Internal links to related notes
+- External links for tools/technologies referenced
+- Clear sections appropriate to format
+
+### 6. Suggest Placement
+
+Where should this live? Propose a path.
+
+## Output
+
+```markdown
+## Graduated: [title]
+
+**Source:** [original note/thought]
+**Format:** [article/plan/reference/decision]
+
+---
+
+[The drafted document]
+
+---
+
+**Gaps:** [what's missing for completion]
+**Suggested Path:** [where to save it]
+**Next Steps:** [how to finalize]
+```
 
 ## Usage
 
@@ -58,4 +85,19 @@ Use `Read` tool to load it before processing notes.
 /syner-grow-note [note title or topic]
 ```
 
-Example: `/syner-grow-note my thoughts on async communication`
+Examples:
+- `/syner-grow-note my thoughts on async communication`
+- `/syner-grow-note that idea about developer tools`
+
+## Boundaries
+
+This skill operates within `/syner-boundaries`. Key constraints:
+
+| Boundary | Application |
+|----------|-------------|
+| Suggest, Don't Enforce | Propose format and placement, don't auto-save |
+| Concrete Output | Deliver a draft, not "here's what it might contain" |
+| Notes Are Context | Read source as context, preserve user's voice |
+| Self-Verification | Verify source material exists before drafting |
+
+**Self-check:** The graduated document should sound like the user, not like a template. If you're imposing structure they wouldn't use, simplify.

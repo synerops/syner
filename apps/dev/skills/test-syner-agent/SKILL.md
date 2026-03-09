@@ -1,15 +1,20 @@
 ---
 name: test-syner-agent
 description: Test syner agents using output-first methodology. Use when testing an agent, validating behavior, or debugging agent output.
+agent: dev
 tools: [Task, Edit, Read]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Test Syner Agent
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Test agents by comparing actual output against expected output.
+
+This is a testing skill. Use it during agent development to verify behavior matches instructions.
 
 ## Core Principle: Output-First
 
@@ -183,3 +188,10 @@ agents/*.md
 # Symlinks (don't edit these)
 .claude/skills/
 ```
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Self-Verification** — Compare actual vs expected output
+- **Concrete Output** — Fix agent files, not just report findings
+- **Observable Work** — Document what was tested and fixed

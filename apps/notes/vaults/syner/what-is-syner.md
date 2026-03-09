@@ -10,12 +10,6 @@ The user create notes, is free to use their own convenient approach to organize 
 
 Syner read these notes and understand them organically, not parsing fields unless user want the opposite.
 
-## worker
-
-Syner has their own worker to perform actions. It is called `syner-worker` and it's a [custom sub agent](https://code.claude.com/docs/en/sub-agents) for Claude.
-
-The worker also has its internal architecture based on [predefined workflows](https://www.anthropic.com/engineering/building-effective-agents)
-
 ## ecosystem
 
 everything starts with a markdown file

@@ -1,15 +1,18 @@
 ---
 name: create-syner-agent
 description: Create syner agents. Use when creating new agents, or when user says "crear agente", "new agent", "subagent".
+agent: dev
 tools: [Read, Write, Bash, Task]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Create Syner Agent
 
-Create agents for the syner ecosystem.
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
+Create agents for the syner ecosystem. Agents are invoked via Task tool and run in their own context.
 
 ## Core Principles
 
@@ -204,3 +207,10 @@ In agent instructions, be explicit:
 - [ ] Input/Output clearly defined
 - [ ] Model matches complexity
 - [ ] Parallel reads if multiple files needed
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Concrete Output** — Create actual agent file, not proposal
+- **Self-Verification** — Test agent works via Task tool
+- **Observable Work** — Agent instructions are explicit and readable

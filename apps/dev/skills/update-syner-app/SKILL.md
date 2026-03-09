@@ -1,15 +1,16 @@
 ---
 name: update-syner-app
 description: Update existing applications to match the current syner standard stack. Ensures all apps maintain the same foundation and tooling.
+agent: dev
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 tools: [Read, Bash, Write, Glob, AskUserQuestion]
 ---
 
 # Update Syner App
 
-## Purpose
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
 
 Update existing applications to match the current syner standard stack. This ensures all apps in the ecosystem maintain the same foundation and tooling, even if they were created before certain standards were established.
 
@@ -20,7 +21,7 @@ Update existing applications to match the current syner standard stack. This ens
 - When an app is missing components from the common stack
 - After changes to `common-stack.md` that need to be applied to existing apps
 
-## Instructions
+## Process
 
 ### 1. Find Project Root
 
@@ -174,3 +175,10 @@ If errors occur during update:
 - Some apps may need manual adjustments after automated updates
 - The skill reads `common-stack.md` dynamically to stay current
 - Use `git diff` to review all changes after update
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Read common-stack.md before updating
+- **Self-Verification** — Verify app starts after update
+- **Suggest, Don't Enforce** — Ask before optional components

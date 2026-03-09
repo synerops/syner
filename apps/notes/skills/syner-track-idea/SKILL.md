@@ -5,92 +5,130 @@ context: fork
 tools: [Bash, Glob, Grep, Read]
 metadata:
   author: syner
-  version: "0.2.2"
+  version: "0.3.0"
 ---
 
-# Syner-Track-Idea Skill
+# Syner Track Idea
+
+> Part of **Notes** — the Context Engineer mutation of Syner.
+
+You track how ideas evolve. Some thoughts get revisited, refined, contradicted. You surface which ones have grown — and how.
 
 ## Purpose
 
 Two modes:
-1. **Proactive Mode** (no argument): Detect ideas that have evolved significantly and surface them for review
-2. **Manual Mode** (with argument): Trace the evolution of a specific idea through time
 
-## How to Read Notes
+| Mode | Trigger | What it does |
+|------|---------|--------------|
+| **Proactive** | No argument | Detect ideas that evolved significantly, surface for review |
+| **Manual** | With argument | Trace a specific concept through time |
 
-Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
-Use `Read` tool to load it before processing notes.
+## Proactive Mode
 
-Use `Bash` tool with `git log --oneline --follow -- [file]` to get commit history per file.
+### When
 
-## Instructions
+Use when:
+- Starting a session and want to see what's matured
+- Periodic review of evolving thinking
+- Looking for what deserves attention
 
-### Step 0: Anchor to Project Root
+### Process
 
-Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+1. **Discover vaults:** `apps/*/vaults/**/*.md`
+2. **Read context:** `index.md` first per folder
+3. **Check git history:** `git log --oneline --follow -- [file]`
+4. **Identify candidates:**
 
-### Proactive Mode (`/syner-track-idea` without arguments)
+| Criterion | Why it matters |
+|-----------|----------------|
+| >5 commits across different months | Sustained attention |
+| >3 commits, dormant >30 days | Matured, ready for review |
+| >3 internal links | Connected idea |
 
-1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-2. For each vault folder, read `index.md` first if it exists to understand folder context
-3. For each file, use `Bash` tool with `git log --oneline --follow -- [file]` to get commit count and dates
-4. Identify candidates using these criteria (in order of priority):
-   - **High activity**: Files with >5 commits across different months
-   - **Dormant but significant**: Files with >3 commits that haven't been touched in >30 days
-   - **High link density**: Files with >3 internal links (indicates connected ideas)
-5. Rank candidates by how many criteria they meet
-6. Present top 1-3 ideas with:
-   - Note name/path
-   - One-line "why now" explanation
-   - Commit activity summary
-7. Ask user if they want a full trace of any idea
+5. **Rank by criteria met**
+6. **Present top 1-3**
 
-### Manual Mode (`/syner-track-idea [concept]`)
+### Output
 
-1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-2. For each vault folder, read `index.md` first if it exists to understand folder context
-3. Use `Grep` tool to search all notes for mentions of the concept
-4. For each file with matches, use `Bash` tool with `git log --oneline --follow -- [file]`
-5. Order findings chronologically using git commit dates
-6. For each mention, capture:
-   - Date (from git history)
-   - Context in which it appeared
-   - The specific take or perspective at that time
-   - Any connections made to other ideas (internal links)
-7. Identify key inflection points where thinking shifted
-8. Map the evolution narrative
+```markdown
+## Ideas Worth Revisiting
 
-## Output Format
+1. **[note-name]** — [X commits across Y months, last edit Z days ago]
+   → [One-line insight: why this evolved]
 
-### Proactive Mode Output
-
-ALWAYS use this structure:
-
-```
-## Ideas con evolución significativa
-
-1. **[note-name]** - [X commits across Y months, last edit Z days ago]
-   → [One-line insight: why this idea evolved]
-
-2. **[note-name]** - [activity summary]
+2. **[note-name]** — [activity summary]
    → [One-line insight]
 
-¿Quieres que trace alguna? Responde con el nombre.
+Want me to trace any of these? Reply with the name.
 ```
 
-### Manual Mode Output
+## Manual Mode
 
-ALWAYS use this structure:
+### When
 
-- **Origin**: First appearance and initial framing
-- **Evolution Points**: Key moments where the idea changed
-- **Influences**: What caused shifts in thinking
-- **Current State**: Latest understanding
-- **Trajectory**: Where the idea seems to be heading
+Use when:
+- User wants to see how a specific idea changed
+- Tracing the evolution of a concept
+- Understanding shifts in thinking
+
+### Process
+
+1. **Discover vaults:** `apps/*/vaults/**/*.md`
+2. **Grep for concept** across all notes
+3. **Get git history** for each file with matches
+4. **Order chronologically** by commit date
+5. **For each mention, capture:**
+   - Date
+   - Context
+   - The take at that time
+   - Connections made (internal links)
+6. **Identify inflection points** where thinking shifted
+7. **Map the evolution**
+
+### Output
+
+```markdown
+## Evolution: [concept]
+
+### Origin
+[First appearance, initial framing]
+
+### Evolution Points
+
+**[Date]** — [file]
+[The take at this point]
+
+**[Date]** — [file]
+[How it shifted]
+
+...
+
+### Influences
+[What caused shifts in thinking]
+
+### Current State
+[Latest understanding]
+
+### Trajectory
+[Where the idea seems headed]
+```
 
 ## Usage
 
 ```
-/syner-track-idea                    # Proactive: detect evolved ideas
-/syner-track-idea building in public # Manual: trace specific concept
+/syner-track-idea                    # Proactive: what evolved?
+/syner-track-idea building in public # Manual: trace this concept
 ```
+
+## Boundaries
+
+This skill operates within `/syner-boundaries`. Key constraints:
+
+| Boundary | Application |
+|----------|-------------|
+| Self-Verification | Verify git history exists before claiming evolution |
+| Observable Work | Show commit counts and dates as evidence |
+| Concrete Output | Name specific evolution points, not "it seems to have changed" |
+| Graceful Failure | If no git history, say so and offer alternatives |
+
+**Self-check:** Every evolution point should cite a commit or date. If you can't verify the timeline, flag uncertainty.

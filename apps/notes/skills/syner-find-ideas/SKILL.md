@@ -3,45 +3,75 @@ name: syner-find-ideas
 description: Generate startup ideas from your vault. Synthesize your unique knowledge, experiences, and observations into actionable startup or project ideas. Use when you want to explore what you could build based on your accumulated insights.
 metadata:
   author: syner
-  version: "0.1.1"
+  version: "0.2.0"
 tools: [Glob, Read]
 ---
 
 # Syner Find Ideas
 
+> Part of **Notes** — the Context Engineer mutation of Syner.
+
+You mine vaults for what the user could build. Not generic ideas — ideas that leverage their specific knowledge, frustrations, and unfair advantages.
+
 ## Purpose
 
-Generate startup and project ideas by mining the user's notes for unique insights, frustrations, and opportunities.
+Generate startup and project ideas by reading the user's notes for:
+- Problems they've complained about
+- Inefficiencies they've observed
+- "Someone should build..." moments
+- Unique knowledge combinations
+- Underserved communities they belong to
+- Workflows they've hacked together
 
-## How to Read Notes
+## Process
 
-Find project root (directory containing `skills/syner/`), then read `{root}/skills/syner/note-conventions.md`.
-Use `Read` tool to load it before processing notes.
+### 1. Discover Vaults
 
-## Instructions
+```
+apps/*/vaults/**/*.md
+```
 
-0. **Anchor to project root**: Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
-1. Discover all vaults using pattern `apps/*/vaults/**/*.md`
-2. For each folder, read `index.md` first if it exists to understand folder context
-3. Follow external documentation links (especially llms.txt) to understand technical context
-4. Analyze all notes and extract idea seeds:
-   - Problems the user has complained about
-   - Inefficiencies they've observed
-   - "Someone should build..." moments
-   - Unique knowledge combinations
-   - Underserved communities they belong to
-   - Workflows they've hacked together
-5. Cross-reference with user's skills and interests
-6. Generate ideas that leverage their unfair advantages
+### 2. Read with Context
 
-## Output Format
+For each folder, read `index.md` first to understand folder context.
+
+### 3. Extract Idea Seeds
+
+Look for:
+- **Pain points** — What frustrates them?
+- **Expertise gaps** — What do they know that others don't?
+- **Community access** — What groups do they belong to?
+- **Workflow hacks** — What have they built for themselves?
+- **External links** — Follow llms.txt or docs for technical context
+
+### 4. Cross-Reference
+
+Match seeds against:
+- User's skills and interests
+- Available time and resources
+- Market gaps they've noted
+
+### 5. Generate Ideas
+
+For each viable idea, assess their unfair advantage.
+
+## Output
 
 For each idea:
-- **Idea**: One-line description
-- **Origin**: Which notes/insights led here
-- **Why You**: Your unfair advantage
-- **First Step**: Smallest possible validation
-- **Risk**: Main assumption to test
+
+```markdown
+### [Idea Name]
+
+**What:** One-line description
+
+**Origin:** Which notes/insights led here
+
+**Why You:** Your unfair advantage for this
+
+**First Step:** Smallest possible validation
+
+**Risk:** Main assumption to test
+```
 
 ## Usage
 
@@ -49,4 +79,19 @@ For each idea:
 /syner-find-ideas [optional: focus area or constraint]
 ```
 
-Example: `/syner-find-ideas developer-tools` or just `/syner-find-ideas`
+Examples:
+- `/syner-find-ideas` — scan everything
+- `/syner-find-ideas developer-tools` — focus on dev tools
+- `/syner-find-ideas low-effort` — ideas that need minimal time
+
+## Boundaries
+
+This skill operates within `/syner-boundaries`. Key constraints:
+
+| Boundary | Application |
+|----------|-------------|
+| Notes Are Context | Read for patterns, not structured extraction |
+| Concrete Output | Deliver actual ideas with reasoning, not "areas to explore" |
+| Proportional Loading | If focus area given, scope to relevant notes |
+
+**Self-check:** Each idea should trace back to specific notes. If you can't cite the origin, the idea is generic — discard it.

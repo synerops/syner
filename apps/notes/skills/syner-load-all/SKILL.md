@@ -3,39 +3,42 @@ name: syner-load-all
 description: Load your full life + work state. Discovers and reads all notes across all app vaults, building a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.3.0"
 tools: [Glob, Read]
 ---
 
 # Syner Load All
 
+> Part of **Notes** — the Context Engineer mutation of Syner.
+
+You load everything. Other skills load targeted context — you load the full picture when nothing less will do.
+
 ## Purpose
 
-Build a comprehensive understanding of the user's current state by analyzing all their notes across all vaults.
+Build comprehensive understanding of the user's current state by reading all notes across all vaults. Use when:
 
-## Instructions
+- Starting a new session cold
+- Task spans multiple domains
+- Need to understand the full situation before acting
+- Other agents request "full context"
 
-### Step 0: Anchor to Project Root
+## Process
 
-Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
-
-### Step 1: Discover All Vaults
-
-Use Glob to find all vaults across all apps:
+### 1. Discover Vaults
 
 ```
 apps/*/vaults/**/*.md
 ```
 
-This discovers notes in:
-- `apps/notes/vaults/` - knowledge, ideas, writings
-- `apps/bot/vaults/` - bot context and config
-- `apps/dev/vaults/` - development notes
+This finds notes in:
+- `apps/notes/vaults/` — knowledge, ideas, writings
+- `apps/bot/vaults/` — bot context
+- `apps/dev/vaults/` — development notes
 - Any other app with vaults
 
-### Step 2: Group by App
+### 2. Group by App
 
-Organize discovered notes by their app:
+Organize what you find:
 
 ```
 notes/
@@ -47,32 +50,55 @@ dev/
   vaults/dev/index.md
 ```
 
-### Step 3: Read with Context
+### 3. Read with Context
 
 For each vault:
-1. Check for and read `index.md` first - it provides context for that vault
+1. Read `index.md` first — it provides context for that vault
 2. Read remaining files
 3. Follow internal links to map relationships
 
-### Step 4: Synthesize
+### 4. Synthesize
 
-Extract and synthesize:
-- Active projects and their status
-- Current goals (short-term and long-term)
+Extract and connect:
+- Active projects and status
+- Current goals (short and long term)
 - Recurring themes and interests
 - Open questions and uncertainties
 - Key relationships and collaborators
 - Recent learnings and insights
 
-Highlight tensions or contradictions. Note what areas have recent activity vs dormant.
+Highlight tensions or contradictions. Note what's active vs dormant.
 
-## Output Format
+## Output
 
-Provide a structured summary with sections:
-- **Active Focus**: What the user is currently working on
-- **Background Projects**: Ongoing but not primary focus
-- **Key Themes**: Recurring ideas and interests
-- **Open Loops**: Unresolved questions or decisions
-- **Context Window**: Recent vs historical activity patterns
+```markdown
+## Full Context
 
-> **Philosophy reminder:** Notes are personal and free-form. Skills read for context, not for data extraction.
+### Active Focus
+[What the user is currently working on]
+
+### Background Projects
+[Ongoing but not primary]
+
+### Key Themes
+[Recurring ideas and interests]
+
+### Open Loops
+[Unresolved questions or decisions]
+
+### Context Window
+[Recent vs historical activity patterns]
+```
+
+## Boundaries
+
+This skill operates within `/syner-boundaries`. Key constraints:
+
+| Boundary | Application |
+|----------|-------------|
+| Proportional Loading | Only invoke when full context is actually needed |
+| Notes Are Context | Read for understanding, not field extraction |
+| Concrete Output | Return synthesized context, not raw dumps |
+| Observable Work | List sources used |
+
+**Self-check:** Before running, confirm that targeted or app-scoped loading wouldn't suffice. Full loads are expensive.

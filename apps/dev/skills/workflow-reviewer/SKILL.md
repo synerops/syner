@@ -1,15 +1,20 @@
 ---
 name: workflow-reviewer
 description: Review GitHub Actions workflows before running. Use when about to trigger a workflow, debugging workflow failures, or auditing workflow logic. Triggers on "review workflow", "check this workflow", "before I run this", "why did this fail".
+agent: dev
 tools: [Read, Glob, Grep, WebFetch]
 metadata:
   author: syner
-  version: "0.0.1"
+  version: "0.1.0"
 ---
 
 # Workflow Reviewer
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Catch workflow issues before they cost money or time.
+
+This is a review skill. Run it before triggering workflows or when debugging failures.
 
 ## Process
 
@@ -141,3 +146,10 @@ To test this skill:
 ```
 
 Compare findings against known issues in the workflow.
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Read entire workflow before auditing
+- **Concrete Output** — Actionable findings with specific fixes
+- **Suggest, Don't Enforce** — Report findings, user decides what to fix

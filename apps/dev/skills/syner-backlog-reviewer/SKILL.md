@@ -1,9 +1,10 @@
 ---
 name: syner-backlog-reviewer
 description: Health audit for the backlog itself. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately. Use to keep the backlog clean and actionable.
+agent: dev
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 tools:
   - Read
   - Glob
@@ -15,7 +16,11 @@ tools:
 
 # Backlog Reviewer
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Audit backlog health — find what's stale, duplicated, tangled, or hiding.
+
+This is a review skill. Differs from triager: triager checks items against code, reviewer checks the backlog structure itself.
 
 ## Phase 1: Context
 
@@ -82,3 +87,10 @@ ALWAYS provide:
 - **Health**: Overall assessment (Healthy / Needs attention / Overdue for cleanup)
 - **Actions applied**: List of changes made (merges, closures, promotions)
 - **Remaining**: Items presented to user but not yet actioned
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Read all backlog items before auditing
+- **Suggest, Don't Enforce** — Ask before applying changes
+- **Observable Work** — Detailed health report with findings

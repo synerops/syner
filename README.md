@@ -7,44 +7,52 @@
 
 # Syner
 
-Syner Agent is an orchestrator for your Personal Knowledge Management. Turns into life your notes, projects, ideas, etc. and execute your plans.
-
-Built using [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview). 
+Agent orchestrator that understands your personal context through markdown notes.
 
 ## How it works
 
-Everything starts with your notes. Write markdown in `apps/notes/content/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
+Everything starts with your notes. Write markdown in `apps/notes/vaults/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
 
-Skills read that context and act on it — find ideas, connect domains, grow a thought into a full document. You invoke them directly or let the orchestrator route for you. When a task needs multiple steps, agents take over organically, executing with verification loops until the job is done.
+Skills read that context and act on it. You invoke them directly or let the orchestrator route for you.
 
 ```
 /syner anything new worth exploring?
 ```
 
-## Skills
+## Apps
 
-| Skill | What it does |
-|-------|-------------|
-| `/syner` | Orchestrator — routes to the right skill or executes directly |
-| `/syner-load-all` | Load your full notes state |
-| `/syner-find-ideas` | Generate ideas from your knowledge |
-| `/syner-find-links` | Find bridges between two domains |
-| `/syner-grow-note` | Promote a thought into a document |
-| `/syner-track-idea` | Track how an idea evolved over time |
-| `/create-syner-app` | Scaffold new app with standard stack |
-| `/update-syner-app` | Update app to current standards |
-| `/syner-backlog-triager` | Triage backlog against codebase |
-| `/syner-backlog-reviewer` | Audit backlog health |
-| `/syner-enhance-skills` | Improve an existing skill |
-| `/syner-researcher` | Research a topic from any source |
+| App | What it is |
+|-----|------------|
+| [syner.md](apps/notes/) | Personal knowledge management — your notes as agent context |
+| [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks |
+| [syner.dev](apps/dev/) | Developer portal — skills for building and maintaining |
+| [syner.design](apps/design/) | Agentic design system — components agents understand |
 
 ## Agents
 
-- **syner-worker** — Executes tasks with workflow patterns (chaining, parallelization, routing)
-- **code-reviewer** — Reviews code for quality, security, and best practices
+<!-- auto:agents -->
+| Agent | Role |
+|-------|------|
+| `syner` | Main orchestrator |
+| `notes` | Context engineer — vault understanding |
+| `bot` | Integration bridge — external systems |
+| `dev` | Ecosystem builder — create and maintain |
+| `design` | Design lead — UI/UX and accessibility |
+| `syner-worker` | Execution with verification loops |
+| `syner-planner` | Strategic planning |
+| `syner-researcher` | Research from any source |
+| `code-reviewer` | Code quality and security |
+| `release-manager` | Release coordination |
+<!-- /auto:agents -->
+
+## Quick start
+
+```bash
+bun install
+bun run dev
+```
 
 ## References
 
 - [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
-- [note-conventions.md](skills/syner/note-conventions.md) — How skills read your notes
-- [apps/bot/README.md](apps/bot/README.md) — GitHub Actions setup and secrets
+- [CLAUDE.md](CLAUDE.md) — Instructions for Claude Code

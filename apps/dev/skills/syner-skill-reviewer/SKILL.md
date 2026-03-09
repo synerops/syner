@@ -1,15 +1,20 @@
 ---
 name: syner-skill-reviewer
 description: Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on "review this skill", "audit skill", "check skill quality", "is this skill safe", or when evaluating skills before publishing.
+agent: dev
 tools: [Glob, Read, AskUserQuestion]
 metadata:
   author: syner
-  version: "0.0.6"
+  version: "0.1.0"
 ---
 
 # Skill Reviewer
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Audit a skill and report what needs attention — the user decides what to fix.
+
+This is Dev's quality gate. Review before skills go live.
 
 ## Process
 
@@ -257,3 +262,10 @@ Skills:
 ```
 
 End with a reminder: this reviewer reports and suggests. The user decides what matters and what to change.
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Suggest, Don't Enforce** — Report findings, user decides what to fix
+- **Observable Work** — Detailed audit trail with line numbers
+- **Concrete Output** — Actionable findings, not vague concerns

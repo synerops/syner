@@ -1,9 +1,10 @@
 ---
 name: syner-backlog-triager
 description: Triage backlog items against the current codebase. Compares each item to actual code state, marks as fixed/partial/open, assigns priorities, and updates the backlog note. Use when starting a session without a task, or to check what's pending.
+agent: dev
 metadata:
   author: syner
-  version: "0.1.1"
+  version: "0.2.0"
 tools:
   - Read
   - Glob
@@ -15,7 +16,11 @@ tools:
 
 # Backlog Triager
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Triage backlog items against the current state of the codebase.
+
+This is an operations skill. Run it when starting a session to know what's pending, or after completing work to update status.
 
 ## Phase 1: Context
 
@@ -72,3 +77,10 @@ ALWAYS provide:
 - **Reviewed**: Number of items triaged
 - **Status**: X fixed, Y partial, Z open
 - **Top action**: The single highest-priority next step
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Read backlog and codebase before classifying
+- **Concrete Output** — Update backlog with status, not just report findings
+- **Suggest, Don't Enforce** — Ask before creating GitHub issues

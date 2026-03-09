@@ -1,9 +1,10 @@
 ---
 name: create-syner-app
 description: Scaffold new applications following the syner common stack. Use when creating new apps, projects, or when the user says "nueva app", "create app", "new project", or "scaffold".
+agent: dev
 metadata:
   author: syner
-  version: "0.0.2"
+  version: "0.1.0"
 tools:
   - Read
   - Bash
@@ -11,7 +12,7 @@ tools:
 
 # Create Syner App
 
-## Purpose
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
 
 Create new applications with the syner standard stack consistently. This ensures all apps in the ecosystem share the same foundation and tooling.
 
@@ -21,7 +22,7 @@ Create new applications with the syner standard stack consistently. This ensures
 - User mentions "scaffold", "nueva app", "create app", "new project"
 - Starting a project from scratch within the syner ecosystem
 
-## Instructions
+## Process
 
 ### 1. Find Project Root
 
@@ -111,3 +112,10 @@ rm -rf apps/[test-app-name]
 - shadcn is the design system for consistency across apps
 - Use `vercel` CLI for production deployments
 - Use `gh` CLI for git operations
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Read common-stack.md before creating
+- **Concrete Output** — Create actual app, not proposal
+- **Self-Verification** — Verify app was created successfully

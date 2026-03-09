@@ -1,15 +1,20 @@
 ---
 name: syner-daily-briefing
 description: Generate daily briefing from pre-gathered GitHub data. Your single dashboard showing PRs ready for review, issues needing decisions, and completed work. Use when asked for "briefing", "daily status", or on scheduled CI runs.
+agent: dev
 metadata:
   author: syner
-  version: "0.0.1"
+  version: "0.1.0"
 tools: [Read, Write, Glob]
 ---
 
 # Daily Briefing
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Generate a briefing report from pre-gathered GitHub data. This is your daily dashboard - the one place to see everything that needs attention.
+
+This is an operations skill. Run daily or on schedule to stay informed.
 
 ## Step 1: Read the data
 
@@ -56,3 +61,10 @@ If a section is empty, show "None" or omit entirely.
 If everything is clear: "✅ All clear - nothing pending"
 
 Keep it under 20 lines. This is a dashboard, not a novel.
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Concrete Output** — Write actual report file
+- **Proportional Loading** — Read only the pre-gathered data files
+- **Observable Work** — Report location is predictable

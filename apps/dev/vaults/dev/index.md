@@ -7,7 +7,7 @@ path: apps/dev
 
 # syner.dev
 
-> the syner hub - an agentic first repository of utils for agents
+> 
 
 ## skills
 
@@ -18,3 +18,4 @@ path: apps/dev
 - manuals
 - technical docs
 - community
+- prompts

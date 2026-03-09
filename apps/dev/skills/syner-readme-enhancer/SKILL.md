@@ -1,6 +1,7 @@
 ---
 name: syner-readme-enhancer
 description: Enhance READMEs for apps and packages by analyzing actual code. Detects maturity level, special capabilities (plan mode), and generates honest, focused READMEs. Use when creating or updating README files.
+agent: dev
 tools:
   - Glob
   - Read
@@ -9,12 +10,16 @@ tools:
   - AskUserQuestion
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Syner README Enhancer
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Generate honest READMEs by analyzing what the component **actually does**.
+
+This is a documentation skill. Use it when creating or updating READMEs to ensure accuracy.
 
 ## The Three Questions
 
@@ -282,3 +287,10 @@ _Internal documentation only — not file paths for agent use._
 
 - `apps/dev/skills/syner-readme-enhancer/references/examples.md` - Before/after examples
 - `apps/dev/skills/syner-readme-enhancer/references/separation.md` - What content stays vs moves
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Context Before Action** — Analyze actual code before generating
+- **Suggest, Don't Enforce** — Ask for approval before writing
+- **Concrete Output** — Write actual README, not just show draft
