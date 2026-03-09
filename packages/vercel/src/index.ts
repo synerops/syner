@@ -21,11 +21,21 @@ export {
   createWriteTool,
   createGlobTool,
   createGrepTool,
+  createSkillTool,
   // Registry
   createTools,
   createToolsByName,
 } from './tools'
-export type { ToolName } from './tools'
+export type { ToolName, SandboxToolName, SpecialToolName, CreateSkillToolOptions } from './tools'
+
+// Skills
+export {
+  loadSkill,
+  loadSkills,
+  buildInlineSkillContext,
+  buildSkillInstructions,
+} from './skills'
+export type { SkillConfig } from './skills'
 
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'

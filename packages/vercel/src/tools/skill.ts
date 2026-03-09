@@ -1,18 +1,16 @@
-import { tool, ToolLoopAgent, stepCountIs } from 'ai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { tool, ToolLoopAgent, stepCountIs, type LanguageModel, type Tool } from 'ai'
 import { z } from 'zod'
 import { loadSkill, buildSkillInstructions, type SkillConfig } from '../skills/loader'
-import type { ToolSession } from './registry'
 
-interface CreateSkillToolOptions {
+export interface CreateSkillToolOptions {
   /** Repository root path in the sandbox */
   repoRoot: string
   /** List of skill names this agent can use */
   availableSkills: string[]
-  /** Tool session for subagent tools */
-  session: ToolSession
-  /** Model to use for subagent (defaults to sonnet) */
-  model?: 'opus' | 'sonnet' | 'haiku'
+  /** Tools available to the subagent */
+  tools: Record<string, Tool>
+  /** Model to use for subagent (already instantiated) */
+  model: LanguageModel
 }
 
 /**
@@ -22,7 +20,7 @@ interface CreateSkillToolOptions {
  * The skill runs in its own context with its own instructions.
  */
 export function createSkillTool(options: CreateSkillToolOptions) {
-  const { repoRoot, availableSkills, session, model = 'sonnet' } = options
+  const { repoRoot, availableSkills, tools, model } = options
 
   // Cache loaded skills
   const skillCache = new Map<string, SkillConfig>()
@@ -59,27 +57,21 @@ export function createSkillTool(options: CreateSkillToolOptions) {
       const instructions = buildSkillInstructions(skill, task)
 
       // 4. Determine which tools the subagent can use
-      // If skill specifies tools, filter to those; otherwise use all session tools
-      let subagentTools = session.tools
+      // If skill specifies tools, filter to those; otherwise use all tools
+      let subagentTools = tools
       if (skill.tools && skill.tools.length > 0) {
         const allowedTools = new Set(skill.tools.map(t => t.toLowerCase()))
         subagentTools = Object.fromEntries(
-          Object.entries(session.tools).filter(([toolName]) =>
+          Object.entries(tools).filter(([toolName]) =>
             allowedTools.has(toolName.toLowerCase())
           )
         )
       }
 
       // 5. Create subagent with skill instructions
-      const modelId = model === 'opus'
-        ? 'claude-opus-4-20250514'
-        : model === 'haiku'
-          ? 'claude-haiku-4-20250514'
-          : 'claude-sonnet-4-20250514'
-
       const skillAgent = new ToolLoopAgent({
         id: `skill-${name}`,
-        model: anthropic(modelId),
+        model,
         instructions: `${instructions}\n\n## Working Directory\n\nThe repository is available at: ${repoRoot}`,
         tools: subagentTools,
         stopWhen: stepCountIs(10),
