@@ -23,10 +23,12 @@ apps/notes/vaults/*
 **/.obsidian/
 
 # Dev vaults (local development notes)
-apps/dev/vaults/
+apps/dev/vaults/*
+!apps/dev/vaults/guides/
 
-# Local-only skills (not shared)
-skills/dev-find-ideas/
+# Dev skills (local experiments)
+skills/dev-*
+apps/dev/skills/dev-*/
 
 # Syner local data
 .syner/
