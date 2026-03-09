@@ -1,7 +1,7 @@
 ---
 name: syner
 description: Orchestrator for CI/CD that understands personal context through notes. Use as main agent for GitHub Actions.
-tools: Agent(notes, bot, dev, design, syner-worker, syner-planner, syner-researcher), Read, Glob, Grep, Skill, Write, Bash
+tools: Agent(notes, bot, dev, design), Read, Glob, Grep, Skill, Write, Bash
 model: opus
 skills:
   - syner

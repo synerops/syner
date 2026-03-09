@@ -8,6 +8,8 @@ export const env = createEnv({
     GITHUB_APP_INSTALLATION_ID: z.string().min(1),
     GITHUB_APP_PRIVATE_KEY: z.string().min(1),
     GITHUB_WEBHOOK_SECRET: z.string().min(1),
+    SLACK_BOT_TOKEN: z.string().startsWith('xoxb-').optional(),
+    SLACK_SIGNING_SECRET: z.string().min(1).optional(),
   },
   client: {},
   runtimeEnv: {
@@ -16,6 +18,8 @@ export const env = createEnv({
     GITHUB_APP_INSTALLATION_ID: process.env.GITHUB_APP_INSTALLATION_ID,
     GITHUB_APP_PRIVATE_KEY: process.env.GITHUB_APP_PRIVATE_KEY,
     GITHUB_WEBHOOK_SECRET: process.env.GITHUB_WEBHOOK_SECRET,
+    SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
+    SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
   },
   // Skip validation during build (vars available at runtime via Vercel)
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
