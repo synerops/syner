@@ -1,10 +1,10 @@
 ---
 name: syner-fix-symlinks
-description: Fix skill symlinks in skills/. Use when symlinks are broken, skills not showing up, or after creating new skills.
+description: Fix skill and agent symlinks. Use when symlinks are broken, skills/agents not showing up, or after creating new ones.
 agent: dev
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 tools: [Glob, Bash]
 ---
 
@@ -12,16 +12,20 @@ tools: [Glob, Bash]
 
 > Part of **Dev** — the Ecosystem Builder mutation of Syner.
 
-Sync `skills/` with skill sources in `apps/*/skills/` and `packages/*/skills/`.
+Sync `skills/` and `.claude/agents/` with their sources.
 
-This is a maintenance skill. Run after creating skills or when skills aren't showing up.
+This is a maintenance skill. Run after creating skills/agents or when they aren't showing up.
 
 ## Usage
 
 - `/syner-fix-symlinks` - check only (safe, no changes)
 - `/syner-fix-symlinks --fix` - fix issues found
+- `/syner-fix-symlinks --agents` - check agents only
+- `/syner-fix-symlinks --skills` - check skills only
 
 ## Architecture
+
+### Skills
 
 ```
 .claude/skills → ../skills  (symlink - never touch directly)
@@ -31,27 +35,43 @@ skills/
   └── {name} → ../apps/...   ← symlink to app/package skill
 ```
 
+### Agents
+
+```
+.claude/agents → ../agents  (symlink - never touch directly)
+
+agents/
+  ├── {name}.md (real file)        ← root agents (syner, dev, bot, design, etc.)
+  └── {name}.md → ../apps/.../...  ← symlink to app-specific agent
+```
+
 ## Rules
 
+### Skills
 1. `.claude/skills` IS `skills/` (symlink) - work in `skills/` only
 2. Symlinks point to `../apps/{app}/skills/{name}` or `../packages/{pkg}/skills/{name}`
 3. Never symlink to `../skills/...` (circular)
-4. Always `rm -f` before `ln -s` (prevents creating link inside existing dir)
+
+### Agents
+1. `.claude/agents` IS `agents/` (symlink) - work in `agents/` only
+2. Root agents are **real files** in `agents/` (not symlinks)
+3. App-specific agents symlink to `../apps/{app}/agents/{name}.md`
+4. Never symlink to `../../agents/...` from within `agents/` (circular)
+
+### Both
+- Always `rm -f` before `ln -s` (prevents creating link inside existing dir)
 
 ## Process
 
 ### 0. Anchor to project root
 
-Before running any commands, ensure cwd is the project root (the directory containing both `apps/` and `skills/`):
+Before running any commands, ensure cwd is the project root:
 
 ```bash
-# Verify we are at project root
-[ -d apps ] && [ -d skills ] || echo "ERROR: not at project root — cd to the directory containing apps/ and skills/ first"
+[ -d apps ] && [ -d skills ] && [ -d .claude ] || echo "ERROR: not at project root"
 ```
 
-If not at project root, stop and instruct the user to run the skill from the project root directory.
-
-### Check (default)
+### Check Skills (default)
 
 ```bash
 # 1. Find all skill sources
@@ -60,21 +80,42 @@ ls apps/*/skills/*/SKILL.md packages/*/skills/*/SKILL.md 2>/dev/null
 # 2. Check current state
 file skills/*
 
-# 3. Compare and report discrepancies
+# 3. Compare and report
 ```
 
-Output: `| Skill | Source | Status |` (missing, broken, ok)
+### Check Agents
+
+```bash
+# 1. Find all agent sources
+ls agents/*.md apps/*/agents/*.md 2>/dev/null
+
+# 2. Check current state in agents/
+file agents/*.md
+
+# 3. Verify:
+#    - Root agents (syner, dev, bot, design, etc.) = real files
+#    - App agents (notes) = symlinks to ../apps/*/agents/
+```
 
 ### Fix (with --fix)
 
+**Skills:**
 ```bash
 cd skills
 rm -f {name}
 ln -s ../apps/{app}/skills/{name} {name}
-file {name}  # verify shows "directory"
 ```
 
-Output: `| Skill | Source | Action | Status |`
+**Agents:**
+```bash
+cd agents
+# For app-specific agents only:
+rm -f {name}.md
+ln -s ../apps/{app}/agents/{name}.md {name}.md
+# Root agents should be real files, not symlinks
+```
+
+Output: `| Type | Name | Source | Action | Status |`
 
 ## Boundaries
 
