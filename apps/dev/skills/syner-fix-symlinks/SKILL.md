@@ -41,9 +41,20 @@ skills/
 .claude/agents → ../agents  (symlink - never touch directly)
 
 agents/
-  ├── {name}.md (real file)        ← root agents (syner, dev, bot, design, etc.)
-  └── {name}.md → ../apps/.../...  ← symlink to app-specific agent
+  ├── {name}.md (real file)        ← shared agents (syner, syner-*, code-reviewer, release-manager)
+  └── {name}.md → ../apps/.../...  ← lead agents symlink to their app
 ```
+
+**Lead agents live in their apps:**
+- `agents/dev.md` → `../apps/dev/agents/dev.md`
+- `agents/bot.md` → `../apps/bot/agents/bot.md`
+- `agents/design.md` → `../apps/design/agents/design.md`
+- `agents/notes.md` → `../apps/notes/agents/notes.md`
+
+**Shared agents are real files:**
+- `agents/syner.md` (orchestrator)
+- `agents/syner-worker.md`, `syner-planner.md`, `syner-researcher.md`
+- `agents/code-reviewer.md`, `release-manager.md`
 
 ## Rules
 
@@ -54,8 +65,8 @@ agents/
 
 ### Agents
 1. `.claude/agents` IS `agents/` (symlink) - work in `agents/` only
-2. Root agents are **real files** in `agents/` (not symlinks)
-3. App-specific agents symlink to `../apps/{app}/agents/{name}.md`
+2. Lead agents (dev, bot, design, notes) symlink to `../apps/{app}/agents/{name}.md`
+3. Shared agents (syner, syner-*, code-reviewer, release-manager) are real files
 4. Never symlink to `../../agents/...` from within `agents/` (circular)
 
 ### Both
@@ -87,14 +98,15 @@ file skills/*
 
 ```bash
 # 1. Find all agent sources
-ls agents/*.md apps/*/agents/*.md 2>/dev/null
+ls apps/*/agents/*.md 2>/dev/null  # lead agents in apps
+ls agents/*.md 2>/dev/null          # shared agents + symlinks
 
-# 2. Check current state in agents/
+# 2. Check current state
 file agents/*.md
 
 # 3. Verify:
-#    - Root agents (syner, dev, bot, design, etc.) = real files
-#    - App agents (notes) = symlinks to ../apps/*/agents/
+#    - Lead agents (dev, bot, design, notes) = symlinks to ../apps/*/agents/
+#    - Shared agents (syner, syner-*, code-reviewer, release-manager) = real files
 ```
 
 ### Fix (with --fix)
@@ -109,10 +121,12 @@ ln -s ../apps/{app}/skills/{name} {name}
 **Agents:**
 ```bash
 cd agents
-# For app-specific agents only:
+
+# For lead agents (dev, bot, design, notes):
 rm -f {name}.md
 ln -s ../apps/{app}/agents/{name}.md {name}.md
-# Root agents should be real files, not symlinks
+
+# Shared agents should remain as real files in agents/
 ```
 
 Output: `| Type | Name | Source | Action | Status |`
