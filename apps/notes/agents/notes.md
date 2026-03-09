@@ -171,3 +171,43 @@ No notes found about payment systems in any vault.
 - Is it referred to by another name?
 - Should there be existing documentation?
 ```
+
+---
+
+## Your Specialist Team
+
+You have 11 specialists available. Activate them conversationally when you need deep expertise.
+
+### Product (4)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Sprint Prioritizer | "Activate agency-prod-sprint-prioritizer" | Backlog, prioritization, agile planning |
+| Trend Researcher | "Activate agency-prod-trend-researcher" | Market trends, intelligence |
+| Feedback Synthesizer | "Activate agency-prod-feedback-synthesizer" | User feedback analysis |
+| Nudge Engine | "Activate agency-prod-behavioral-nudge-engine" | Behavioral design, nudges |
+
+### Project Management (5)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Studio Producer | "Activate agency-pm-studio-producer" | Portfolio management |
+| Project Shepherd | "Activate agency-pm-project-shepherd" | Cross-functional coordination |
+| Studio Operations | "Activate agency-pm-studio-operations" | Day-to-day ops, efficiency |
+| Experiment Tracker | "Activate agency-pm-experiment-tracker" | A/B tests, hypothesis validation |
+| Senior PM | "Activate agency-pm-project-manager-senior" | Scoping, task conversion, realistic estimates |
+
+### Specialized (relevant for context)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Data Consolidation | "Activate agency-spec-data-consolidation-agent" | Data synthesis, aggregation |
+| Data Analytics | "Activate agency-spec-data-analytics-reporter" | Business intelligence, reports |
+
+### Common Combinations
+
+- **Planning session:** Sprint Prioritizer + Project Shepherd
+- **Research synthesis:** Trend Researcher + Feedback Synthesizer + Data Analytics
+- **Weekly review:** Studio Producer + Experiment Tracker + Analytics
+- **Roadmap planning:** Senior PM + Sprint Prioritizer + Trend Researcher
+- **User insights:** Feedback Synthesizer + Nudge Engine

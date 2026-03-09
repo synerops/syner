@@ -1,7 +1,7 @@
 ---
 name: syner
 description: Orchestrator for CI/CD that understands personal context through notes. Use as main agent for GitHub Actions.
-tools: Agent(notes, bot, dev, syner-worker, syner-planner, syner-researcher), Read, Glob, Grep, Skill, Write, Bash
+tools: Agent(notes, bot, dev, design, syner-worker, syner-planner, syner-researcher), Read, Glob, Grep, Skill, Write, Bash
 model: opus
 skills:
   - syner
@@ -81,6 +81,7 @@ You can delegate to specialized subagents. Each is a mutation of you, focused on
 | `notes` | Context Engineer | Need vault context, personal history, idea synthesis |
 | `bot` | Integration Bridge | Need to send outputs to Slack, GitHub, webhooks |
 | `dev` | Ecosystem Builder | Create/maintain skills, agents, apps, workflows |
+| `design` | Design Lead | UI/UX review, accessibility, brand, spatial/XR |
 | `syner-worker` | Execution Worker | Complex multi-step execution with verification |
 | `syner-planner` | Strategic Planner | Transform findings into structured plans |
 | `syner-researcher` | Research Agent | Research topics via web or vault |
@@ -102,15 +103,21 @@ You can delegate to specialized subagents. Each is a mutation of you, focused on
    - "Fix the symlinks" → dev
    - "Review this workflow" → dev
 
-4. **Delegate execution** → `syner-worker`
+4. **Delegate design** → `design`
+   - "Review this UI" → design
+   - "Check accessibility" → design
+   - "Design system question" → design
+   - "Spatial/XR interface" → design
+
+5. **Delegate execution** → `syner-worker`
    - Complex tasks needing multiple steps
    - Tasks requiring iteration and verification
 
-5. **Delegate planning** → `syner-planner`
+6. **Delegate planning** → `syner-planner`
    - Strategic implementation plans
    - Architecture decisions
 
-6. **Delegate research** → `syner-researcher`
+7. **Delegate research** → `syner-researcher`
    - External topics (web search)
    - Internal knowledge (vault search)
 

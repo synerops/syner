@@ -215,3 +215,46 @@ Common triggers:
 - New skill PR → `/syner-skill-reviewer`
 - Daily schedule → `/syner-daily-briefing`
 - Symlink issues → `/syner-fix-symlinks --fix`
+
+---
+
+## Your Specialist Team
+
+You have 19 specialists available. Activate them conversationally when you need deep expertise.
+
+### Engineering (11)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Frontend | "Activate agency-eng-frontend-developer" | React, Vue, Angular, performance, Core Web Vitals |
+| Backend | "Activate agency-eng-backend-architect" | API design, databases, scalability |
+| Security | "Activate agency-eng-security-engineer" | Security review, threat modeling, secure code |
+| DevOps | "Activate agency-eng-devops-automator" | CI/CD, infrastructure, deployment |
+| Senior Dev | "Activate agency-eng-senior-developer" | Architecture decisions, code review, Laravel/Livewire |
+| AI Engineer | "Activate agency-eng-ai-engineer" | ML integration, AI features |
+| Mobile | "Activate agency-eng-mobile-app-builder" | iOS, Android, React Native |
+| Data | "Activate agency-eng-data-engineer" | Data pipelines, ETL |
+| Rapid Proto | "Activate agency-eng-rapid-prototyper" | MVPs, POCs, fast iteration |
+| Tech Writer | "Activate agency-eng-technical-writer" | Documentation |
+| Auto-Optimize | "Activate agency-eng-autonomous-optimization-architect" | Self-optimizing systems |
+
+### Testing (8)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Reality Checker | "Activate agency-test-reality-checker" | Production readiness assessment |
+| API Tester | "Activate agency-test-api-tester" | API validation, contract testing |
+| Performance | "Activate agency-test-performance-benchmarker" | Load testing, speed optimization |
+| Accessibility | "Activate agency-test-accessibility-auditor" | WCAG compliance, a11y audit |
+| Evidence Collector | "Activate agency-test-evidence-collector" | Screenshot-based QA |
+| Results Analyzer | "Activate agency-test-test-results-analyzer" | Test evaluation |
+| Tool Evaluator | "Activate agency-test-tool-evaluator" | Technology assessment |
+| Workflow Optimizer | "Activate agency-test-workflow-optimizer" | Process analysis |
+
+### Common Combinations
+
+- **Full code review:** Frontend + Security + Accessibility
+- **New feature:** Backend + API Tester + DevOps
+- **Performance audit:** Frontend + Performance Benchmarker
+- **Production readiness:** Reality Checker + Security + Performance
+- **Documentation sprint:** Tech Writer + Senior Dev

@@ -194,3 +194,44 @@ Channels: 1 attempted
 
 **Suggested fix:** Regenerate Slack webhook at https://api.slack.com/apps and update SLACK_WEBHOOK_URL via `/vercel-setup`
 ```
+
+---
+
+## Your Specialist Team
+
+You have 17 specialists available. Activate them conversationally when you need deep expertise.
+
+### Marketing (11)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Growth Hacker | "Activate agency-mkt-growth-hacker" | User acquisition, viral loops |
+| Content Creator | "Activate agency-mkt-content-creator" | Content strategy, copywriting |
+| Social Media | "Activate agency-mkt-social-media-strategist" | Cross-platform strategy |
+| Twitter | "Activate agency-mkt-twitter-engager" | Twitter/X engagement |
+| TikTok | "Activate agency-mkt-tiktok-strategist" | Viral content, algorithm optimization |
+| Instagram | "Activate agency-mkt-instagram-curator" | Visual storytelling |
+| Reddit | "Activate agency-mkt-reddit-community-builder" | Reddit community, authentic engagement |
+| App Store | "Activate agency-mkt-app-store-optimizer" | ASO, app marketing |
+| Xiaohongshu | "Activate agency-mkt-xiaohongshu-specialist" | China market |
+| WeChat | "Activate agency-mkt-wechat-official-account" | WeChat strategy |
+| Zhihu | "Activate agency-mkt-zhihu-strategist" | Zhihu thought leadership |
+
+### Support (6)
+
+| Specialist | Activate with | When to use |
+|--------------|------------|-------------|
+| Support Responder | "Activate agency-support-support-responder" | Customer service |
+| Analytics | "Activate agency-support-analytics-reporter" | Data analysis, dashboards |
+| Executive Summary | "Activate agency-support-executive-summary-generator" | C-suite reports |
+| Infrastructure | "Activate agency-support-infrastructure-maintainer" | System reliability |
+| Legal | "Activate agency-support-legal-compliance-checker" | Compliance, regulations |
+| Finance | "Activate agency-support-finance-tracker" | Financial tracking, planning |
+
+### Common Combinations
+
+- **Launch campaign:** Growth Hacker + Content Creator + Social Media
+- **Support flow:** Support Responder + Analytics
+- **Executive update:** Analytics + Executive Summary
+- **Social blitz:** Twitter + TikTok + Instagram + Reddit
+- **Compliance check:** Legal + Finance + Infrastructure
