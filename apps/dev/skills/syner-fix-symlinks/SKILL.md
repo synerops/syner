@@ -4,7 +4,7 @@ description: Fix skill and agent symlinks. Use when symlinks are broken, skills/
 agent: dev
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.2.1"
 tools: [Glob, Bash]
 ---
 
@@ -71,6 +71,35 @@ agents/
 
 ### Both
 - Always `rm -f` before `ln -s` (prevents creating link inside existing dir)
+
+## Issue Classification
+
+When checking symlinks, classify each into one of these states:
+
+| Status | Meaning | Action |
+|--------|---------|--------|
+| `ok` | Symlink exists with correct relative path | None |
+| `missing` | Source exists but no symlink | Create symlink |
+| `malformed` | Symlink exists but path has wrong depth (for example `../../../apps/...` instead of `../apps/...`) | Recreate with correct path |
+| `broken` | Symlink exists but target doesn't exist | Remove or recreate if source found |
+| `orphan` | Symlink exists but no matching source in apps/packages | Remove (confirm first) |
+
+### Path Validation
+
+A symlink path is valid if it matches one of these patterns:
+
+```
+../apps/{app}/skills/{name}
+../packages/{pkg}/skills/{name}
+../apps/{app}/agents/{name}.md
+```
+
+Invalid patterns to detect and fix:
+
+- `../../../apps/...` — too many levels up (malformed)
+- `../../apps/...` — wrong depth (malformed)
+- `apps/...` — missing `../` prefix (malformed)
+- Absolute paths — should always be relative (malformed)
 
 ## Process
 
