@@ -1,17 +1,20 @@
 ---
 name: syner-enhance-skills
 description: Improve an existing skill by auditing and applying fixes. Use when asked to "enhance skill", "improve skill", "fix skill issues", or when code-reviewer detects skill file changes. Delegates to syner-skill-reviewer for audit, then proposes and applies fixes with user confirmation.
+agent: dev
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 tools: [Read, Glob, Grep, Edit, AskUserQuestion, Skill]
 ---
 
 # Skill Enhancer
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Audit a skill and apply fixes with user confirmation.
 
-This skill wraps `/syner-skill-reviewer` (audit-only) and adds the fix layer.
+This skill wraps `/syner-skill-reviewer` (audit-only) and adds the fix layer. Review reports, you decide. Enhance applies.
 
 ## Process
 
@@ -105,3 +108,11 @@ Re-audit shows: [X issues remaining | clean]
 - **No findings**: Report skill is clean, no changes needed
 - **User cancels all**: Acknowledge and exit without changes
 - **Partial apply fails**: Report which edits failed, leave file in consistent state
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Route, Don't Hoard** — Delegate audit to `/syner-skill-reviewer`
+- **Suggest, Don't Enforce** — Confirm before applying fixes
+- **Self-Verification** — Verify changes were applied
+- **Observable Work** — Report what was changed

@@ -1,9 +1,10 @@
 ---
 name: create-syner-skill
 description: Create syner skills. Use when creating new skills, or when user says "crear skill", "new skill", "add capability".
+agent: dev
 metadata:
   author: syner
-  version: "0.0.1"
+  version: "0.1.0"
 tools:
   - Read
   - Glob
@@ -13,7 +14,9 @@ tools:
 
 # Create Syner Skill
 
-Create skills for the syner ecosystem.
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
+Create skills for the syner ecosystem. Skills are invoked with /name and extend agent capabilities.
 
 ## Core Principles
 
@@ -84,12 +87,15 @@ Ask only if unclear: "Is this skill specific to an app or shared?"
 ---
 name: {name}
 description: {description}. Use when {triggers}.
+agent: dev
 metadata:
   author: syner
   version: "0.0.1"
 ---
 
 # {Name}
+
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
 
 {Purpose - one line}
 
@@ -115,6 +121,12 @@ To test this skill:
 1. {test case}
 
 Cleanup: {cleanup commands if needed}
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- {relevant boundary}
+- {relevant boundary}
 ```
 
 ### 4. Description Triggers
@@ -246,3 +258,10 @@ Or for shared skills:
 ```bash
 ln -s skills/{name} .claude/skills/{name}
 ```
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Concrete Output** — Create actual skill file, not proposal
+- **Self-Verification** — Test skill works when invoked
+- **Observable Work** — Skill instructions are explicit and readable

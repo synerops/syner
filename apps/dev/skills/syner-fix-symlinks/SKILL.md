@@ -1,15 +1,20 @@
 ---
 name: syner-fix-symlinks
 description: Fix skill symlinks in skills/. Use when symlinks are broken, skills not showing up, or after creating new skills.
+agent: dev
 metadata:
   author: syner
-  version: "0.0.6"
+  version: "0.1.0"
 tools: [Glob, Bash]
 ---
 
 # Fix Symlinks
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Sync `skills/` with skill sources in `apps/*/skills/` and `packages/*/skills/`.
+
+This is a maintenance skill. Run after creating skills or when skills aren't showing up.
 
 ## Usage
 
@@ -70,3 +75,10 @@ file {name}  # verify shows "directory"
 ```
 
 Output: `| Skill | Source | Action | Status |`
+
+## Boundaries
+
+Validate against `/syner-boundaries`:
+- **Self-Verification** — Verify symlinks work after fixing
+- **Observable Work** — Report what was fixed
+- **Suggest, Don't Enforce** — Check-only by default, fix requires --fix flag

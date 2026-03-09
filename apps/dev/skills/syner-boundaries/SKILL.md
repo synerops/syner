@@ -1,16 +1,20 @@
 ---
 name: syner-boundaries
 description: Validate that proposals respect Syner's operational boundaries. Use before executing significant actions, when reviewing skill outputs, or when unsure if an approach stays within limits. Triggers on "check boundaries", "validate approach", "is this within scope", or before destructive/complex operations.
-agent: general-purpose
+agent: dev
 tools: [Read]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Syner Boundaries
 
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
 Validate that a proposal, action, or output respects Syner's operational boundaries.
+
+This is the governance skill. Dev owns it and maintains it, but cannot validate changes to boundaries itself — that requires human confirmation.
 
 ## When to Use
 
@@ -222,3 +226,15 @@ After evaluating, output:
 - Crosses "Notes Are Context" (enforcing structure)
 - Crosses "Suggest, Don't Enforce" (rewriting without asking)
 - Crosses "Proportional Loading" (entire vault for restructuring)
+
+---
+
+## Self-Referential Note
+
+Dev owns this skill. When modifying syner-boundaries itself:
+
+1. **Cannot self-validate** — The boundary cannot validate changes to itself
+2. **Requires human confirmation** — Always ask before modifying boundaries
+3. **Document changes** — Explain what changed and why
+
+This is the one place where Dev must pause and defer to human judgment.

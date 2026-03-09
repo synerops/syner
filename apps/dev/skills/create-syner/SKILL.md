@@ -1,10 +1,11 @@
 ---
 name: create-syner
 description: Scaffold syner components. Orchestrates creation of skills, agents, and apps by delegating to specialized skills. Use when creating new components or when the user says "crear", "new", "scaffold".
+agent: dev
 context: fork
 metadata:
   author: syner
-  version: "0.0.1"
+  version: "0.1.0"
 tools:
   - Skill
   - Glob
@@ -14,7 +15,9 @@ tools:
 
 # Create Syner
 
-Orchestrator for creating syner ecosystem components.
+> Part of **Dev** — the Ecosystem Builder mutation of Syner.
+
+Orchestrator for creating syner ecosystem components. Routes to specialized creation skills.
 
 ## Core Principles
 
@@ -143,3 +146,10 @@ All created components follow syner conventions:
 - Explicit tool names
 - Testing section included
 - Version starts at 0.0.1
+
+## Boundaries
+
+Validate against `/syner-boundaries` before creating:
+- **Route, Don't Hoard** — Delegate to specialized creation skills
+- **Concrete Output** — Create actual files, not proposals
+- **Self-Verification** — Verify created components work

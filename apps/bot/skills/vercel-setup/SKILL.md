@@ -1,16 +1,28 @@
 ---
 name: vercel-setup
 description: Configure Vercel environment variables for syner.bot. Use when deploying the bot, setting up env vars, or troubleshooting deployment issues.
-agent: general-purpose
+agent: bot
 tools: [Read, Bash, AskUserQuestion]
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Vercel Setup
 
-Configure environment variables for `syner.bot` deployment on Vercel.
+> Part of **Bot** — the Integration Bridge mutation of Syner.
+
+Configure environment variables for `syner.bot` deployment on Vercel. Bot needs to be running to connect systems — this skill ensures it's properly configured.
+
+## Purpose
+
+Bot delivers outputs to external channels. Those channels require credentials:
+
+- **Slack** needs webhook URLs
+- **GitHub** needs App credentials
+- **Scheduled tasks** need secrets
+
+This skill configures all of that. Without it, Bot can't deliver.
 
 ## Task
 
@@ -161,6 +173,23 @@ vercel env rm GITHUB_WEBHOOK_SECRET production --scope synerops --yes
 vercel env add GITHUB_WEBHOOK_SECRET production --scope synerops
 ```
 
+## Boundaries
+
+This skill operates within `/syner-boundaries`. Key constraints:
+
+| Boundary | How it applies |
+|----------|----------------|
+| 8. Self-Verification | Verify env vars are set before reporting success |
+| 9. Graceful Failure | Report what failed and why (missing vars, auth issues) |
+| 10. Observable Work | Log what was configured, show current state |
+
+**Self-check before completing:**
+
+1. Did I verify the variables exist in Vercel? (not just add them)
+2. Did I confirm the deployment succeeded?
+3. If something failed, did I explain why and suggest a fix?
+
 ## Related
 
 - [.env.example](../../.env.example) - Local environment setup
+- [agents/bot.md](/agents/bot.md) - Bot agent identity
