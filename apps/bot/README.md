@@ -28,11 +28,15 @@ runs on localhost:3001. to test webhooks, use ngrok or deploy.
 ## integrations
 
 - github - working
-- slack - planned
+- slack - working
 
 ## skills
 
-- `/vercel-setup` - configure deployment
+<!-- auto:skills -->
+| Skill | Description |
+|-------|-------------|
+| `/vercel-setup` | Configure Vercel environment variables for syner.bot |
+<!-- /auto:skills -->
 
 ## setup
 
@@ -52,7 +56,8 @@ runs on localhost:3001. to test webhooks, use ngrok or deploy.
 
 **Optional:**
 
-- `SLACK_WEBHOOK_URL` - For Slack notifications
+- `SLACK_BOT_TOKEN` - For Slack integration
+- `SLACK_SIGNING_SECRET` - For Slack webhook verification
 - `CRON_SECRET` - Protects cron endpoints
 
 See [`.env.example`](.env.example) for detailed instructions on where to find each value.

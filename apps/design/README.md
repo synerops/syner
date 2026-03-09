@@ -18,6 +18,10 @@ syner.design is for agents generating interfaces.
 - agents compose primitives following the same patterns you would
 - markdown specs that both humans and agents read
 
+<!-- auto:skills -->
+<!-- no skills yet -->
+<!-- /auto:skills -->
+
 ## try it
 
 ```bash

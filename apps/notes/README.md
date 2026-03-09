@@ -12,11 +12,15 @@ personal knowledge management meets AI orchestration. **coming soon.**
 
 the **skills** work locally via Claude Code:
 
-- `/syner-find-ideas` - generate ideas from your vault
-- `/syner-find-links` - connect two domains
-- `/syner-grow-note` - promote thoughts to documents
-- `/syner-track-idea` - trace idea evolution
-- `/syner-load-all` - load full context from all vaults
+<!-- auto:skills -->
+| Skill | Description |
+|-------|-------------|
+| `/syner-find-ideas` | Generate startup ideas from your vault |
+| `/syner-find-links` | Bridge two domains you've been circling |
+| `/syner-grow-note` | Promote thoughts into structured documents |
+| `/syner-track-idea` | Track idea evolution over time |
+| `/syner-load-all` | Load full context from all vaults |
+<!-- /auto:skills -->
 
 your vault lives in `apps/notes/vaults/` - agents read it, you own it.
 
