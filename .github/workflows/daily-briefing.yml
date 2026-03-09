@@ -33,8 +33,8 @@ jobs:
           date +%Y-%m-%d > .syner/context/daily-briefing/today.txt
 
           # PRs ready for review (from skill-review or with ready for review label)
-          gh pr list --state open --label "skill-review" --json number,title,createdAt,author > .syner/context/daily-briefing/prs-skill-review.json
-          gh pr list --state open --json number,title,createdAt,author,labels > .syner/context/daily-briefing/prs-open.json
+          gh pr list --state open --label "skill-review" --json number,title,createdAt,author,additions,deletions > .syner/context/daily-briefing/prs-skill-review.json
+          gh pr list --state open --json number,title,createdAt,author,labels,additions,deletions > .syner/context/daily-briefing/prs-open.json
 
           # Issues needing decision
           gh issue list --state open --label "needs-decision" --json number,title,createdAt,assignees > .syner/context/daily-briefing/issues-needs-decision.json
@@ -56,6 +56,7 @@ jobs:
             --allowedTools Read,Write,Glob
 
       - name: Create briefing issue
+        if: success()
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
