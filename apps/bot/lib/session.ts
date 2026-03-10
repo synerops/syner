@@ -11,13 +11,13 @@ import {
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, getModel, type AgentConfig } from 'syner/agents'
+import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
 import { createToolSession, type ToolSession } from './tools'
 import path from 'path'
 
 export interface Session {
   /** Agent configuration */
-  agent: AgentConfig
+  agent: AgentCard
   /** Working directory in sandbox (if tools enabled) */
   workdir: string
   /** Generate a response for the given prompt */
@@ -33,8 +33,10 @@ export interface GenerateResult {
 }
 
 export interface SessionOptions {
-  /** Agent name (default: 'syner') */
-  agent?: string
+  /** Agent name (default: 'syner') - ignored if agent config provided */
+  agentName?: string
+  /** Full agent config (use this to avoid fs lookups in serverless) */
+  agent?: AgentCard
   /** Callback when status changes (e.g., 'Cloning repository...') */
   onStatus?: (status: string) => void | Promise<void>
   /** Callback when tool starts */
@@ -63,14 +65,20 @@ function getProjectRoot(): string {
  * ```
  */
 export async function createSession(options?: SessionOptions): Promise<Session> {
-  const agentName = options?.agent || DEFAULT_AGENT
   const onStatus = options?.onStatus || (() => {})
-  const projectRoot = getProjectRoot()
 
-  // 1. Load agent config
-  const agent = await getAgentByName(projectRoot, agentName)
-  if (!agent) {
-    throw new Error(`Agent "${agentName}" not found`)
+  // 1. Get agent config (prefer provided config over fs lookup)
+  let agent: AgentCard
+  if (options?.agent) {
+    agent = options.agent
+  } else {
+    const agentName = options?.agentName || DEFAULT_AGENT
+    const projectRoot = getProjectRoot()
+    const foundAgent = await getAgentByName(projectRoot, agentName)
+    if (!foundAgent) {
+      throw new Error(`Agent "${agentName}" not found`)
+    }
+    agent = foundAgent
   }
 
   // 2. Create tool session (sandbox) if agent has tools

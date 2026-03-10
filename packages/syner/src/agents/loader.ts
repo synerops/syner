@@ -3,7 +3,7 @@ import { readFileSync } from 'fs'
 import matter from 'gray-matter'
 import path from 'path'
 
-export interface AgentConfig {
+export interface AgentCard {
   name: string
   description?: string
   instructions: string
@@ -11,13 +11,12 @@ export interface AgentConfig {
   tools?: string[]
   skills?: string[]
   channel?: string
-  filePath: string
 }
 
 /**
  * Load all agent configurations from markdown files
  */
-export async function loadAgents(projectRoot: string): Promise<AgentConfig[]> {
+export async function loadAgents(projectRoot: string): Promise<AgentCard[]> {
   const agentsDir = path.resolve(projectRoot, 'agents')
   const pattern = path.join(agentsDir, '*.md')
   const files = await glob(pattern)
@@ -40,7 +39,6 @@ export async function loadAgents(projectRoot: string): Promise<AgentConfig[]> {
       tools: data.tools ? String(data.tools).split(',').map(t => t.trim()) : undefined,
       skills: data.skills,
       channel: data.channel,
-      filePath: resolved,
     }
   })
 }
@@ -49,9 +47,9 @@ export async function loadAgents(projectRoot: string): Promise<AgentConfig[]> {
  * Get agents indexed by their Slack channel ID
  * Only returns agents that have a channel configured
  */
-export async function getAgentsByChannel(projectRoot: string): Promise<Map<string, AgentConfig>> {
+export async function getAgentsByChannel(projectRoot: string): Promise<Map<string, AgentCard>> {
   const agents = await loadAgents(projectRoot)
-  const map = new Map<string, AgentConfig>()
+  const map = new Map<string, AgentCard>()
 
   for (const agent of agents) {
     if (agent.channel) {
@@ -65,7 +63,7 @@ export async function getAgentsByChannel(projectRoot: string): Promise<Map<strin
 /**
  * Get a specific agent by name
  */
-export async function getAgentByName(projectRoot: string, name: string): Promise<AgentConfig | undefined> {
+export async function getAgentByName(projectRoot: string, name: string): Promise<AgentCard | undefined> {
   const agents = await loadAgents(projectRoot)
   return agents.find(a => a.name === name)
 }

@@ -74,7 +74,7 @@ async function handleCommand(command: SlackSlashCommand): Promise<SlackCommandRe
 
   // Create a session for the agent
   const session = await createSession({
-    agent: cmdConfig.agent,
+    agentName: cmdConfig.agent,
     onStatus: (status) => {
       console.log(`[SlashCommand][${cmdConfig.agent}] Status: ${status}`)
     },

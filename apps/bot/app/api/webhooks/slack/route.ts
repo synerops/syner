@@ -9,17 +9,9 @@ import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
 import { createSession } from '@/lib/session'
 import { env } from '@/lib/env'
+import type { AgentCard } from 'syner/agents'
 
 export const maxDuration = 60
-
-interface AgentCard {
-  name: string
-  description?: string
-  model?: string
-  tools?: string[]
-  skills?: string[]
-  channel?: string
-}
 
 // Fetch agents from the static API endpoint (works in Vercel)
 async function fetchAgentsByChannel(): Promise<Map<string, AgentCard>> {
@@ -80,11 +72,11 @@ function getChat() {
 
           // Find agent for this channel (fetches from static API endpoint)
           const agents = await fetchAgentsByChannel()
-          const agentConfig = agents.get(context.channel)
+          const agent = agents.get(context.channel)
 
-          if (!agentConfig) {
+          if (!agent) {
             const configuredChannels = Array.from(agents.entries())
-              .map(([id, agent]) => `• \`${id}\` → ${agent.name}`)
+              .map(([id, a]) => `• \`${id}\` → ${a.name}`)
               .join('\n')
 
             return [
@@ -105,15 +97,15 @@ function getChat() {
 
           // Create session and generate response
           const session = await createSession({
-            agent: agentConfig.name,
+            agent,
             onStatus: (status) => {
-              console.log(`[Slack][${agentConfig.name}] Status: ${status}`)
+              console.log(`[Slack][${agent.name}] Status: ${status}`)
             },
           })
 
           try {
             const result = await session.generate(context.text)
-            console.log(`[Slack][${agentConfig.name}] Generated ${result.text.length} chars`)
+            console.log(`[Slack][${agent.name}] Generated ${result.text.length} chars`)
             return result.text || '_No response_'
           } finally {
             await session.cleanup()
