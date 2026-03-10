@@ -59,7 +59,7 @@ gh issue edit $ISSUE_NUMBER --remove-label "needs-planning" --add-label "claude"
 → Highest-value fixes:
 1. `syner-find-links` [B4] — missing input guard
 2. `syner-daily-standup` [B2] — output path not anchored
-3. `syner-backlog-reviewer` [B3] — fragile skill reference
+3. `backlog-hygiene` [B3] — fragile skill reference
 ```
 
 **Output (append to issue):**
@@ -68,7 +68,7 @@ gh issue edit $ISSUE_NUMBER --remove-label "needs-planning" --add-label "claude"
 
 - [ ] `syner-find-links`: add AskUserQuestion fallback when no arguments (B4)
 - [ ] `syner-daily-standup`: anchor output path to project root (B2)
-- [ ] `syner-backlog-reviewer`: use `/skill-name` instead of Glob path (B3)
+- [ ] `backlog-hygiene`: use `/skill-name` instead of Glob path (B3)
 ```
 
 ## Fallback
