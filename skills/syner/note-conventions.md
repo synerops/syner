@@ -28,6 +28,82 @@ The filesystem IS the configuration. No config file needed.
 2. Use `Read` tool to load file contents
 3. Follow internal links to understand relationships
 
+## Vault Index Guidelines
+
+Every vault should have an `index.md` at its root. This file helps syner understand what the vault contains and how to navigate it.
+
+### Validation Criteria
+
+Before committing a vault index, verify:
+
+| Criteria | Question |
+|----------|----------|
+| **Commiteable** | Does it avoid revealing private structure? Only reference public folders (no `_*` prefixes). |
+| **Useful for syner** | Does it map intents to locations? Syner should know what to search and where. |
+| **Privacy-preserving** | Does it avoid exposing folder names or file paths that are gitignored? |
+
+### Structure
+
+**For vaults with public content:**
+
+```markdown
+# {vault-name}
+
+{One-line description of what this vault contains.}
+
+## organization
+
+| folder | contains |
+|--------|----------|
+| `public-folder/` | description |
+
+## navigation
+
+| intent | where | pattern |
+|--------|-------|---------|
+| understand X | path/to/file.md | Read |
+| find Y | folder/ | Grep "keyword" |
+| discover all | entire vault | Glob `**/*.md` |
+```
+
+**For vaults with only private content:**
+
+```markdown
+# {vault-name}
+
+{One-line description of what this vault contains.}
+
+## intent → search pattern
+
+| intent | strategy |
+|--------|----------|
+| {specific need} | Grep "keyword", "related-term" |
+| {another need} | Grep "topic", "config" |
+
+## navigation
+
+| tool | when to use |
+|------|-------------|
+| Glob `**/*.md` | Discover all available context |
+| Grep | Find specific topic or capability |
+| Read | Direct access once you know the path |
+
+## principles
+
+- **No folder structure exposed** — this file is public, vault contents are private
+- **Intent-first routing** — describe what you need, grep finds where it lives
+```
+
+### Privacy Convention
+
+Folders prefixed with `_` are gitignored and private:
+- `_dev/` — local, never committed
+- `guides/` — public, committed
+
+**The index.md only documents public structure.** Syner can still read private folders locally, but the index doesn't reveal them.
+
+**If the entire vault is private** (all folders start with `_`), the index uses intent → grep strategies instead of explicit paths.
+
 ## Context Loading Strategies
 
 | Scope | Pattern | When to use |

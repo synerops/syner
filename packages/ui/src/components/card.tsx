@@ -1,17 +1,45 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@syner/ui/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+const cardVariants = cva(
+  "relative overflow-hidden border text-card-foreground",
+  {
+    variants: {
+      variant: {
+        default: "flex flex-col gap-6 rounded-xl bg-card py-6 shadow-sm",
+        bracket: "group cursor-pointer transition-colors hover:border-foreground/20 p-6 min-h-[214px] flex flex-col justify-between",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+interface CardProps
+  extends React.ComponentProps<"div">,
+    VariantProps<typeof cardVariants> {}
+
+function Card({ className, variant, children, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
-      className={cn(
-        "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
-        className
-      )}
+      className={cn(cardVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {/* Corner brackets for bracket variant */}
+      {variant === "bracket" && (
+        <>
+          <span className="absolute h-3 w-3 border-foreground/10 group-hover:border-foreground/20 border-b border-r bottom-0 right-0 transition-colors duration-300" />
+          <span className="absolute h-3 w-3 border-foreground/10 group-hover:border-foreground/20 border-b border-l bottom-0 left-0 transition-colors duration-300" />
+          <span className="absolute h-3 w-3 border-foreground/10 group-hover:border-foreground/20 border-t border-r top-0 right-0 transition-colors duration-300" />
+          <span className="absolute h-3 w-3 border-foreground/10 group-hover:border-foreground/20 border-t border-l top-0 left-0 transition-colors duration-300" />
+        </>
+      )}
+      {children}
+    </div>
   )
 }
 

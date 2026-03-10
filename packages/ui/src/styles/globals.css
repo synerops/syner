@@ -7,7 +7,7 @@
 @source "../**/*.{ts,tsx}";
 
 :root {
-  /* Light theme (optional - we're dark-native) */
+  /* Light theme */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -30,26 +30,26 @@
 }
 
 .dark {
-  /* Dark theme - PRIMARY aesthetic */
-  --background: oklch(0 0 0);           /* Pure black #000 */
-  --foreground: oklch(1 0 0);           /* Pure white #fff */
-  --card: oklch(0.039 0 0);             /* Barely lighter than black */
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0.039 0 0);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(1 0 0);              /* White for primary actions */
-  --primary-foreground: oklch(0 0 0);   /* Black text on white */
-  --secondary: oklch(0.149 0 0);        /* zinc-800 */
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.149 0 0);            /* zinc-800 */
-  --muted-foreground: oklch(0.639 0 0); /* zinc-400 */
-  --accent: oklch(0.149 0 0);
-  --accent-foreground: oklch(1 0 0);
+  /* Dark theme - optimized for legibility */
+  --background: oklch(0.145 0 0);       /* Soft dark gray instead of pure black */
+  --foreground: oklch(0.985 0 0);       /* Soft white instead of pure white */
+  --card: oklch(0.205 0 0);             /* Elevated layer */
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);          /* High contrast for primary actions */
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);        /* Intermediate layer */
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.149 0 0);           /* zinc-800 - minimal borders */
-  --input: oklch(0.149 0 0);
-  --ring: oklch(0.639 0 0);             /* zinc-400 for focus rings */
-  --radius: 0.5rem;                     /* 8px - subtle corners */
+  --border: oklch(1 0 0 / 10%);         /* Subtle borders with opacity */
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --radius: 0.5rem;
 }
 
 @theme inline {

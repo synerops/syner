@@ -8,9 +8,9 @@ Design system identity for the syner ecosystem.
 
 Black is the canvas, not a theme toggle. We design for dark first, light is an afterthought.
 
-- Background: pure black `oklch(0 0 0)` — not zinc-900, not gray-950
-- Foreground: pure white `oklch(1 0 0)` — maximum contrast
-- Muted: zinc-400 `oklch(0.639 0 0)` — secondary text
+- Background: soft dark gray `oklch(0.145 0 0)` — easier on the eyes than pure black
+- Foreground: soft white `oklch(0.985 0 0)` — high contrast without harshness
+- Muted: mid gray `oklch(0.708 0 0)` — secondary text
 
 ### terminal-inspired
 
@@ -30,15 +30,15 @@ Every element earns its place. No decoration without purpose.
 - No gradients — flat colors
 - No rounded corners > 8px — subtle, not playful
 - Spacing is generous — let elements breathe
+- **Radical minimalism** — almost invisible backgrounds
 
 ### grid-aware
 
-A subtle grid background gives the design-tool aesthetic.
+Ultra-subtle spatial texture that doesn't compete with content.
 
-- Dotted grid pattern (16px cells)
-- Larger grid lines (80px cells)
+- Diagonal hatching pattern (almost invisible)
 - Corner markers for framing
-- Baseline markers for typography specimens
+- Optional baseline guides for typography
 
 ---
 
@@ -48,13 +48,13 @@ A subtle grid background gives the design-tool aesthetic.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--background` | `oklch(0 0 0)` | Page background |
-| `--foreground` | `oklch(1 0 0)` | Primary text |
-| `--card` | `oklch(0.039 0 0)` | Card backgrounds |
-| `--muted` | `oklch(0.149 0 0)` | Muted backgrounds |
-| `--muted-foreground` | `oklch(0.639 0 0)` | Secondary text |
-| `--border` | `oklch(0.149 0 0)` | Borders (zinc-800) |
-| `--primary` | `oklch(1 0 0)` | Primary actions (white) |
+| `--background` | `oklch(0.145 0 0)` | Page background |
+| `--foreground` | `oklch(0.985 0 0)` | Primary text |
+| `--card` | `oklch(0.205 0 0)` | Card backgrounds |
+| `--muted` | `oklch(0.269 0 0)` | Muted backgrounds |
+| `--muted-foreground` | `oklch(0.708 0 0)` | Secondary text |
+| `--border` | `oklch(1 0 0 / 10%)` | Borders (white 10% opacity) |
+| `--primary` | `oklch(0.922 0 0)` | Primary actions |
 | `--destructive` | `oklch(0.704 0.191 22.216)` | Destructive actions |
 
 ### typography
@@ -113,7 +113,7 @@ gap-16 → 64px  → Page sections
 ### borders
 
 - Width: 1px always
-- Color: `--border` (zinc-800)
+- Color: `--border` (white 10% opacity)
 - Radius: `--radius` (8px) or less
 - Style: solid for UI, dashed for guides/grids
 
@@ -123,31 +123,38 @@ gap-16 → 64px  → Page sections
 
 ### grid background
 
-The signature grid pattern inspired by vercel.com/font:
+Three variants for different levels of minimalism:
 
 ```tsx
-import { GridBackground } from "@/components/grid-background";
+import { GridBackground, TypographyGrid, MinimalBackground } from "@/components/grid-background";
 
-// In layout
-<body>
-  <GridBackground />
-  <div className="relative z-10">{children}</div>
-</body>
+// Default: Ultra-subtle diagonal texture + corner markers
+<GridBackground />
+
+// Typography pages: Center guides + corner markers
+<TypographyGrid />
+
+// Absolute minimal: Corner markers only
+<MinimalBackground />
 ```
 
-Two variants available:
-- `GridBackground` — Full page dotted grid with corner markers
-- `TypographyGrid` — Baseline guides for typography specimens
+**Characteristics:**
+- **Diagonal hatching** at 2% opacity — barely visible, just enough texture
+- **Corner markers** at 10% opacity — subtle framing
+- **Fixed attachment** — pattern doesn't scroll, creates depth
+- **Uses CSS variables** — adapts to theme
 
-### baseline markers
+**Philosophy:** The grid should be felt, not seen. It provides spatial awareness without demanding attention.
 
-Typography specimens can show baseline/x-height markers:
+### corner markers
 
-```
-722  ─ ─ ─ ─  cap height
-532  ─ ─ ─ ─  x-height
-0    ─ ─ ─ ─  baseline
-```
+Small L-shaped brackets in the four corners:
+- Size: 12px × 12px (h-3 w-3)
+- Opacity: 10% of foreground
+- Position: 32px (left-8, top-8, etc.) from edges
+- Purpose: Frame the viewport without boxing it in
+
+Think of them as terminal viewport delimiters.
 
 ---
 
@@ -159,13 +166,18 @@ Typography specimens can show baseline/x-height markers:
 - **Technical**: Monospace accents, terminal patterns
 - **Pixel**: Geist Pixel for display, adds character
 - **Minimal**: No unnecessary elements
-- **Dark**: Black as identity, not just preference
+- **Dark**: Dark gray as identity, not just preference
+- **Calm**: Ultra-low contrast backgrounds, high contrast text
 
 ### anti-patterns
 
-- Rounded corners > 8px (too playful)
+- Heavy backgrounds (keep them almost invisible)
+- Too many grid lines (diagonal hatching is enough)
+- Pure black backgrounds (use soft dark gray)
+- Pure white text (use soft white)
 - Shadows (too elevated)
 - Gradients (too decorative)
+- Rounded corners > 8px (too playful)
 - Light backgrounds by default (not dark-native)
 - Colored backgrounds for cards (use borders)
 - Too many font weights (stick to 400, 500, 700)
@@ -178,8 +190,8 @@ Typography specimens can show baseline/x-height markers:
 ### buttons
 
 6 variants, all flat:
-- `default` — white bg, black text
-- `secondary` — zinc-800 bg
+- `default` — high contrast
+- `secondary` — mid gray bg
 - `outline` — border only
 - `ghost` — no bg, hover reveals
 - `destructive` — red, use sparingly
@@ -187,14 +199,14 @@ Typography specimens can show baseline/x-height markers:
 
 ### cards
 
-- Border: 1px zinc-800
+- Border: 1px white/10%
 - Background: slightly lighter than page (`--card`)
 - Padding: 24px (p-6)
 - No shadows ever
 
 ### inputs
 
-- Border: 1px zinc-800
+- Border: 1px white/15%
 - Background: transparent or `--input`
 - Focus: ring with `--ring`
 - Placeholder: muted-foreground
