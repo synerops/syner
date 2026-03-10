@@ -1,3 +1,7 @@
+---
+tools: [Glob, Bash]
+---
+
 # update-docs
 
 Update documentation to reflect the current state of the codebase.
@@ -86,16 +90,11 @@ Parse arguments to determine what to update:
 
 ### 2. Scan the codebase
 
-```bash
-# Skills per app
-find apps/*/skills/*/SKILL.md
+Use `Glob` to discover files:
 
-# Agents
-find agents/*.md
-
-# Tools
-ls packages/vercel/src/tools/
-```
+- Skills per app: `Glob("apps/*/skills/*/SKILL.md")`
+- Agents: `Glob("agents/*.md")`
+- Tools: `Glob("packages/vercel/src/tools/*")`
 
 ### 3. For README.md updates
 
