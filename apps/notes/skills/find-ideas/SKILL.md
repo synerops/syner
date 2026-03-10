@@ -1,6 +1,7 @@
 ---
 name: find-ideas
 description: Orchestrate the ideas system. Mine vaults for ideas, analyze maturity, and route to the right skill or agent. The entry point for idea discovery that connects find-links, grow-note, track-idea, and cross-app routing.
+command: find-ideas
 metadata:
   author: syner
   version: "0.3.0"

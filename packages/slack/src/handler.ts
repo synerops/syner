@@ -5,8 +5,11 @@ import type {
   SlackHandlerConfig,
   SlackMessageEvent,
   SlackAppMentionEvent,
+  SlackCommandHandlerConfig,
+  SlackSlashCommand,
 } from './types'
 import { isUrlVerification, isMessageEvent, isAppMentionEvent } from './types'
+import { convertMarkdown } from './convert'
 
 /**
  * Verify Slack request signature
@@ -107,6 +110,101 @@ export function createHandler(config: SlackHandlerConfig) {
     }
 
     // Acknowledge receipt immediately
+    return new Response('', { status: 200 })
+  }
+}
+
+/**
+ * Create a Next.js route handler for Slack slash commands
+ */
+export function createCommandHandler(config: SlackCommandHandlerConfig) {
+  return async function handler(request: Request): Promise<Response> {
+    // Get raw body for signature verification
+    const body = await request.text()
+
+    // Verify signature
+    const signature = request.headers.get('x-slack-signature')
+    const timestamp = request.headers.get('x-slack-request-timestamp')
+
+    if (!signature || !timestamp) {
+      return new Response('Missing signature headers', { status: 401 })
+    }
+
+    if (!verifySignature(config.signingSecret, signature, timestamp, body)) {
+      return new Response('Invalid signature', { status: 401 })
+    }
+
+    // Parse URL-encoded payload (slash commands use form data)
+    const params = new URLSearchParams(body)
+    const command: SlackSlashCommand = {
+      token: params.get('token') || '',
+      team_id: params.get('team_id') || '',
+      team_domain: params.get('team_domain') || '',
+      enterprise_id: params.get('enterprise_id') || undefined,
+      enterprise_name: params.get('enterprise_name') || undefined,
+      channel_id: params.get('channel_id') || '',
+      channel_name: params.get('channel_name') || '',
+      user_id: params.get('user_id') || '',
+      user_name: params.get('user_name') || '',
+      command: params.get('command') || '',
+      text: params.get('text') || '',
+      api_app_id: params.get('api_app_id') || '',
+      is_enterprise_install: params.get('is_enterprise_install') || 'false',
+      response_url: params.get('response_url') || '',
+      trigger_id: params.get('trigger_id') || '',
+    }
+
+    // If no handler, just acknowledge
+    if (!config.onCommand) {
+      return new Response('', { status: 200 })
+    }
+
+    // Process command in background if afterFn is available
+    const processCommand = async () => {
+      try {
+        const response = await config.onCommand!(command)
+
+        if (response && command.response_url) {
+          // Send response via response_url (allows delayed responses)
+          await fetch(command.response_url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: convertMarkdown(response.text),
+              response_type: response.response_type || 'ephemeral',
+              blocks: response.blocks,
+            }),
+          })
+        }
+      } catch (error) {
+        console.error('[SlackCommand] Error processing command:', error)
+
+        // Try to send error response
+        if (command.response_url) {
+          try {
+            const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+            await fetch(command.response_url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text: `_Error: ${errorMsg}_`,
+                response_type: 'ephemeral',
+              }),
+            })
+          } catch {
+            // Ignore error sending error response
+          }
+        }
+      }
+    }
+
+    if (config.afterFn) {
+      config.afterFn(processCommand)
+    } else {
+      await processCommand()
+    }
+
+    // Acknowledge immediately (Slack requires response within 3 seconds)
     return new Response('', { status: 200 })
   }
 }

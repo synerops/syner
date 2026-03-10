@@ -1,6 +1,7 @@
 ---
 name: find-links
 description: Bridge two domains you've been circling. Find unexpected connections between two different areas, topics, or projects in your notes. Use when you sense a link but can't articulate it, or to discover non-obvious relationships.
+command: find-links
 metadata:
   author: syner
   version: "0.3.0"

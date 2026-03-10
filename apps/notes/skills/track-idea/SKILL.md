@@ -1,6 +1,7 @@
 ---
 name: track-idea
 description: Track idea evolution - proactively surfaces evolved ideas worth revisiting, or traces a specific concept manually.
+command: track-idea
 context: fork
 tools: [Bash, Glob, Grep, Read]
 metadata:

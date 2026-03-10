@@ -11,6 +11,8 @@ export interface SkillConfig {
   agent?: string
   context?: 'inline' | 'fork'
   filePath: string
+  /** Command name to expose as slash command (e.g., 'create-skill' for /syner create-skill) */
+  command?: string
 }
 
 // Skill directories to search (relative to repo root)
@@ -49,6 +51,7 @@ function parseSkillFile(filePath: string): SkillConfig {
     agent: data.agent,
     context: data.context || 'inline',
     filePath,
+    command: data.command,
   }
 }
 
@@ -124,4 +127,47 @@ export function buildSkillInstructions(
     })
 
   return instructions
+}
+
+/**
+ * Command configuration for slash commands
+ */
+export interface CommandConfig {
+  name: string
+  skillName: string
+  description: string
+  agent: string
+}
+
+/**
+ * Discover all skills that are exposed as slash commands
+ * Scans all skill directories for skills with `command:` in frontmatter
+ */
+export async function discoverCommandSkills(repoRoot: string): Promise<CommandConfig[]> {
+  const commands: CommandConfig[] = []
+
+  for (const dir of SKILL_DIRS) {
+    const pattern = path.join(repoRoot, dir, '*/SKILL.md')
+    const files = await glob(pattern)
+
+    for (const file of files) {
+      try {
+        const skill = parseSkillFile(file)
+
+        // Only include skills with command frontmatter
+        if (skill.command) {
+          commands.push({
+            name: skill.command,
+            skillName: skill.name,
+            description: skill.description || `Invoke ${skill.name} skill`,
+            agent: skill.agent || 'syner',
+          })
+        }
+      } catch (error) {
+        console.error(`[discoverCommandSkills] Error parsing ${file}:`, error)
+      }
+    }
+  }
+
+  return commands
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { type Skill, type SkillContent, groupByCategory } from "@/lib/types";
+import { type Skill, type SkillContent, groupByCategory } from "syner/skills";
 import { SkillModal } from "./skill-modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -53,7 +53,7 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
                 {category}
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                {grouped[category].map((skill) => (
+                {grouped[category].map((skill: Skill) => (
                   <SkillCard
                     key={skill.slug}
                     skill={skill}

@@ -34,8 +34,9 @@ export {
   loadSkills,
   buildInlineSkillContext,
   buildSkillInstructions,
+  discoverCommandSkills,
 } from './skills'
-export type { SkillConfig } from './skills'
+export type { SkillConfig, CommandConfig } from './skills'
 
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'
