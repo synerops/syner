@@ -231,4 +231,5 @@ When writing audits, include failure details if applicable.
 - [skills.md](skills.md) - **Skill architecture** (symlinks, directories, where skills live)
 - [plan.md](plan.md) - Planning mode for breaking down complex work
 - [apps.md](apps.md) - When building AI apps
+- [grow.md](grow.md) - The grow methodology for evolving observations to principles
 - PHILOSOPHY.md - Notes are personal, suggest don't enforce
