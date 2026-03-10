@@ -302,12 +302,12 @@ When promoting, cite concrete evidence:
 
 This skill is self-referential:
 - It grows specialists using PKM methodology
-- `/syner-grow-note` grows notes using PKM methodology
+- `/grow-note` grows notes using PKM methodology
 - Both share the philosophy: **observe cheap, promote expensive**
 
 **If this skill works well for design, other subagents (notes, dev, bot) might want their own specialist evolution.**
 
 ---
 
-**Related skills:** `/syner-grow-note`, `/syner-skill-reviewer`
+**Related skills:** `/grow-note`, `/syner-skill-reviewer`
 **Related agents:** `design`, `dev`, `syner`

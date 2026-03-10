@@ -54,7 +54,7 @@ Determine how much context this request needs:
 | **None** | Casual conversation, greetings | Respond directly |
 | **App** | Task within a single app | Load that app's vault: `apps/{app}/vaults/**/*.md` |
 | **Targeted** | Question about specific thing | Use Glob/Grep/Read for that area only |
-| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="syner-load-all")` |
+| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="load-all")` |
 
 ### Vault Discovery
 
@@ -119,10 +119,10 @@ This converts analysis output into atomic, executable items.
 
 | Skill | What it does |
 |-------|--------------|
-| `/syner-track-idea` | Track how an idea evolved over time |
-| `/syner-find-links` | Find bridges between two different domains |
-| `/syner-find-ideas` | Generate ideas from your knowledge |
-| `/syner-grow-note` | Promote a thought into a proper document |
+| `/track-idea` | Track how an idea evolved over time |
+| `/find-links` | Find bridges between two different domains |
+| `/find-ideas` | Generate ideas from your knowledge |
+| `/grow-note` | Promote a thought into a proper document |
 | `/create-syner-app` | Scaffold a new application |
 | `/update-syner-app` | Update app to current stack |
 | `/syner-backlog-triager` | Triage backlog against codebase |

@@ -15,11 +15,11 @@ apps/notes/
 ├── lib/
 │   └── utils.ts                    # Utilities
 ├── skills/                         # 5 skills
-│   ├── syner-find-ideas/
-│   ├── syner-find-links/
-│   ├── syner-grow-note/
-│   ├── syner-track-idea/
-│   └── syner-load-all/
+│   ├── find-ideas/
+│   ├── find-links/
+│   ├── grow-note/
+│   ├── track-idea/
+│   └── load-all/
 └── vaults/                         # User's notes (gitignored)
     ├── syner/                      # Project notes
     ├── blog/                       # Blog drafts

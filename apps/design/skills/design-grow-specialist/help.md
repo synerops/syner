@@ -385,7 +385,7 @@ autoApprove: false            # Always ask confirmation
 
 ## Related
 
-- **`/syner-grow-note`** - Same PKM philosophy for notes
+- **`/grow-note`** - Same PKM philosophy for notes
 - **`/syner-skill-reviewer`** - Review specialists for quality
 - **`/syner-fix-symlinks`** - Propagate specialists to .claude/agents
 
