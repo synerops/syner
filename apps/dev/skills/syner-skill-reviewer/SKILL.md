@@ -136,7 +136,7 @@ Complex skills benefit from declaring their needs in frontmatter:
 
 ### C3. Shared Conventions
 
-If a skill repeats the "How to Read Notes" pattern (or similar boilerplate), it should reference `skills/syner/note-conventions.md` instead. Five skills currently share this block — deduplication keeps updates from needing five edits.
+If a skill repeats the "How to Read Notes" pattern (or similar boilerplate), it should reference `skills/syner/notes.md` instead. Five skills currently share this block — deduplication keeps updates from needing five edits.
 
 ### C4. Philosophy
 
