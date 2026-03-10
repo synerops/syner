@@ -1,62 +1,56 @@
-import { Badge } from "@syner/ui/components/badge";
+import { Logo } from "@syner/ui/branding";
+import { Button } from "@syner/ui/components/button";
 import { Input } from "@syner/ui/components/input";
 import { geistPixelSquare } from "@syner/ui/fonts";
+import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative w-full px-8 py-24 lg:py-32">
+    <section className="w-full px-8 py-20 lg:py-28">
       <div className="mx-auto max-w-4xl">
-        <div className="flex flex-col gap-8">
-          <Badge
-            variant="outline"
-            className="w-fit font-mono text-xs lowercase tracking-wide"
-          >
-            {"// agentic design system"}
-          </Badge>
+        <div className="flex flex-col gap-10">
+          {/* Logo mark */}
+          <Logo className="h-16 w-16 md:h-20 md:w-20" />
 
-          <div className="flex flex-col gap-4">
-            {/* Pixel font title */}
+          {/* Title block */}
+          <div className="flex flex-col gap-2">
             <h1
-              className={`${geistPixelSquare.className} text-6xl tracking-tight md:text-7xl lg:text-8xl`}
+              className={`${geistPixelSquare.className} text-5xl tracking-tight md:text-6xl lg:text-7xl`}
             >
-              syner<span className="text-muted-foreground">.</span>
+              syner.design
             </h1>
-            <p className="max-w-lg font-mono text-base text-muted-foreground md:text-lg">
-              components that agents understand and generate.
+            <div className="h-px w-32 bg-border" />
+            <p className="font-mono text-sm text-muted-foreground">
+              // agentic design system
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="relative w-full max-w-md">
+          {/* Description */}
+          <div className="flex max-w-lg flex-col gap-2">
+            <p className="font-mono text-base text-muted-foreground md:text-lg">
+              components that agents understand and generate.
+            </p>
+            <p className="font-mono text-sm text-muted-foreground">
+              markdown specs for humans and agents.
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative w-full max-w-xs">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
                 $
               </span>
               <Input
-                placeholder="explore components..."
-                className="h-12 pl-8 font-mono text-sm"
+                placeholder="explore..."
+                className="h-11 pl-8 font-mono text-sm"
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <kbd className="rounded border border-border bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                  /
-                </kbd>
-              </div>
             </div>
-
-            <p className="font-mono text-xs text-muted-foreground">
-              markdown specs that both humans and agents read.
-            </p>
+            <Button className="gap-2 font-mono text-sm">
+              get started
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
-
-        {/* Decorative baseline markers */}
-        <div className="absolute right-8 top-1/2 hidden -translate-y-1/2 flex-col items-end gap-1 font-mono text-xs text-muted-foreground/50 xl:flex">
-          <span className="border-t border-dashed border-white/10 pl-4">
-            722
-          </span>
-          <span className="border-t border-dashed border-white/10 pl-4">
-            532
-          </span>
-          <span className="border-t border-dashed border-white/10 pl-4">0</span>
         </div>
       </div>
     </section>

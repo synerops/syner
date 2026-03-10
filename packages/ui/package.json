@@ -9,7 +9,8 @@
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
-    "./fonts": "./src/fonts/index.ts"
+    "./fonts": "./src/fonts/index.ts",
+    "./branding": "./src/branding/index.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
