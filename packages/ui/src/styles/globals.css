@@ -71,8 +71,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  /* Typography */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-geist-pixel-square);
+  /* Radius */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -88,5 +91,26 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Selection styling - visible and on-brand */
+  ::selection {
+    @apply bg-foreground text-background;
+  }
+
+  ::-moz-selection {
+    @apply bg-foreground text-background;
+  }
+
+  /* Improve text rendering */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Make all text selectable by default */
+  p, h1, h2, h3, h4, h5, h6, span, a, li, td, th, label, code, pre {
+    @apply select-text;
   }
 }

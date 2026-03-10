@@ -18,6 +18,7 @@ We build for developers. The terminal aesthetic signals: this is serious tooling
 
 - Monospace for code, data, commands
 - Sans for UI, labels, prose
+- Pixel fonts for display/hero elements
 - Search bars styled like command prompts
 - Labels feel like CLI output
 
@@ -29,6 +30,15 @@ Every element earns its place. No decoration without purpose.
 - No gradients — flat colors
 - No rounded corners > 8px — subtle, not playful
 - Spacing is generous — let elements breathe
+
+### grid-aware
+
+A subtle grid background gives the design-tool aesthetic.
+
+- Dotted grid pattern (16px cells)
+- Larger grid lines (80px cells)
+- Corner markers for framing
+- Baseline markers for typography specimens
 
 ---
 
@@ -49,12 +59,30 @@ Every element earns its place. No decoration without purpose.
 
 ### typography
 
-| Role | Font | Weight | Usage |
-|------|------|--------|-------|
-| Display | Geist Sans | 700 | Hero titles |
-| Body | Geist Sans | 400 | Paragraphs, UI |
-| Code | Geist Mono | 400 | Code, commands, data |
-| Label | Geist Sans | 500 | Labels, badges |
+| Role | Font | Variable | Usage |
+|------|------|----------|-------|
+| Display | Geist Pixel Square | `--font-pixel` | Hero titles, brand moments |
+| Body | Geist Sans | `--font-sans` | Paragraphs, UI |
+| Code | Geist Mono | `--font-mono` | Code, commands, data |
+| Label | Geist Sans | `--font-sans` | Labels, badges |
+
+#### geist pixel variants
+
+5 display variants for different aesthetics:
+
+| Variant | Class | Vibe |
+|---------|-------|------|
+| Square | `geistPixelSquare` | Default, blocky pixels |
+| Grid | `geistPixelGrid` | Pixels with grid overlay |
+| Circle | `geistPixelCircle` | Rounded pixel dots |
+| Triangle | `geistPixelTriangle` | Angular, directional |
+| Line | `geistPixelLine` | Horizontal line pixels |
+
+Use pixel fonts for:
+- Hero titles
+- Brand wordmarks
+- Section headers (sparingly)
+- Decorative display text
 
 ### scale
 
@@ -65,7 +93,8 @@ text-base → 16px  → Body text
 text-lg   → 18px  → Lead paragraphs
 text-xl   → 20px  → Section titles
 text-2xl  → 24px  → Subsection titles
-text-5xl  → 48px  → Hero titles
+text-5xl  → 48px  → Hero titles (sans)
+text-7xl+ → 72px+ → Hero titles (pixel)
 ```
 
 ### spacing
@@ -86,7 +115,39 @@ gap-16 → 64px  → Page sections
 - Width: 1px always
 - Color: `--border` (zinc-800)
 - Radius: `--radius` (8px) or less
-- Style: solid, never dashed
+- Style: solid for UI, dashed for guides/grids
+
+---
+
+## visual elements
+
+### grid background
+
+The signature grid pattern inspired by vercel.com/font:
+
+```tsx
+import { GridBackground } from "@/components/grid-background";
+
+// In layout
+<body>
+  <GridBackground />
+  <div className="relative z-10">{children}</div>
+</body>
+```
+
+Two variants available:
+- `GridBackground` — Full page dotted grid with corner markers
+- `TypographyGrid` — Baseline guides for typography specimens
+
+### baseline markers
+
+Typography specimens can show baseline/x-height markers:
+
+```
+722  ─ ─ ─ ─  cap height
+532  ─ ─ ─ ─  x-height
+0    ─ ─ ─ ─  baseline
+```
 
 ---
 
@@ -96,6 +157,7 @@ gap-16 → 64px  → Page sections
 
 - **Confident**: Large type, generous whitespace
 - **Technical**: Monospace accents, terminal patterns
+- **Pixel**: Geist Pixel for display, adds character
 - **Minimal**: No unnecessary elements
 - **Dark**: Black as identity, not just preference
 
@@ -107,6 +169,7 @@ gap-16 → 64px  → Page sections
 - Light backgrounds by default (not dark-native)
 - Colored backgrounds for cards (use borders)
 - Too many font weights (stick to 400, 500, 700)
+- Pixel fonts for body text (only display)
 
 ---
 
@@ -135,6 +198,7 @@ gap-16 → 64px  → Page sections
 - Background: transparent or `--input`
 - Focus: ring with `--ring`
 - Placeholder: muted-foreground
+- Terminal style: prefix with `$` for command inputs
 
 ### labels/badges
 

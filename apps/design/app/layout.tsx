@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { geistSans, geistMono } from "@syner/ui/fonts";
+import {
+  geistSans,
+  geistMono,
+  geistPixelSquare,
+} from "@syner/ui/fonts";
 import "@syner/ui/globals.css";
+import { GridBackground } from "@/components/grid-background";
 
 export const metadata: Metadata = {
   title: "syner.design",
@@ -13,9 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`}>
-      <body className="font-sans antialiased">
-        {children}
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable} dark`}
+    >
+      <body className="relative font-sans antialiased">
+        <GridBackground />
+        <div className="relative z-10">{children}</div>
       </body>
     </html>
   );
