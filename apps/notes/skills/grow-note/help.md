@@ -1,11 +1,11 @@
-# syner-grow-note --help
+# grow-note --help
 
 Promote thoughts into documents, documents into structures, and discover evolution opportunities.
 
 ## Usage
 
 ```bash
-/syner-grow-note [target] [options]
+/grow-note [target] [options]
 ```
 
 ## Modes
@@ -14,8 +14,8 @@ Promote thoughts into documents, documents into structures, and discover evoluti
 Transform scattered thoughts into structured documents.
 
 ```bash
-/syner-grow-note "my thoughts on async communication"
-/syner-grow-note daily/2024-03-09.md
+/grow-note "my thoughts on async communication"
+/grow-note daily/2024-03-09.md
 ```
 
 **Output:** Polished article, plan, reference, or decision doc
@@ -26,7 +26,7 @@ Transform scattered thoughts into structured documents.
 Fragment a dense document into organized folder structure.
 
 ```bash
-/syner-grow-note apps/design/vaults/syner/components.md
+/grow-note apps/design/vaults/syner/components.md
 ```
 
 **Output:** Proposed folder structure with fragmentation plan
@@ -37,8 +37,8 @@ Fragment a dense document into organized folder structure.
 Scan vaults for documents ready to evolve.
 
 ```bash
-/syner-grow-note --scan
-/syner-grow-note --scan apps/design/vaults
+/grow-note --scan
+/grow-note --scan apps/design/vaults
 ```
 
 **Output:** List of evolution opportunities with priority
@@ -57,16 +57,16 @@ Scan vaults for documents ready to evolve.
 
 ```bash
 # Graduate a thought
-/syner-grow-note "that idea about developer tools"
+/grow-note "that idea about developer tools"
 
 # Transform a dense doc
-/syner-grow-note apps/design/vaults/syner/components.md
+/grow-note apps/design/vaults/syner/components.md
 
 # Scout for opportunities
-/syner-grow-note --scan apps/design/vaults
+/grow-note --scan apps/design/vaults
 
 # Graduate with specific format
-/syner-grow-note "async notes" --format article
+/grow-note "async notes" --format article
 ```
 
 ## Output Formats
@@ -99,10 +99,10 @@ Scan vaults for documents ready to evolve.
 ```markdown
 ## Evolution Opportunities
 
-### 🎯 High Priority
+### High Priority
 [Files ready to evolve]
 
-### ✅ Already Well-Structured
+### Already Well-Structured
 [Files in good shape]
 ```
 
@@ -125,4 +125,4 @@ This skill does all three.
 
 ---
 
-**See also:** `/syner-track-idea`, `/syner-find-links`, `/syner-find-ideas`
+**See also:** `/track-idea`, `/find-links`, `/find-ideas`

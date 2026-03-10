@@ -1,5 +1,5 @@
 ---
-name: syner-grow-note
+name: grow-note
 description: Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.
 metadata:
   author: syner
@@ -7,7 +7,7 @@ metadata:
 tools: [Glob, Read, Write]
 ---
 
-# Syner Grow Note
+# Grow Note
 
 You detect growth opportunities and execute the right type of evolution.
 
@@ -19,6 +19,12 @@ Growth isn't always "make it bigger." Sometimes it's:
 - **Discover** — Hidden potential → Visible opportunities
 
 This skill orchestrates all three.
+
+## Ideas Scope Integration
+
+**Queries:** `Expected output` from agent lead
+**Purpose:** Determine what document format to create when graduating
+**Benefit:** In `notes` creates personal plans/articles, in `dev` creates technical specs
 
 ## Decision Flow
 
@@ -82,18 +88,18 @@ Graduate raw thoughts into polished documents.
 
 ```bash
 # Scout for opportunities
-/syner-grow-note --scan
-/syner-grow-note --scan apps/design/vaults
+/grow-note --scan
+/grow-note --scan apps/design/vaults
 
 # Transform dense document
-/syner-grow-note apps/design/vaults/syner/components.md
+/grow-note apps/design/vaults/syner/components.md
 
 # Graduate a thought
-/syner-grow-note "my thoughts on async communication"
-/syner-grow-note daily/2024-03-09.md
+/grow-note "my thoughts on async communication"
+/grow-note daily/2024-03-09.md
 
 # Force specific format
-/syner-grow-note "async notes" --format article
+/grow-note "async notes" --format article
 ```
 
 **For detailed help:** Read `help.md` in this skill directory
@@ -155,7 +161,7 @@ This skill operates within `/syner-boundaries`:
 This skill practices what it preaches:
 
 ```
-syner-grow-note/
+grow-note/
   ├── SKILL.md                      ← You are here (orchestrator)
   ├── help.md                       ← User-facing documentation
   └── references/                   ← Detailed mode specifications
@@ -168,4 +174,4 @@ syner-grow-note/
 
 ---
 
-**Related skills:** `/syner-track-idea`, `/syner-find-links`, `/syner-find-ideas`
+**Related skills:** `/track-idea`, `/find-links`, `/find-ideas`

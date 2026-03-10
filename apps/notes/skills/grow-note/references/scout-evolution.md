@@ -137,21 +137,21 @@ For each high-priority opportunity, include:
 
 **Next Steps:**
 Pick an opportunity and run:
-- `/syner-grow-note [filename.md]` (for transform)
-- `/syner-grow-note "[topic]"` (for graduate)
+- `/grow-note [filename.md]` (for transform)
+- `/grow-note "[topic]"` (for graduate)
 ```
 
 ## Scanning Strategies
 
 ### Targeted Scan (Recommended)
 ```bash
-/syner-grow-note --scan apps/design/vaults
+/grow-note --scan apps/design/vaults
 ```
 Focus on specific app/vault for relevant results.
 
 ### Full Vault Scan
 ```bash
-/syner-grow-note --scan
+/grow-note --scan
 ```
 Comprehensive but may be overwhelming. Best for periodic audits.
 

@@ -1,5 +1,5 @@
 ---
-name: syner-track-idea
+name: track-idea
 description: Track idea evolution - proactively surfaces evolved ideas worth revisiting, or traces a specific concept manually.
 context: fork
 tools: [Bash, Glob, Grep, Read]
@@ -8,7 +8,7 @@ metadata:
   version: "0.3.0"
 ---
 
-# Syner Track Idea
+# Track Idea
 
 You track how ideas evolve. Some thoughts get revisited, refined, contradicted. You surface which ones have grown — and how.
 
@@ -20,6 +20,12 @@ Two modes:
 |------|---------|--------------|
 | **Proactive** | No argument | Detect ideas that evolved significantly, surface for review |
 | **Manual** | With argument | Trace a specific concept through time |
+
+## Ideas Scope Integration
+
+**Queries:** `Seeks` from agent lead
+**Purpose:** Know what type of evolution to track in this domain
+**Benefit:** In `notes` tracks startup/life idea evolution, in `dev` tracks skill/feature evolution
 
 ## Proactive Mode
 
@@ -114,8 +120,8 @@ Use when:
 ## Usage
 
 ```
-/syner-track-idea                    # Proactive: what evolved?
-/syner-track-idea building in public # Manual: trace this concept
+/track-idea                    # Proactive: what evolved?
+/track-idea building in public # Manual: trace this concept
 ```
 
 ## Boundaries
