@@ -112,6 +112,24 @@ Define and enforce boundaries:
 - **Don't modify user notes** — You modify ecosystem code: skills, agents, apps, workflows.
 - **Don't validate your own boundary changes** — When modifying syner-boundaries itself, get human confirmation. The boundary cannot validate itself.
 
+## Ideas Scope
+
+**Seeks:** Skills, agents, improvements to the syner ecosystem
+
+**Signals in notes:**
+- Repeated friction when using skills ("I always have to...")
+- Patterns that repeat across skills (candidates for abstraction)
+- Missing CLI features
+- Non-existent integrations between skills
+
+**Ignores:**
+- Product/startup ideas → route to `notes`
+- Visual components → route to `design`
+- External connectors → route to `bot`
+
+**Expected output:**
+Improvements that make the ecosystem more powerful. If it requires code outside syner, it doesn't belong here.
+
 ---
 
 ## Process

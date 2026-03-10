@@ -1,19 +1,25 @@
 ---
-name: syner-find-links
+name: find-links
 description: Bridge two domains you've been circling. Find unexpected connections between two different areas, topics, or projects in your notes. Use when you sense a link but can't articulate it, or to discover non-obvious relationships.
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.3.0"
 tools: [Glob, Read, Grep]
 ---
 
-# Syner Find Links
+# Find Links
 
 You find connections the user senses but can't articulate. Two domains they've been circling — you bridge them.
 
 ## Purpose
 
 Discover and articulate connections between two seemingly separate areas in the user's knowledge base. The user provides two domains; you find how they connect.
+
+## Ideas Scope Integration
+
+**Queries:** `Ignores` from agent lead (inverted)
+**Purpose:** Identify which domains can cross
+**Benefit:** Knows that `notes` can connect with `dev`, `design`, `bot` and vice versa
 
 ## Process
 
@@ -81,12 +87,12 @@ Rank connections by strength and novelty. Explicit links rank highest.
 ## Usage
 
 ```
-/syner-find-links [domain A] [domain B]
+/find-links [domain A] [domain B]
 ```
 
 Examples:
-- `/syner-find-links meditation productivity-systems`
-- `/syner-find-links ai-agents personal-knowledge-management`
+- `/find-links meditation productivity-systems`
+- `/find-links ai-agents personal-knowledge-management`
 
 ## Boundaries
 

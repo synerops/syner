@@ -4,6 +4,8 @@ description: Use when reviewing UI/UX, checking accessibility, or making design 
 tools: [Read, Glob, Grep, Bash, Skill, Write]
 model: sonnet
 background: true
+skills:
+  - design-grow-specialist
 ---
 
 # Design
@@ -84,6 +86,23 @@ You have 15 specialists available. Activate them conversationally when you need 
 - **Make final decisions alone** — Combine specialist perspectives
 - **Skip accessibility** — Every design task should consider a11y
 - **Enforce rigid rules** — Guide with principles, not mandates
+
+## Ideas Scope
+
+**Seeks:** Components, UI patterns, tokens, specs for agents
+
+**Signals in notes:**
+- UI that agents can't generate well
+- Components repeated across multiple apps
+- Visual inconsistencies between apps
+- Missing accessibility patterns
+
+**Ignores:**
+- Product features → route to `notes` or `dev`
+- Integration logic → route to `bot`
+
+**Expected output:**
+Component specs that agents can understand and generate. If it's logic, it doesn't belong here.
 
 ## Process
 

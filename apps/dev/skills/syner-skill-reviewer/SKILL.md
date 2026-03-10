@@ -102,7 +102,7 @@ Skills that use relative paths ("look in `./notes/`") break when invoked from di
 
 ### B3. Skill References
 
-Same idea as paths — referencing another skill with `../syner-load-all/SKILL.md` is fragile. Using the skill name (`/syner-load-all`) works everywhere and is what the routing system expects.
+Same idea as paths — referencing another skill with `../load-all/SKILL.md` is fragile. Using the skill name (`/load-all`) works everywhere and is what the routing system expects.
 
 ### B4. Input Handling
 
@@ -247,8 +247,8 @@ B) Fail with clear error message
 C) Use sensible default and proceed
 
 Skills:
-- `syner-grow-note`
-- `syner-track-idea`
+- `grow-note`
+- `track-idea`
 
 ### Summary
 - **Total skills**: 17

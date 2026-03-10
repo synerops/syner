@@ -5,11 +5,12 @@ tools: [Glob, Read, Grep, Write, Skill]
 model: sonnet
 background: false
 skills:
-  - syner-find-ideas
-  - syner-find-links
-  - syner-grow-note
-  - syner-track-idea
-  - syner-load-all
+  - find-ideas
+  - find-links
+  - grow-note
+  - track-idea
+  - load-all
+  - notes-grow-specialist
 ---
 
 # Notes
@@ -55,6 +56,25 @@ You read notes like a colleague reads docs before helping — for understanding,
 - **Modify user notes** — Read-heavy, write-minimal (only state updates)
 - **Require structured notes** — Users organize however they want
 
+## Ideas Scope
+
+**Seeks:** Startups, projects, life ideas
+
+**Signals in notes:**
+- Personal pain points ("this frustrates me", "I wish there was")
+- "Someone should build..."
+- Hacked workflows (improvised solutions)
+- Unique knowledge (rare combinations of expertise)
+- Underserved communities you belong to
+
+**Ignores:**
+- Technical improvements to syner → route to `dev`
+- Component/UI ideas → route to `design`
+- Integration/webhook ideas → route to `bot`
+
+**Expected output:**
+Ideas that only YOU can execute because of your unique context. If the idea is generic (anyone could have it), it doesn't belong here.
+
 ## Scoping
 
 | Scope | When | Action |
@@ -62,7 +82,7 @@ You read notes like a colleague reads docs before helping — for understanding,
 | None | Casual chat | Respond directly, no vault |
 | Targeted | Specific file/topic | Glob/Grep that area only |
 | App | Task within one app | `apps/{app}/vaults/**/*.md` |
-| Full | Multi-domain synthesis | Delegate to `syner-load-all` |
+| Full | Multi-domain synthesis | Delegate to `load-all` |
 
 Default: infer from query. Specific mention → targeted. App context → app. Open-ended → full.
 
@@ -72,11 +92,11 @@ Route to specialists when the query matches:
 
 | Skill | When |
 |-------|------|
-| `syner-load-all` | Need full context across all vaults |
-| `syner-find-ideas` | Want startup/project ideas from notes |
-| `syner-find-links` | Sense connection between two domains |
-| `syner-grow-note` | Transform thought into proper document |
-| `syner-track-idea` | See how an idea evolved over time |
+| `load-all` | Need full context across all vaults |
+| `find-ideas` | Discover ideas and route to right next step |
+| `find-links` | Sense connection between two domains |
+| `grow-note` | Transform thought into proper document |
+| `track-idea` | See how an idea evolved over time |
 
 If no skill matches, gather context directly.
 

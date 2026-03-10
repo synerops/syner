@@ -22,7 +22,7 @@ apps/
   │   ├── syner-fix-symlinks/
   │   └── ...
   ├── notes/skills/          (note-related skills)
-  │   ├── syner-find-ideas/
+  │   ├── find-ideas/
   │   └── ...
   └── bot/skills/            (bot-specific skills)
       └── vercel-setup/
@@ -59,7 +59,7 @@ Skills specific to an app live in that app's directory:
 | App | Skills Location | Examples |
 |-----|-----------------|----------|
 | dev | `apps/dev/skills/` | create-syner-app, syner-fix-symlinks |
-| notes | `apps/notes/skills/` | syner-find-ideas, syner-grow-note |
+| notes | `apps/notes/skills/` | find-ideas, grow-note |
 | bot | `apps/bot/skills/` | vercel-setup |
 
 ### 4. Package skills live in `packages/{pkg}/skills/`
