@@ -233,7 +233,9 @@ jobs:
               continue
             fi
 
-            BODY=$(awk "/^### \\$CODE/,/^###/" "$REPORT" | head -n -1)
+            # Escape brackets for awk regex, then extract section until ---
+            ESCAPED_CODE=$(echo "$CODE" | sed 's/\[/\\[/g; s/\]/\\]/g')
+            BODY=$(awk "/^### $ESCAPED_CODE/,/^---\$/" "$REPORT" | sed '1d;$d')
 
             echo "Creating issue: $TITLE"
             gh issue create \
