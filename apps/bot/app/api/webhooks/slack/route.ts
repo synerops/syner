@@ -29,6 +29,10 @@ async function fetchAgentsByChannel(): Promise<Map<string, AgentCard>> {
 
   try {
     const res = await fetch(`${baseUrl}/api/agents`, {
+      headers: {
+        'x-vercel-protection-bypass':
+          process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
+      },
       next: { revalidate: 3600 },
     })
 
