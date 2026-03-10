@@ -14,8 +14,6 @@ tools:
 
 # Create Syner Skill
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Create skills for the syner ecosystem. Skills are invoked with /name and extend agent capabilities.
 
 ## Core Principles
@@ -94,8 +92,6 @@ metadata:
 ---
 
 # {Name}
-
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
 
 {Purpose - one line}
 

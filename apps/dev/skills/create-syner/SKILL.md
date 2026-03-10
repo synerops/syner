@@ -15,8 +15,6 @@ tools:
 
 # Create Syner
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Orchestrator for creating syner ecosystem components. Routes to specialized creation skills.
 
 ## Core Principles

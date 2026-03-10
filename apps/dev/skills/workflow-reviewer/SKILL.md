@@ -10,8 +10,6 @@ metadata:
 
 # Workflow Reviewer
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Catch workflow issues before they cost money or time.
 
 This is a review skill. Run it before triggering workflows or when debugging failures.

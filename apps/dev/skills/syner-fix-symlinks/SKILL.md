@@ -10,8 +10,6 @@ tools: [Glob, Bash]
 
 # Fix Symlinks
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Sync `skills/` and `.claude/agents/` with their sources.
 
 This is a maintenance skill. Run after creating skills/agents or when they aren't showing up.

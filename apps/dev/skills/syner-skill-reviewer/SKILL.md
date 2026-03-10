@@ -10,8 +10,6 @@ metadata:
 
 # Skill Reviewer
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Audit a skill and report what needs attention — the user decides what to fix.
 
 This is Dev's quality gate. Review before skills go live.

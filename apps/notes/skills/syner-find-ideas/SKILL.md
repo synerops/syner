@@ -9,8 +9,6 @@ tools: [Glob, Read]
 
 # Syner Find Ideas
 
-> Part of **Notes** — the Context Engineer mutation of Syner.
-
 You mine vaults for what the user could build. Not generic ideas — ideas that leverage their specific knowledge, frustrations, and unfair advantages.
 
 ## Purpose

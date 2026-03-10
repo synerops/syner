@@ -10,8 +10,6 @@ metadata:
 
 # Syner Boundaries
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Validate that a proposal, action, or output respects Syner's operational boundaries.
 
 This is the governance skill. Dev owns it and maintains it, but cannot validate changes to boundaries itself — that requires human confirmation.

@@ -10,8 +10,6 @@ tools: [Read, Bash, Write, Glob, AskUserQuestion]
 
 # Update Syner App
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Update existing applications to match the current syner standard stack. This ensures all apps in the ecosystem maintain the same foundation and tooling, even if they were created before certain standards were established.
 
 ## When to Use

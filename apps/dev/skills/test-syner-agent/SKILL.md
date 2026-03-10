@@ -10,8 +10,6 @@ metadata:
 
 # Test Syner Agent
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Test agents by comparing actual output against expected output.
 
 This is a testing skill. Use it during agent development to verify behavior matches instructions.

@@ -10,8 +10,6 @@ metadata:
 
 # Vercel Setup
 
-> Part of **Bot** — the Integration Bridge mutation of Syner.
-
 Configure environment variables for `syner.bot` deployment on Vercel. Bot needs to be running to connect systems — this skill ensures it's properly configured.
 
 ## Purpose
