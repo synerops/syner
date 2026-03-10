@@ -15,17 +15,7 @@ export async function GET() {
     const projectRoot = getProjectRoot();
     const agents = await loadAgents(projectRoot);
 
-    // Return agent cards (basic metadata, not full instructions)
-    const cards = agents.map((agent) => ({
-      name: agent.name,
-      description: agent.description,
-      model: agent.model,
-      tools: agent.tools,
-      skills: agent.skills,
-      channel: agent.channel,
-    }));
-
-    return NextResponse.json(cards);
+    return NextResponse.json(agents);
   } catch (error) {
     console.error("Error fetching agents:", error);
     return NextResponse.json(

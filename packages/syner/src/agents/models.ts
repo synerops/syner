@@ -1,6 +1,6 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import type { LanguageModel } from 'ai'
-import type { AgentConfig } from './loader'
+import type { AgentCard } from './loader'
 
 export const MODEL_IDS = {
   opus: 'claude-opus-4-20250514',
@@ -8,7 +8,7 @@ export const MODEL_IDS = {
   haiku: 'claude-haiku-4-20250514',
 } as const
 
-export function getModel(config: AgentConfig): LanguageModel {
+export function getModel(config: AgentCard): LanguageModel {
   const modelId = MODEL_IDS[config.model ?? 'sonnet']
   return anthropic(modelId)
 }

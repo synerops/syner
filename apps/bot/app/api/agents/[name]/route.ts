@@ -34,13 +34,5 @@ export async function GET(
     return NextResponse.json({ error: "Agent not found" }, { status: 404 });
   }
 
-  // Return agent card (basic metadata, not full instructions)
-  return NextResponse.json({
-    name: agent.name,
-    description: agent.description,
-    model: agent.model,
-    tools: agent.tools,
-    skills: agent.skills,
-    channel: agent.channel,
-  });
+  return NextResponse.json(agent);
 }
