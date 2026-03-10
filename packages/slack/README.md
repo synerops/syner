@@ -37,7 +37,7 @@ https://your-domain/api/chat-poc
 | Field | Value |
 |-------|-------|
 | Command | `/syner` |
-| Request URL | `https://your-domain/api/slack/commands` |
+| Request URL | `https://your-domain/api/commands/slack` |
 | Description | Invoke Syner skills |
 | Usage Hint | `[command] [args]` |
 
