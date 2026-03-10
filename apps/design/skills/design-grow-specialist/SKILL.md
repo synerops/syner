@@ -286,7 +286,7 @@ This skill operates within `/syner-boundaries`:
 - [ ] Real code examples cited
 - [ ] Format is project-adapted, not copy-paste
 
-## Voice
+## Output Tone
 
 Direct. Evidence-based. PKM-native.
 

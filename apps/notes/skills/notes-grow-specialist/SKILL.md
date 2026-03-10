@@ -238,7 +238,7 @@ This skill operates within `/syner-boundaries`:
 - [ ] Real friction examples cited
 - [ ] Format is adapted to user's patterns, not generic PKM
 
-## Voice
+## Output Tone
 
 Direct. Evidence-based. PKM-native.
 
