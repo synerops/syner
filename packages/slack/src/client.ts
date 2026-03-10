@@ -1,5 +1,6 @@
 import { WebClient } from '@slack/web-api'
 import type { SlackClientConfig, StreamReplyOptions } from './types'
+import { convertMarkdown } from './convert'
 
 /**
  * Create a Slack Web API client
@@ -50,18 +51,18 @@ export async function streamReply(
         await client.chat.update({
           channel,
           ts: messageTs,
-          text: fullText || '_Thinking..._',
+          text: convertMarkdown(fullText) || '_Thinking..._',
         })
         lastUpdate = now
       }
     }
 
-    // Final update with complete text
+    // Final update with complete text (converted to Slack mrkdwn)
     if (fullText) {
       await client.chat.update({
         channel,
         ts: messageTs,
-        text: fullText,
+        text: convertMarkdown(fullText),
       })
     }
   } catch (error) {
@@ -94,7 +95,7 @@ export async function sendReply(
   const response = await client.chat.postMessage({
     channel,
     thread_ts: threadTs,
-    text,
+    text: convertMarkdown(text),
   })
   return response.ts
 }

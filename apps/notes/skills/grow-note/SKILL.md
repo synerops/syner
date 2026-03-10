@@ -1,6 +1,7 @@
 ---
 name: grow-note
 description: Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.
+command: grow-note
 metadata:
   author: syner
   version: "0.3.0"

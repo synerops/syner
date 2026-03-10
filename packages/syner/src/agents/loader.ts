@@ -14,20 +14,18 @@ export interface AgentConfig {
   filePath: string
 }
 
-// OWASP: Controlled directory, not configurable by input
-const AGENTS_DIR = path.resolve(process.cwd(), '../../agents')
-
 /**
  * Load all agent configurations from markdown files
  */
-export async function loadAgents(): Promise<AgentConfig[]> {
-  const pattern = path.join(AGENTS_DIR, '*.md')
+export async function loadAgents(projectRoot: string): Promise<AgentConfig[]> {
+  const agentsDir = path.resolve(projectRoot, 'agents')
+  const pattern = path.join(agentsDir, '*.md')
   const files = await glob(pattern)
 
   return files.map(file => {
     // OWASP A01: Path traversal prevention
     const resolved = path.resolve(file)
-    if (!resolved.startsWith(AGENTS_DIR)) {
+    if (!resolved.startsWith(agentsDir)) {
       throw new Error(`Invalid agent path: ${file}`)
     }
 
@@ -51,8 +49,8 @@ export async function loadAgents(): Promise<AgentConfig[]> {
  * Get agents indexed by their Slack channel ID
  * Only returns agents that have a channel configured
  */
-export async function getAgentsByChannel(): Promise<Map<string, AgentConfig>> {
-  const agents = await loadAgents()
+export async function getAgentsByChannel(projectRoot: string): Promise<Map<string, AgentConfig>> {
+  const agents = await loadAgents(projectRoot)
   const map = new Map<string, AgentConfig>()
 
   for (const agent of agents) {
@@ -67,7 +65,7 @@ export async function getAgentsByChannel(): Promise<Map<string, AgentConfig>> {
 /**
  * Get a specific agent by name
  */
-export async function getAgentByName(name: string): Promise<AgentConfig | undefined> {
-  const agents = await loadAgents()
+export async function getAgentByName(projectRoot: string, name: string): Promise<AgentConfig | undefined> {
+  const agents = await loadAgents(projectRoot)
   return agents.find(a => a.name === name)
 }

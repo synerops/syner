@@ -25,7 +25,7 @@ import {
   type PullRequestEvent,
 } from '@syner/github'
 import { env } from '@/lib/env'
-import { logger } from '@/lib/logger'
+import { logger } from 'syner/logger'
 
 const BOT_TRIGGER = '@synerbot'
 

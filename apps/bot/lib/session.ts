@@ -11,9 +11,9 @@ import {
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, type AgentConfig } from './agents'
-import { getModel } from './agents/models'
+import { getAgentByName, getModel, type AgentConfig } from 'syner/agents'
 import { createToolSession, type ToolSession } from './tools'
+import path from 'path'
 
 export interface Session {
   /** Agent configuration */
@@ -47,6 +47,11 @@ export interface SessionOptions {
 
 const DEFAULT_AGENT = 'syner'
 
+// Project root is two levels up from apps/bot
+function getProjectRoot(): string {
+  return path.resolve(process.cwd(), '../..')
+}
+
 /**
  * Create a session for an agent
  *
@@ -60,9 +65,10 @@ const DEFAULT_AGENT = 'syner'
 export async function createSession(options?: SessionOptions): Promise<Session> {
   const agentName = options?.agent || DEFAULT_AGENT
   const onStatus = options?.onStatus || (() => {})
+  const projectRoot = getProjectRoot()
 
   // 1. Load agent config
-  const agent = await getAgentByName(agentName)
+  const agent = await getAgentByName(projectRoot, agentName)
   if (!agent) {
     throw new Error(`Agent "${agentName}" not found`)
   }

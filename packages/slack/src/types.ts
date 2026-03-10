@@ -123,3 +123,36 @@ export interface StreamReplyOptions {
   textStream: AsyncIterable<string>
   updateIntervalMs?: number
 }
+
+// Slash command payload from Slack
+export interface SlackSlashCommand {
+  token: string
+  team_id: string
+  team_domain: string
+  enterprise_id?: string
+  enterprise_name?: string
+  channel_id: string
+  channel_name: string
+  user_id: string
+  user_name: string
+  command: string
+  text: string
+  api_app_id: string
+  is_enterprise_install: string
+  response_url: string
+  trigger_id: string
+}
+
+// Slash command handler configuration
+export interface SlackCommandHandlerConfig {
+  signingSecret: string
+  afterFn?: (callback: () => Promise<void> | void) => void
+  onCommand?: (command: SlackSlashCommand) => Promise<SlackCommandResponse | void>
+}
+
+// Command response types
+export interface SlackCommandResponse {
+  text: string
+  response_type?: 'ephemeral' | 'in_channel'
+  blocks?: unknown[]
+}

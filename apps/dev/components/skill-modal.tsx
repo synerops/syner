@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
-import type { SkillContent } from "@/lib/types";
+import type { SkillContent } from "syner/skills";
 
 interface SkillModalProps {
   skill: SkillContent | null;
