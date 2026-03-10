@@ -1,3 +1,4 @@
+# === Build artifacts ===
 node_modules/
 .next/
 .turbo/
@@ -5,33 +6,36 @@ dist/
 *.log
 *.tsbuildinfo
 .tmp-*
-.DS_Store
+
+# === Local config ===
 .env
 .env.local
+.env*.local
+.vercel
+.DS_Store
 
-# Claude Code local settings (user preferences)
-.claude/settings.local.json
-
-CLAUDE.md
-
-# Notes vaults (personal knowledge base)
-apps/notes/vaults/*
-!apps/notes/vaults/.gitkeep
-!apps/notes/vaults/syner/
-
-# Obsidian config (local editor preferences)
+# === Editor ===
 **/.obsidian/
 
-# Dev vaults (local development notes)
-apps/dev/vaults/*
-!apps/dev/vaults/guides/
-
-# Dev skills (local experiments)
-skills/dev-*
-apps/dev/skills/dev-*/
-
-# Syner local data
-.syner/
-.vercel
-.env*.local
+# === Claude Code ===
+.claude/settings.local.json
+CLAUDE.md
 SYNER.md
+
+# === Syner local data ===
+.syner/
+
+# === Private content: _ prefix ===
+# Vaults
+apps/*/vaults/_*/
+packages/*/vaults/_*/
+
+# Skills
+apps/*/skills/_*/
+packages/*/skills/_*/
+skills/_*/
+
+# Agents
+apps/*/agents/_*/
+packages/*/agents/_*/
+agents/_*.md
