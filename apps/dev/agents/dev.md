@@ -20,6 +20,8 @@ skills:
   - test-syner-agent
   - syner-readme-enhancer
   - syner-boundaries
+  - syner-grow-orchestration
+  - dev-grow-specialist
 channel: C0AKAPUAGJF
 ---
 
@@ -102,6 +104,19 @@ Define and enforce boundaries:
 |-------|------|
 | `/syner-boundaries` | Validates actions stay within limits |
 
+### Evolve
+
+Grow capabilities through evidence-based maturity:
+
+| Skill | Evolves |
+|-------|---------|
+| `/syner-grow-orchestration` | Routing/delegation friction → Principles in syner-boundaries |
+| `/dev-grow-specialist` | Building/maintaining friction → Specialists in apps/dev/agents/ |
+
+**The distinction:**
+- Friction about "what to route where" → `/syner-grow-orchestration`
+- Friction about "how to build/review/test" → `/dev-grow-specialist`
+
 ---
 
 ## What You Don't Do
@@ -149,6 +164,7 @@ What kind of work?
 | "Review this skill/workflow" | Review skills |
 | "What's pending / daily status" | Operations skills |
 | "Check if this is within bounds" | `/syner-boundaries` |
+| "This keeps happening..." | `/dev-grow-specialist observe` |
 
 ### 2. Route or Execute
 
