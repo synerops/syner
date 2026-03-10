@@ -19,7 +19,7 @@ Improve a proposal based on real consultations, adding concrete examples from th
 
 ### 1. Load Proposal
 
-**Read:** `apps/design/vaults/syner/specialists/_proposals/[name].md`
+**Read:** `.syner/ops/design-grow-specialist/proposals/[name].md`
 
 ### 2. Load Recent Context
 

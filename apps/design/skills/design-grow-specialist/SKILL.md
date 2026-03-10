@@ -70,7 +70,7 @@ Record when a design decision lacked clear criteria.
 /design-grow-specialist observe --component header.tsx
 ```
 
-**Output:** Entry added to `_observations.md`
+**Output:** Entry added to `.syner/ops/design-grow-specialist/observations.md`
 
 ### 2. `review` — Detect patterns in observations
 **Reference:** `references/review.md`
@@ -108,7 +108,7 @@ Promote mature proposal to custom specialist.
 ```
 
 **Validates:** 3 conditions + threshold
-**Output:** File in `agents/specialists/`
+**Output:** File in `.syner/artifacts/design-grow-specialist/specialists/`
 
 ### 5. `promote` — Custom Specialist → Subagent
 **Reference:** `references/promote.md`
@@ -152,18 +152,23 @@ Show current state of all specialists at all levels.
 ## File Structure
 
 ```
-apps/design/vaults/syner/specialists/
-  _observations.md              # L0: Raw observations log
-  _proposals/
-    design-system-evolution.md  # L1: Immature proposals
-    whimsy-arbiter.md
-  _tracking.md                  # Metrics for all levels
-
-apps/design/agents/specialists/
-  design-system-evolution.md    # L2: Mature custom specialists
+.syner/
+├── ops/
+│   └── design-grow-specialist/
+│       ├── observations.md       # L0: Raw observations log
+│       ├── tracking.md           # Metrics for all levels
+│       ├── proposals/            # L1: Immature proposals
+│       │   ├── design-system-evolution.md
+│       │   └── whimsy-arbiter.md
+│       └── archive/              # Archived proposals/specialists
+│
+└── artifacts/
+    └── design-grow-specialist/
+        └── specialists/          # L2: Mature custom specialists
+            └── design-system-evolution.md
 
 apps/design/agents/
-  design-system-evolution.md    # L3: Autonomous subagents
+  design-system-evolution.md      # L3: Autonomous subagents (final destination)
 ```
 
 ## Thresholds (configurable)
@@ -186,7 +191,7 @@ Current settings (high, mostly manual):
 
 **Meta-metric:** If a specialist's format is evolving toward something more pragmatic than the generic template, that's a signal of real adaptation.
 
-Track in `_tracking.md`:
+Track in `.syner/ops/design-grow-specialist/tracking.md`:
 ```markdown
 ## design-system-evolution
 Format evolution: 3 refinements, moving toward decision-tree structure
@@ -198,7 +203,7 @@ Format evolution: 3 refinements, moving toward decision-tree structure
 The 71 `agency-*` specialists:
 - Start as fallback options
 - Get marked "deprecated for this project" when custom equivalent exists
-- Tracked in `_tracking.md`:
+- Tracked in `.syner/ops/design-grow-specialist/tracking.md`:
 
 ```markdown
 ## Deprecated Generics (for apps/design)
@@ -237,7 +242,7 @@ Load proportionally based on command:
 # Decision: Used custom spacing instead of design tokens
 # Component: test-component.tsx
 # Gap: No criteria for when to deviate from design system
-# Verify: Entry added to apps/design/vaults/syner/specialists/_observations.md
+# Verify: Entry added to .syner/ops/design-grow-specialist/observations.md
 ```
 
 ### Test Case 2: status command
@@ -254,13 +259,14 @@ Load proportionally based on command:
 # (Repeat 3x with similar "design system deviation" decisions)
 
 /design-grow-specialist review
-# Expected: Proposal created in _proposals/ directory
+# Expected: Proposal created in .syner/ops/design-grow-specialist/proposals/
 # Verify: Proposal passes 3-condition test
 ```
 
 **Cleanup:**
 ```bash
-rm -rf apps/design/vaults/syner/specialists/
+rm -rf .syner/ops/design-grow-specialist/
+rm -rf .syner/artifacts/design-grow-specialist/
 ```
 
 ## Boundaries

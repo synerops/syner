@@ -30,7 +30,7 @@ Which generic specialist COULD have helped but lacked context?
 
 ### 2. Create/Update Observations File
 
-**Location:** `apps/design/vaults/syner/specialists/_observations.md`
+**Location:** `.syner/ops/design-grow-specialist/observations.md`
 
 **Format:**
 ```markdown
@@ -58,7 +58,7 @@ Which generic specialist COULD have helped but lacked context?
 
 ### 3. Update Tracking
 
-**Location:** `apps/design/vaults/syner/specialists/_tracking.md`
+**Location:** `.syner/ops/design-grow-specialist/tracking.md`
 
 Increment observation count for potential specialist:
 
@@ -110,8 +110,8 @@ Next: Run `/design-grow-specialist review` to analyze patterns
 ## Context Loading
 
 Minimal:
-- Read existing `_observations.md`
-- Read existing `_tracking.md`
+- Read existing `observations.md`
+- Read existing `tracking.md`
 - Don't load full codebase (user provides context)
 
 ## Validation

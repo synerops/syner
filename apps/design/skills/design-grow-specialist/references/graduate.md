@@ -9,7 +9,7 @@ Promote a mature proposal to a custom specialist. This means it's been consulted
 
 ## When to Graduate
 
-- Proposal has ≥5 consultations (tracked in `_tracking.md`)
+- Proposal has ≥5 consultations (tracked in `tracking.md`)
 - 3-condition test still passes after real usage
 - Scope is clear and stable (not changing dramatically between consultations)
 - User confirms readiness (manual approval required initially)
@@ -18,11 +18,11 @@ Promote a mature proposal to a custom specialist. This means it's been consulted
 
 ### 1. Load Proposal
 
-**Read:** `apps/design/vaults/syner/specialists/_proposals/[name].md`
+**Read:** `.syner/ops/design-grow-specialist/proposals/[name].md`
 
 ### 2. Load Tracking Data
 
-**Read:** `apps/design/vaults/syner/specialists/_tracking.md`
+**Read:** `.syner/ops/design-grow-specialist/tracking.md`
 
 **Verify:**
 - Consultation count ≥ 5
@@ -99,7 +99,7 @@ See: packages/ui/src/tokens/semantic.ts"
 
 ### 6. Create Custom Specialist File
 
-**Location:** `apps/design/agents/specialists/[name].md`
+**Location:** `.syner/artifacts/design-grow-specialist/specialists/[name].md`
 
 **Template:**
 ```markdown
@@ -246,8 +246,8 @@ Consultations before deprecation: 0 (never used in project)
 
 Move proposal file to archive:
 ```bash
-mkdir -p apps/design/vaults/syner/specialists/_archive
-mv _proposals/[name].md _archive/[name]-proposal-archived-YYYY-MM-DD.md
+mkdir -p .syner/ops/design-grow-specialist/archive
+mv proposals/[name].md archive/[name]-proposal-archived-YYYY-MM-DD.md
 ```
 
 ## Output Template
@@ -268,7 +268,7 @@ mv _proposals/[name].md _archive/[name]-proposal-archived-YYYY-MM-DD.md
 - ✓ Is recurring ([X] components)
 - ✓ Has evidence ([list files])
 
-**File:** `agents/specialists/[name].md`
+**File:** `.syner/artifacts/design-grow-specialist/specialists/[name].md`
 
 **Next:**
 - Use this specialist when [triggering condition]

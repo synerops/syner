@@ -20,9 +20,9 @@ Detect redundancy, overlap, and deprecated specialists across all levels. Keep t
 
 **Read all levels:**
 ```
-L0: apps/design/vaults/syner/specialists/_observations.md
-L1: apps/design/vaults/syner/specialists/_proposals/*.md
-L2: apps/design/agents/specialists/*.md
+L0: .syner/ops/design-grow-specialist/observations.md
+L1: .syner/ops/design-grow-specialist/proposals/*.md
+L2: .syner/artifacts/design-grow-specialist/specialists/*.md
 L3: apps/design/agents/*.md (subagents)
 ```
 

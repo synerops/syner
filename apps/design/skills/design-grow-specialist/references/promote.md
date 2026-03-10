@@ -19,11 +19,11 @@ Elevate a custom specialist to autonomous subagent. This is the highest level �
 
 ### 1. Load Custom Specialist
 
-**Read:** `apps/design/agents/specialists/[name].md`
+**Read:** `.syner/artifacts/design-grow-specialist/specialists/[name].md`
 
 ### 2. Load Tracking Data
 
-**Read:** `apps/design/vaults/syner/specialists/_tracking.md`
+**Read:** `.syner/ops/design-grow-specialist/tracking.md`
 
 **Verify:**
 - Components affected ≥ 10
@@ -184,8 +184,8 @@ Tools: Read, Grep, Glob, Bash, Write
 ### 8. Archive Specialist File
 
 ```bash
-mkdir -p apps/design/vaults/syner/specialists/_archive
-mv agents/specialists/[name].md vaults/syner/specialists/_archive/[name]-specialist-archived-YYYY-MM-DD.md
+mkdir -p .syner/ops/design-grow-specialist/archive
+mv .syner/artifacts/design-grow-specialist/specialists/[name].md .syner/ops/design-grow-specialist/archive/[name]-specialist-archived-YYYY-MM-DD.md
 ```
 
 ### 9. Trigger Symlink Update
@@ -243,7 +243,7 @@ Or auto-invoke if skill has permission:
 - L3: [Date] (promoted)
 
 **Archived:**
-- Specialist file → `_archive/[name]-specialist-archived-YYYY-MM-DD.md`
+- Specialist file → `.syner/ops/design-grow-specialist/archive/[name]-specialist-archived-YYYY-MM-DD.md`
 ```
 
 ## Flags

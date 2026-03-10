@@ -18,7 +18,7 @@ Analyze accumulated observations, detect recurring patterns, and propose custom 
 
 ### 1. Load Observations
 
-**Read:** `apps/design/vaults/syner/specialists/_observations.md`
+**Read:** `.syner/ops/design-grow-specialist/observations.md`
 
 ### 2. Detect Patterns
 
@@ -70,7 +70,7 @@ If observations are vague "would be nice" → NO
 
 For each pattern that passes:
 
-**Create file:** `apps/design/vaults/syner/specialists/_proposals/[name].md`
+**Create file:** `.syner/ops/design-grow-specialist/proposals/[name].md`
 
 **Template:**
 ```markdown
@@ -140,7 +140,7 @@ last_refined: YYYY-MM-DD
 
 ### 5. Update Tracking
 
-**Location:** `apps/design/vaults/syner/specialists/_tracking.md`
+**Location:** `.syner/ops/design-grow-specialist/tracking.md`
 
 Move from "Potential Specialists (L0)" to "Proposals (L1)":
 
@@ -159,7 +159,7 @@ Components: card.tsx, header.tsx, button.tsx, sections.tsx
 
 ### 6. Mark Observations as Processed
 
-Add note to `_observations.md`:
+Add note to `observations.md`:
 
 ```markdown
 ---
@@ -180,7 +180,7 @@ Add note to `_observations.md`:
 ✅ **[Specialist Name]**
 - Evidence: [X] observations across [Y] components
 - Passes 3 conditions: ✓ Judgment ✓ Recurring ✓ Evidence
-- File: `_proposals/[name].md`
+- File: `proposals/[name].md`
 - Next: Needs [5] consultations before graduation
 
 ### Patterns Below Threshold
@@ -228,8 +228,8 @@ Show what would be proposed without creating files.
 ## Context Loading
 
 Moderate:
-- Read `_observations.md` (full)
-- Read `_tracking.md` (full)
+- Read `observations.md` (full)
+- Read `tracking.md` (full)
 - Grep component files mentioned for quick context
 - Don't deep-read entire codebase yet
 

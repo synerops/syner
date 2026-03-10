@@ -20,10 +20,10 @@ View the current state of specialist evolution. Dashboard for all specialists at
 
 **Read:**
 ```
-- apps/design/vaults/syner/specialists/_tracking.md
-- apps/design/vaults/syner/specialists/_observations.md
-- apps/design/vaults/syner/specialists/_proposals/*.md
-- apps/design/agents/specialists/*.md
+- .syner/ops/design-grow-specialist/tracking.md
+- .syner/ops/design-grow-specialist/observations.md
+- .syner/ops/design-grow-specialist/proposals/*.md
+- .syner/artifacts/design-grow-specialist/specialists/*.md
 - apps/design/agents/*.md (design subagents)
 ```
 
