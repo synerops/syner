@@ -3,101 +3,171 @@ name: syner-grow-note
 description: Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.
 metadata:
   author: syner
-  version: "0.2.0"
-tools: [Glob, Read, Write, Bash]
+  version: "0.3.0"
+tools: [Glob, Read, Write]
 ---
 
 # Syner Grow Note
 
 > Part of **Notes** — the Context Engineer mutation of Syner.
 
-You graduate thoughts. Raw daily notes become structured documents. Fleeting ideas become actionable plans.
+You detect growth opportunities and execute the right type of evolution.
 
 ## Purpose
 
-Convert raw, scattered thoughts into polished documents that can be shared or acted upon. The user points at something rough; you shape it into something useful.
+Growth isn't always "make it bigger." Sometimes it's:
+- **Graduate** — Rough thought → Polished document
+- **Fragment** — Dense file → Breathable structure
+- **Discover** — Hidden potential → Visible opportunities
 
-## Process
+This skill orchestrates all three.
 
-### 1. Identify the Thought
-
-If no argument provided, ask:
-> "Which note or thought would you like to graduate? (title, topic, or path)"
-
-### 2. Discover and Read
+## Decision Flow
 
 ```
-apps/*/vaults/**/*.md
+Input received
+  ↓
+Has --scan flag?
+  ├─ Yes → Scout Evolution mode
+  │         (Find opportunities across vaults)
+  │
+  └─ No → Analyze target
+            ↓
+          Is it a .md file path?
+            ├─ Yes → Analyze density
+            │         ├─ High → Document → Structure
+            │         └─ Low → Thought → Document
+            │
+            └─ No (phrase/topic) → Thought → Document
 ```
 
-Find the source material. Read `index.md` first for context.
+## Modes
 
-### 3. Analyze Raw Material
+Each mode has detailed reference documentation:
 
-Extract:
-- **Core insight or thesis** — What's the main point?
-- **Supporting observations** — What evidence or examples exist?
-- **Related notes** — What else connects?
-- **Gaps** — What's missing for completion?
+### 1. Scout Evolution (`--scan`)
+**Reference:** `references/scout-evolution.md`
 
-### 4. Determine Output Format
+Proactively scan vaults for evolution opportunities.
 
-| Format | When |
-|--------|------|
-| **Article** | Shareable insight for others |
-| **Plan** | Actionable project with steps |
-| **Reference** | Reusable knowledge for future self |
-| **Decision Doc** | Choice to be made with options |
+**Triggers:**
+- `--scan` flag present
+- No specific file target
 
-### 5. Draft the Document
+**Output:** Prioritized list of files ready to evolve
 
-Structure based on format. Include:
-- Internal links to related notes
-- External links for tools/technologies referenced
-- Clear sections appropriate to format
+### 2. Document → Structure
+**Reference:** `references/document-to-structure.md`
 
-### 6. Suggest Placement
+Fragment dense documents into folder structures.
 
-Where should this live? Propose a path.
+**Triggers:**
+- Input is `.md` file path
+- Density analysis shows 3+ competing concepts
+- File > 200 lines with clear boundaries
 
-## Output
+**Output:** Proposed folder structure + fragment plan
 
-```markdown
-## Graduated: [title]
+### 3. Thought → Document
+**Reference:** `references/thought-to-document.md`
 
-**Source:** [original note/thought]
-**Format:** [article/plan/reference/decision]
+Graduate raw thoughts into polished documents.
 
----
+**Triggers:**
+- Input is phrase/topic
+- Input is daily note or rough draft
+- Density analysis shows single cohesive idea
 
-[The drafted document]
-
----
-
-**Gaps:** [what's missing for completion]
-**Suggested Path:** [where to save it]
-**Next Steps:** [how to finalize]
-```
+**Output:** Drafted document with suggested placement
 
 ## Usage
 
-```
-/syner-grow-note [note title or topic]
+```bash
+# Scout for opportunities
+/syner-grow-note --scan
+/syner-grow-note --scan apps/design/vaults
+
+# Transform dense document
+/syner-grow-note apps/design/vaults/syner/components.md
+
+# Graduate a thought
+/syner-grow-note "my thoughts on async communication"
+/syner-grow-note daily/2024-03-09.md
+
+# Force specific format
+/syner-grow-note "async notes" --format article
 ```
 
-Examples:
-- `/syner-grow-note my thoughts on async communication`
-- `/syner-grow-note that idea about developer tools`
+**For detailed help:** Read `help.md` in this skill directory
+
+## Execution Steps
+
+### 1. Parse Input
+
+Extract:
+- Target (file, topic, or none if scanning)
+- Flags (`--scan`, `--format`, `--path`, `--verbose`, `--stats`)
+- Scope (specific path or full vault)
+
+### 2. Read References
+
+Based on mode detected, read the appropriate reference:
+```bash
+Read references/scout-evolution.md        # If --scan
+Read references/document-to-structure.md  # If high density file
+Read references/thought-to-document.md    # If thought/topic
+```
+
+### 3. Execute Mode
+
+Follow the process defined in the reference document.
+
+### 4. Output Result
+
+Use the output template from the reference, formatted consistently.
+
+## Context Loading
+
+Load proportionally:
+- **Scout mode:** Full vault scan (`apps/*/vaults/**/*.md`)
+- **Transform mode:** Single file + related notes
+- **Graduate mode:** Topic search across vaults
+
+Always read `index.md` files first for orientation.
 
 ## Boundaries
 
-This skill operates within `/syner-boundaries`. Key constraints:
+This skill operates within `/syner-boundaries`:
 
 | Boundary | Application |
 |----------|-------------|
-| Suggest, Don't Enforce | Propose format and placement, don't auto-save |
-| Concrete Output | Deliver a draft, not "here's what it might contain" |
-| Notes Are Context | Read source as context, preserve user's voice |
-| Self-Verification | Verify source material exists before drafting |
+| Suggest, Don't Enforce | Propose structure/format, confirm before executing |
+| Concrete Output | Deliver drafts and plans, not vague suggestions |
+| Notes Are Context | Read for understanding, preserve user's voice |
+| Proportional Loading | Load only what the mode requires |
 
-**Self-check:** The graduated document should sound like the user, not like a template. If you're imposing structure they wouldn't use, simplify.
+**Self-check:** Before outputting, verify:
+- [ ] Mode detection was correct
+- [ ] References were consulted
+- [ ] Output is actionable and concrete
+- [ ] User's voice is preserved (not templatized)
+
+## Meta-Note
+
+This skill practices what it preaches:
+
+```
+syner-grow-note/
+  ├── SKILL.md                      ← You are here (orchestrator)
+  ├── help.md                       ← User-facing documentation
+  └── references/                   ← Detailed mode specifications
+      ├── scout-evolution.md
+      ├── document-to-structure.md
+      └── thought-to-document.md
+```
+
+**It evolved from a single file using its own methodology.** This structure is the case study for document → structure transformation.
+
+---
+
+**Related skills:** `/syner-track-idea`, `/syner-find-links`, `/syner-find-ideas`
