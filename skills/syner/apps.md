@@ -1,4 +1,4 @@
-# Building AI Apps Checklist
+# Apps
 
 When building AI-powered applications, apply these guidelines:
 

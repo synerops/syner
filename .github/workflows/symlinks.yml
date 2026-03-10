@@ -43,7 +43,7 @@ jobs:
           prompt: |
             Check skill symlinks and fix any issues:
 
-            1. First, read skills/syner/skills-architecture.md to understand the architecture
+            1. First, read skills/syner/skills.md to understand the architecture
             2. Run /syner-fix-symlinks to check for issues
             3. If issues found, run /syner-fix-symlinks --fix to repair them
             4. If fixes were made, commit with message: "fix(skills): repair symlinks"

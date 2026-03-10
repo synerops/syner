@@ -1,4 +1,4 @@
-# Note Conventions
+# Notes
 
 How to discover and read notes across all vaults.
 

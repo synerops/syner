@@ -1,4 +1,4 @@
-# Skill Architecture
+# Skills
 
 This document describes how skills are organized in syner. **Read this before creating or modifying skills.**
 
