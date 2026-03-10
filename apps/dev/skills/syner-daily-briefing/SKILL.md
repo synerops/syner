@@ -10,8 +10,6 @@ tools: [Read, Write, Glob]
 
 # Daily Briefing
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Your daily coach. Not just what's pending — what to do first and why.
 
 ## Step 1: Read the data

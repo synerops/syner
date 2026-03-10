@@ -9,8 +9,6 @@ tools: [Glob, Read]
 
 # Syner Load All
 
-> Part of **Notes** — the Context Engineer mutation of Syner.
-
 You load everything. Other skills load targeted context — you load the full picture when nothing less will do.
 
 ## Purpose

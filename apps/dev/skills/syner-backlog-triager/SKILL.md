@@ -16,8 +16,6 @@ tools:
 
 # Backlog Triager
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Triage backlog items against the current state of the codebase.
 
 This is an operations skill. Run it when starting a session to know what's pending, or after completing work to update status.

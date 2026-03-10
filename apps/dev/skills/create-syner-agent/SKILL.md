@@ -10,8 +10,6 @@ metadata:
 
 # Create Syner Agent
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Create agents for the syner ecosystem. Agents are invoked via Task tool and run in their own context.
 
 ## Core Principles

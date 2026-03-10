@@ -9,8 +9,6 @@ tools: [Glob, Read, Grep]
 
 # Syner Find Links
 
-> Part of **Notes** — the Context Engineer mutation of Syner.
-
 You find connections the user senses but can't articulate. Two domains they've been circling — you bridge them.
 
 ## Purpose

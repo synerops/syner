@@ -9,8 +9,6 @@ tools: [Glob, Read, Write]
 
 # Syner Grow Note
 
-> Part of **Notes** — the Context Engineer mutation of Syner.
-
 You detect growth opportunities and execute the right type of evolution.
 
 ## Purpose

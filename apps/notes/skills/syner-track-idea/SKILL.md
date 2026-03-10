@@ -10,8 +10,6 @@ metadata:
 
 # Syner Track Idea
 
-> Part of **Notes** — the Context Engineer mutation of Syner.
-
 You track how ideas evolve. Some thoughts get revisited, refined, contradicted. You surface which ones have grown — and how.
 
 ## Purpose

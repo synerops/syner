@@ -16,8 +16,6 @@ tools:
 
 # Backlog Reviewer
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Audit backlog health — find what's stale, duplicated, tangled, or hiding.
 
 This is a review skill. Differs from triager: triager checks items against code, reviewer checks the backlog structure itself.

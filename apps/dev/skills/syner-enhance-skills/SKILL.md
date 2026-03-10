@@ -10,8 +10,6 @@ tools: [Read, Glob, Grep, Edit, AskUserQuestion, Skill]
 
 # Skill Enhancer
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Audit a skill and apply fixes with user confirmation.
 
 This skill wraps `/syner-skill-reviewer` (audit-only) and adds the fix layer. Review reports, you decide. Enhance applies.

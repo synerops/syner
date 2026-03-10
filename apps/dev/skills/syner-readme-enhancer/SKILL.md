@@ -15,8 +15,6 @@ metadata:
 
 # Syner README Enhancer
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Generate honest READMEs by analyzing what the component **actually does**.
 
 This is a documentation skill. Use it when creating or updating READMEs to ensure accuracy.

@@ -12,8 +12,6 @@ tools:
 
 # Create Syner App
 
-> Part of **Dev** — the Ecosystem Builder mutation of Syner.
-
 Create new applications with the syner standard stack consistently. This ensures all apps in the ecosystem share the same foundation and tooling.
 
 ## When to Use
