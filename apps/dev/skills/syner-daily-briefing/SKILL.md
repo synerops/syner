@@ -32,18 +32,16 @@ Read all files. Parse JSON. Calculate:
 
 ## Step 2: Analyze
 
-### Priority Score
+### Priority Order
 
-For each open PR/issue, calculate priority:
+Prioritize in this order:
+1. Has `needs-decision` label (human input required)
+2. Blocks other work (mentioned in other items)
+3. Has `skill-review` label (ready for review)
+4. Age > 7 days (going stale)
+5. Size S (quick win)
 
-| Factor | Weight |
-|--------|--------|
-| Has `needs-decision` label | +10 |
-| Has `skill-review` label | +5 |
-| Age > 7 days | +3 |
-| Age > 3 days | +1 |
-| Size S (quick win) | +2 |
-| Blocks other work (mentioned in other items) | +5 |
+Apply judgment when criteria conflict or context suggests otherwise.
 
 ### Pattern Detection
 
