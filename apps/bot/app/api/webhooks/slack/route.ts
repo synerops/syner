@@ -7,15 +7,50 @@
 
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { getAgentsByChannel } from 'syner/agents'
 import { createSession } from '@/lib/session'
 import { env } from '@/lib/env'
-import path from 'path'
 
 export const maxDuration = 60
 
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), '../..')
+interface AgentCard {
+  name: string
+  description?: string
+  model?: string
+  tools?: string[]
+  skills?: string[]
+  channel?: string
+}
+
+// Fetch agents from the static API endpoint (works in Vercel)
+async function fetchAgentsByChannel(): Promise<Map<string, AgentCard>> {
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3001'
+
+  try {
+    const res = await fetch(`${baseUrl}/api/agents`, {
+      next: { revalidate: 3600 },
+    })
+
+    if (!res.ok) {
+      console.error('[Slack] Failed to fetch agents:', res.status)
+      return new Map()
+    }
+
+    const agents: AgentCard[] = await res.json()
+    const map = new Map<string, AgentCard>()
+
+    for (const agent of agents) {
+      if (agent.channel) {
+        map.set(agent.channel, agent)
+      }
+    }
+
+    return map
+  } catch (error) {
+    console.error('[Slack] Error fetching agents:', error)
+    return new Map()
+  }
 }
 
 // Lazy-init chat instance
@@ -30,8 +65,6 @@ function getChat() {
       throw new Error('Slack integration not configured')
     }
 
-    const projectRoot = getProjectRoot()
-
     chatInstance = createSlackChat(
       {
         botToken,
@@ -41,8 +74,8 @@ function getChat() {
         async onMention(context) {
           console.log('[Slack] Mention received:', context.text?.slice(0, 100))
 
-          // Find agent for this channel
-          const agents = await getAgentsByChannel(projectRoot)
+          // Find agent for this channel (fetches from static API endpoint)
+          const agents = await fetchAgentsByChannel()
           const agentConfig = agents.get(context.channel)
 
           if (!agentConfig) {

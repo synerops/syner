@@ -5,6 +5,9 @@ import path from "path";
 // ISR: revalidate every hour
 export const revalidate = 3600;
 
+// Only serve pre-generated routes, never call fs at runtime
+export const dynamicParams = false;
+
 // Project root is two levels up from apps/dev
 function getProjectRoot(): string {
   return path.resolve(process.cwd(), "../..");
