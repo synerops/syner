@@ -125,8 +125,8 @@ This converts analysis output into atomic, executable items.
 | `/grow-note` | Promote a thought into a proper document |
 | `/create-syner-app` | Scaffold a new application |
 | `/update-syner-app` | Update app to current stack |
-| `/syner-backlog-triager` | Triage backlog against codebase |
-| `/syner-backlog-reviewer` | Audit backlog health |
+| `/whats-next` | What to work on today |
+| `/backlog-hygiene` | Clean backlog (stale, duplicates) |
 | `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
 
 ### Execute Directly

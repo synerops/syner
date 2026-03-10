@@ -23,8 +23,8 @@ the **skills** work locally via Claude Code:
 | `/update-docs` | Update documentation to reflect codebase state |
 | `/syner-enhance-skills` | Improve existing skills |
 | `/syner-fix-symlinks` | Fix skill and agent symlinks |
-| `/syner-backlog-triager` | Triage backlog against codebase |
-| `/syner-backlog-reviewer` | Audit backlog health |
+| `/whats-next` | What to work on today |
+| `/backlog-hygiene` | Clean backlog (stale, duplicates) |
 | `/syner-skill-reviewer` | Review skills for quality and safety |
 | `/syner-readme-enhancer` | Generate honest READMEs from code |
 | `/syner-daily-briefing` | Generate daily briefing from GitHub data |

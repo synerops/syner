@@ -107,7 +107,7 @@ the **skills** work locally via Claude Code:
 ### analyze
 
 - `/syner-researcher` - research any topic
-- `/syner-backlog-triager` - triage backlog against codebase
+- `/whats-next` - what to work on today
 
 ## try it
 

@@ -13,8 +13,8 @@ skills:
   - syner-fix-symlinks
   - syner-enhance-skills
   - syner-skill-reviewer
-  - syner-backlog-reviewer
-  - syner-backlog-triager
+  - backlog-hygiene
+  - whats-next
   - syner-daily-briefing
   - workflow-reviewer
   - test-syner-agent
@@ -80,7 +80,7 @@ Quality gate before things go live:
 | Skill | Reviews |
 |-------|---------|
 | `/syner-skill-reviewer` | Skill quality, safety, conventions |
-| `/syner-backlog-reviewer` | Backlog health and hygiene |
+| `/backlog-hygiene` | Clean backlog (stale, duplicates) |
 | `/workflow-reviewer` | GitHub Actions before running |
 
 ### Operate
@@ -89,7 +89,7 @@ Daily operations and testing:
 
 | Skill | Does |
 |-------|------|
-| `/syner-backlog-triager` | Triages backlog against codebase |
+| `/whats-next` | What to work on today |
 | `/syner-daily-briefing` | Generates daily status dashboard |
 | `/test-syner-agent` | Tests agents with output-first methodology |
 | `/syner-readme-enhancer` | Generates honest READMEs from code |

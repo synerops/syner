@@ -1,10 +1,10 @@
 ---
-name: syner-backlog-reviewer
-description: Health audit for the backlog itself. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately. Use to keep the backlog clean and actionable.
+name: backlog-hygiene
+description: Cleans your backlog. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately.
 agent: dev
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.3.0"
 tools:
   - Read
   - Glob
@@ -14,11 +14,11 @@ tools:
   - AskUserQuestion
 ---
 
-# Backlog Reviewer
+# Backlog Hygiene
 
-Audit backlog health — find what's stale, duplicated, tangled, or hiding.
+Clean your backlog — find what's stale, duplicated, tangled, or hiding.
 
-This is a review skill. Differs from triager: triager checks items against code, reviewer checks the backlog structure itself.
+Run this before `/whats-next` to ensure your backlog is healthy.
 
 ## Phase 1: Context
 
@@ -71,7 +71,7 @@ Run these checks across all backlog items:
 4. Apply approved changes using `Edit`
 5. Update the `> Last reviewed: YYYY-MM-DD` timestamp on every modified backlog note
 
-> After reviewing, run the `/syner-backlog-triager` skill to validate surviving items against the actual codebase.
+> After cleaning, run `/whats-next` to prioritize items and determine what to work on.
 
 ## Output Format
 
