@@ -8,17 +8,20 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [opened, assigned, labeled]
+    types: [assigned, labeled]
 
 jobs:
   claude:
     runs-on: ubuntu-latest
-    # Only run if triggered by @claude mention, assignment, or relevant labels
+    # Only run if triggered by @claude mention, assignment to claude, or claude label
+    # Excludes automated issues (daily-briefing, skill-review) from assignment triggers
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && github.event.action == 'assigned') ||
+      (github.event_name == 'issues' && github.event.action == 'assigned' &&
+        !contains(toJson(github.event.issue.labels), 'daily-briefing') &&
+        !contains(toJson(github.event.issue.labels), 'skill-review')) ||
       (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'claude')
 
     permissions:
