@@ -36,7 +36,7 @@ List available apps from the `apps/` directory to help the user choose.
 
 ### 3. Read Current Stack
 
-Anchor to project root (directory containing `apps/`), then use the `Read` tool to load `{root}/apps/notes/vaults/syner/common-stack.md`.
+Anchor to project root (directory containing `apps/`), then use the `Read` tool to load `{root}/.syner/vaults/wiki/syner/common-stack.md`.
 
 This step is mandatory - the skill ALWAYS reads common-stack.md before acting. This ensures we apply the latest stack standards.
 

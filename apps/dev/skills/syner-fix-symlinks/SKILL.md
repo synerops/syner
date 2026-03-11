@@ -47,7 +47,7 @@ agents/
 - `agents/dev.md` → `../apps/dev/agents/dev.md`
 - `agents/bot.md` → `../apps/bot/agents/bot.md`
 - `agents/design.md` → `../apps/design/agents/design.md`
-- `agents/wiki.md` → `../apps/wiki/agents/wiki.md`
+- `agents/wiki.md` → `../apps/vaults/agents/wiki.md`
 
 **Shared agents are real files:**
 - `agents/syner.md` (orchestrator)

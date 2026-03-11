@@ -70,7 +70,7 @@ From `PHILOSOPHY.md`:
 ```
 /syner add dark mode to the notes app
 ```
-→ Loads targeted context (apps/notes/ only), delegates to syner-worker.
+→ Loads targeted context (apps/vaults/ only), delegates to syner-worker.
 
 ```
 /syner connect my ideas about AI agents with the backlog

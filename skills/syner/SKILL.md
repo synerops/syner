@@ -43,7 +43,7 @@ If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
 ## Step 0: Anchor to Project Root
 
-Use `Glob` with pattern `vaults/` and `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+Use `Glob` with pattern `.syner/vaults/` to verify vault directory exists from the current working directory. All vault paths in subsequent steps are relative to this project root.
 
 ## Step 1: Understand & Load Context
 
@@ -52,7 +52,7 @@ Determine how much context this request needs:
 | Scope | When | Action |
 |-------|------|--------|
 | **None** | Casual conversation, greetings | Respond directly |
-| **App** | Task within a single app | Load that app's vault: `apps/{app}/vaults/**/*.md` |
+| **App** | Task within a single app | Load that app's vault: `.syner/vaults/{app}/**/*.md` |
 | **Targeted** | Question about specific thing | Use Glob/Grep/Read for that area only |
 | **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="load-all")` |
 
@@ -61,9 +61,8 @@ Determine how much context this request needs:
 Vaults exist at project and app levels. The filesystem IS the configuration:
 
 ```
-vaults/**/*.md           # Project-level (syner itself)
-apps/*/vaults/**/*.md    # All vaults across all apps
-apps/{app}/vaults/**/*.md  # Single app's vaults
+.syner/vaults/**/*.md           # All vaults (centralized)
+.syner/vaults/{app}/**/*.md     # Single app's vaults
 ```
 
 Local machine has more context than repo (vaults are gitignored by default).
@@ -82,8 +81,8 @@ Don't pattern match on keywords. Understand the intent naturally.
 
 - "hola" → None (conversational)
 - "what's in my backlog?" → Targeted (load backlog notes only)
-- "add dark mode to wiki app" → App (load `apps/wiki/vaults/`)
-- "fix bot webhook" → App (load `apps/bot/vaults/`)
+- "add dark mode to wiki app" → App (load `.syner/vaults/wiki/`)
+- "fix bot webhook" → App (load `.syner/vaults/bot/`)
 - "connect my ideas about X with project Y" → Full (multi-domain)
 - "what should I build next?" → Full (needs complete context)
 

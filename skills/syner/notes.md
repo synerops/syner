@@ -7,22 +7,20 @@ How to discover and read notes across all vaults.
 Vaults live at two levels:
 
 ```
-vaults/              # Project-level (syner itself)
-apps/
-  wiki/vaults/       # wiki app vaults
-  bot/vaults/        # bot app vaults
-  dev/vaults/        # dev app vaults
-  {app}/vaults/      # any app can have vaults
+.syner/vaults/              # Centralized vault location
+  wiki/                     # wiki app vaults
+  bot/                      # bot app vaults
+  dev/                      # dev app vaults
+  {app}/                    # any app can have vaults
 ```
 
 The filesystem IS the configuration. No config file needed.
 
 ## How to Discover Vaults
 
-1. Find the project root (the directory containing `apps/` and `vaults/`)
-2. Use `Glob` tool with pattern `vaults/**/*.md` for project-level context
-3. Use `Glob` tool with pattern `apps/*/vaults/**/*.md` for app-level context
-4. For app-specific context, use `apps/{app}/vaults/**/*.md`
+1. Find the project root (the directory containing `apps/` and `.syner/`)
+2. Use `Glob` tool with pattern `.syner/vaults/**/*.md` for all vault context
+3. For app-specific context, use `.syner/vaults/{app}/**/*.md`
 
 ## How to Read Notes
 
@@ -110,11 +108,11 @@ Folders prefixed with `_` are gitignored and private:
 
 | Scope | Pattern | When to use |
 |-------|---------|-------------|
-| **Project** | `vaults/**/*.md` | Syner-level context |
-| **All apps** | `apps/*/vaults/**/*.md` | App context, synthesis across domains |
-| **Full** | `vaults/**/*.md` + `apps/*/vaults/**/*.md` | Complete context load |
-| **Single app** | `apps/{app}/vaults/**/*.md` | Working within one app |
-| **Single vault** | `apps/{app}/vaults/{vault}/**/*.md` | Focused on specific area |
+| **Project** | `.syner/vaults/**/*.md` | Syner-level context |
+| **All apps** | `.syner/vaults/**/*.md` | App context, synthesis across domains |
+| **Full** | `.syner/vaults/**/*.md` | Complete context load |
+| **Single app** | `.syner/vaults/{app}/**/*.md` | Working within one app |
+| **Single vault** | `.syner/vaults/{app}/{vault}/**/*.md` | Focused on specific area |
 
 ## Local vs Repo
 

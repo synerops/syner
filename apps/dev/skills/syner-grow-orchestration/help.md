@@ -245,7 +245,7 @@ Other grow skills create subagents (autonomous capabilities). Orchestration grow
 - **`/syner-boundaries`** — Where L3 principles live
 - **`/syner`** — The orchestrator governed by these principles
 - **`grow.md`** — Shared methodology reference
-- **`/notes-grow-specialist`** — Sibling skill for PKM friction
+- **`/vaults-grow-specialist`** — Sibling skill for PKM friction
 - **`/design-grow-specialist`** — Sibling skill for design friction
 
 ---

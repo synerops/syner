@@ -241,7 +241,7 @@ Lower than default due to multiplicative impact:
 | `/syner-boundaries` | L3 destination - principles live there |
 | `/syner` | Orchestrator governed by evolved principles |
 | `/syner-skill-reviewer` | Uses evolved principles to audit |
-| `/notes-grow-specialist` | Sibling - same methodology, different domain |
+| `/vaults-grow-specialist` | Sibling - same methodology, different domain |
 | `/design-grow-specialist` | Sibling - same methodology, different domain |
 
 ## Voice

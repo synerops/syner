@@ -35,7 +35,7 @@ Discover and read all sources. See `references/sources.md` for patterns.
 
 ### Required: Backlog
 1. Find project root (directory containing `apps/` or `package.json`)
-2. Discover backlog files: `apps/*/vaults/**/backlog*.md` or `apps/*/vaults/**/backlog/**/*.md`
+2. Discover backlog files: `.syner/vaults/**/backlog*.md` or `.syner/vaults/**/backlog/**/*.md`
 3. If `--domain` specified, filter to that domain
 4. If no backlog found, use `AskUserQuestion` to ask where it lives
 5. Read all matching files
@@ -46,11 +46,11 @@ Discover and read all sources. See `references/sources.md` for patterns.
 3. Parse friction observations from last 7 days
 4. If doesn't exist, note "No grow observations found" and continue
 
-### Optional: Tasks
-1. Check if `.syner/tasks/` exists
-2. If exists, read `index.md` from each subdirectory
-3. Parse task status (in progress, pending)
-4. If doesn't exist, note "No task tracking found" and continue
+### Optional: Plans
+1. Check if `.syner/plans/` exists
+2. If exists, read `README.md` from each subdirectory
+3. Parse plan status (in progress, pending, completed)
+4. If doesn't exist, note "No plans found" and continue
 
 ### Optional: GitHub Issues
 1. Skip if `--quick` or `--backlog-only` flag
@@ -103,7 +103,7 @@ Write triage report. See `references/report-format.md` for template.
 |--------|-----------|----------|
 | Backlog | No files found | Ask user for location |
 | Observations | No `.syner/ops/` | Skip, note in report |
-| Tasks | No `.syner/tasks/` | Skip, note in report |
+| Plans | No `.syner/plans/` | Skip, note in report |
 | GitHub | `gh` fails | Skip, suggest `/syner-gh-auth` |
 
 If `--backlog-only` flag is set, skip phases related to observations, tasks, and GitHub. Only run backlog discovery, compare against code state (v0.2.0 behavior), and produce simplified output.

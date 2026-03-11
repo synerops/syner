@@ -2,6 +2,7 @@
 node_modules/
 .next/
 .turbo/
+.source/
 dist/
 *.log
 *.tsbuildinfo
@@ -34,10 +35,9 @@ SYNER.md
 .syner/deprecated/*
 !.syner/deprecated/.gitkeep
 
-# === Vaults (contenido personal) ===
-vaults/
-apps/*/vaults/_*/
-packages/*/vaults/_*/
+# === Vaults (contenido personal, centralizado en .syner/vaults/) ===
+.syner/vaults/
+/vaults
 
 # Skills
 apps/*/skills/_*/

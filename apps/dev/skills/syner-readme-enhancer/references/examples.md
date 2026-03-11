@@ -25,7 +25,7 @@ the **skills** work locally via Claude Code:
 - `/syner-track-idea` - trace idea evolution
 - `/syner-load-all` - load full context from all vaults
 
-your vault lives in `apps/notes/vaults/` - agents read it, you own it.
+your vault lives in `.syner/vaults/` - agents read it, you own it.
 
 ## try it
 

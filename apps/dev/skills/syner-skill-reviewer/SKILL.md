@@ -98,7 +98,7 @@ When a skill says "read the files", the model has to guess which tool to use —
 
 ### B2. Path Resolution
 
-Skills that use relative paths ("look in `./notes/`") break when invoked from different directories. Anchoring to the project root ("find the directory containing `apps/` or `package.json`, then look in `apps/notes/`") makes the skill work regardless of where the user is.
+Skills that use relative paths ("look in `./notes/`") break when invoked from different directories. Anchoring to the project root ("find the directory containing `apps/` or `package.json`, then look in `apps/vaults/`") makes the skill work regardless of where the user is.
 
 ### B3. Skill References
 

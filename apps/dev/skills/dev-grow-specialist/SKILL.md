@@ -274,7 +274,7 @@ When promoting, cite concrete evidence:
 | Skill | Relationship |
 |-------|-------------|
 | `/syner-grow-orchestration` | Sibling - same methodology, orchestration domain (produces principles) |
-| `/notes-grow-specialist` | Sibling - same methodology, PKM domain |
+| `/vaults-grow-specialist` | Sibling - same methodology, PKM domain |
 | `/bot-grow-specialist` | Sibling - same methodology, lead bot domain |
 | `/design-grow-specialist` | Sibling - same methodology, design domain |
 | `/create-syner-skill` | Dev builds skills; this skill evolves how to build better |

@@ -11,22 +11,62 @@ Agent orchestrator that understands your personal context through markdown notes
 
 ## How it works
 
-Everything starts with your notes. Write markdown in `apps/wiki/vaults/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
+Two layers: **vaults** (private thinking) and **content** (published documentation).
 
-Skills read that context and act on it. You invoke them directly or let the orchestrator route for you.
+Vaults live in `.syner/vaults/` — your notes, any structure, no schemas. They're gitignored. Your machine has life context; the repo has project context. Skills synthesize both.
+
+When a thought matures, `/grow-note` graduates it into `apps/*/content/`, where Fumadocs renders it as official documentation.
+
+```
+.syner/vaults/ (thinking)
+  → /grow-note (graduation)
+    → apps/*/content/ (published)
+```
+
+Skills read vault context and act on it. Invoke them directly or let the orchestrator route:
 
 ```
 /syner anything new worth exploring?
 ```
 
+## Structure
+
+```
+.syner/                  # OS brain (gitignored operations)
+  vaults/                # Centralized vaults (all personal context)
+    vaults/              # syner.md app vaults
+    dev/                 # syner.dev app vaults
+    bot/                 # syner.bot app vaults
+    design/              # syner.design app vaults
+  ops/                   # Grow specialist observations
+  plans/                 # Plans per epic
+  research/              # Research artifacts
+  system/                # Environment config
+apps/                    # Applications (Next.js)
+  vaults/                # syner.md — vault dashboard
+  bot/                   # syner.bot — integration platform
+  dev/                   # syner.dev — developer portal
+  design/                # syner.design — design system
+packages/                # Shared packages
+  syner/                 # Core orchestrator package
+  github/                # GitHub App integration
+  vercel/                # AI SDK tools (Sandbox)
+  slack/                 # Slack integration
+  ui/                    # Shared UI components
+skills/                  # Skill symlinks (→ apps/*/skills/)
+agents/                  # Agent symlinks (→ apps/*/agents/)
+```
+
 ## Apps
 
-| App | What it is |
-|-----|------------|
-| [syner.md](apps/wiki/) | Personal knowledge management — your notes as agent context |
-| [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks |
-| [syner.dev](apps/dev/) | Developer portal — skills for building and maintaining |
-| [syner.design](apps/design/) | Agentic design system — components agents understand |
+| App | What it is | Content |
+|-----|------------|---------|
+| [syner.md](apps/vaults/) | Vault dashboard — your notes as agent context | `apps/vaults/content/` |
+| [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks | `apps/bot/content/` |
+| [syner.dev](apps/dev/) | Developer portal — docs, specs, changelog | `apps/dev/content/` |
+| [syner.design](apps/design/) | Design system — components agents understand | `apps/design/content/` |
+
+Each app owns its published content via [Fumadocs](https://fumadocs.dev) (headless). Vaults are centralized in `.syner/vaults/`.
 
 ## Agents
 
@@ -34,7 +74,7 @@ Skills read that context and act on it. You invoke them directly or let the orch
 | Agent | Role |
 |-------|------|
 | `syner` | Main orchestrator |
-| `wiki` | Context engineer — vault understanding |
+| `vaults` | Context engineer — vault understanding |
 | `bot` | Integration bridge — external systems |
 | `dev` | Ecosystem builder — create and maintain |
 | `design` | Design lead — UI/UX and accessibility |
