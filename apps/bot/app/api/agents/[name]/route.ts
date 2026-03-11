@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { loadAgents, getAgentByName } from "syner/agents";
+import { getAgentsList, getAgentByName } from "syner/agents";
 import path from "path";
 
 // ISR: revalidate every hour
@@ -16,7 +16,7 @@ function getProjectRoot(): string {
 // Pre-generate routes for all agents at build time
 export async function generateStaticParams() {
   const projectRoot = getProjectRoot();
-  const agents = await loadAgents(projectRoot);
+  const agents = await getAgentsList(projectRoot);
   return agents.map((agent) => ({
     name: agent.name,
   }));
