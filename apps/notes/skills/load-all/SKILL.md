@@ -25,20 +25,24 @@ Build comprehensive understanding of the user's current state by reading all not
 ### 1. Discover Vaults
 
 ```
-apps/*/vaults/**/*.md
+vaults/**/*.md           # Project-level (syner itself)
+apps/*/vaults/**/*.md    # App-level context
 ```
 
 This finds notes in:
+- `vaults/` — project-level context
 - `apps/notes/vaults/` — knowledge, ideas, writings
 - `apps/bot/vaults/` — bot context
 - `apps/dev/vaults/` — development notes
 - Any other app with vaults
 
-### 2. Group by App
+### 2. Group by Level
 
 Organize what you find:
 
 ```
+project/
+  vaults/syner/context.md
 notes/
   vaults/syner/backlog.md
   vaults/syner/ideas.md
