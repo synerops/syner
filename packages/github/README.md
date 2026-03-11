@@ -83,13 +83,7 @@ const event: IssueEvent = JSON.parse(body)
 
 ## plan mode
 
-converts plan output into GitHub issues. reads `.syner/plan.json` and creates one issue at a time (iterative execution).
-
-```bash
-# after generating a plan
-cat .syner/plan.json | jq '.items[0]'  # preview first item
-# then plan.md guides issue creation via gh CLI
-```
+See `.syner/plans/README.md` for plan structure. Each plan lives in `.syner/plans/{id}-{slug}/README.md` with 3 sections: What/How, Definition of Done, Deliveries.
 
 ## setup
 

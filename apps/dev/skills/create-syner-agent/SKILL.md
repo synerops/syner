@@ -117,11 +117,11 @@ Principle: **minimum necessary tools, but ALL necessary tools**
 **Common mistake**: Defining output responsibilities without granting the tool.
 
 ```markdown
-# BAD - agent should write plan.json but has no Write tool
+# BAD - agent should write plan but has no Write tool
 tools: []
 
 ## Output
-Write plan to `.syner/plan.json`
+Write plan to `.syner/plans/{epic}/README.md`
 ```
 
 **Verify**: If instructions say "write X" → needs Write. If "edit X" → needs Edit.
