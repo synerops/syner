@@ -22,13 +22,13 @@ const CATEGORY_MAP: Record<string, string> = {
   'packages/github/skills': 'Auth',
 }
 
-interface SkillsIndex {
+interface SkillsRegistry {
   skills: Map<string, { skill: Skill; path: string }>
   list: Skill[]
 }
 
-// Singleton cache for skills index
-let cachedIndex: SkillsIndex | null = null
+// Singleton cache
+let cachedRegistry: SkillsRegistry | null = null
 let cachedProjectRoot: string | null = null
 
 // Validation: only alphanumeric and hyphens
@@ -58,7 +58,7 @@ function getSlugFromPath(filePath: string): string {
   return parts[parts.length - 2]
 }
 
-async function buildIndex(projectRoot: string): Promise<SkillsIndex> {
+async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
   const skills = new Map<string, { skill: Skill; path: string }>()
   const list: Skill[] = []
 
@@ -111,18 +111,18 @@ async function buildIndex(projectRoot: string): Promise<SkillsIndex> {
   return { skills, list }
 }
 
-export async function getSkillsIndex(projectRoot: string): Promise<SkillsIndex> {
+export async function getSkillsRegistry(projectRoot: string): Promise<SkillsRegistry> {
   // Invalidate cache if project root changed
-  if (cachedIndex && cachedProjectRoot === projectRoot) {
-    return cachedIndex
+  if (cachedRegistry && cachedProjectRoot === projectRoot) {
+    return cachedRegistry
   }
-  cachedIndex = await buildIndex(projectRoot)
+  cachedRegistry = await buildRegistry(projectRoot)
   cachedProjectRoot = projectRoot
-  return cachedIndex
+  return cachedRegistry
 }
 
 export async function getSkillsList(projectRoot: string): Promise<Skill[]> {
-  const index = await getSkillsIndex(projectRoot)
+  const index = await getSkillsRegistry(projectRoot)
   return index.list
 }
 
@@ -132,7 +132,7 @@ export async function getSkillBySlug(projectRoot: string, slug: string): Promise
     return null
   }
 
-  const index = await getSkillsIndex(projectRoot)
+  const index = await getSkillsRegistry(projectRoot)
   const entry = index.skills.get(slug)
 
   if (!entry) {

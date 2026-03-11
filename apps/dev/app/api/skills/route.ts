@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getSkillsList } from "syner/skills";
 import path from "path";
 
-// ISR: revalidate every hour
-export const revalidate = 3600;
+// Force static generation - skills only update on deploy
+// (Vercel serverless doesn't have monorepo filesystem at runtime)
+export const dynamic = "force-static";
 
 // Project root is two levels up from apps/dev
 function getProjectRoot(): string {

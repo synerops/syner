@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { loadAgents } from "syner/agents";
+import { getAgentsList } from "syner/agents";
 import path from "path";
 
 // ISR: revalidate every hour
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
   try {
     const projectRoot = getProjectRoot();
-    const agents = await loadAgents(projectRoot);
+    const agents = await getAgentsList(projectRoot);
 
     return NextResponse.json(agents);
   } catch (error) {
