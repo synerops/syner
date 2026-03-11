@@ -1,16 +1,16 @@
-import { source } from '@/lib/source'
-import { notFound } from 'next/navigation'
+import { source } from '@/lib/source';
+import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: Promise<{ slug?: string[] }>
+  params: Promise<{ slug?: string[] }>;
 }
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params
-  const page = source.getPage(slug)
-  if (!page) notFound()
+  const { slug } = await params;
+  const page = source.getPage(slug);
+  if (!page) notFound();
 
-  const MDX = page.data.body
+  const { body: MDX } = page.data as typeof page.data & { body: React.ComponentType };
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-8">
@@ -22,9 +22,9 @@ export default async function Page({ params }: PageProps) {
         <MDX />
       </div>
     </article>
-  )
+  );
 }
 
 export function generateStaticParams() {
-  return source.generateParams()
+  return source.generateParams();
 }

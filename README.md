@@ -5,68 +5,54 @@
   </picture>
 </p>
 
-# Syner
+<h1 align="center">Syner</h1>
 
-Agent orchestrator that understands your personal context through markdown notes.
+<p align="center">A personal operating system for developers.</p>
 
-## How it works
+<p align="center">
+  Your markdown notes become the filesystem. AI skills are the commands.<br/>
+  Describe what you want. Syner figures out the rest.
+</p>
 
-Two layers: **vaults** (private thinking) and **content** (published documentation).
+---
 
-Vaults live in `.syner/vaults/` — your notes, any structure, no schemas. They're gitignored. Your machine has life context; the repo has project context. Skills synthesize both.
+## The OS
 
-When a thought matures, `/grow-note` graduates it into `apps/*/content/`, where Fumadocs renders it as official documentation.
+| Layer | What it is |
+|-------|-----------|
+| `.syner/` | Kernel -- plans, research, system config |
+| `.syner/vaults/` | Filesystem -- your notes, any structure, no schemas |
+| `skills/` | Commands -- focused capabilities via `/skill-name` |
+| `agents/` | Daemons -- background workers for complex tasks |
+| `apps/` | Applications -- web portals built with Next.js |
+| `packages/` | Libraries -- shared infrastructure |
 
-```
-.syner/vaults/ (thinking)
-  → /grow-note (graduation)
-    → apps/*/content/ (published)
-```
+## What you can do
 
-Skills read vault context and act on it. Invoke them directly or let the orchestrator route:
+| | |
+|---|---|
+| `/syner` | Talk to the orchestrator. It routes everything. |
+| `/find-ideas` | Discover ideas buried across your vaults |
+| `/find-links` | Connect two domains you've been circling |
+| `/grow-note` | Graduate a thought into a real document |
+| `/whats-next` | Figure out what to work on today |
+| `/backlog-hygiene` | Clean stale issues and duplicates |
+| `/create-syner-app` | Scaffold a new app |
+| `/create-syner-skill` | Create a new skill |
+| `/create-syner-agent` | Define a new agent |
+| `/syner-skill-reviewer` | Audit skill quality |
+| `/syner-gh-auth` | Authenticate GitHub via App tokens |
 
-```
-/syner anything new worth exploring?
-```
-
-## Structure
-
-```
-.syner/                  # OS brain (gitignored operations)
-  vaults/                # Centralized vaults (all personal context)
-    vaults/              # syner.md app vaults
-    dev/                 # syner.dev app vaults
-    bot/                 # syner.bot app vaults
-    design/              # syner.design app vaults
-  ops/                   # Grow specialist observations
-  plans/                 # Plans per epic
-  research/              # Research artifacts
-  system/                # Environment config
-apps/                    # Applications (Next.js)
-  vaults/                # syner.md — vault dashboard
-  bot/                   # syner.bot — integration platform
-  dev/                   # syner.dev — developer portal
-  design/                # syner.design — design system
-packages/                # Shared packages
-  syner/                 # Core orchestrator package
-  github/                # GitHub App integration
-  vercel/                # AI SDK tools (Sandbox)
-  slack/                 # Slack integration
-  ui/                    # Shared UI components
-skills/                  # Skill symlinks (→ apps/*/skills/)
-agents/                  # Agent symlinks (→ apps/*/agents/)
-```
+[All 31 skills](skills/) are available via Claude Code.
 
 ## Apps
 
-| App | What it is | Content |
-|-----|------------|---------|
-| [syner.md](apps/vaults/) | Vault dashboard — your notes as agent context | `apps/vaults/content/` |
-| [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks | `apps/bot/content/` |
-| [syner.dev](apps/dev/) | Developer portal — docs, specs, changelog | `apps/dev/content/` |
-| [syner.design](apps/design/) | Design system — components agents understand | `apps/design/content/` |
-
-Each app owns its published content via [Fumadocs](https://fumadocs.dev) (headless). Vaults are centralized in `.syner/vaults/`.
+| App | Domain |
+|-----|--------|
+| Vaults | **syner.md** -- browse your thinking |
+| Dev | **syner.dev** -- docs, specs, changelog |
+| Bot | **syner.bot** -- Slack, GitHub integrations |
+| Design | **syner.design** -- components, tokens |
 
 ## Agents
 
@@ -74,24 +60,21 @@ Each app owns its published content via [Fumadocs](https://fumadocs.dev) (headle
 | Agent | Role |
 |-------|------|
 | `syner` | Main orchestrator |
-| `vaults` | Context engineer — vault understanding |
-| `bot` | Integration bridge — external systems |
-| `dev` | Ecosystem builder — create and maintain |
-| `design` | Design lead — UI/UX and accessibility |
-| `syner-worker` | Execution with verification loops |
+| `vaults` | Context engineer |
+| `bot` | Integration bridge |
+| `dev` | Ecosystem builder |
+| `design` | Design lead |
+| `syner-worker` | Execution with verification |
 | `syner-researcher` | Research from any source |
 | `code-reviewer` | Code quality and security |
 | `release-manager` | Release coordination |
 <!-- /auto:agents -->
 
-## Quick start
+## Getting started
 
 ```bash
 bun install
 bun run dev
 ```
 
-## References
-
-- [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
-- [CLAUDE.md](CLAUDE.md) — Instructions for Claude Code
+[Philosophy](PHILOSOPHY.md) · [Technical Reference](CLAUDE.md)
