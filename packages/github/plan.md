@@ -8,7 +8,7 @@ tools: [Bash]
 
 # GitHub Plan
 
-Convert a syner-planner output into GitHub issues.
+Convert a plan output into GitHub issues.
 
 ## Input
 

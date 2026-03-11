@@ -83,10 +83,10 @@ const event: IssueEvent = JSON.parse(body)
 
 ## plan mode
 
-converts syner-planner output into GitHub issues. reads `.syner/plan.json` and creates one issue at a time (iterative execution).
+converts plan output into GitHub issues. reads `.syner/plan.json` and creates one issue at a time (iterative execution).
 
 ```bash
-# after syner-planner generates a plan
+# after generating a plan
 cat .syner/plan.json | jq '.items[0]'  # preview first item
 # then plan.md guides issue creation via gh CLI
 ```

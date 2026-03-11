@@ -30,10 +30,10 @@ Agents are **invoked via Task tool**, not read and followed.
 
 ```javascript
 // CORRECT - delegate to the agent
-Task(subagent_type: "syner-planner", prompt: "...")
+Task(subagent_type: "syner-worker", prompt: "...")
 
 // WRONG - read agent file and do the work yourself
-Read("agents/syner-planner.md")
+Read("agents/syner-worker.md")
 // then manually follow the instructions
 ```
 

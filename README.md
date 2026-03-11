@@ -39,7 +39,6 @@ Skills read that context and act on it. You invoke them directly or let the orch
 | `dev` | Ecosystem builder — create and maintain |
 | `design` | Design lead — UI/UX and accessibility |
 | `syner-worker` | Execution with verification loops |
-| `syner-planner` | Strategic planning |
 | `syner-researcher` | Research from any source |
 | `code-reviewer` | Code quality and security |
 | `release-manager` | Release coordination |

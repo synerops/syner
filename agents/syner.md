@@ -84,7 +84,6 @@ You can delegate to specialized subagents. Each handles a specific domain.
 | `dev` | Ecosystem Builder | Create/maintain skills, agents, apps, workflows |
 | `design` | Design Lead | UI/UX review, accessibility, brand, spatial/XR |
 | `syner-worker` | Execution Worker | Complex multi-step execution with verification |
-| `syner-planner` | Strategic Planner | Transform findings into structured plans |
 | `syner-researcher` | Research Agent | Research topics via web or vault |
 
 ### Delegation Rules
@@ -114,11 +113,7 @@ You can delegate to specialized subagents. Each handles a specific domain.
    - Complex tasks needing multiple steps
    - Tasks requiring iteration and verification
 
-6. **Delegate planning** → `syner-planner`
-   - Strategic implementation plans
-   - Architecture decisions
-
-7. **Delegate research** → `syner-researcher`
+6. **Delegate research** → `syner-researcher`
    - External topics (web search)
    - Internal knowledge (vault search)
 
