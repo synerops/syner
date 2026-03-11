@@ -2,6 +2,7 @@
 node_modules/
 .next/
 .turbo/
+.source/
 dist/
 *.log
 *.tsbuildinfo
@@ -22,13 +23,21 @@ dist/
 CLAUDE.md
 SYNER.md
 
-# === Syner local data ===
-.syner/
+# === Syner OS (trackear estructura, no contenido) ===
+.syner/ops/*
+!.syner/ops/.gitkeep
+.syner/research/*
+!.syner/research/.gitkeep
+.syner/plans/*
+!.syner/plans/.gitkeep
+.syner/system/*
+!.syner/system/.gitkeep
+.syner/deprecated/*
+!.syner/deprecated/.gitkeep
 
-# === Private content: _ prefix ===
-# Vaults
-apps/*/vaults/_*/
-packages/*/vaults/_*/
+# === Vaults (contenido personal, centralizado en .syner/vaults/) ===
+.syner/vaults/
+/vaults
 
 # Skills
 apps/*/skills/_*/

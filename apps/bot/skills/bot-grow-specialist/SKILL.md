@@ -262,7 +262,7 @@ When promoting, cite concrete evidence:
 
 | Skill | Relationship |
 |-------|-------------|
-| `/notes-grow-specialist` | Sibling - same methodology, different domain (PKM) |
+| `/vaults-grow-specialist` | Sibling - same methodology, different domain (PKM) |
 | `/design-grow-specialist` | Sibling - same methodology, different domain (design) |
 | `/syner-grow-orchestration` | Sibling - same methodology, orchestration domain |
 
@@ -270,5 +270,5 @@ This skill doesn't replace bot functionality — it evolves specialists that mak
 
 ---
 
-**Related skills:** `/notes-grow-specialist`, `/design-grow-specialist`, `/syner-grow-orchestration`
+**Related skills:** `/vaults-grow-specialist`, `/design-grow-specialist`, `/syner-grow-orchestration`
 **Related agents:** `bot`, `dev`

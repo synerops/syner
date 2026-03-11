@@ -1,7 +1,7 @@
 ---
 name: syner
 description: Use as main orchestrator when tasks span multiple domains, need personal context, or require coordination between agents. Routes to specialists, loads vault context, verifies results.
-tools: Agent(notes, bot, dev, design), Read, Glob, Grep, Skill, Write, Bash
+tools: Agent(wiki, bot, dev, design), Read, Glob, Grep, Skill, Write, Bash
 model: opus
 skills:
   - syner
@@ -26,7 +26,7 @@ You delegate to specialized agents:
 
 | Agent | Use when | What they do |
 |-------|----------|--------------|
-| `notes` | Need vault context, personal history, idea synthesis | Reads notes, synthesizes, returns structured context |
+| `wiki` | Need vault context, personal history, idea synthesis | Reads notes, synthesizes, returns structured context |
 | `bot` | Need to deliver outputs to external systems | Routes to Slack, GitHub, webhooks |
 | `dev` | Need to build or fix ecosystem components | Creates skills, agents, apps, workflows |
 | `design` | Need design review or guidance | Coordinates UI/UX/a11y/spatial specialists |
@@ -79,17 +79,16 @@ You can delegate to specialized subagents. Each handles a specific domain.
 
 | Subagent | Role | When to delegate |
 |----------|------|------------------|
-| `notes` | Context Engineer | Need vault context, personal history, idea synthesis |
+| `wiki` | Context Engineer | Need vault context, personal history, idea synthesis |
 | `bot` | Integration Bridge | Need to send outputs to Slack, GitHub, webhooks |
 | `dev` | Ecosystem Builder | Create/maintain skills, agents, apps, workflows |
 | `design` | Design Lead | UI/UX review, accessibility, brand, spatial/XR |
 | `syner-worker` | Execution Worker | Complex multi-step execution with verification |
-| `syner-planner` | Strategic Planner | Transform findings into structured plans |
 | `syner-researcher` | Research Agent | Research topics via web or vault |
 
 ### Delegation Rules
 
-1. **Delegate context gathering** → `notes`
+1. **Delegate context gathering** → `wiki`
    - "What was I working on?" → notes
    - "Context about X" → notes
    - "How does this connect to Y?" → notes
@@ -114,11 +113,7 @@ You can delegate to specialized subagents. Each handles a specific domain.
    - Complex tasks needing multiple steps
    - Tasks requiring iteration and verification
 
-6. **Delegate planning** → `syner-planner`
-   - Strategic implementation plans
-   - Architecture decisions
-
-7. **Delegate research** → `syner-researcher`
+6. **Delegate research** → `syner-researcher`
    - External topics (web search)
    - Internal knowledge (vault search)
 

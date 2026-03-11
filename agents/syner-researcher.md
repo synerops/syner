@@ -46,8 +46,8 @@ Use built-in knowledge. Additionally search the codebase:
 
 ### For Internal Topics
 
-1. Anchor: `Glob` with `apps/*/vaults/` to verify vault paths
-2. Discover: `apps/*/vaults/**/*.md`
+1. Anchor: `Glob` with `.syner/vaults/` to verify vault paths
+2. Discover: `.syner/vaults/**/*.md`
 3. Search: `Grep` for topic across all vaults
 4. Load: `Read` relevant files
 5. Follow internal links between notes

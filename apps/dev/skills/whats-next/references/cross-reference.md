@@ -60,7 +60,7 @@ Build a map connecting related items:
 Pattern: "auth flow problems"
 ├── Friction: 2024-01-15 bot/observations.md "OAuth token refresh fails"
 ├── Backlog: apps/bot/vaults/backlog.md "Fix OAuth token handling"
-├── Task: .syner/tasks/bot/index.md "Investigating auth issues"
+├── Task: .syner/plans/bot/README.md "Investigating auth issues"
 └── Issue: #42 "OAuth tokens expire unexpectedly"
 ```
 

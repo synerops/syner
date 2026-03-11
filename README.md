@@ -5,28 +5,54 @@
   </picture>
 </p>
 
-# Syner
+<h1 align="center">Syner</h1>
 
-Agent orchestrator that understands your personal context through markdown notes.
+<p align="center">A personal operating system for developers.</p>
 
-## How it works
+<p align="center">
+  Your markdown notes become the filesystem. AI skills are the commands.<br/>
+  Describe what you want. Syner figures out the rest.
+</p>
 
-Everything starts with your notes. Write markdown in `apps/notes/vaults/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
+---
 
-Skills read that context and act on it. You invoke them directly or let the orchestrator route for you.
+## The OS
 
-```
-/syner anything new worth exploring?
-```
+| Layer | What it is |
+|-------|-----------|
+| `.syner/` | Kernel -- plans, research, system config |
+| `.syner/vaults/` | Filesystem -- your notes, any structure, no schemas |
+| `skills/` | Commands -- focused capabilities via `/skill-name` |
+| `agents/` | Daemons -- background workers for complex tasks |
+| `apps/` | Applications -- web portals built with Next.js |
+| `packages/` | Libraries -- shared infrastructure |
+
+## What you can do
+
+| | |
+|---|---|
+| `/syner` | Talk to the orchestrator. It routes everything. |
+| `/find-ideas` | Discover ideas buried across your vaults |
+| `/find-links` | Connect two domains you've been circling |
+| `/grow-note` | Graduate a thought into a real document |
+| `/whats-next` | Figure out what to work on today |
+| `/backlog-hygiene` | Clean stale issues and duplicates |
+| `/create-syner-app` | Scaffold a new app |
+| `/create-syner-skill` | Create a new skill |
+| `/create-syner-agent` | Define a new agent |
+| `/syner-skill-reviewer` | Audit skill quality |
+| `/syner-gh-auth` | Authenticate GitHub via App tokens |
+
+[All 31 skills](skills/) are available via Claude Code.
 
 ## Apps
 
-| App | What it is |
-|-----|------------|
-| [syner.md](apps/notes/) | Personal knowledge management — your notes as agent context |
-| [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks |
-| [syner.dev](apps/dev/) | Developer portal — skills for building and maintaining |
-| [syner.design](apps/design/) | Agentic design system — components agents understand |
+| App | Domain |
+|-----|--------|
+| Vaults | **syner.md** -- browse your thinking |
+| Dev | **syner.dev** -- docs, specs, changelog |
+| Bot | **syner.bot** -- Slack, GitHub integrations |
+| Design | **syner.design** -- components, tokens |
 
 ## Agents
 
@@ -34,25 +60,21 @@ Skills read that context and act on it. You invoke them directly or let the orch
 | Agent | Role |
 |-------|------|
 | `syner` | Main orchestrator |
-| `notes` | Context engineer — vault understanding |
-| `bot` | Integration bridge — external systems |
-| `dev` | Ecosystem builder — create and maintain |
-| `design` | Design lead — UI/UX and accessibility |
-| `syner-worker` | Execution with verification loops |
-| `syner-planner` | Strategic planning |
+| `vaults` | Context engineer |
+| `bot` | Integration bridge |
+| `dev` | Ecosystem builder |
+| `design` | Design lead |
+| `syner-worker` | Execution with verification |
 | `syner-researcher` | Research from any source |
 | `code-reviewer` | Code quality and security |
 | `release-manager` | Release coordination |
 <!-- /auto:agents -->
 
-## Quick start
+## Getting started
 
 ```bash
 bun install
 bun run dev
 ```
 
-## References
-
-- [PHILOSOPHY.md](PHILOSOPHY.md) — Design principles
-- [CLAUDE.md](CLAUDE.md) — Instructions for Claude Code
+[Philosophy](PHILOSOPHY.md) · [Technical Reference](CLAUDE.md)

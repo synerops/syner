@@ -30,10 +30,10 @@ Agents are **invoked via Task tool**, not read and followed.
 
 ```javascript
 // CORRECT - delegate to the agent
-Task(subagent_type: "syner-planner", prompt: "...")
+Task(subagent_type: "syner-worker", prompt: "...")
 
 // WRONG - read agent file and do the work yourself
-Read("agents/syner-planner.md")
+Read("agents/syner-worker.md")
 // then manually follow the instructions
 ```
 
@@ -117,11 +117,11 @@ Principle: **minimum necessary tools, but ALL necessary tools**
 **Common mistake**: Defining output responsibilities without granting the tool.
 
 ```markdown
-# BAD - agent should write plan.json but has no Write tool
+# BAD - agent should write plan but has no Write tool
 tools: []
 
 ## Output
-Write plan to `.syner/plan.json`
+Write plan to `.syner/plans/{epic}/README.md`
 ```
 
 **Verify**: If instructions say "write X" → needs Write. If "edit X" → needs Edit.

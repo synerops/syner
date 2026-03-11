@@ -4,7 +4,7 @@ Multi-source triage reads from four sources. Each has a discovery pattern and ex
 
 ## 1. Backlog Items
 
-**Pattern:** `apps/*/vaults/**/backlog*.md` or `apps/*/vaults/**/backlog/**/*.md`
+**Pattern:** `.syner/vaults/**/backlog*.md` or `.syner/vaults/**/backlog/**/*.md`
 
 **Structure:**
 ```markdown
@@ -39,7 +39,7 @@ Multi-source triage reads from four sources. Each has a discovery pattern and ex
 
 ## 3. Tasks
 
-**Pattern:** `.syner/tasks/*/index.md`
+**Pattern:** `.syner/plans/*/README.md`
 
 **Structure:**
 ```markdown
@@ -52,7 +52,7 @@ Multi-source triage reads from four sources. Each has a discovery pattern and ex
 - [ ] Task description
 ```
 
-**Fallback:** If `.syner/tasks/` doesn't exist, skip and note in report: "No task tracking found."
+**Fallback:** If `.syner/plans/` doesn't exist, skip and note in report: "No plans found."
 
 ## 4. GitHub Issues
 

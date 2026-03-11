@@ -7,7 +7,7 @@ import type { Skill, SkillContent } from './types'
 // Predefined allowed paths - security: only serve skills from these directories
 const SKILL_SOURCES = [
   'skills/syner',
-  'apps/notes/skills',
+  'apps/vaults/skills',
   'apps/dev/skills',
   'apps/bot/skills',
   'packages/github/skills',
@@ -16,7 +16,7 @@ const SKILL_SOURCES = [
 // Category mapping based on path
 const CATEGORY_MAP: Record<string, string> = {
   'skills/syner': 'Orchestration',
-  'apps/notes/skills': 'Notes',
+  'apps/vaults/skills': 'Vaults',
   'apps/dev/skills': 'Dev',
   'apps/bot/skills': 'Bot',
   'packages/github/skills': 'Auth',

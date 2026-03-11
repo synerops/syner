@@ -357,7 +357,7 @@ What would have helped: Knowing lead's company size to tailor response
 ## Relationship to Other Skills
 
 ```
-/notes-grow-specialist  ←── sibling (PKM domain)
+/vaults-grow-specialist  ←── sibling (PKM domain)
 /design-grow-specialist ←── sibling (design domain)
 /syner-grow-orchestration ←── sibling (orchestration domain)
 ```

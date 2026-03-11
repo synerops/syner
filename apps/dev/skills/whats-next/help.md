@@ -25,7 +25,7 @@ Tells you what to work on today. Synthesizes backlog, observations, tasks, and G
 Reads all four sources:
 1. Backlog items from vaults
 2. Grow observations from `.syner/ops/`
-3. Tasks from `.syner/tasks/`
+3. Plans from `.syner/plans/`
 4. Open GitHub issues
 
 Generates a report at `.syner/reports/triage-{date}.md`.
@@ -76,8 +76,8 @@ Items: [X] P1, [Y] P2, [Z] P3
 ### "No backlog found"
 
 The skill couldn't find backlog files. Check:
-- Files exist at `apps/*/vaults/**/backlog*.md`
-- Or files exist in `apps/*/vaults/**/backlog/` directory
+- Files exist at `.syner/vaults/**/backlog*.md`
+- Or files exist in `.syner/vaults/**/backlog/` directory
 
 The skill will ask for the location if auto-discovery fails.
 
@@ -88,7 +88,7 @@ Normal if you haven't run grow specialists yet. The skill continues with other s
 To create observations:
 ```bash
 /bot-grow-specialist observe
-/notes-grow-specialist observe
+/vaults-grow-specialist observe
 ```
 
 ### "GitHub issues unavailable"
@@ -102,7 +102,7 @@ Or use `--quick` mode to skip GitHub.
 
 ### "No task tracking found"
 
-Normal if you don't use `.syner/tasks/` yet. The skill continues with other sources.
+Normal if you don't use `.syner/plans/` yet. The skill continues with other sources.
 
 ## Related Skills
 

@@ -23,7 +23,7 @@ Run this before `/whats-next` to ensure your backlog is healthy.
 ## Phase 1: Context
 
 1. Find project root (directory containing `apps/` or `package.json`)
-2. Discover all vaults: `apps/*/vaults/**/backlog*.md` or `apps/*/vaults/**/backlog/**/*.md`
+2. Discover all vaults: `.syner/vaults/**/backlog*.md` or `.syner/vaults/**/backlog/**/*.md`
 3. If no backlog found, use `AskUserQuestion` to ask where the backlog lives
 4. For the backlog folder, use `Read` to load `index.md` first if it exists (contains folder-level context)
 5. Use `Read` to load all backlog item files
