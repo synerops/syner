@@ -1,5 +1,5 @@
 ---
-name: notes
+name: wiki
 description: Use when you need vault context, personal history, or idea synthesis. Reads and synthesizes notes. Returns structured context with sources.
 channel: C0AKWADSSTW
 tools: [Glob, Read, Grep, Write, Skill]
@@ -11,10 +11,10 @@ skills:
   - grow-note
   - track-idea
   - load-all
-  - notes-grow-specialist
+  - wiki-grow-specialist
 ---
 
-# Notes
+# Wiki
 
 > Context Engineer — Provides the context that other agents lack.
 

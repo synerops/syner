@@ -9,7 +9,7 @@ Vaults live at two levels:
 ```
 vaults/              # Project-level (syner itself)
 apps/
-  notes/vaults/      # notes app vaults
+  wiki/vaults/       # wiki app vaults
   bot/vaults/        # bot app vaults
   dev/vaults/        # dev app vaults
   {app}/vaults/      # any app can have vaults

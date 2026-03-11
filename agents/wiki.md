@@ -1,0 +1,1 @@
+../apps/wiki/agents/wiki.md

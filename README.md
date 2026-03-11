@@ -11,7 +11,7 @@ Agent orchestrator that understands your personal context through markdown notes
 
 ## How it works
 
-Everything starts with your notes. Write markdown in `apps/notes/vaults/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
+Everything starts with your notes. Write markdown in `apps/wiki/vaults/` — any structure, no schemas, no config. Your notes become the shared context that powers everything else.
 
 Skills read that context and act on it. You invoke them directly or let the orchestrator route for you.
 
@@ -23,7 +23,7 @@ Skills read that context and act on it. You invoke them directly or let the orch
 
 | App | What it is |
 |-----|------------|
-| [syner.md](apps/notes/) | Personal knowledge management — your notes as agent context |
+| [syner.md](apps/wiki/) | Personal knowledge management — your notes as agent context |
 | [syner.bot](apps/bot/) | Integration platform — GitHub, Slack, webhooks |
 | [syner.dev](apps/dev/) | Developer portal — skills for building and maintaining |
 | [syner.design](apps/design/) | Agentic design system — components agents understand |
@@ -34,7 +34,7 @@ Skills read that context and act on it. You invoke them directly or let the orch
 | Agent | Role |
 |-------|------|
 | `syner` | Main orchestrator |
-| `notes` | Context engineer — vault understanding |
+| `wiki` | Context engineer — vault understanding |
 | `bot` | Integration bridge — external systems |
 | `dev` | Ecosystem builder — create and maintain |
 | `design` | Design lead — UI/UX and accessibility |

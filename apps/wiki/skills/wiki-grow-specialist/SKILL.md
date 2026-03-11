@@ -1,14 +1,14 @@
 ---
-name: notes-grow-specialist
+name: wiki-grow-specialist
 description: Evolve PKM specialists from friction observations to autonomous subagents. Use when the ideas system fails you, when retrieval breaks, or when synthesis falls short.
 metadata:
-  author: notes
+  author: wiki
   version: "0.0.1"
   background: false
 tools: [Read, Write, Glob, Grep, Bash]
 ---
 
-# Notes Grow Specialist
+# Wiki Grow Specialist
 
 Evolve specialists through maturity levels based on real PKM friction, not theory.
 
@@ -67,11 +67,11 @@ Record when the ideas/notes system failed you.
 
 **Usage:**
 ```bash
-/notes-grow-specialist observe
-/notes-grow-specialist observe --type retrieval
+/wiki-grow-specialist observe
+/wiki-grow-specialist observe --type retrieval
 ```
 
-**Output:** Entry added to `.syner/ops/notes-grow-specialist/observations.md`
+**Output:** Entry added to `.syner/ops/wiki-grow-specialist/observations.md`
 
 ### 2. `review` — Detect patterns in observations
 **Reference:** `references/review.md`
@@ -80,8 +80,8 @@ Analyze accumulated observations, detect recurring patterns, propose specialists
 
 **Usage:**
 ```bash
-/notes-grow-specialist review
-/notes-grow-specialist review --threshold 2
+/wiki-grow-specialist review
+/wiki-grow-specialist review --threshold 2
 ```
 
 **Output:** Proposals for new specialists based on evidence
@@ -93,7 +93,7 @@ Enhance proposal based on real usage, add concrete examples from your notes.
 
 **Usage:**
 ```bash
-/notes-grow-specialist refine retrieval-optimizer
+/wiki-grow-specialist refine retrieval-optimizer
 ```
 
 **Output:** Updated proposal with better scope/examples
@@ -105,11 +105,11 @@ Promote mature proposal to custom specialist.
 
 **Usage:**
 ```bash
-/notes-grow-specialist graduate retrieval-optimizer
+/wiki-grow-specialist graduate retrieval-optimizer
 ```
 
 **Validates:** 3 conditions + threshold
-**Output:** File in `.syner/artifacts/notes-grow-specialist/specialists/`
+**Output:** File in `.syner/artifacts/wiki-grow-specialist/specialists/`
 
 ### 5. `promote` — Custom Specialist → Subagent
 **Reference:** `references/promote.md`
@@ -118,7 +118,7 @@ Elevate critical specialist to autonomous subagent.
 
 **Usage:**
 ```bash
-/notes-grow-specialist promote retrieval-optimizer
+/wiki-grow-specialist promote retrieval-optimizer
 ```
 
 **Validates:** Criticality threshold
@@ -131,8 +131,8 @@ Find overlapping specialists, mark deprecated generics.
 
 **Usage:**
 ```bash
-/notes-grow-specialist audit
-/notes-grow-specialist audit --mark-deprecated
+/wiki-grow-specialist audit
+/wiki-grow-specialist audit --mark-deprecated
 ```
 
 **Output:** Consolidation recommendations
@@ -144,8 +144,8 @@ Show current state of all specialists at all levels.
 
 **Usage:**
 ```bash
-/notes-grow-specialist status
-/notes-grow-specialist status retrieval-optimizer
+/wiki-grow-specialist status
+/wiki-grow-specialist status retrieval-optimizer
 ```
 
 **Output:** Dashboard of maturity levels and metrics
@@ -155,7 +155,7 @@ Show current state of all specialists at all levels.
 ```
 .syner/
 ├── ops/
-│   └── notes-grow-specialist/
+│   └── wiki-grow-specialist/
 │       ├── observations.md       # L0: Raw observations log
 │       ├── tracking.md           # Metrics for all levels
 │       ├── proposals/            # L1: Immature proposals
@@ -164,11 +164,11 @@ Show current state of all specialists at all levels.
 │       └── archive/              # Archived proposals/specialists
 │
 └── artifacts/
-    └── notes-grow-specialist/
+    └── wiki-grow-specialist/
         └── specialists/          # L2: Mature custom specialists
             └── retrieval-optimizer.md
 
-apps/notes/agents/
+apps/wiki/agents/
   retrieval-optimizer.md          # L3: Autonomous subagents (final destination)
 ```
 
@@ -273,4 +273,4 @@ The difference: design observes UI/component decisions, notes observes PKM/ideas
 ---
 
 **Related skills:** `/grow-note`, `/find-ideas`, `/design-grow-specialist`
-**Related agents:** `notes`, `dev`
+**Related agents:** `wiki`, `dev`
