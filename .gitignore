@@ -22,11 +22,20 @@ dist/
 CLAUDE.md
 SYNER.md
 
-# === Syner local data ===
-.syner/
+# === Syner OS (trackear estructura, no contenido) ===
+.syner/ops/*
+!.syner/ops/.gitkeep
+.syner/research/*
+!.syner/research/.gitkeep
+.syner/plans/*
+!.syner/plans/.gitkeep
+.syner/system/*
+!.syner/system/.gitkeep
+.syner/deprecated/*
+!.syner/deprecated/.gitkeep
 
-# === Private content: _ prefix ===
-# Vaults
+# === Vaults (contenido personal) ===
+vaults/
 apps/*/vaults/_*/
 packages/*/vaults/_*/
 

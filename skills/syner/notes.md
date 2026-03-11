@@ -4,23 +4,25 @@ How to discover and read notes across all vaults.
 
 ## Vault Structure
 
-Each app can have its own vault:
+Vaults live at two levels:
 
 ```
+vaults/              # Project-level (syner itself)
 apps/
-  notes/vaults/     # notes app vaults
-  bot/vaults/       # bot app vaults
-  dev/vaults/       # dev app vaults
-  {app}/vaults/     # any app can have vaults
+  notes/vaults/      # notes app vaults
+  bot/vaults/        # bot app vaults
+  dev/vaults/        # dev app vaults
+  {app}/vaults/      # any app can have vaults
 ```
 
 The filesystem IS the configuration. No config file needed.
 
 ## How to Discover Vaults
 
-1. Find the project root (the directory containing `apps/`)
-2. Use `Glob` tool with pattern `apps/*/vaults/**/*.md` to discover all notes across all vaults
-3. For app-specific context, use `apps/{app}/vaults/**/*.md`
+1. Find the project root (the directory containing `apps/` and `vaults/`)
+2. Use `Glob` tool with pattern `vaults/**/*.md` for project-level context
+3. Use `Glob` tool with pattern `apps/*/vaults/**/*.md` for app-level context
+4. For app-specific context, use `apps/{app}/vaults/**/*.md`
 
 ## How to Read Notes
 
@@ -108,7 +110,9 @@ Folders prefixed with `_` are gitignored and private:
 
 | Scope | Pattern | When to use |
 |-------|---------|-------------|
-| **All vaults** | `apps/*/vaults/**/*.md` | Full context load, synthesis across domains |
+| **Project** | `vaults/**/*.md` | Syner-level context |
+| **All apps** | `apps/*/vaults/**/*.md` | App context, synthesis across domains |
+| **Full** | `vaults/**/*.md` + `apps/*/vaults/**/*.md` | Complete context load |
 | **Single app** | `apps/{app}/vaults/**/*.md` | Working within one app |
 | **Single vault** | `apps/{app}/vaults/{vault}/**/*.md` | Focused on specific area |
 

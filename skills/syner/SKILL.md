@@ -43,7 +43,7 @@ If empty, use `AskUserQuestion` to ask what the user wants to accomplish.
 
 ## Step 0: Anchor to Project Root
 
-Use `Glob` with pattern `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
+Use `Glob` with pattern `vaults/` and `apps/*/vaults/` to verify vault directories exist from the current working directory. All vault paths in subsequent steps are relative to this project root.
 
 ## Step 1: Understand & Load Context
 
@@ -58,9 +58,10 @@ Determine how much context this request needs:
 
 ### Vault Discovery
 
-Each app can have its own vault. The filesystem IS the configuration:
+Vaults exist at project and app levels. The filesystem IS the configuration:
 
 ```
+vaults/**/*.md           # Project-level (syner itself)
 apps/*/vaults/**/*.md    # All vaults across all apps
 apps/{app}/vaults/**/*.md  # Single app's vaults
 ```
