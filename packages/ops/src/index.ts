@@ -11,3 +11,5 @@ export {
   type DecisionCorpus,
   type SupervisorDecision,
 } from './types/supervisor.js'
+
+export { type FrictionEvent, logFriction, readFrictionLog } from './friction.js'
