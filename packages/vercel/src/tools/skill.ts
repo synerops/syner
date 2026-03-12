@@ -1,6 +1,13 @@
 import { tool, ToolLoopAgent, stepCountIs, type LanguageModel, type Tool } from 'ai'
 import { z } from 'zod'
 import { loadSkill, buildSkillInstructions, type SkillConfig } from '../skills/loader'
+import {
+  createContext,
+  createAction,
+  verify,
+  createResult,
+  type OspResult,
+} from '@syner/osprotocol'
 
 export interface CreateSkillToolOptions {
   /** Repository root path in the sandbox */
@@ -79,6 +86,20 @@ export function createSkillTool(options: CreateSkillToolOptions) {
 
       console.log(`[Skill:${name}] Starting subagent for task: "${task.slice(0, 100)}..."`)
 
+      const startTime = Date.now()
+
+      const context = createContext({
+        agentId: `skill-${name}`,
+        skillRef: name,
+        loaded: [{ type: 'skill' as const, ref: name, summary: skill.description }],
+        missing: [],
+      })
+
+      const action = createAction({
+        description: `Execute skill "${name}": ${task.slice(0, 100)}`,
+        expectedEffects: [{ description: 'Skill completed successfully', verifiable: true }],
+      })
+
       try {
         // 6. Execute skill
         const result = await skillAgent.generate({
@@ -86,14 +107,29 @@ export function createSkillTool(options: CreateSkillToolOptions) {
           abortSignal,
         })
 
-        console.log(`[Skill:${name}] Completed successfully`)
+        const output = result.text || 'Skill completed with no output'
+        const verification = verify(action.expectedEffects, { 'Skill completed successfully': true })
 
-        return result.text || 'Skill completed with no output'
+        const ospResult: OspResult<string> = {
+          ...createResult(context, action, verification, output),
+          duration: Date.now() - startTime,
+        }
+
+        console.log(`[Skill:${name}] Completed (${ospResult.verification.status})`)
+
+        return JSON.stringify(ospResult)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error)
-        console.error(`[Skill:${name}] Error:`, errorMessage)
+        const verification = verify(action.expectedEffects, { 'Skill completed successfully': false })
 
-        return `Error executing skill "${name}": ${errorMessage}`
+        const ospResult: OspResult = {
+          ...createResult(context, action, verification),
+          duration: Date.now() - startTime,
+        }
+
+        console.error(`[Skill:${name}] Error (${ospResult.verification.status}):`, errorMessage)
+
+        return JSON.stringify(ospResult)
       }
     },
   })
