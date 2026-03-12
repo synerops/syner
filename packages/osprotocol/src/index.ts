@@ -24,3 +24,5 @@ export {
   escalate,
   verify,
 } from './types/verification.js'
+
+export { parseSkillManifest } from './parser.js'
