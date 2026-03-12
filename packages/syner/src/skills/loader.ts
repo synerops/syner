@@ -1,5 +1,6 @@
 import { glob } from 'glob'
 import matter from 'gray-matter'
+import { parseSkillManifest } from '@syner/osprotocol'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import type { Skill, SkillContent } from './types'
@@ -78,18 +79,19 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
 
       try {
         const content = await readFile(filePath, 'utf-8')
-        const { data } = matter(content)
+        const manifest = parseSkillManifest(content)
 
         const slug = getSlugFromPath(filePath)
         const category = getCategoryFromPath(filePath)
 
         const skill: Skill = {
           slug,
-          name: data.name || slug,
-          description: data.description || '',
+          name: manifest.name || slug,
+          description: manifest.description || '',
           category,
-          version: data.metadata?.version,
-          author: data.metadata?.author,
+          version: manifest.metadata?.version,
+          author: manifest.metadata?.author,
+          manifest,
         }
 
         skills.set(slug, { skill, path: filePath })
