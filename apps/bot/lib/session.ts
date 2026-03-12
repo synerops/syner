@@ -14,11 +14,11 @@ import {
 import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
 import { createToolSession, type ToolSession } from './tools'
 import {
-  type OspResult,
   createContext,
   createAction,
   verify,
   createResult,
+  type OspResult,
 } from '@syner/osprotocol'
 import path from 'path'
 
@@ -138,55 +138,68 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
 
     async generate(prompt: string): Promise<OspResult<GenerateResult>> {
       await onStatus('Thinking...')
-
       const startTime = Date.now()
-      const toolCallsList: string[] = []
 
       const context = createContext({
         agentId: agent.name,
         skillRef: `session:${agent.name}`,
+        loaded: toolSession ? [{ type: 'skill' as const, ref: 'tools', summary: 'sandbox tools' }] : [],
+        missing: [],
       })
 
       const action = createAction({
         description: `Generate response for: ${prompt.slice(0, 100)}`,
-        expectedEffects: [
-          { description: 'response_generated', verifiable: true },
-        ],
+        expectedEffects: [{ description: 'Response generated', verifiable: true }],
       })
 
-      const result = await loopAgent.generate({
-        prompt,
+      const toolCallsList: string[] = []
 
-        experimental_onToolCallStart({ toolCall }) {
-          options?.onToolStart?.(toolCall.toolName)
-        },
+      try {
+        const result = await loopAgent.generate({
+          prompt,
 
-        experimental_onToolCallFinish({ toolCall, durationMs, success }) {
-          toolCallsList.push(toolCall.toolName)
-          options?.onToolFinish?.(toolCall.toolName, durationMs, success)
-        },
+          experimental_onToolCallStart({ toolCall }) {
+            options?.onToolStart?.(toolCall.toolName)
+          },
 
-        onStepFinish({ stepNumber, toolCalls }) {
-          const toolNames = toolCalls?.map(tc => tc.toolName) || []
-          options?.onStepFinish?.(stepNumber, toolNames)
-        },
-      })
+          experimental_onToolCallFinish({ toolCall, durationMs, success }) {
+            toolCallsList.push(toolCall.toolName)
+            options?.onToolFinish?.(toolCall.toolName, durationMs, success)
+          },
 
-      const output: GenerateResult = {
-        text: result.text || '',
-        steps: result.steps.length,
-        toolCalls: toolCallsList,
+          onStepFinish({ stepNumber, toolCalls }) {
+            const toolNames = toolCalls?.map(tc => tc.toolName) || []
+            options?.onStepFinish?.(stepNumber, toolNames)
+          },
+        })
+
+        const output: GenerateResult = {
+          text: result.text || '',
+          steps: result.steps.length,
+          toolCalls: toolCallsList,
+        }
+
+        const hasText = output.text.length > 0
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': hasText }
+        )
+
+        return {
+          ...createResult(context, action, verification, output),
+          duration: Date.now() - startTime,
+        }
+      } catch (error) {
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': false }
+        )
+
+        return {
+          ...createResult(context, action, verification),
+          duration: Date.now() - startTime,
+        }
       }
-
-      const verification = verify(
-        action.expectedEffects,
-        { response_generated: output.text.length > 0 }
-      )
-
-      const ospResult = createResult(context, action, verification, output)
-      ospResult.duration = Date.now() - startTime
-
-      return ospResult
     },
 
     async cleanup(): Promise<void> {

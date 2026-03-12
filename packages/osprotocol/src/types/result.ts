@@ -1,6 +1,6 @@
-import type { OspContext } from './context.js'
-import type { OspAction } from './action.js'
-import type { OspVerification } from './verification.js'
+import type { OspContext } from './context'
+import type { OspAction } from './action'
+import type { OspVerification } from './verification'
 
 export interface OspResult<T = unknown> {
   context: OspContext

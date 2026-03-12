@@ -26,6 +26,12 @@ import {
 } from '@syner/github'
 import { env } from '@/lib/env'
 import { logger } from 'syner/logger'
+import {
+  createContext,
+  createAction,
+  verify,
+  createResult,
+} from '@syner/osprotocol'
 
 const BOT_TRIGGER = '@synerbot'
 
@@ -372,6 +378,21 @@ export async function POST(request: NextRequest) {
       const userMessage = ctx.body.replace(BOT_TRIGGER, '').trim()
 
       logger.info('Calling AI model', meta)
+
+      const ospContext = createContext({
+        agentId: `github-${ctx.owner}/${ctx.repo}#${ctx.number}`,
+        skillRef: 'webhook:github',
+      })
+      const ospAction = createAction({
+        description: `Respond to GitHub ${ctx.isPullRequest ? 'PR' : 'issue'} in ${ctx.owner}/${ctx.repo}#${ctx.number}`,
+        expectedEffects: [
+          { description: 'AI response generated', verifiable: true },
+          { description: 'Comment posted to GitHub', verifiable: true },
+        ],
+      })
+
+      const startTime = Date.now()
+
       const result = await generateText({
         model: anthropic('claude-sonnet-4-20250514'),
         system: buildSystemPrompt(ctx, repoCtx),
@@ -380,6 +401,8 @@ export async function POST(request: NextRequest) {
         stopWhen: stepCountIs(15),
       })
 
+      const hasText = Boolean(result.text)
+
       // Post response as new comment
       logger.debug('Posting response', meta)
       await createComment({
@@ -387,9 +410,36 @@ export async function POST(request: NextRequest) {
         owner: ctx.owner,
         repo: ctx.repo,
         issueNumber: ctx.number,
-        body: result.text,
+        body: result.text || '_No response generated_',
       })
-      logger.info('Webhook completed successfully', meta)
+
+      const verification = verify(ospAction.expectedEffects, {
+        'AI response generated': hasText,
+        'Comment posted to GitHub': true,
+      })
+
+      const ospResult = {
+        ...createResult(ospContext, ospAction, verification, {
+          text: result.text,
+          steps: result.steps.length,
+          toolCalls: result.steps.flatMap(s => s.toolCalls).length,
+        }),
+        duration: Date.now() - startTime,
+      }
+
+      logger.info('Webhook completed', {
+        ...meta,
+        verification: ospResult.verification.status,
+        duration: ospResult.duration,
+        steps: result.steps.length,
+      })
+
+      if (ospResult.verification.status !== 'passed') {
+        logger.warn('Verification failed', {
+          ...meta,
+          assertions: ospResult.verification.assertions,
+        })
+      }
     } catch (error) {
       logger.error('Error processing webhook', {
         ...meta,
