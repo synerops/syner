@@ -7,7 +7,7 @@
 
 <h1 align="center">Syner</h1>
 
-<p align="center">A personal knowledge OS for agents.</p>
+<p align="center">Syner OS give agents to your knowledge system.</p>
 
 <p align="center">
   Your markdown notes become the filesystem. AI skills are the actions.<br/>
