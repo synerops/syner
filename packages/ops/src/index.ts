@@ -13,3 +13,5 @@ export {
 } from './types/supervisor'
 
 export { type FrictionEvent, logFriction, readFrictionLog } from './friction'
+
+export { type FrictionPattern, analyzeFriction } from './friction-analyzer'
