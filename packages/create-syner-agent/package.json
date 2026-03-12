@@ -1,0 +1,27 @@
+{
+  "name": "create-syner-agent",
+  "version": "0.0.1",
+  "description": "Interactive scaffolding CLI for new syner agents",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-syner-agent": "./src/index.ts"
+  },
+  "files": ["src"],
+  "dependencies": {
+    "@syner/osprotocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synerops/syner.git",
+    "directory": "packages/create-syner-agent"
+  }
+}
