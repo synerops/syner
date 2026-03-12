@@ -105,8 +105,9 @@ function getChat() {
 
           try {
             const result = await session.generate(context.text)
-            console.log(`[Slack][${agent.name}] Generated ${result.text.length} chars`)
-            return result.text || '_No response_'
+            const text = result.output?.text ?? ''
+            console.log(`[Slack][${agent.name}] Generated ${text.length} chars (${result.verification.status}, ${result.duration}ms)`)
+            return text || '_No response_'
           } finally {
             await session.cleanup()
           }

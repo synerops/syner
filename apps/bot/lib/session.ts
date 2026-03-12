@@ -13,6 +13,13 @@ import {
 } from '@syner/vercel'
 import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
 import { createToolSession, type ToolSession } from './tools'
+import {
+  type OspResult,
+  createContext,
+  createAction,
+  verify,
+  createResult,
+} from '@syner/osprotocol'
 import path from 'path'
 
 export interface Session {
@@ -21,7 +28,7 @@ export interface Session {
   /** Working directory in sandbox (if tools enabled) */
   workdir: string
   /** Generate a response for the given prompt */
-  generate(prompt: string): Promise<GenerateResult>
+  generate(prompt: string): Promise<OspResult<GenerateResult>>
   /** Cleanup sandbox and resources */
   cleanup(): Promise<void>
 }
@@ -129,10 +136,23 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     agent,
     workdir,
 
-    async generate(prompt: string): Promise<GenerateResult> {
+    async generate(prompt: string): Promise<OspResult<GenerateResult>> {
       await onStatus('Thinking...')
 
+      const startTime = Date.now()
       const toolCallsList: string[] = []
+
+      const context = createContext({
+        agentId: agent.name,
+        skillRef: `session:${agent.name}`,
+      })
+
+      const action = createAction({
+        description: `Generate response for: ${prompt.slice(0, 100)}`,
+        expectedEffects: [
+          { description: 'response_generated', verifiable: true },
+        ],
+      })
 
       const result = await loopAgent.generate({
         prompt,
@@ -152,11 +172,21 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
         },
       })
 
-      return {
+      const output: GenerateResult = {
         text: result.text || '',
         steps: result.steps.length,
         toolCalls: toolCallsList,
       }
+
+      const verification = verify(
+        action.expectedEffects,
+        { response_generated: output.text.length > 0 }
+      )
+
+      const ospResult = createResult(context, action, verification, output)
+      ospResult.duration = Date.now() - startTime
+
+      return ospResult
     },
 
     async cleanup(): Promise<void> {
