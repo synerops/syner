@@ -11,6 +11,10 @@ export interface AgentCard {
   tools?: string[]
   skills?: string[]
   channel?: string
+  protocol?: {
+    version: string
+    capabilities: string[]
+  }
 }
 
 interface AgentsRegistry {
@@ -51,6 +55,7 @@ async function buildRegistry(projectRoot: string): Promise<AgentsRegistry> {
         tools: data.tools ? String(data.tools).split(',').map(t => t.trim()) : undefined,
         skills: data.skills,
         channel: data.channel,
+        protocol: data.protocol,
       }
 
       agents.set(name, agent)
