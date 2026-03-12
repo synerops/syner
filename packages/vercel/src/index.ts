@@ -38,6 +38,10 @@ export {
 } from './skills'
 export type { SkillConfig, CommandConfig } from './skills'
 
+// Next.js integration
+export { withSyner } from './with-syner'
+export type { SynerConfig } from './with-syner'
+
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'
 export type { AgentSandbox, SandboxConfig } from './sandbox'
