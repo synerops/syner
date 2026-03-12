@@ -1,3 +1,3 @@
-export { getSkillsRegistry, getSkillsList, getSkillBySlug, getCategories } from './loader'
-export type { Skill, SkillContent } from './types'
+export { getSkillsRegistry, getSkillsList, getSkillBySlug, getCategories, getPublicSkills, getInstanceSkills, getPrivateSkills } from './loader'
+export type { Skill, SkillContent, SkillVisibility } from './types'
 export { groupByCategory } from './types'

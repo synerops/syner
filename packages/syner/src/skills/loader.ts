@@ -3,7 +3,7 @@ import matter from 'gray-matter'
 import { parseSkillManifest } from '@syner/osprotocol'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import type { Skill, SkillContent } from './types'
+import type { Skill, SkillContent, SkillVisibility } from './types'
 
 // Predefined allowed paths - security: only serve skills from these directories
 const SKILL_SOURCES = [
@@ -84,6 +84,8 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
         const slug = getSlugFromPath(filePath)
         const category = getCategoryFromPath(filePath)
 
+        const visibility: SkillVisibility = manifest.visibility || 'instance'
+
         const skill: Skill = {
           slug,
           name: manifest.name || slug,
@@ -91,6 +93,7 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
           category,
           version: manifest.metadata?.version,
           author: manifest.metadata?.author,
+          visibility,
           manifest,
         }
 
@@ -163,6 +166,26 @@ export async function getSkillBySlug(projectRoot: string, slug: string): Promise
   } catch {
     return null
   }
+}
+
+export async function getPublicSkills(projectRoot: string): Promise<Skill[]> {
+  const { list } = await getSkillsRegistry(projectRoot)
+  return list.filter((s) => s.visibility === 'public')
+}
+
+export async function getInstanceSkills(projectRoot: string): Promise<Skill[]> {
+  const { list } = await getSkillsRegistry(projectRoot)
+  return list.filter((s) => s.visibility === 'instance' || s.visibility === 'public')
+}
+
+export async function getPrivateSkills(projectRoot: string, app: string): Promise<Skill[]> {
+  const { list } = await getSkillsRegistry(projectRoot)
+  const appSource = `apps/${app}/skills`
+  return list.filter((s) => {
+    if (s.visibility !== 'private') return false
+    const entry = cachedRegistry?.skills.get(s.slug)
+    return entry?.path.includes(appSource)
+  })
 }
 
 export function getCategories(skills: Skill[]): string[] {
