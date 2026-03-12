@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@syner/osprotocol": "workspace:*",
     "@vercel/sandbox": "^1.8.0",
     "ai": "^6.0.0",
     "glob": "^10.0.0",
