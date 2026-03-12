@@ -1,4 +1,4 @@
-import type { ChangeProposal } from './changes.js'
+import type { ChangeProposal } from './changes'
 
 /**
  * A supervisor decision on a change proposal.

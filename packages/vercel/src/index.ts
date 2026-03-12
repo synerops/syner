@@ -42,6 +42,10 @@ export type { SkillConfig, CommandConfig } from './skills'
 export { withSyner } from './with-syner'
 export type { SynerConfig } from './with-syner'
 
+// Agent handler
+export { createAgentHandler } from './agent-handler'
+export type { AgentHandlerConfig } from './agent-handler'
+
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'
 export type { AgentSandbox, SandboxConfig } from './sandbox'

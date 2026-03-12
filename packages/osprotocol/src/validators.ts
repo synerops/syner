@@ -1,7 +1,7 @@
-import type { OspContext } from './types/context.js'
-import type { OspAction } from './types/action.js'
-import type { OspVerification } from './types/verification.js'
-import type { OspResult } from './types/result.js'
+import type { OspContext } from './types/context'
+import type { OspAction } from './types/action'
+import type { OspVerification } from './types/verification'
+import type { OspResult } from './types/result'
 
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null && !Array.isArray(x)
