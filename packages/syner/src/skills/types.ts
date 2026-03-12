@@ -1,5 +1,7 @@
 import type { SkillManifestV2 } from '@syner/osprotocol'
 
+export type SkillVisibility = 'public' | 'instance' | 'private'
+
 export interface Skill {
   slug: string
   name: string
@@ -7,6 +9,7 @@ export interface Skill {
   category: string
   version?: string
   author?: string
+  visibility: SkillVisibility
   manifest?: SkillManifestV2
 }
 
