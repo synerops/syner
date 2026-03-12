@@ -7,25 +7,14 @@
 
 <h1 align="center">Syner</h1>
 
-<p align="center">A personal operating system for developers.</p>
+<p align="center">A personal knowledge OS for agents.</p>
 
 <p align="center">
-  Your markdown notes become the filesystem. AI skills are the commands.<br/>
+  Your markdown notes become the filesystem. AI skills are the actions.<br/>
   Describe what you want. Syner figures out the rest.
 </p>
 
 ---
-
-## The OS
-
-| Layer | What it is |
-|-------|-----------|
-| `.syner/` | Kernel -- plans, research, system config |
-| `.syner/vaults/` | Filesystem -- your notes, any structure, no schemas |
-| `skills/` | Commands -- focused capabilities via `/skill-name` |
-| `agents/` | Daemons -- background workers for complex tasks |
-| `apps/` | Applications -- web portals built with Next.js |
-| `packages/` | Libraries -- shared infrastructure |
 
 ## What you can do
 
