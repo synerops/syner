@@ -6,3 +6,8 @@ export {
   type ChangeProposal,
   type MetricThreshold,
 } from './types/changes.js'
+
+export {
+  type DecisionCorpus,
+  type SupervisorDecision,
+} from './types/supervisor.js'
