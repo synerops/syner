@@ -2,6 +2,14 @@
 // context → action → verification lifecycle
 
 export {
+  type Effect,
+  type OspAction,
+  type Precondition,
+  checkPreconditions,
+  createAction,
+} from './types/action.js'
+
+export {
   type InputField,
   type OutputField,
   type SkillManifestV2,
