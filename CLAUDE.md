@@ -236,6 +236,9 @@ When the user asks to work on vision-2026 issues:
 7. **Implement:** Follow "## Implementation" section exactly
 8. **Verify:** Run all checks in "## Acceptance" section
 9. **PR:** Create PR to `feat/vision-2026` with `Closes #{n}` in body
+10. **Close:** After PR merges, close issue manually (`Closes #N` only works on merge to `main`):
+    - `gh issue close {n} --repo synerops/syner --reason completed`
+    - `gh issue edit {n} --repo synerops/syner --remove-label in-progress`
 
 ## Recommended Action
 
