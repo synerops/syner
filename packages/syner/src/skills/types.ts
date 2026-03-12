@@ -1,3 +1,5 @@
+import type { SkillManifestV2 } from '@syner/osprotocol'
+
 export interface Skill {
   slug: string
   name: string
@@ -5,6 +7,7 @@ export interface Skill {
   category: string
   version?: string
   author?: string
+  manifest?: SkillManifestV2
 }
 
 export interface SkillContent extends Skill {

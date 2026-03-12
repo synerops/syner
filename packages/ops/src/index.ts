@@ -7,4 +7,9 @@ export {
   type MetricThreshold,
 } from './types/changes.js'
 
+export {
+  type DecisionCorpus,
+  type SupervisorDecision,
+} from './types/supervisor.js'
+
 export { type FrictionEvent, logFriction, readFrictionLog } from './friction.js'
