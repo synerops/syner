@@ -25,4 +25,6 @@ export {
   verify,
 } from './types/verification.js'
 
+export { type OspResult, createResult } from './types/result.js'
+
 export { parseSkillManifest } from './parser.js'
