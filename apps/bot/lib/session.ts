@@ -13,6 +13,13 @@ import {
 } from '@syner/vercel'
 import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
 import { createToolSession, type ToolSession } from './tools'
+import {
+  createContext,
+  createAction,
+  verify,
+  createResult,
+  type OspResult,
+} from '@syner/osprotocol'
 import path from 'path'
 
 export interface Session {
@@ -21,7 +28,7 @@ export interface Session {
   /** Working directory in sandbox (if tools enabled) */
   workdir: string
   /** Generate a response for the given prompt */
-  generate(prompt: string): Promise<GenerateResult>
+  generate(prompt: string): Promise<OspResult<GenerateResult>>
   /** Cleanup sandbox and resources */
   cleanup(): Promise<void>
 }
@@ -129,33 +136,69 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     agent,
     workdir,
 
-    async generate(prompt: string): Promise<GenerateResult> {
+    async generate(prompt: string): Promise<OspResult<GenerateResult>> {
       await onStatus('Thinking...')
+      const startTime = Date.now()
+
+      const context = createContext({
+        agentId: agent.name,
+        skillRef: `session:${agent.name}`,
+        loaded: toolSession ? [{ type: 'skill' as const, ref: 'tools', summary: 'sandbox tools' }] : [],
+        missing: [],
+      })
+
+      const action = createAction({
+        description: `Generate response for: ${prompt.slice(0, 100)}`,
+        expectedEffects: [{ description: 'Response generated', verifiable: true }],
+      })
 
       const toolCallsList: string[] = []
 
-      const result = await loopAgent.generate({
-        prompt,
+      try {
+        const result = await loopAgent.generate({
+          prompt,
 
-        experimental_onToolCallStart({ toolCall }) {
-          options?.onToolStart?.(toolCall.toolName)
-        },
+          experimental_onToolCallStart({ toolCall }) {
+            options?.onToolStart?.(toolCall.toolName)
+          },
 
-        experimental_onToolCallFinish({ toolCall, durationMs, success }) {
-          toolCallsList.push(toolCall.toolName)
-          options?.onToolFinish?.(toolCall.toolName, durationMs, success)
-        },
+          experimental_onToolCallFinish({ toolCall, durationMs, success }) {
+            toolCallsList.push(toolCall.toolName)
+            options?.onToolFinish?.(toolCall.toolName, durationMs, success)
+          },
 
-        onStepFinish({ stepNumber, toolCalls }) {
-          const toolNames = toolCalls?.map(tc => tc.toolName) || []
-          options?.onStepFinish?.(stepNumber, toolNames)
-        },
-      })
+          onStepFinish({ stepNumber, toolCalls }) {
+            const toolNames = toolCalls?.map(tc => tc.toolName) || []
+            options?.onStepFinish?.(stepNumber, toolNames)
+          },
+        })
 
-      return {
-        text: result.text || '',
-        steps: result.steps.length,
-        toolCalls: toolCallsList,
+        const output: GenerateResult = {
+          text: result.text || '',
+          steps: result.steps.length,
+          toolCalls: toolCallsList,
+        }
+
+        const hasText = output.text.length > 0
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': hasText }
+        )
+
+        return {
+          ...createResult(context, action, verification, output),
+          duration: Date.now() - startTime,
+        }
+      } catch (error) {
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': false }
+        )
+
+        return {
+          ...createResult(context, action, verification),
+          duration: Date.now() - startTime,
+        }
       }
     },
 

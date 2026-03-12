@@ -1,4 +1,4 @@
-import type { Effect } from './action.js'
+import type { Effect } from './action'
 
 export interface Assertion {
   effect: string

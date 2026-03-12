@@ -1,5 +1,5 @@
 import matter from 'gray-matter'
-import type { SkillManifestV2, InputField, OutputField } from './types/skill-manifest.js'
+import type { SkillManifestV2, InputField, OutputField } from './types/skill-manifest'
 
 function parseListSection(body: string, heading: string): string[] | undefined {
   const regex = new RegExp(`^##\\s+${heading}\\s*$`, 'im')

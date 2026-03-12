@@ -88,7 +88,7 @@ async function handleCommand(command: SlackSlashCommand): Promise<SlackCommandRe
     const result = await session.generate(prompt)
 
     return {
-      text: result.text || '_No response_',
+      text: result.output?.text || '_No response_',
       response_type: 'in_channel',
     }
   } finally {
