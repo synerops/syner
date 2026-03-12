@@ -106,7 +106,13 @@ function getChat() {
           try {
             const result = await session.generate(context.text)
             const text = result.output?.text || ''
-            console.log(`[Slack][${agent.name}] Generated ${text.length} chars (${result.verification.status})`)
+            console.log(`[Slack][${agent.name}] Generated ${text.length} chars (${result.verification.status}) in ${result.duration}ms`)
+
+            if (result.verification.status === 'failed') {
+              const failed = result.verification.assertions.filter(a => !a.result)
+              console.error(`[Slack][${agent.name}] Verification failed:`, failed.map(a => a.effect).join(', '))
+            }
+
             return text || '_No response_'
           } finally {
             await session.cleanup()
