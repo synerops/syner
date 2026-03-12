@@ -71,6 +71,8 @@
       "name": "dev",
       "version": "0.1.0",
       "dependencies": {
+        "@syner/ops": "workspace:*",
+        "@syner/osprotocol": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "fumadocs-core": "^16.6.16",
