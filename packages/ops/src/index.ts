@@ -5,11 +5,11 @@ export {
   type ChangeCategory,
   type ChangeProposal,
   type MetricThreshold,
-} from './types/changes.js'
+} from './types/changes'
 
 export {
   type DecisionCorpus,
   type SupervisorDecision,
-} from './types/supervisor.js'
+} from './types/supervisor'
 
-export { type FrictionEvent, logFriction, readFrictionLog } from './friction.js'
+export { type FrictionEvent, logFriction, readFrictionLog } from './friction'
