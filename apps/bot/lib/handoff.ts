@@ -4,7 +4,7 @@ import {
   verify,
   createResult,
   escalate,
-  type OspResult,
+  type Result,
 } from '@syner/osprotocol'
 import { randomUUID } from 'crypto'
 
@@ -15,9 +15,9 @@ export interface HandoffStep {
   effects: string[]
 }
 
-export async function executeChain(steps: HandoffStep[]): Promise<OspResult[]> {
+export async function executeChain(steps: HandoffStep[]): Promise<Result[]> {
   const chainId = randomUUID()
-  const results: OspResult[] = []
+  const results: Result[] = []
 
   for (const step of steps) {
     const startTime = Date.now()
@@ -49,7 +49,7 @@ export async function executeChain(steps: HandoffStep[]): Promise<OspResult[]> {
       }
       const verification = verify(expectedEffects, effectResults)
 
-      const result: OspResult = {
+      const result: Result = {
         ...createResult(context, action, verification, output),
         duration: Date.now() - startTime,
         chain: chainId,
@@ -70,7 +70,7 @@ export async function executeChain(steps: HandoffStep[]): Promise<OspResult[]> {
       const verification = verify(expectedEffects, effectResults)
       verification.escalation = escalate(verification, 'caller')
 
-      const result: OspResult = {
+      const result: Result = {
         ...createResult(context, action, verification),
         duration: Date.now() - startTime,
         chain: chainId,
