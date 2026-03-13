@@ -1,15 +1,24 @@
-export type ChangeCategory = 'skill-tweak' | 'new-skill' | 'structural'
+export type Category = 'skill-tweak' | 'new-skill' | 'structural'
 
-export interface MetricThreshold {
+/** @deprecated Use Category instead */
+export type ChangeCategory = Category
+
+export interface Threshold {
   metric: string
   before: number
   required: number
 }
 
-export interface ChangeProposal {
-  category: ChangeCategory
+/** @deprecated Use Threshold instead */
+export type MetricThreshold = Threshold
+
+export interface Proposal {
+  category: Category
   description: string
   diff: string
-  metrics: MetricThreshold[]
+  metrics: Threshold[]
   skillRef: string
 }
+
+/** @deprecated Use Proposal instead */
+export type ChangeProposal = Proposal

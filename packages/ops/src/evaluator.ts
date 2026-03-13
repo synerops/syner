@@ -1,6 +1,6 @@
-import type { ChangeProposal, MetricThreshold } from './types/changes.js'
+import type { Proposal, Threshold } from './types/changes.js'
 
-export interface TestCase {
+export interface Test {
   name: string
   input: Record<string, unknown>
   expected: Record<string, unknown>
@@ -13,26 +13,35 @@ export interface TestResult {
   error?: string
 }
 
-export interface EvalResult {
-  proposal: ChangeProposal
+/** @deprecated Use Test instead */
+export type TestCase = Test
+
+export interface Evaluation {
+  proposal: Proposal
   passed: boolean
   testResults: TestResult[]
   regressions: string[]
-  metricResults: MetricResult[]
+  metricResults: Metric[]
 }
 
-export interface MetricResult {
+/** @deprecated Use Evaluation instead */
+export type EvalResult = Evaluation
+
+export interface Metric {
   metric: string
   actual: number
   required: number
   passed: boolean
 }
 
+/** @deprecated Use Metric instead */
+export type MetricResult = Metric
+
 export function evaluate(
-  proposal: ChangeProposal,
-  testCases: TestCase[],
-  runner: (testCase: TestCase) => TestResult
-): EvalResult {
+  proposal: Proposal,
+  testCases: Test[],
+  runner: (testCase: Test) => TestResult
+): Evaluation {
   const testResults = testCases.map(runner)
 
   const regressions = testResults
@@ -52,7 +61,7 @@ export function evaluate(
   }
 }
 
-function evaluateMetrics(thresholds: MetricThreshold[], testResults: TestResult[]): MetricResult[] {
+function evaluateMetrics(thresholds: Threshold[], testResults: TestResult[]): Metric[] {
   const totalTests = testResults.length
   if (totalTests === 0) return []
 
