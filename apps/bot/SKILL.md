@@ -1,10 +1,19 @@
 ---
 name: syner-bot
-description: Conversational agent interface for the Syner ecosystem. Routes messages to specialized agents via Slack, GitHub, and Chat API.
-visibility: public
+description: Slack integration agent — receives messages, routes through orchestrator, delivers results
+version: 1.0.0
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - Bash
+  - Skill
+  - Write
 metadata:
-  version: "0.1.0"
   author: syner
+  skills:
+    - vercel-setup
+    - bot-grow-specialist
 ---
 
 # syner.bot
