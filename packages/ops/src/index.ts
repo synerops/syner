@@ -48,6 +48,7 @@ export {
   /** @deprecated Use Invoke */ type RemoteInvokeInput,
   fetchRemoteAgent,
   invokeRemote,
+  invokeAndVerify,
 } from './remote'
 
 export { validateRemoteResult } from './boundary'

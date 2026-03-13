@@ -4,7 +4,9 @@ import {
   verify,
   createResult,
   type Result,
+  type Verification,
 } from '@syner/osprotocol'
+import { validateRemoteResult } from './boundary'
 
 export interface Instance {
   name: string
@@ -154,4 +156,18 @@ export async function invokeRemote(url: string, input: Invoke, options?: InvokeO
   } finally {
     clearTimeout(timer)
   }
+}
+
+/**
+ * Invoke a remote skill and locally verify the result.
+ * Combines invokeRemote() + validateRemoteResult() in one call.
+ */
+export async function invokeAndVerify(
+  url: string,
+  input: Invoke,
+  options?: InvokeOptions,
+): Promise<{ remote: Result; local: Verification }> {
+  const remote = await invokeRemote(url, input, options)
+  const local = validateRemoteResult(remote)
+  return { remote, local }
 }
