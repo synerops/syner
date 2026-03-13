@@ -12,7 +12,8 @@
       "browser": "./src/skills/client.ts",
       "default": "./src/skills/index.ts"
     },
-    "./agents": "./src/agents/index.ts"
+    "./agents": "./src/agents/index.ts",
+    "./context": "./src/context/index.ts"
   },
   "files": ["src"],
   "scripts": {
