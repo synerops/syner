@@ -29,6 +29,11 @@ export interface Invoke {
 /** @deprecated Use Invoke instead */
 export type RemoteInvokeInput = Invoke
 
+export interface InvokeOptions {
+  timeout?: number
+  parentContext?: string
+}
+
 /**
  * Fetch the agent.json from a remote syner instance.
  * Returns the InstanceCard describing the remote agent and its public skills.
@@ -52,8 +57,11 @@ export async function fetchRemoteAgent(url: string): Promise<Instance> {
  * 3. Sends task to the remote instance
  * 4. Validates response and returns Result
  */
-export async function invokeRemote(url: string, input: Invoke): Promise<Result> {
+export async function invokeRemote(url: string, input: Invoke, options?: InvokeOptions): Promise<Result> {
   const startTime = Date.now()
+  const timeout = options?.timeout ?? 30000
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeout)
 
   // 1. Build context
   const context = createContext({
@@ -61,43 +69,45 @@ export async function invokeRemote(url: string, input: Invoke): Promise<Result> 
     skillRef: `remote:${url}/${input.skill}`,
     loaded: [{ type: 'api' as const, ref: url, summary: 'Remote syner instance' }],
     missing: [],
+    ...(options?.parentContext && { parentContext: options.parentContext }),
   })
 
-  // 2. Fetch remote agent card and check skill exists
-  const remoteCard = await fetchRemoteAgent(url)
-  const skillExists = remoteCard.skills.some((s) => s.id === input.skill)
-
-  const action = createAction({
-    description: `Invoke ${input.skill} on remote instance ${remoteCard.name}`,
-    preconditions: [
-      { check: 'Remote instance is reachable', met: true },
-      { check: `Skill "${input.skill}" is public on remote instance`, met: skillExists },
-    ],
-    expectedEffects: [
-      { description: 'Remote skill executed successfully', verifiable: true },
-      { description: 'Valid response received', verifiable: true },
-    ],
-  })
-
-  // 3. Check preconditions
-  if (!skillExists) {
-    const verification = verify(action.expectedEffects, {
-      'Remote skill executed successfully': false,
-      'Valid response received': false,
-    })
-    return {
-      ...createResult(context, action, verification),
-      duration: Date.now() - startTime,
-    }
-  }
-
-  // 4. Send task to remote instance
   try {
+    // 2. Fetch remote agent card and check skill exists
+    const remoteCard = await fetchRemoteAgent(url)
+    const skillExists = remoteCard.skills.some((s) => s.id === input.skill)
+
+    const action = createAction({
+      description: `Invoke ${input.skill} on remote instance ${remoteCard.name}`,
+      preconditions: [
+        { check: 'Remote instance is reachable', met: true },
+        { check: `Skill "${input.skill}" is public on remote instance`, met: skillExists },
+      ],
+      expectedEffects: [
+        { description: 'Remote skill executed successfully', verifiable: true },
+        { description: 'Valid response received', verifiable: true },
+      ],
+    })
+
+    // 3. Check preconditions
+    if (!skillExists) {
+      const verification = verify(action.expectedEffects, {
+        'Remote skill executed successfully': false,
+        'Valid response received': false,
+      })
+      return {
+        ...createResult(context, action, verification),
+        duration: Date.now() - startTime,
+      }
+    }
+
+    // 4. Send task to remote instance
     const taskUrl = url.endsWith('/') ? `${url}agent` : `${url}/agent`
     const response = await fetch(taskUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
+      signal: controller.signal,
     })
 
     if (!response.ok) {
@@ -123,6 +133,13 @@ export async function invokeRemote(url: string, input: Invoke): Promise<Result> 
       duration: Date.now() - startTime,
     }
   } catch (error) {
+    const action = createAction({
+      description: `Invoke ${input.skill} on remote instance at ${url}`,
+      expectedEffects: [
+        { description: 'Remote skill executed successfully', verifiable: true },
+        { description: 'Valid response received', verifiable: true },
+      ],
+    })
     const verification = verify(action.expectedEffects, {
       'Remote skill executed successfully': false,
       'Valid response received': false,
@@ -134,5 +151,7 @@ export async function invokeRemote(url: string, input: Invoke): Promise<Result> 
       }),
       duration: Date.now() - startTime,
     }
+  } finally {
+    clearTimeout(timer)
   }
 }
