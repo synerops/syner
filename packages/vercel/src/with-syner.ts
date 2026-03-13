@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { parseSkillManifest } from '@syner/osprotocol'
-import type { SkillManifestV2 } from '@syner/osprotocol'
+import type { SkillManifest } from '@syner/osprotocol'
 
 interface NextConfig {
   rewrites?: () => Promise<Array<{ source: string; destination: string }>> | Array<{ source: string; destination: string }>
@@ -10,7 +10,7 @@ interface NextConfig {
 
 export interface SynerConfig {
   skillPath?: string
-  manifest?: SkillManifestV2
+  manifest?: SkillManifest
 }
 
 export function withSyner(nextConfig: NextConfig = {}, synerConfig: SynerConfig = {}): NextConfig {
@@ -20,7 +20,7 @@ export function withSyner(nextConfig: NextConfig = {}, synerConfig: SynerConfig 
     const skillPath = synerConfig.skillPath || resolve(process.cwd(), 'SKILL.md')
     try {
       const content = readFileSync(skillPath, 'utf-8')
-      manifest = parseSkillManifest(content)
+      manifest = parseSkillManifest(content).skill
     } catch {
       // No SKILL.md found — still works, just no manifest
     }

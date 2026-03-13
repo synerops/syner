@@ -1,10 +1,11 @@
-import type { ChangeProposal, SupervisorDecision } from '@syner/ops'
+import type { Proposal } from '@syner/ops'
+import type { Approval } from '@syner/osprotocol'
 import { writeFile, mkdir } from 'fs/promises'
 import { dirname, join } from 'path'
 
 export interface DeployResult {
   deployed: boolean
-  proposal: ChangeProposal
+  proposal: Proposal
   reason: string
   timestamp: string
   artifactPath?: string
@@ -12,19 +13,19 @@ export interface DeployResult {
 
 /**
  * Deploy an approved change proposal.
- * Only proceeds if decision.approved === true.
+ * Only proceeds if decision.decision === 'approved'.
  */
 export async function deploy(
-  proposal: ChangeProposal,
-  decision: SupervisorDecision
+  proposal: Proposal,
+  decision: Approval
 ): Promise<DeployResult> {
   const timestamp = new Date().toISOString()
 
-  if (!decision.approved) {
+  if (decision.decision !== 'approved') {
     return {
       deployed: false,
       proposal,
-      reason: `Rejected by ${decision.reviewer}: ${decision.reason}`,
+      reason: `Rejected by ${decision.reviewer ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
       timestamp,
     }
   }
@@ -49,7 +50,7 @@ export async function deploy(
   return {
     deployed: true,
     proposal,
-    reason: `Approved by ${decision.reviewer}: ${decision.reason}`,
+    reason: `Approved by ${decision.reviewer ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
     timestamp,
     artifactPath,
   }
