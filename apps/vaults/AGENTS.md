@@ -20,7 +20,7 @@ apps/vaults/
 │   ├── grow-note/
 │   ├── track-idea/
 │   └── load-all/
-└── .syner/vaults/wiki/             # User's notes (gitignored)
+└── .syner/vaults/vaults/            # User's notes (gitignored)
     ├── syner/                      # Project notes
     ├── blog/                       # Blog drafts
     ├── ideas/                      # Ideas
@@ -39,7 +39,7 @@ apps/vaults/
 Vaults are personal. They're gitignored by default. Skills read them for context, not for data extraction.
 
 ```
-.syner/vaults/wiki/          # Your notes
+.syner/vaults/vaults/        # Your notes
 .syner/vaults/*/             # Other apps can have vaults too
 ```
 

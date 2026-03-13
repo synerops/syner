@@ -30,7 +30,7 @@ Build comprehensive understanding of the user's current state by reading all not
 
 This finds notes in:
 - `.syner/vaults/` — all vault context
-- `.syner/vaults/wiki/` — knowledge, ideas, writings
+- `.syner/vaults/vaults/` — knowledge, ideas, writings
 - `.syner/vaults/bot/` — bot context
 - `.syner/vaults/dev/` — development notes
 - Any other app with vaults under `.syner/vaults/{app}/`
@@ -42,8 +42,8 @@ Organize what you find:
 ```
 .syner/vaults/
   syner/context.md
-  wiki/syner/backlog.md
-  wiki/syner/ideas.md
+  vaults/syner/backlog.md
+  vaults/syner/ideas.md
   bot/index.md
   dev/index.md
 ```
