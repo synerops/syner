@@ -32,8 +32,10 @@ export { type Result, type OspResult, createResult } from './types/result'
 
 export {
   validateAction,
+  validateApproval,
   validateContext,
   validateResult,
+  validateRun,
   validateVerification,
 } from './validators'
 
