@@ -1,6 +1,11 @@
 import matter from 'gray-matter'
 import type { SkillManifest, InputField, OutputField } from './types/skill-manifest'
 
+export interface ParseResult {
+  skill: SkillManifest
+  warnings: string[]
+}
+
 function parseListSection(body: string, heading: string): string[] | undefined {
   const regex = new RegExp(`^##\\s+${heading}\\s*$`, 'im')
   const match = body.search(regex)
@@ -57,31 +62,81 @@ function parseOutputs(body: string): OutputField[] | undefined {
   })
 }
 
-export function parseSkillManifest(content: string): SkillManifest {
-  const { data, content: body } = matter(content)
+// Extension fields that support 3-tier priority
+const EXTENSION_FIELDS = ['preconditions', 'effects', 'verification', 'visibility', 'notFor'] as const
 
-  const manifest: SkillManifest = {
-    ...data,
+const BODY_HEADING_MAP: Record<string, string> = {
+  preconditions: 'Preconditions',
+  effects: 'Effects',
+  verification: 'Verification',
+  notFor: 'I am NOT',
+}
+
+export function parseSkillManifest(content: string): ParseResult {
+  const { data, content: body } = matter(content)
+  const warnings: string[] = []
+
+  const manifest: SkillManifest = {}
+
+  // Standard Agent Skills fields — always from top-level frontmatter
+  if (data.name) manifest.name = data.name
+  if (data.description) manifest.description = data.description
+  if (data.category) manifest.category = data.category
+
+  // Copy metadata (excluding extension fields handled below)
+  if (data.metadata) {
+    manifest.metadata = {
+      version: data.metadata.version,
+      author: data.metadata.author,
+    }
   }
 
-  // Parse structured sections from markdown body
-  const preconditions = parseListSection(body, 'Preconditions')
-  if (preconditions) manifest.preconditions = preconditions
+  // Extension fields: 3-tier priority
+  for (const field of EXTENSION_FIELDS) {
+    // Tier 1: frontmatter.metadata.*
+    if (data.metadata?.[field] !== undefined) {
+      ;(manifest as Record<string, unknown>)[field] = data.metadata[field]
+      continue
+    }
 
-  const effects = parseListSection(body, 'Effects')
-  if (effects) manifest.effects = effects
+    // Tier 2: top-level frontmatter
+    if (data[field] !== undefined) {
+      ;(manifest as Record<string, unknown>)[field] = data[field]
+      warnings.push(`${field} found at top-level frontmatter, move to metadata for Agent Skills spec compliance`)
+      continue
+    }
 
-  const verification = parseListSection(body, 'Verification')
-  if (verification) manifest.verification = verification
+    // Tier 3: markdown body sections
+    const heading = BODY_HEADING_MAP[field]
+    if (heading) {
+      const items = parseListSection(body, heading)
+      if (items) {
+        ;(manifest as Record<string, unknown>)[field] = items
+      }
+    }
+  }
 
-  const notFor = parseListSection(body, 'I am NOT')
-  if (notFor) manifest.notFor = notFor
+  // Inputs: 3-tier priority
+  if (data.metadata?.inputs !== undefined) {
+    manifest.inputs = data.metadata.inputs
+  } else if (data.inputs !== undefined) {
+    manifest.inputs = data.inputs
+    warnings.push('inputs found at top-level frontmatter, move to metadata for Agent Skills spec compliance')
+  } else {
+    const inputs = parseInputs(body)
+    if (inputs) manifest.inputs = inputs
+  }
 
-  const inputs = parseInputs(body)
-  if (inputs) manifest.inputs = inputs
+  // Outputs: 3-tier priority
+  if (data.metadata?.outputs !== undefined) {
+    manifest.outputs = data.metadata.outputs
+  } else if (data.outputs !== undefined) {
+    manifest.outputs = data.outputs
+    warnings.push('outputs found at top-level frontmatter, move to metadata for Agent Skills spec compliance')
+  } else {
+    const outputs = parseOutputs(body)
+    if (outputs) manifest.outputs = outputs
+  }
 
-  const outputs = parseOutputs(body)
-  if (outputs) manifest.outputs = outputs
-
-  return manifest
+  return { skill: manifest, warnings }
 }
