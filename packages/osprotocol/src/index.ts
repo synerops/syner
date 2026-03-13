@@ -43,6 +43,7 @@ export { type ParseResult, parseSkillManifest } from './parser'
 
 export {
   type RunStatus,
+  type RunActivity,
   type Progress,
   type Timeout,
   type Retry,

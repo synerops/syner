@@ -11,6 +11,8 @@ export type RunStatus =
   | 'cancelled'
   | 'timed_out'
 
+export type RunActivity = 'idle' | 'executing' | 'waiting' | 'thinking'
+
 export interface Progress {
   current: number
   total: number
@@ -52,6 +54,9 @@ export interface Run<T = unknown> {
   startedAt: string
   completedAt?: string
   chain?: string
+  activity?: RunActivity
+  /** ISO 8601 timestamp */
+  lastHeartbeat?: string
 }
 
 export function createRun(partial: Partial<Run> & Pick<Run, 'id'>): Run {

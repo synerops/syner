@@ -89,5 +89,9 @@ export function validateRun(x: unknown): x is Run {
     if (typeof (x.retry as Record<string, unknown>).maxAttempts !== 'number') return false
     if (typeof (x.retry as Record<string, unknown>).delay !== 'number') return false
   }
+  if (x.activity !== undefined) {
+    if (!['idle', 'executing', 'waiting', 'thinking'].includes(x.activity as string)) return false
+  }
+  if (x.lastHeartbeat !== undefined && !isString(x.lastHeartbeat)) return false
   return true
 }
