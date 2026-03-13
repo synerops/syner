@@ -21,7 +21,17 @@ export {
 export {
   createIssue,
   addLabels,
+  getIssue,
+  listIssues,
+  removeLabel,
+  closeIssue,
   type CreateIssueOptions,
   type CreateIssueResult,
   type AddLabelsOptions,
+  type GetIssueOptions,
+  type IssueDetail,
+  type ListIssuesOptions,
+  type IssueSummary,
+  type RemoveLabelOptions,
+  type CloseIssueOptions,
 } from './issues'
