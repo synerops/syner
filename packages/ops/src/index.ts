@@ -23,3 +23,10 @@ export {
   type MetricResult,
   evaluate,
 } from './evaluator'
+
+export {
+  type RemoteInstanceCard,
+  type RemoteInvokeInput,
+  fetchRemoteAgent,
+  invokeRemote,
+} from './remote'
