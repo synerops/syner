@@ -37,7 +37,7 @@ export {
   validateVerification,
 } from './validators'
 
-export { parseSkillManifest } from './parser'
+export { type ParseResult, parseSkillManifest } from './parser'
 
 export {
   type RunStatus,
