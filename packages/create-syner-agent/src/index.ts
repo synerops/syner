@@ -85,7 +85,7 @@ async function main() {
   console.log(`\n  created ${relative(absoluteTarget, skillPath)}`)
 
   // Generate app/api/agent/route.ts
-  const routeContent = readTemplate('agent-route.ts')
+  const routeContent = replaceVars(readTemplate('agent-route.ts'), vars)
   const routePath = join(appAgentDir, 'route.ts')
   writeFileSync(routePath, routeContent)
   console.log(`  created ${relative(absoluteTarget, routePath)}`)
