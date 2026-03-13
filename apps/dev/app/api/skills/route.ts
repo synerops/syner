@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSkillsList } from "syner/skills";
+import { getSkillsList } from "@syner/sdk/skills";
 import path from "path";
 
 // Force static generation - skills only update on deploy

@@ -1,5 +1,5 @@
 {
-  "name": "syner",
+  "name": "@syner/sdk",
   "version": "0.0.1",
   "description": "Core package for the Syner ecosystem",
   "license": "MIT",
@@ -48,6 +48,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/synerops/syner.git",
-    "directory": "packages/syner"
+    "directory": "packages/sdk"
   }
 }

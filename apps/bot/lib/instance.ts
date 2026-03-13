@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { parseSkillManifest, type SkillManifest, type ParseResult } from '@syner/osprotocol'
-import { getPublicSkills, getInstanceSkills } from 'syner/skills'
+import { getPublicSkills, getInstanceSkills } from '@syner/sdk/skills'
 
 export type InstanceScope = 'external' | 'internal'
 

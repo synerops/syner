@@ -11,7 +11,7 @@ import {
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
+import { getAgentByName, getModel, type AgentCard } from '@syner/sdk/agents'
 import { createToolSession, type ToolSession } from './tools'
 import {
   createContext,
@@ -21,8 +21,8 @@ import {
   type Result,
   type ContextSource,
 } from '@syner/osprotocol'
-import { resolveContext, type ContextRequest } from 'syner/context'
-import type { VaultStore } from 'syner/context'
+import { resolveContext, type ContextRequest } from '@syner/sdk/context'
+import type { VaultStore } from '@syner/sdk/context'
 import path from 'path'
 
 export interface Session {

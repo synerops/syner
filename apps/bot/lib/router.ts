@@ -6,7 +6,7 @@
  */
 
 import { createSession, type SessionOptions } from './session'
-import type { AgentCard } from 'syner/agents'
+import type { AgentCard } from '@syner/sdk/agents'
 import type { Result } from '@syner/osprotocol'
 import type { GenerateResult } from './session'
 

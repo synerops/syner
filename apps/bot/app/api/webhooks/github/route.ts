@@ -25,7 +25,7 @@ import {
   type PullRequestEvent,
 } from '@syner/github'
 import { env } from '@/lib/env'
-import { logger } from 'syner/logger'
+import { logger } from '@syner/sdk/logger'
 import {
   createContext,
   createAction,

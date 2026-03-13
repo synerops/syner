@@ -18,7 +18,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createSession } from '@/lib/session'
-import { logger } from 'syner/logger'
+import { logger } from '@syner/sdk/logger'
 
 export const maxDuration = 60
 
