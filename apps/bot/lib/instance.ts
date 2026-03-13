@@ -1,7 +1,9 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { parseSkillManifest, type SkillManifestV2 } from '@syner/osprotocol'
-import { getPublicSkills } from 'syner/skills'
+import { getPublicSkills, getInstanceSkills } from 'syner/skills'
+
+export type InstanceScope = 'external' | 'internal'
 
 export interface InstanceCard {
   name: string
@@ -28,11 +30,24 @@ function getManifest(): SkillManifestV2 {
   return cachedManifest
 }
 
-export async function getInstanceCard(): Promise<InstanceCard> {
+/**
+ * Determine request scope from the x-syner-internal header.
+ * Internal requests must provide the shared instance secret.
+ */
+export function getRequestScope(request: Request): InstanceScope {
+  const secret = process.env.SYNER_INSTANCE_SECRET
+  if (!secret) return 'external'
+  const header = request.headers.get('x-syner-internal')
+  return header === secret ? 'internal' : 'external'
+}
+
+export async function getInstanceCard(scope: InstanceScope = 'external'): Promise<InstanceCard> {
   const manifest = getManifest()
 
   const projectRoot = resolve(process.cwd(), '../..')
-  const publicSkills = await getPublicSkills(projectRoot)
+  const skills = scope === 'internal'
+    ? await getInstanceSkills(projectRoot)
+    : await getPublicSkills(projectRoot)
 
   return {
     name: manifest.name || 'syner',
@@ -45,7 +60,7 @@ export async function getInstanceCard(): Promise<InstanceCard> {
       streaming: false,
       pushNotifications: false,
     },
-    skills: publicSkills.map((s) => ({
+    skills: skills.map((s) => ({
       id: s.slug,
       name: s.manifest?.name || s.slug,
       description: s.manifest?.description || '',
