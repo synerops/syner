@@ -38,3 +38,14 @@ export {
 } from './validators'
 
 export { type ParseResult, parseSkillManifest } from './parser'
+
+export {
+  type RunStatus,
+  type Progress,
+  type Timeout,
+  type Retry,
+  type Approval,
+  type Run,
+  createRun,
+  updateRunStatus,
+} from './types/run'
