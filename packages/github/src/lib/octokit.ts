@@ -50,6 +50,7 @@ interface CachedToken {
 }
 
 let tokenCache: CachedToken | null = null;
+let pendingTokenRequest: Promise<string> | null = null;
 const TOKEN_TTL = 55 * 60 * 1000; // 55 minutes
 
 export async function getToken(): Promise<string> {
@@ -57,27 +58,44 @@ export async function getToken(): Promise<string> {
     return tokenCache.token;
   }
 
-  const config = getConfig();
+  // Dedup concurrent calls during cache miss
+  if (pendingTokenRequest) {
+    return pendingTokenRequest;
+  }
 
-  const octokit = new Octokit({
-    authStrategy: createAppAuth,
-    auth: {
-      appId: config.appId,
-      privateKey: config.privateKey,
-      installationId: config.installationId,
-    },
-  });
+  pendingTokenRequest = (async () => {
+    try {
+      const config = getConfig();
+      const octokit = new Octokit({
+        authStrategy: createAppAuth,
+        auth: {
+          appId: config.appId,
+          privateKey: config.privateKey,
+          installationId: config.installationId,
+        },
+      });
 
-  const auth = (await octokit.auth({ type: "installation" })) as {
-    token: string;
-  };
+      const auth = (await octokit.auth({ type: "installation" })) as {
+        token: string;
+      };
 
-  tokenCache = {
-    token: auth.token,
-    expiresAt: Date.now() + TOKEN_TTL,
-  };
+      tokenCache = {
+        token: auth.token,
+        expiresAt: Date.now() + TOKEN_TTL,
+      };
 
-  return auth.token;
+      return auth.token;
+    } finally {
+      pendingTokenRequest = null;
+    }
+  })();
+
+  return pendingTokenRequest;
+}
+
+export function clearTokenCache(): void {
+  tokenCache = null;
+  pendingTokenRequest = null;
 }
 
 export function isTokenValid(): boolean {

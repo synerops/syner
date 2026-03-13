@@ -7,6 +7,7 @@
 // Auth/Octokit
 export {
   getToken,
+  clearTokenCache,
   createOctokit,
   createThrottledOctokit,
   isTokenValid,
