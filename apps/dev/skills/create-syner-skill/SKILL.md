@@ -1,11 +1,11 @@
 ---
 name: create-syner-skill
 description: Create syner skills. Use when creating new skills, or when user says "crear skill", "new skill", "add capability".
-agent: dev
 metadata:
   author: syner
   version: "0.1.0"
-tools:
+  agent: dev
+allowed-tools:
   - Read
   - Glob
   - Write
@@ -85,10 +85,15 @@ Ask only if unclear: "Is this skill specific to an app or shared?"
 ---
 name: {name}
 description: {description}. Use when {triggers}.
-agent: dev
 metadata:
   author: syner
   version: "0.0.1"
+  agent: dev
+allowed-tools:
+  - Read
+  - Glob
+  - Write
+  - Bash
 ---
 
 # {Name}
@@ -159,7 +164,11 @@ If skill needs tools, declare in frontmatter:
 ```yaml
 ---
 name: my-skill
-tools: [Read, Glob, Grep, Bash]
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - Bash
 ---
 ```
 
@@ -198,7 +207,8 @@ Normal flow:
 
 - Filename: `SKILL.md` (uppercase)
 - Frontmatter: `name`, `description`, `metadata.version`
-- Optional: `tools`, `context`, `skills`
+- Optional: `allowed-tools`, `license`, `compatibility`, `metadata.*`
+- Syner extensions go inside `metadata`: `agent`, `context`, `skills`
 - Voice: imperative, not first-person
 - Version starts at 0.0.1
 - Include Testing section
