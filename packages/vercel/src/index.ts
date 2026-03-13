@@ -22,11 +22,13 @@ export {
   createGlobTool,
   createGrepTool,
   createSkillTool,
+  // Skill execution
+  executeSkill,
   // Registry
   createTools,
   createToolsByName,
 } from './tools'
-export type { ToolName, SandboxToolName, SpecialToolName, CreateSkillToolOptions } from './tools'
+export type { ToolName, SandboxToolName, SpecialToolName, CreateSkillToolOptions, ExecuteSkillOptions } from './tools'
 
 // Skills
 export {
