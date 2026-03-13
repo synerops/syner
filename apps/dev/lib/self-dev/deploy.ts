@@ -1,10 +1,10 @@
-import type { ChangeProposal, SupervisorDecision } from '@syner/ops'
+import type { Proposal, SupervisorDecision } from '@syner/ops'
 import { writeFile, mkdir } from 'fs/promises'
 import { dirname, join } from 'path'
 
 export interface DeployResult {
   deployed: boolean
-  proposal: ChangeProposal
+  proposal: Proposal
   reason: string
   timestamp: string
   artifactPath?: string
@@ -15,7 +15,7 @@ export interface DeployResult {
  * Only proceeds if decision.approved === true.
  */
 export async function deploy(
-  proposal: ChangeProposal,
+  proposal: Proposal,
   decision: SupervisorDecision
 ): Promise<DeployResult> {
   const timestamp = new Date().toISOString()

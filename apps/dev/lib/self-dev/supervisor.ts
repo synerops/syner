@@ -1,11 +1,11 @@
-import type { ChangeProposal, EvalResult, SupervisorDecision } from '@syner/ops'
+import type { Proposal, Evaluation, SupervisorDecision } from '@syner/ops'
 import { logDecision } from './corpus'
 
 const SUPERVISOR_API_URL = process.env.SYNER_BOT_URL || 'http://localhost:3000'
 
 export async function requestApproval(
-  proposal: ChangeProposal,
-  evalResult: EvalResult
+  proposal: Proposal,
+  evalResult: Evaluation
 ): Promise<SupervisorDecision> {
   const response = await fetch(`${SUPERVISOR_API_URL}/api/supervisor`, {
     method: 'POST',
