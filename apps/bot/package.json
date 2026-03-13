@@ -12,6 +12,7 @@
     "@ai-sdk/anthropic": "^3.0.58",
     "@octokit/rest": "^21.0.0",
     "@syner/github": "workspace:*",
+    "@syner/ops": "workspace:*",
     "@syner/osprotocol": "workspace:*",
     "@syner/slack": "workspace:*",
     "@syner/vercel": "workspace:*",
