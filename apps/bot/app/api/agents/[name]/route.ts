@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAgentsList, getAgentByName } from "syner/agents";
+import { getAgentsList, getAgentByName } from "@syner/sdk/agents";
 import path from "path";
 
 // ISR: revalidate every hour

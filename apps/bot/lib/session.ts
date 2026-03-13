@@ -11,7 +11,7 @@ import {
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, getModel, type AgentCard } from 'syner/agents'
+import { getAgentByName, getModel, type AgentCard } from '@syner/sdk/agents'
 import { createToolSession, type ToolSession } from './tools'
 import path from 'path'
 
