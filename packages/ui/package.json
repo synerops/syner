@@ -14,6 +14,7 @@
     "./slides": "./src/slides/index.ts",
     "./slides/types": "./src/slides/types.ts",
     "./slides/registry": "./src/slides/registry.ts",
+    "./slides/templates": "./src/slides/templates/index.ts",
     "./branding": "./src/branding/index.ts"
   },
   "dependencies": {
