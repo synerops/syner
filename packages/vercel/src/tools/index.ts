@@ -16,6 +16,13 @@ export { Glob, executeGlob, createGlobTool } from './glob'
 export { Grep, executeGrep, createGrepTool } from './grep'
 export { createSkillTool, type CreateSkillToolOptions } from './skill'
 
+// Vault tools (factory functions, take VaultStore instance)
+export { createVaultRead } from './vault-read'
+export { createVaultWrite } from './vault-write'
+export { createVaultDelete } from './vault-delete'
+export { createVaultList } from './vault-list'
+export { createVaultGlob } from './vault-glob'
+
 // Import creators for registry
 import { createBashTool } from './bash'
 import { createFetchTool } from './fetch'
