@@ -123,7 +123,7 @@ async function handleDelegate(message: string, targetAgent: string): Promise<str
       'Content-Type': 'application/json',
       'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
     },
-    body: JSON.stringify({ prompt: message }),
+    body: JSON.stringify({ agentName: targetAgent, task: message }),
   })
 
   if (!res.ok) {
