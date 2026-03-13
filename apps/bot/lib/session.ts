@@ -52,6 +52,8 @@ export interface SessionOptions {
   onToolFinish?: (toolName: string, durationMs: number, success: boolean) => void
   /** Callback when step finishes */
   onStepFinish?: (stepNumber: number, toolNames: string[]) => void
+  /** Callback when generation produces a result (success or error) */
+  onResult?: (result: OspResult<GenerateResult>) => Promise<void> | void
 }
 
 const DEFAULT_AGENT = 'syner'
@@ -185,20 +187,25 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
           { 'Response generated': hasText }
         )
 
-        return {
+        const ospResult = {
           ...createResult(context, action, verification, output),
           duration: Date.now() - startTime,
         }
+        await options?.onResult?.(ospResult)
+        return ospResult
       } catch (error) {
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false }
         )
 
-        return {
+        const ospResult: OspResult<GenerateResult> = {
           ...createResult(context, action, verification),
+          output: undefined,
           duration: Date.now() - startTime,
         }
+        await options?.onResult?.(ospResult)
+        return ospResult
       }
     },
 
