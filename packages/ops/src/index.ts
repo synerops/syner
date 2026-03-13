@@ -12,7 +12,8 @@ export {
 
 export {
   type Decisions,
-  type SupervisorDecision,
+  type Decision,
+  /** @deprecated Import Approval from @syner/osprotocol */ type SupervisorDecision,
   /** @deprecated Use Decisions */ type DecisionCorpus,
 } from './types/supervisor'
 
