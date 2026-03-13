@@ -71,6 +71,11 @@ async function buildRegistry(projectRoot: string): Promise<AgentsRegistry> {
   return { agents, list }
 }
 
+export function invalidateAgentsCache(): void {
+  cachedRegistry = null
+  cachedProjectRoot = null
+}
+
 export async function getAgentsRegistry(projectRoot: string): Promise<AgentsRegistry> {
   // Invalidate cache if project root changed
   if (cachedRegistry && cachedProjectRoot === projectRoot) {

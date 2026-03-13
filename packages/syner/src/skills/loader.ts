@@ -84,6 +84,13 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
         const slug = getSlugFromPath(filePath)
         const category = getCategoryFromPath(filePath)
 
+        if (manifest.name && manifest.name !== slug) {
+          console.warn(
+            `Skill "${slug}": manifest name "${manifest.name}" does not match directory "${slug}". ` +
+            `Per Agent Skills spec, name should match the directory.`
+          )
+        }
+
         const visibility: SkillVisibility = manifest.visibility || 'instance'
 
         const skill: Skill = {
@@ -114,6 +121,11 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
   })
 
   return { skills, list }
+}
+
+export function invalidateSkillsCache(): void {
+  cachedRegistry = null
+  cachedProjectRoot = null
 }
 
 export async function getSkillsRegistry(projectRoot: string): Promise<SkillsRegistry> {
