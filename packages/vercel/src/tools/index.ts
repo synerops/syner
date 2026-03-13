@@ -14,7 +14,7 @@ export { Read, executeRead, createReadTool } from './read'
 export { Write, executeWrite, createWriteTool } from './write'
 export { Glob, executeGlob, createGlobTool } from './glob'
 export { Grep, executeGrep, createGrepTool } from './grep'
-export { createSkillTool, type CreateSkillToolOptions } from './skill'
+export { executeSkill, createSkillTool, type ExecuteSkillOptions, type CreateSkillToolOptions } from './skill'
 
 // Vault tools (factory functions, take VaultStore instance)
 export { createVaultRead } from './vault-read'
