@@ -2,7 +2,7 @@
  * Satori-compatible font loaders for OG image generation.
  *
  * Satori requires fonts as ArrayBuffer in .ttf or .woff format (not .woff2).
- * These loaders read Geist fonts from the `geist` package at runtime.
+ * Fonts are static files committed to the repo (src/fonts/static/).
  *
  * Usage with next/og ImageResponse:
  * ```tsx
@@ -21,21 +21,16 @@
  */
 
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const require = createRequire(import.meta.url);
-
-function resolveGeistFont(path: string): string {
-  const geistDir = require.resolve("geist/package.json").replace("/package.json", "");
-  return `${geistDir}/dist/fonts/${path}`;
-}
+const FONTS_DIR = join(dirname(fileURLToPath(import.meta.url)), "static");
 
 /**
  * Load Geist Sans Regular as ArrayBuffer for Satori.
  */
 export async function loadGeistSans(): Promise<ArrayBuffer> {
-  const fontPath = resolveGeistFont("geist-sans/Geist-Regular.ttf");
-  const buffer = await readFile(fontPath);
+  const buffer = await readFile(join(FONTS_DIR, "Geist-Regular.ttf"));
   return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }
 
@@ -43,7 +38,6 @@ export async function loadGeistSans(): Promise<ArrayBuffer> {
  * Load Geist Mono Regular as ArrayBuffer for Satori.
  */
 export async function loadGeistMono(): Promise<ArrayBuffer> {
-  const fontPath = resolveGeistFont("geist-mono/GeistMono-Regular.ttf");
-  const buffer = await readFile(fontPath);
+  const buffer = await readFile(join(FONTS_DIR, "GeistMono-Regular.ttf"));
   return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }
