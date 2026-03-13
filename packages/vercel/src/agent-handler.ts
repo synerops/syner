@@ -4,17 +4,18 @@ import {
   checkPreconditions,
   verify,
   createResult,
-  type OspContext,
-  type OspAction,
-  type OspResult,
-  type SkillManifestV2,
+  type Context,
+  type Action,
+  type Result,
+  type SkillManifest,
 } from '@syner/osprotocol'
 
 export interface AgentHandlerConfig {
   agentId: string
   skillRef: string
-  manifest?: SkillManifestV2
-  handler: (req: Request, context: OspContext, action: OspAction) => Promise<unknown>
+  manifest?: SkillManifest
+  handler: (req: Request, context: Context, action: Action) => Promise<unknown>
+  onResult?: (result: Result) => Promise<void>
 }
 
 export function createAgentHandler(config: AgentHandlerConfig) {
@@ -54,6 +55,8 @@ export function createAgentHandler(config: AgentHandlerConfig) {
       const verification = verify(expectedEffects, {})
       const result = createResult(context, action, verification)
 
+      await config.onResult?.(result)
+
       return Response.json(
         {
           error: 'Preconditions not met',
@@ -75,10 +78,12 @@ export function createAgentHandler(config: AgentHandlerConfig) {
       }
       const verification = verify(expectedEffects, results)
 
-      const result: OspResult = {
+      const result: Result = {
         ...createResult(context, action, verification, output),
         duration: Date.now() - startTime,
       }
+
+      await config.onResult?.(result)
 
       return Response.json(result)
     } catch (error) {
@@ -88,10 +93,12 @@ export function createAgentHandler(config: AgentHandlerConfig) {
       }
       const verification = verify(expectedEffects, results)
 
-      const result: OspResult = {
+      const result: Result = {
         ...createResult(context, action, verification),
         duration: Date.now() - startTime,
       }
+
+      await config.onResult?.(result)
 
       return Response.json(
         { error: error instanceof Error ? error.message : String(error), result },
