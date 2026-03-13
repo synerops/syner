@@ -1,7 +1,7 @@
-import type { OspContext } from './types/context'
-import type { OspAction } from './types/action'
-import type { OspVerification } from './types/verification'
-import type { OspResult } from './types/result'
+import type { Context } from './types/context'
+import type { Action } from './types/action'
+import type { Verification } from './types/verification'
+import type { Result } from './types/result'
 
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null && !Array.isArray(x)
@@ -15,7 +15,7 @@ function isArray(x: unknown): x is unknown[] {
   return Array.isArray(x)
 }
 
-export function validateContext(x: unknown): x is OspContext {
+export function validateContext(x: unknown): x is Context {
   if (!isObject(x)) return false
   if (!isString(x.agentId)) return false
   if (!isString(x.skillRef)) return false
@@ -25,7 +25,7 @@ export function validateContext(x: unknown): x is OspContext {
   return true
 }
 
-export function validateAction(x: unknown): x is OspAction {
+export function validateAction(x: unknown): x is Action {
   if (!isObject(x)) return false
   if (!isString(x.description)) return false
   if (!isArray(x.preconditions)) return false
@@ -36,7 +36,7 @@ export function validateAction(x: unknown): x is OspAction {
   return true
 }
 
-export function validateVerification(x: unknown): x is OspVerification {
+export function validateVerification(x: unknown): x is Verification {
   if (!isObject(x)) return false
   if (!isString(x.status)) return false
   if (!['passed', 'failed', 'partial'].includes(x.status as string)) return false
@@ -44,7 +44,7 @@ export function validateVerification(x: unknown): x is OspVerification {
   return true
 }
 
-export function validateResult(x: unknown): x is OspResult {
+export function validateResult(x: unknown): x is Result {
   if (!isObject(x)) return false
   if (!validateContext(x.context)) return false
   if (!validateAction(x.action)) return false

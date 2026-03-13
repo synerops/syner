@@ -12,16 +12,19 @@ export interface Escalation {
   reason: string
 }
 
-export interface OspVerification {
+export interface Verification {
   status: 'passed' | 'failed' | 'partial'
   assertions: Assertion[]
   escalation?: Escalation
 }
 
+/** @deprecated Use Verification instead */
+export type OspVerification = Verification
+
 export function verify(
   effects: Effect[],
   results: Record<string, boolean>
-): OspVerification {
+): Verification {
   const assertions: Assertion[] = effects.map((effect) => ({
     effect: effect.description,
     result: results[effect.description] ?? false,
@@ -30,7 +33,7 @@ export function verify(
   const passed = assertions.filter((a) => a.result).length
   const total = assertions.length
 
-  let status: OspVerification['status']
+  let status: Verification['status']
   if (passed === total) status = 'passed'
   else if (passed === 0) status = 'failed'
   else status = 'partial'
@@ -38,7 +41,7 @@ export function verify(
   return { status, assertions }
 }
 
-export function escalate(verification: OspVerification, target: string): Escalation {
+export function escalate(verification: Verification, target: string): Escalation {
   const failed = verification.assertions.filter((a) => !a.result)
   return {
     strategy: 'escalate',

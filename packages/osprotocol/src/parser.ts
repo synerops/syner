@@ -1,5 +1,5 @@
 import matter from 'gray-matter'
-import type { SkillManifestV2, InputField, OutputField } from './types/skill-manifest'
+import type { SkillManifest, InputField, OutputField } from './types/skill-manifest'
 
 function parseListSection(body: string, heading: string): string[] | undefined {
   const regex = new RegExp(`^##\\s+${heading}\\s*$`, 'im')
@@ -57,10 +57,10 @@ function parseOutputs(body: string): OutputField[] | undefined {
   })
 }
 
-export function parseSkillManifest(content: string): SkillManifestV2 {
+export function parseSkillManifest(content: string): SkillManifest {
   const { data, content: body } = matter(content)
 
-  const manifest: SkillManifestV2 = {
+  const manifest: SkillManifest = {
     ...data,
   }
 
