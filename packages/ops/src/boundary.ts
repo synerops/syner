@@ -24,7 +24,14 @@ export function validateRemoteResult(result: unknown): OspVerification {
   })
 
   if (!isValidShape) {
-    return { status: 'failed', assertions }
+    return {
+      status: 'failed',
+      assertions,
+      escalation: {
+        strategy: 'escalate',
+        reason: 'Remote result is not a valid OspResult — cannot trust this response',
+      },
+    }
   }
 
   const ospResult = result as OspResult
@@ -34,6 +41,9 @@ export function validateRemoteResult(result: unknown): OspVerification {
   assertions.push({
     effect: 'Context is well-formed',
     result: validContext,
+    evidence: validContext
+      ? `agentId: ${ospResult.context.agentId}, skillRef: ${ospResult.context.skillRef}`
+      : 'Context missing required fields',
   })
 
   // 3. Action integrity
@@ -41,6 +51,9 @@ export function validateRemoteResult(result: unknown): OspVerification {
   assertions.push({
     effect: 'Action is well-formed',
     result: validAction,
+    evidence: validAction
+      ? `${ospResult.action.preconditions.length} preconditions, ${ospResult.action.expectedEffects.length} effects`
+      : 'Action missing required fields',
   })
 
   // 4. Verification integrity — remote says it passed, do we agree?
@@ -48,6 +61,9 @@ export function validateRemoteResult(result: unknown): OspVerification {
   assertions.push({
     effect: 'Verification block is well-formed',
     result: validVerification,
+    evidence: validVerification
+      ? `Remote status: ${ospResult.verification.status}`
+      : 'Verification missing or malformed',
   })
 
   // 5. Cross-check: remote assertions should reference declared effects
@@ -70,6 +86,7 @@ export function validateRemoteResult(result: unknown): OspVerification {
   assertions.push({
     effect: 'Duration is non-negative',
     result: validDuration,
+    evidence: `${ospResult.duration}ms`,
   })
 
   // Compute status
@@ -81,5 +98,14 @@ export function validateRemoteResult(result: unknown): OspVerification {
   else if (passed === 0) status = 'failed'
   else status = 'partial'
 
-  return { status, assertions }
+  return {
+    status,
+    assertions,
+    ...(status !== 'passed' && {
+      escalation: {
+        strategy: 'escalate',
+        reason: `Local verification: ${passed}/${total} checks passed — remote output may not be trustworthy`,
+      },
+    }),
+  }
 }
