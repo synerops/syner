@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
-import { parseSkillManifest, type SkillManifestV2 } from '@syner/osprotocol'
+import { parseSkillManifest, type SkillManifest, type ParseResult } from '@syner/osprotocol'
 import { getPublicSkills, getInstanceSkills } from 'syner/skills'
 
 export type InstanceScope = 'external' | 'internal'
@@ -21,12 +21,13 @@ export interface InstanceCard {
   }>
 }
 
-let cachedManifest: SkillManifestV2 | null = null
+let cachedManifest: SkillManifest | null = null
 
-function getManifest(): SkillManifestV2 {
+function getManifest(): SkillManifest {
   if (cachedManifest) return cachedManifest
   const content = readFileSync(resolve(process.cwd(), 'SKILL.md'), 'utf-8')
-  cachedManifest = parseSkillManifest(content)
+  const result = parseSkillManifest(content)
+  cachedManifest = result.skill
   return cachedManifest
 }
 

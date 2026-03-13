@@ -18,7 +18,7 @@ import {
   createAction,
   verify,
   createResult,
-  type OspResult,
+  type Result,
   type ContextSource,
 } from '@syner/osprotocol'
 import { resolveContext, type ContextRequest } from 'syner/context'
@@ -31,7 +31,7 @@ export interface Session {
   /** Working directory in sandbox (if tools enabled) */
   workdir: string
   /** Generate a response for the given prompt */
-  generate(prompt: string): Promise<OspResult<GenerateResult>>
+  generate(prompt: string): Promise<Result<GenerateResult>>
   /** Cleanup sandbox and resources */
   cleanup(): Promise<void>
 }
@@ -60,7 +60,7 @@ export interface SessionOptions {
   /** Callback when step finishes */
   onStepFinish?: (stepNumber: number, toolNames: string[]) => void
   /** Callback when generation produces a result (success or error) */
-  onResult?: (result: OspResult<GenerateResult>) => Promise<void> | void
+  onResult?: (result: Result<GenerateResult>) => Promise<void> | void
 }
 
 const DEFAULT_AGENT = 'syner'
@@ -145,7 +145,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     agent,
     workdir,
 
-    async generate(prompt: string): Promise<OspResult<GenerateResult>> {
+    async generate(prompt: string): Promise<Result<GenerateResult>> {
       await onStatus('Thinking...')
       const startTime = Date.now()
 
@@ -221,7 +221,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
           { 'Response generated': false }
         )
 
-        const ospResult: OspResult<GenerateResult> = {
+        const ospResult: Result<GenerateResult> = {
           ...createResult(context, action, verification),
           output: undefined,
           duration: Date.now() - startTime,
