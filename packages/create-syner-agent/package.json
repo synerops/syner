@@ -8,6 +8,9 @@
     "create-syner-agent": "./src/index.ts"
   },
   "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@syner/osprotocol": "workspace:*"
   },

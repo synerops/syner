@@ -15,3 +15,11 @@ export {
 export { type FrictionEvent, logFriction, readFrictionLog } from './friction'
 
 export { type FrictionPattern, analyzeFriction } from './friction-analyzer'
+
+export {
+  type TestCase,
+  type TestResult,
+  type EvalResult,
+  type MetricResult,
+  evaluate,
+} from './evaluator'
