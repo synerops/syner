@@ -7,7 +7,7 @@
 
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { createSession } from '@/lib/session'
+import { classifyAndRoute } from '@/lib/router'
 import { env } from '@/lib/env'
 import type { AgentCard } from 'syner/agents'
 
@@ -95,28 +95,18 @@ function getChat() {
             ].join('\n')
           }
 
-          // Create session and generate response
-          const session = await createSession({
-            agent,
-            onStatus: (status) => {
-              console.log(`[Slack][${agent.name}] Status: ${status}`)
-            },
-          })
-
-          try {
-            const result = await session.generate(context.text)
-            const text = result.output?.text || ''
-            console.log(`[Slack][${agent.name}] Generated ${text.length} chars (${result.verification.status}) in ${result.duration}ms`)
-
-            if (result.verification.status === 'failed') {
-              const failed = result.verification.assertions.filter(a => !a.result)
-              console.error(`[Slack][${agent.name}] Verification failed:`, failed.map(a => a.effect).join(', '))
+          // Route through classifier: direct, chain, or delegate
+          const response = await classifyAndRoute(
+            context.text,
+            { channel: context.channel, agent },
+            {
+              onStatus: (status) => {
+                console.log(`[Slack][${agent.name}] Status: ${status}`)
+              },
             }
+          )
 
-            return text || '_No response_'
-          } finally {
-            await session.cleanup()
-          }
+          return response
         },
       }
     )
