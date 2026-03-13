@@ -81,7 +81,7 @@ Don't pattern match on keywords. Understand the intent naturally.
 
 - "hola" → None (conversational)
 - "what's in my backlog?" → Targeted (load backlog notes only)
-- "add dark mode to wiki app" → App (load `.syner/vaults/wiki/`)
+- "add dark mode to vaults app" → App (load `.syner/vaults/vaults/`)
 - "fix bot webhook" → App (load `.syner/vaults/bot/`)
 - "connect my ideas about X with project Y" → Full (multi-domain)
 - "what should I build next?" → Full (needs complete context)
