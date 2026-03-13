@@ -9,10 +9,13 @@ export {
   updateComment,
   deleteComment,
   addReaction,
+  readThread,
   type CreateCommentOptions,
   type UpdateCommentOptions,
   type DeleteCommentOptions,
   type AddReactionOptions,
+  type Comment,
+  type ReadThreadOptions,
 } from './comments'
 
 export {
