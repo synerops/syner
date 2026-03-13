@@ -30,3 +30,5 @@ export {
   fetchRemoteAgent,
   invokeRemote,
 } from './remote'
+
+export { validateRemoteResult } from './boundary'
