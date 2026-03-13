@@ -19,7 +19,10 @@ import {
   verify,
   createResult,
   type OspResult,
+  type ContextSource,
 } from '@syner/osprotocol'
+import { resolveContext, type ContextRequest } from 'syner/context'
+import type { VaultStore } from 'syner/context'
 import path from 'path'
 
 export interface Session {
@@ -44,6 +47,10 @@ export interface SessionOptions {
   agentName?: string
   /** Full agent config (use this to avoid fs lookups in serverless) */
   agent?: AgentCard
+  /** Vault store for context resolution */
+  vaultStore?: VaultStore
+  /** Context request (scope, app, query) for vault loading */
+  contextRequest?: ContextRequest
   /** Callback when status changes (e.g., 'Cloning repository...') */
   onStatus?: (status: string) => void | Promise<void>
   /** Callback when tool starts */
@@ -142,11 +149,26 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
       await onStatus('Thinking...')
       const startTime = Date.now()
 
+      // Resolve vault context if store is provided
+      const loadedSources: ContextSource[] = toolSession
+        ? [{ type: 'skill' as const, ref: 'tools', summary: 'sandbox tools' }]
+        : []
+      const missingTopics: string[] = []
+
+      if (options?.vaultStore) {
+        const request = options.contextRequest ?? { scope: 'none' as const }
+        const brief = await resolveContext(request, options.vaultStore)
+        for (const source of brief.sources) {
+          loadedSources.push({ type: 'vault' as const, ref: source })
+        }
+        missingTopics.push(...brief.gaps)
+      }
+
       const context = createContext({
         agentId: agent.name,
         skillRef: `session:${agent.name}`,
-        loaded: toolSession ? [{ type: 'skill' as const, ref: 'tools', summary: 'sandbox tools' }] : [],
-        missing: [],
+        loaded: loadedSources,
+        missing: missingTopics,
       })
 
       const action = createAction({
