@@ -3,27 +3,27 @@ import {
   validateContext,
   validateAction,
   validateVerification,
-  type OspVerification,
   type OspResult,
+  type OspVerification,
 } from '@syner/osprotocol'
 
 /**
- * Locally verify a remote OspResult.
+ * Local verification of a remote OspResult.
  * Never trust remote verification alone — re-validate the structure
- * and cross-check assertions independently.
+ * and cross-check assertions locally.
  */
 export function validateRemoteResult(result: unknown): OspVerification {
-  const assertions: OspVerification['assertions'] = []
+  const assertions: Array<{ effect: string; result: boolean; evidence?: string }> = []
 
-  // 1. Structural validation — is it a valid OspResult at all?
-  const isValidResult = validateResult(result)
+  // 1. Structural validation — is it a valid OspResult shape?
+  const isValidShape = validateResult(result)
   assertions.push({
     effect: 'Result has valid OspResult structure',
-    result: isValidResult,
-    evidence: isValidResult ? 'All required fields present and typed correctly' : 'Structural validation failed',
+    result: isValidShape,
+    evidence: isValidShape ? undefined : 'Failed structural validation',
   })
 
-  if (!isValidResult) {
+  if (!isValidShape) {
     return {
       status: 'failed',
       assertions,
@@ -36,60 +36,60 @@ export function validateRemoteResult(result: unknown): OspVerification {
 
   const ospResult = result as OspResult
 
-  // 2. Context validation — does the context look legitimate?
-  const hasValidContext = validateContext(ospResult.context)
+  // 2. Context integrity
+  const validContext = validateContext(ospResult.context)
   assertions.push({
     effect: 'Context is well-formed',
-    result: hasValidContext,
-    evidence: hasValidContext
+    result: validContext,
+    evidence: validContext
       ? `agentId: ${ospResult.context.agentId}, skillRef: ${ospResult.context.skillRef}`
       : 'Context missing required fields',
   })
 
-  // 3. Action validation — did the remote declare what it was doing?
-  const hasValidAction = validateAction(ospResult.action)
+  // 3. Action integrity
+  const validAction = validateAction(ospResult.action)
   assertions.push({
-    effect: 'Action declaration is well-formed',
-    result: hasValidAction,
-    evidence: hasValidAction
+    effect: 'Action is well-formed',
+    result: validAction,
+    evidence: validAction
       ? `${ospResult.action.preconditions.length} preconditions, ${ospResult.action.expectedEffects.length} effects`
       : 'Action missing required fields',
   })
 
-  // 4. Verification validation — did the remote include verification?
-  const hasValidVerification = validateVerification(ospResult.verification)
+  // 4. Verification integrity — remote says it passed, do we agree?
+  const validVerification = validateVerification(ospResult.verification)
   assertions.push({
-    effect: 'Remote includes verification',
-    result: hasValidVerification,
-    evidence: hasValidVerification
+    effect: 'Verification block is well-formed',
+    result: validVerification,
+    evidence: validVerification
       ? `Remote status: ${ospResult.verification.status}`
       : 'Verification missing or malformed',
   })
 
-  // 5. Consistency check — do assertions match declared effects?
-  if (hasValidAction && hasValidVerification) {
-    const declaredEffects = ospResult.action.expectedEffects.map((e) => e.description)
-    const verifiedEffects = ospResult.verification.assertions.map((a) => a.effect)
-    const allEffectsVerified = declaredEffects.every((e) => verifiedEffects.includes(e))
+  // 5. Cross-check: remote assertions should reference declared effects
+  if (validAction && validVerification) {
+    const declaredEffects = new Set(
+      ospResult.action.expectedEffects.map((e) => e.description)
+    )
+    const assertedEffects = ospResult.verification.assertions.map((a) => a.effect)
+    const allMapped = assertedEffects.every((e) => declaredEffects.has(e))
 
     assertions.push({
-      effect: 'All declared effects have corresponding assertions',
-      result: allEffectsVerified,
-      evidence: allEffectsVerified
-        ? `${declaredEffects.length} effects, ${verifiedEffects.length} assertions`
-        : `Missing assertions for: ${declaredEffects.filter((e) => !verifiedEffects.includes(e)).join(', ')}`,
+      effect: 'All assertions map to declared effects',
+      result: allMapped,
+      evidence: allMapped ? undefined : 'Found assertions referencing undeclared effects',
     })
   }
 
-  // 6. Duration sanity check — was the response suspiciously fast?
-  const hasReasonableDuration = typeof ospResult.duration === 'number' && ospResult.duration >= 0
+  // 6. Duration sanity check
+  const validDuration = typeof ospResult.duration === 'number' && ospResult.duration >= 0
   assertions.push({
-    effect: 'Duration is reasonable',
-    result: hasReasonableDuration,
+    effect: 'Duration is non-negative',
+    result: validDuration,
     evidence: `${ospResult.duration}ms`,
   })
 
-  // Determine overall status
+  // Compute status
   const passed = assertions.filter((a) => a.result).length
   const total = assertions.length
 
