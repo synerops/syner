@@ -44,7 +44,19 @@ function getConfig(): AppConfig {
   };
 }
 
+interface CachedToken {
+  token: string;
+  expiresAt: number;
+}
+
+let tokenCache: CachedToken | null = null;
+const TOKEN_TTL = 55 * 60 * 1000; // 55 minutes
+
 export async function getToken(): Promise<string> {
+  if (tokenCache && Date.now() < tokenCache.expiresAt) {
+    return tokenCache.token;
+  }
+
   const config = getConfig();
 
   const octokit = new Octokit({
@@ -59,7 +71,24 @@ export async function getToken(): Promise<string> {
   const auth = (await octokit.auth({ type: "installation" })) as {
     token: string;
   };
+
+  tokenCache = {
+    token: auth.token,
+    expiresAt: Date.now() + TOKEN_TTL,
+  };
+
   return auth.token;
+}
+
+export function isTokenValid(): boolean {
+  return tokenCache !== null && Date.now() < tokenCache.expiresAt;
+}
+
+export function getTokenStatus(): { cached: boolean; expiresIn?: number } {
+  if (!tokenCache || Date.now() >= tokenCache.expiresAt) {
+    return { cached: false };
+  }
+  return { cached: true, expiresIn: tokenCache.expiresAt - Date.now() };
 }
 
 /**

@@ -9,6 +9,8 @@ export {
   getToken,
   createOctokit,
   createThrottledOctokit,
+  isTokenValid,
+  getTokenStatus,
   type ThrottlingCallbacks,
 } from './lib/octokit'
 
