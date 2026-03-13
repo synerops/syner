@@ -75,7 +75,7 @@ async function main() {
   const vars = { name, description, author }
 
   // Create directories
-  const appAgentDir = join(absoluteTarget, 'app', 'agent')
+  const appAgentDir = join(absoluteTarget, 'app', 'api', 'agent')
   mkdirSync(appAgentDir, { recursive: true })
 
   // Generate SKILL.md
@@ -84,7 +84,7 @@ async function main() {
   writeFileSync(skillPath, skillContent)
   console.log(`\n  created ${relative(absoluteTarget, skillPath)}`)
 
-  // Generate app/agent/route.ts
+  // Generate app/api/agent/route.ts
   const routeContent = readTemplate('agent-route.ts')
   const routePath = join(appAgentDir, 'route.ts')
   writeFileSync(routePath, routeContent)
