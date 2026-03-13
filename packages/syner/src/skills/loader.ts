@@ -79,7 +79,7 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
 
       try {
         const content = await readFile(filePath, 'utf-8')
-        const manifest = parseSkillManifest(content)
+        const { skill: manifest } = parseSkillManifest(content)
 
         const slug = getSlugFromPath(filePath)
         const category = getCategoryFromPath(filePath)
