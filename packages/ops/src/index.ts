@@ -43,6 +43,7 @@ export {
 export {
   type Instance,
   type Invoke,
+  type InvokeOptions,
   /** @deprecated Use Instance */ type RemoteInstanceCard,
   /** @deprecated Use Invoke */ type RemoteInvokeInput,
   fetchRemoteAgent,
