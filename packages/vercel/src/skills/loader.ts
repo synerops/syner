@@ -38,6 +38,8 @@ async function findSkillPath(repoRoot: string, skillName: string): Promise<strin
 
 /**
  * Parse a skill markdown file
+ * Supports both `tools` and `allowed-tools` frontmatter keys,
+ * and `agent` at root or nested under `metadata`.
  */
 function parseSkillFile(filePath: string): SkillConfig {
   const content = readFileSync(filePath, 'utf-8')
@@ -47,8 +49,8 @@ function parseSkillFile(filePath: string): SkillConfig {
     name: data.name || path.basename(path.dirname(filePath)),
     description: data.description,
     instructions: body.trim(),
-    tools: data.tools,
-    agent: data.agent,
+    tools: data.tools || data['allowed-tools'],
+    agent: data.agent || data.metadata?.agent,
     context: data.context || 'inline',
     filePath,
     command: data.command,

@@ -28,13 +28,17 @@ export interface ExecuteSkillOptions {
  * runs the skill via a ToolLoopAgent, and returns a typed Result.
  *
  * This is the core execution primitive — `createSkillTool()` delegates here.
+ *
+ * Note: Unlike `createSkillTool()`, this does NOT cache loaded skills.
+ * This is intentional — standalone calls are stateless by design,
+ * and callers that need caching should use `createSkillTool()` instead.
  */
 export async function executeSkill(
   ref: string,
   input: string,
   options: ExecuteSkillOptions
 ): Promise<OspResult<string>> {
-  const { repoRoot, tools, model, abortSignal } = options
+  const { repoRoot, tools, model } = options
 
   // 1. Load skill
   const skill = await loadSkill(repoRoot, ref)
@@ -56,7 +60,7 @@ export async function executeSkill(
     }
   }
 
-  return executeSkillWithConfig(skill, input, options, abortSignal)
+  return executeSkillWithConfig(skill, input, options)
 }
 
 /**
@@ -66,10 +70,9 @@ export async function executeSkill(
 async function executeSkillWithConfig(
   skill: SkillConfig,
   input: string,
-  options: ExecuteSkillOptions,
-  abortSignal?: AbortSignal
+  options: ExecuteSkillOptions
 ): Promise<OspResult<string>> {
-  const { repoRoot, tools, model } = options
+  const { repoRoot, tools, model, abortSignal } = options
   const name = skill.name
 
   // Build skill instructions with arguments
@@ -195,12 +198,11 @@ export function createSkillTool(options: CreateSkillToolOptions) {
         skillCache.set(name, skill)
       }
 
-      // Delegate to executeSkillWithConfig
+      // Delegate to executeSkillWithConfig with abortSignal in options
       const result = await executeSkillWithConfig(
         skill,
         task,
-        { repoRoot, tools, model },
-        abortSignal
+        { repoRoot, tools, model, abortSignal }
       )
 
       return JSON.stringify(result)
