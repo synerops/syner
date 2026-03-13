@@ -9,14 +9,17 @@ export interface Effect {
   verifiable: boolean
 }
 
-export interface OspAction {
+export interface Action {
   description: string
   preconditions: Precondition[]
   expectedEffects: Effect[]
   rollbackStrategy?: 'revert' | 'escalate' | 'noop'
 }
 
-export function createAction(partial: Partial<OspAction> & Pick<OspAction, 'description'>): OspAction {
+/** @deprecated Use Action instead */
+export type OspAction = Action
+
+export function createAction(partial: Partial<Action> & Pick<Action, 'description'>): Action {
   return {
     preconditions: [],
     expectedEffects: [],
@@ -24,7 +27,7 @@ export function createAction(partial: Partial<OspAction> & Pick<OspAction, 'desc
   }
 }
 
-export function checkPreconditions(action: OspAction): { pass: boolean; unmet: Precondition[] } {
+export function checkPreconditions(action: Action): { pass: boolean; unmet: Precondition[] } {
   const unmet = action.preconditions.filter((p) => !p.met)
   return { pass: unmet.length === 0, unmet }
 }

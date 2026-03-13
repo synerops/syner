@@ -1,22 +1,25 @@
-import type { OspContext } from './context'
-import type { OspAction } from './action'
-import type { OspVerification } from './verification'
+import type { Context } from './context'
+import type { Action } from './action'
+import type { Verification } from './verification'
 
-export interface OspResult<T = unknown> {
-  context: OspContext
-  action: OspAction
-  verification: OspVerification
+export interface Result<T = unknown> {
+  context: Context
+  action: Action
+  verification: Verification
   output?: T
   duration: number
   chain?: string
 }
 
+/** @deprecated Use Result instead */
+export type OspResult<T = unknown> = Result<T>
+
 export function createResult<T = unknown>(
-  context: OspContext,
-  action: OspAction,
-  verification: OspVerification,
+  context: Context,
+  action: Action,
+  verification: Verification,
   output?: T
-): OspResult<T> {
+): Result<T> {
   return {
     context,
     action,

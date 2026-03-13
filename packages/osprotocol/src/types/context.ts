@@ -4,7 +4,7 @@ export interface ContextSource {
   summary?: string
 }
 
-export interface OspContext {
+export interface Context {
   agentId: string
   skillRef: string
   loaded: ContextSource[]
@@ -13,9 +13,12 @@ export interface OspContext {
   parentContext?: string
 }
 
+/** @deprecated Use Context instead */
+export type OspContext = Context
+
 export function createContext(
-  partial: Partial<OspContext> & Pick<OspContext, 'agentId' | 'skillRef'>
-): OspContext {
+  partial: Partial<Context> & Pick<Context, 'agentId' | 'skillRef'>
+): Context {
   return {
     loaded: [],
     missing: [],
