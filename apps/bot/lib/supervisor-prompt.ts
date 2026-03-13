@@ -1,4 +1,4 @@
-import type { ChangeProposal, EvalResult } from '@syner/ops'
+import type { Proposal, Evaluation } from '@syner/ops'
 
 export interface SupervisorPrompt {
   text: string
@@ -12,7 +12,7 @@ interface SlackBlock {
   block_id?: string
 }
 
-export function buildSupervisorPrompt(proposal: ChangeProposal, evalResult: EvalResult): SupervisorPrompt {
+export function buildSupervisorPrompt(proposal: Proposal, evalResult: Evaluation): SupervisorPrompt {
   const statusEmoji = evalResult.passed ? ':white_check_mark:' : ':warning:'
   const regressionNote = evalResult.regressions.length > 0
     ? `\n*Regressions:* ${evalResult.regressions.join(', ')}`

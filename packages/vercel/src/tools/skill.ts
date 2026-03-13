@@ -6,7 +6,7 @@ import {
   createAction,
   verify,
   createResult,
-  type OspResult,
+  type Result,
 } from '@syner/osprotocol'
 
 export interface CreateSkillToolOptions {
@@ -110,7 +110,7 @@ export function createSkillTool(options: CreateSkillToolOptions) {
         const output = result.text || 'Skill completed with no output'
         const verification = verify(action.expectedEffects, { 'Skill completed successfully': true })
 
-        const ospResult: OspResult<string> = {
+        const ospResult: Result<string> = {
           ...createResult(context, action, verification, output),
           duration: Date.now() - startTime,
         }
@@ -122,7 +122,7 @@ export function createSkillTool(options: CreateSkillToolOptions) {
         const errorMessage = error instanceof Error ? error.message : String(error)
         const verification = verify(action.expectedEffects, { 'Skill completed successfully': false })
 
-        const ospResult: OspResult = {
+        const ospResult: Result = {
           ...createResult(context, action, verification),
           duration: Date.now() - startTime,
         }

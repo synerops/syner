@@ -1,11 +1,22 @@
-import type { SupervisorDecision, DecisionCorpus } from '@syner/ops'
+import type { Proposal } from '@syner/ops'
+import type { Approval } from '@syner/osprotocol'
 import { appendFile, readFile, mkdir } from 'fs/promises'
 import { dirname } from 'path'
+
+export interface SelfDevDecision {
+  proposal: Proposal
+  approval: Approval
+}
+
+interface SelfDevCorpus {
+  decisions: SelfDevDecision[]
+  patterns: string[]
+}
 
 const DEFAULT_PATH = '.syner/ops/decisions.jsonl'
 
 export async function logDecision(
-  decision: SupervisorDecision,
+  decision: SelfDevDecision,
   storagePath: string = DEFAULT_PATH
 ): Promise<void> {
   await mkdir(dirname(storagePath), { recursive: true })
@@ -14,7 +25,7 @@ export async function logDecision(
 
 export async function getCorpus(
   storagePath: string = DEFAULT_PATH
-): Promise<DecisionCorpus> {
+): Promise<SelfDevCorpus> {
   const decisions = await readDecisions(storagePath)
   const patterns = extractPatterns(decisions)
   return { decisions, patterns }
@@ -23,28 +34,29 @@ export async function getCorpus(
 export async function findSimilar(
   skillRef: string,
   storagePath: string = DEFAULT_PATH
-): Promise<SupervisorDecision[]> {
+): Promise<SelfDevDecision[]> {
   const decisions = await readDecisions(storagePath)
   return decisions.filter((d) => d.proposal.skillRef === skillRef)
 }
 
-async function readDecisions(storagePath: string): Promise<SupervisorDecision[]> {
+async function readDecisions(storagePath: string): Promise<SelfDevDecision[]> {
   try {
     const content = await readFile(storagePath, 'utf-8')
     return content
       .trim()
       .split('\n')
       .filter(Boolean)
-      .map((line) => JSON.parse(line) as SupervisorDecision)
+      .map((line) => JSON.parse(line) as SelfDevDecision)
   } catch {
     return []
   }
 }
 
-function extractPatterns(decisions: SupervisorDecision[]): string[] {
+function extractPatterns(decisions: SelfDevDecision[]): string[] {
   const seen = new Set<string>()
   for (const d of decisions) {
-    seen.add(`${d.proposal.category}:${d.approved ? 'approved' : 'rejected'}`)
+    const status = d.approval.decision === 'approved' ? 'approved' : 'rejected'
+    seen.add(`${d.proposal.category}:${status}`)
   }
   return Array.from(seen)
 }

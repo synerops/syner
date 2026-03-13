@@ -1,10 +1,10 @@
-import type { FrictionPattern, ChangeProposal, ChangeCategory, MetricThreshold } from '@syner/ops'
-import type { SkillManifestV2 } from '@syner/osprotocol'
+import type { FrictionPattern, Proposal, ChangeCategory, MetricThreshold } from '@syner/ops'
+import type { SkillManifest } from '@syner/osprotocol'
 
 export function generateCandidate(
   pattern: FrictionPattern,
-  skill: SkillManifestV2
-): ChangeProposal {
+  skill: SkillManifest
+): Proposal {
   const category = categorizeChange(pattern)
   const metrics = estimateMetrics(pattern, category)
 
@@ -42,7 +42,7 @@ function estimateMetrics(pattern: FrictionPattern, category: ChangeCategory): Me
   ]
 }
 
-function buildDescription(pattern: FrictionPattern, skill: SkillManifestV2): string {
+function buildDescription(pattern: FrictionPattern, skill: SkillManifest): string {
   const skillName = skill.name || pattern.skillRef
   return `Fix "${pattern.pattern}" in ${skillName} (observed ${pattern.frequency}x, severity: ${pattern.severity})`
 }
