@@ -1,4 +1,4 @@
-import type { OspResult } from '@syner/osprotocol'
+import type { Result } from '@syner/osprotocol'
 import type { ContextScope } from './context/types'
 import type { VaultStore } from './context/vault-store'
 import { resolveSkill } from './skills/resolver'
@@ -7,22 +7,25 @@ import { resolveContext } from './context/resolve'
 /**
  * Executor function signature — matches executeSkill() from @syner/vercel.
  * The caller provides this to avoid a circular dependency (vercel → sdk → vercel).
+ *
+ * Generic T allows callers to enforce type safety on executor options
+ * (e.g. ExecuteSkillOptions from @syner/vercel) without the SDK importing them.
  */
-export type SkillExecutor = (
+export type SkillExecutor<T extends Record<string, unknown> = Record<string, unknown>> = (
   skillSlug: string,
   task: string,
-  options: Record<string, unknown>
-) => Promise<OspResult<string>>
+  options: T
+) => Promise<Result<string>>
 
-export interface ExecuteOptions {
+export interface ExecuteOptions<T extends Record<string, unknown> = Record<string, unknown>> {
   /** Skill name (e.g. "/find-ideas") or natural language intent */
   intent: string
   /** The task to execute (passed to the skill subagent) */
   task: string
   /** Executor function (typically executeSkill from @syner/vercel) */
-  executor: SkillExecutor
-  /** Options passed through to the executor (model, tools, repoRoot, etc.) */
-  executorOptions: Record<string, unknown>
+  executor: SkillExecutor<T>
+  /** Options passed through to the executor — type-safe when T is provided */
+  executorOptions: T
   /** Project root path (for skill discovery) */
   projectRoot: string
   /** Vault store for context resolution */
@@ -42,10 +45,24 @@ export interface ExecuteOptions {
  *
  * The caller provides the executor, model, and tools — the SDK does not
  * create these resources, it only orchestrates the resolution pipeline.
+ *
+ * @example
+ * ```typescript
+ * import { execute } from '@syner/sdk'
+ * import { executeSkill, type ExecuteSkillOptions } from '@syner/vercel'
+ *
+ * const result = await execute<ExecuteSkillOptions>({
+ *   intent: '/find-ideas',
+ *   task: 'Find ideas about orchestration',
+ *   executor: executeSkill,
+ *   executorOptions: { repoRoot, tools, model },
+ *   projectRoot, vaultStore,
+ * })
+ * ```
  */
-export async function execute(
-  options: ExecuteOptions
-): Promise<OspResult<string>> {
+export async function execute<T extends Record<string, unknown> = Record<string, unknown>>(
+  options: ExecuteOptions<T>
+): Promise<Result<string>> {
   const {
     intent,
     task,
@@ -66,14 +83,20 @@ export async function execute(
   }
 
   // 2. Resolve vault context (if requested)
-  const brief = await resolveContext(
-    {
-      scope: contextScope,
-      app: contextApp,
-      query: contextScope === 'targeted' ? task : undefined,
-    },
-    vaultStore
-  )
+  let brief
+  try {
+    brief = await resolveContext(
+      {
+        scope: contextScope,
+        app: contextApp,
+        query: contextScope === 'targeted' ? task : undefined,
+      },
+      vaultStore
+    )
+  } catch {
+    // Vault store failure should not block execution
+    brief = { content: '' }
+  }
 
   // 3. Build the task with context injected
   const taskWithContext =

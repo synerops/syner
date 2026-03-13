@@ -14,4 +14,4 @@ export * from './agents'
 export * from './context'
 
 // Execution bridge
-export { execute, type ExecuteOptions } from './execute'
+export { execute, type ExecuteOptions, type SkillExecutor } from './execute'
