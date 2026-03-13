@@ -6,9 +6,8 @@
  */
 
 import { createSession, type SessionOptions } from './session'
-import { executeChain, type HandoffStep } from './handoff'
 import type { AgentCard } from 'syner/agents'
-import type { OspResult } from '@syner/osprotocol'
+import type { Result } from '@syner/osprotocol'
 import type { GenerateResult } from './session'
 
 export type Intent = 'direct' | 'chain' | 'delegate'
@@ -25,7 +24,7 @@ export interface RouteContext {
 export interface RouteResult {
   intent: Intent
   agent?: string
-  chain?: HandoffStep[]
+  chain?: unknown[]
 }
 
 /**
@@ -131,7 +130,7 @@ async function handleDelegate(message: string, targetAgent: string): Promise<str
     return `_Failed to reach agent "${targetAgent}" (${res.status})_`
   }
 
-  const result: OspResult<GenerateResult> = await res.json()
+  const result: Result<GenerateResult> = await res.json()
   return result.output?.text || '_No response from delegate_'
 }
 
