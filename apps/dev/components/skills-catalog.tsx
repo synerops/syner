@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { type Skill, type SkillContent, groupByCategory } from "syner/skills";
+import { type Skill, type SkillContent, groupByCategory } from "@syner/sdk/skills";
 import { SkillModal } from "./skill-modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());

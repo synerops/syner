@@ -1,6 +1,6 @@
 import { Hero } from "@/components/hero";
 import { SkillsCatalog } from "@/components/skills-catalog";
-import { getSkillsList } from "syner/skills";
+import { getSkillsList } from "@syner/sdk/skills";
 import path from "path";
 
 // Force static generation - skills only update on deploy

@@ -1,6 +1,6 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import type { VaultStore } from 'syner/context'
+import type { VaultStore } from '@syner/sdk/context'
 
 const inputSchema = z.object({
   path: z.string().describe('Vault file path relative to vault root (e.g. "bot/notes/q1.md")'),
