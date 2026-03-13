@@ -24,10 +24,21 @@
     "@syner/osprotocol": "workspace:*",
     "ai": "^6.0.116",
     "glob": "^10.0.0",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "picomatch": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@vercel/blob": ">=0.27.0"
+  },
+  "peerDependenciesMeta": {
+    "@vercel/blob": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/picomatch": "^4.0.2",
+    "@vercel/blob": "^0.27.0",
     "typescript": "^5.0.0"
   },
   "publishConfig": {
