@@ -1,13 +1,16 @@
-import type { FrictionEvent } from './friction.js'
-import type { ChangeCategory } from './types/changes.js'
+import type { Friction } from './friction.js'
+import type { Category } from './types/changes.js'
 
-export interface FrictionPattern {
+export interface Pattern {
   skillRef: string
   pattern: string
   frequency: number
   severity: 'low' | 'medium' | 'high'
-  suggestedCategory: ChangeCategory
+  suggestedCategory: Category
 }
+
+/** @deprecated Use Pattern instead */
+export type FrictionPattern = Pattern
 
 interface AnalyzerOptions {
   minFrequency?: number
@@ -15,16 +18,16 @@ interface AnalyzerOptions {
 }
 
 export function analyzeFriction(
-  events: FrictionEvent[],
+  events: Friction[],
   options: AnalyzerOptions = {}
-): FrictionPattern[] {
+): Pattern[] {
   const { minFrequency = 3, windowDays = 30 } = options
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - windowDays)
   const cutoffISO = cutoff.toISOString()
 
   // Group by skillRef + failureType
-  const groups = new Map<string, FrictionEvent[]>()
+  const groups = new Map<string, Friction[]>()
   for (const event of events) {
     if (event.lastSeen < cutoffISO) continue
     const key = `${event.skillRef}::${event.failureType}`
@@ -33,7 +36,7 @@ export function analyzeFriction(
     groups.set(key, group)
   }
 
-  const patterns: FrictionPattern[] = []
+  const patterns: Pattern[] = []
 
   for (const [, group] of groups) {
     const totalFrequency = group.reduce((sum, e) => sum + e.frequency, 0)
@@ -52,13 +55,13 @@ export function analyzeFriction(
   return patterns.sort((a, b) => b.frequency - a.frequency)
 }
 
-function getSeverity(frequency: number): FrictionPattern['severity'] {
+function getSeverity(frequency: number): Pattern['severity'] {
   if (frequency >= 10) return 'high'
   if (frequency >= 5) return 'medium'
   return 'low'
 }
 
-function getSuggestedCategory(frequency: number): ChangeCategory {
+function getSuggestedCategory(frequency: number): Category {
   if (frequency >= 10) return 'structural'
   if (frequency >= 5) return 'new-skill'
   return 'skill-tweak'

@@ -1,8 +1,8 @@
-import type { OspResult } from '@syner/osprotocol'
+import type { Result } from '@syner/osprotocol'
 import { appendFile, readFile, mkdir } from 'fs/promises'
 import { dirname } from 'path'
 
-export interface FrictionEvent {
+export interface Friction {
   skillRef: string
   failureType: string
   context: string
@@ -11,12 +11,15 @@ export interface FrictionEvent {
   lastSeen: string
 }
 
+/** @deprecated Use Friction instead */
+export type FrictionEvent = Friction
+
 const DEFAULT_PATH = '.syner/ops/friction.jsonl'
 
 export async function logFriction(
-  result: OspResult,
+  result: Result,
   storagePath: string = DEFAULT_PATH
-): Promise<FrictionEvent> {
+): Promise<Friction> {
   const now = new Date().toISOString()
   const failureType = result.verification.status === 'failed'
     ? 'verification_failed'
@@ -35,7 +38,7 @@ export async function logFriction(
     (e) => e.skillRef === result.context.skillRef && e.failureType === failureType
   )
 
-  const event: FrictionEvent = {
+  const event: Friction = {
     skillRef: result.context.skillRef,
     failureType,
     context: failedAssertions || result.action.description,
@@ -52,14 +55,14 @@ export async function logFriction(
 
 export async function readFrictionLog(
   storagePath: string = DEFAULT_PATH
-): Promise<FrictionEvent[]> {
+): Promise<Friction[]> {
   try {
     const content = await readFile(storagePath, 'utf-8')
     return content
       .trim()
       .split('\n')
       .filter(Boolean)
-      .map((line) => JSON.parse(line) as FrictionEvent)
+      .map((line) => JSON.parse(line) as Friction)
   } catch {
     return []
   }

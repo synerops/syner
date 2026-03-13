@@ -3,22 +3,22 @@ import {
   validateContext,
   validateAction,
   validateVerification,
-  type OspResult,
-  type OspVerification,
+  type Result,
+  type Verification,
 } from '@syner/osprotocol'
 
 /**
- * Local verification of a remote OspResult.
+ * Local verification of a remote Result.
  * Never trust remote verification alone — re-validate the structure
  * and cross-check assertions locally.
  */
-export function validateRemoteResult(result: unknown): OspVerification {
+export function validateRemoteResult(result: unknown): Verification {
   const assertions: Array<{ effect: string; result: boolean; evidence?: string }> = []
 
-  // 1. Structural validation — is it a valid OspResult shape?
+  // 1. Structural validation — is it a valid Result shape?
   const isValidShape = validateResult(result)
   assertions.push({
-    effect: 'Result has valid OspResult structure',
+    effect: 'Result has valid Result structure',
     result: isValidShape,
     evidence: isValidShape ? undefined : 'Failed structural validation',
   })
@@ -29,12 +29,12 @@ export function validateRemoteResult(result: unknown): OspVerification {
       assertions,
       escalation: {
         strategy: 'escalate',
-        reason: 'Remote result is not a valid OspResult — cannot trust this response',
+        reason: 'Remote result is not a valid Result — cannot trust this response',
       },
     }
   }
 
-  const ospResult = result as OspResult
+  const ospResult = result as Result
 
   // 2. Context integrity
   const validContext = validateContext(ospResult.context)
@@ -93,7 +93,7 @@ export function validateRemoteResult(result: unknown): OspVerification {
   const passed = assertions.filter((a) => a.result).length
   const total = assertions.length
 
-  let status: OspVerification['status']
+  let status: Verification['status']
   if (passed === total) status = 'passed'
   else if (passed === 0) status = 'failed'
   else status = 'partial'

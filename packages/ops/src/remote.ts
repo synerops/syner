@@ -3,10 +3,10 @@ import {
   createAction,
   verify,
   createResult,
-  type OspResult,
+  type Result,
 } from '@syner/osprotocol'
 
-export interface RemoteInstanceCard {
+export interface Instance {
   name: string
   description: string
   url: string
@@ -18,16 +18,22 @@ export interface RemoteInstanceCard {
   }>
 }
 
-export interface RemoteInvokeInput {
+/** @deprecated Use Instance instead */
+export type RemoteInstanceCard = Instance
+
+export interface Invoke {
   skill: string
   input: Record<string, unknown>
 }
+
+/** @deprecated Use Invoke instead */
+export type RemoteInvokeInput = Invoke
 
 /**
  * Fetch the agent.json from a remote syner instance.
  * Returns the InstanceCard describing the remote agent and its public skills.
  */
-export async function fetchRemoteAgent(url: string): Promise<RemoteInstanceCard> {
+export async function fetchRemoteAgent(url: string): Promise<Instance> {
   const agentUrl = url.endsWith('/') ? `${url}agent` : `${url}/agent`
   const response = await fetch(agentUrl)
 
@@ -35,7 +41,7 @@ export async function fetchRemoteAgent(url: string): Promise<RemoteInstanceCard>
     throw new Error(`Failed to fetch remote agent at ${agentUrl}: ${response.status} ${response.statusText}`)
   }
 
-  return response.json() as Promise<RemoteInstanceCard>
+  return response.json() as Promise<Instance>
 }
 
 /**
@@ -44,9 +50,9 @@ export async function fetchRemoteAgent(url: string): Promise<RemoteInstanceCard>
  * 1. Fetches remote agent.json to verify the skill exists
  * 2. Checks preconditions (skill is public and available)
  * 3. Sends task to the remote instance
- * 4. Validates response and returns OspResult
+ * 4. Validates response and returns Result
  */
-export async function invokeRemote(url: string, input: RemoteInvokeInput): Promise<OspResult> {
+export async function invokeRemote(url: string, input: Invoke): Promise<Result> {
   const startTime = Date.now()
 
   // 1. Build context
