@@ -9,7 +9,14 @@ import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
 import { classifyAndRoute } from '@/lib/router'
 import { env } from '@/lib/env'
-import type { AgentCard } from '@syner/sdk/agents'
+interface AgentCard {
+  name: string
+  description?: string
+  instructions: string
+  channel?: string
+  metadata?: Record<string, unknown>
+  [key: string]: unknown
+}
 
 export const maxDuration = 60
 
