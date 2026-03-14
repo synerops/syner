@@ -29,6 +29,7 @@ export async function createToolSession(
     branch: config?.branch || DEFAULT_BRANCH,
     workdir: config?.workdir || 'workspace',
     timeout: config?.timeout || 300000,
+    env: config?.env,
   }
 
   // Create sandbox with repo cloned

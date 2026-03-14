@@ -103,7 +103,17 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
 
   if (agent.tools && agent.tools.length > 0) {
     await onStatus('Cloning repository...')
-    toolSession = await createToolSession(agent.tools)
+    // Generate ephemeral GitHub token before sandbox creation
+    const sandboxEnv: Record<string, string> = {}
+    try {
+      const { getToken } = await import('@syner/github')
+      const token = await getToken()
+      sandboxEnv.GITHUB_TOKEN = token
+    } catch {
+      // GitHub auth not available — agent will work without it
+    }
+
+    toolSession = await createToolSession(agent.tools, { env: sandboxEnv })
     workdir = toolSession.workdir
   }
 
@@ -216,6 +226,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
         await options?.onResult?.(ospResult)
         return ospResult
       } catch (error) {
+        console.error('[Session] generate() error:', error)
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false }

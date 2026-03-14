@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAgentByName } from "@syner/sdk/agents";
+import { createSession } from "@/lib/session";
 import path from "path";
 
 // Dynamic — no caching for POST
@@ -70,23 +71,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // Full agent card — orchestrator needs metadata for routing
-    return NextResponse.json({
-      status: "accepted",
-      agent: {
-        name: agent.name,
-        description: agent.description,
-        tools: agent.tools,
-        skills: agent.skills,
-        model: agent.model,
-        protocol: agent.protocol,
-      },
-      task,
-    });
+    // Create session and execute the task
+    const session = await createSession({ agent });
+
+    try {
+      const result = await session.generate(task);
+      return NextResponse.json(result);
+    } finally {
+      await session.cleanup();
+    }
   } catch (error) {
-    console.error("Error resolving agent:", error);
+    console.error("Error executing agent task:", error);
     return NextResponse.json(
-      { error: "Failed to resolve agent" },
+      { error: "Failed to execute agent task" },
       { status: 500 }
     );
   }
