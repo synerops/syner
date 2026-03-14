@@ -24,7 +24,7 @@ users:read           # Get user info (required by Chat SDK)
 
 **Event Subscriptions** → Enable → Set Request URL:
 ```
-https://your-domain/api/chat-poc
+https://your-domain/api/webhooks/slack
 ```
 
 **Subscribe to bot events**:
@@ -80,3 +80,98 @@ description: Create a new skill
 Now `/syner create-skill [args]` invokes that skill.
 
 `/syner help` lists all available commands.
+
+## Usage
+
+### Event Handler (Next.js Route)
+
+```typescript
+import { after } from 'next/server'
+import { createHandler, createSlackClient } from '@syner/slack'
+
+const client = createSlackClient({ botToken: process.env.SLACK_BOT_TOKEN! })
+
+export const POST = createHandler({
+  signingSecret: process.env.SLACK_SIGNING_SECRET!,
+  afterFn: after,
+  onAppMention: async (event, envelope) => {
+    await sendReply(client, event.channel, event.ts, 'Hello!')
+  },
+})
+```
+
+### Slash Command Handler
+
+```typescript
+import { after } from 'next/server'
+import { createCommandHandler } from '@syner/slack'
+import type { SlackSlashCommand } from '@syner/slack'
+
+export const POST = createCommandHandler({
+  signingSecret: process.env.SLACK_SIGNING_SECRET!,
+  afterFn: after,
+  onCommand: async (command: SlackSlashCommand) => {
+    return { text: `Received: ${command.text}`, response_type: 'ephemeral' }
+  },
+})
+```
+
+### Streaming Replies
+
+```typescript
+import { createSlackClient, streamReply } from '@syner/slack'
+
+const client = createSlackClient({ botToken: process.env.SLACK_BOT_TOKEN! })
+
+await streamReply(client, {
+  channel: 'C1234567890',
+  threadTs: '1234567890.123456',
+  teamId: 'T1234',
+  userId: 'U1234',
+  textStream: someAsyncIterable,
+  updateIntervalMs: 500,
+})
+```
+
+### Messaging Functions
+
+```typescript
+import { sendReply, addReaction, removeReaction } from '@syner/slack'
+
+// Send a threaded reply (returns message timestamp)
+const ts = await sendReply(client, channel, threadTs, 'Response text')
+
+// Add/remove reactions
+await addReaction(client, channel, messageTs, 'eyes')
+await removeReaction(client, channel, messageTs, 'eyes')
+```
+
+### Chat SDK Integration
+
+```typescript
+import { after } from 'next/server'
+import { createSlackChat } from '@syner/slack'
+import type { MentionContext } from '@syner/slack'
+
+const { webhooks } = createSlackChat(
+  {
+    botToken: process.env.SLACK_BOT_TOKEN!,
+    signingSecret: process.env.SLACK_SIGNING_SECRET!,
+    botName: 'Syner',
+  },
+  {
+    onMention: async (context: MentionContext) => {
+      // context.text     -- cleaned message text
+      // context.channel  -- channel ID
+      // context.threadId -- thread identifier (always present)
+      // context.userId   -- author's user ID
+      return `You said: ${context.text}`
+    },
+  }
+)
+
+// Wire up the webhook endpoint
+export async function POST(request: Request) {
+  return webhooks(request)
+}
+```
