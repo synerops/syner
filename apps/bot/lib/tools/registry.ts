@@ -127,11 +127,15 @@ export function createLazyToolSession(
     if (initPromise) return initPromise
 
     initPromise = (async () => {
-      await onStatus?.('Cloning repository...')
-      const result = await createAgentSandbox(sandboxConfig)
-      sandbox = result.sandbox
-      resolvedWorkdir = result.workdir
-      return sandbox
+      try {
+        await onStatus?.('Cloning repository...')
+        const result = await createAgentSandbox(sandboxConfig)
+        sandbox = result.sandbox
+        resolvedWorkdir = result.workdir
+        return sandbox
+      } finally {
+        initPromise = null
+      }
     })()
 
     return initPromise

@@ -13,9 +13,11 @@ interface AgentCard {
   name: string
   description?: string
   instructions: string
+  model?: 'opus' | 'sonnet' | 'haiku'
+  tools?: string[]
+  skills?: string[]
   channel?: string
   metadata?: Record<string, unknown>
-  [key: string]: unknown
 }
 
 export const maxDuration = 60

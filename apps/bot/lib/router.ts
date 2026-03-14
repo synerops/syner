@@ -84,6 +84,7 @@ export async function classifyAndRoute(
     }
 
     case 'chain':
+      console.warn('[Router] chain intent not yet implemented, falling back to direct')
       return handleDirect(message, context, sessionOptions)
   }
 }
