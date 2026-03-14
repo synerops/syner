@@ -5,6 +5,7 @@ export {
   Fetch,
   Read,
   Write,
+  Edit,
   Glob,
   Grep,
   // Execute functions
@@ -12,6 +13,7 @@ export {
   executeFetch,
   executeRead,
   executeWrite,
+  executeEdit,
   executeGlob,
   executeGrep,
   // Tool factories
@@ -19,6 +21,7 @@ export {
   createFetchTool,
   createReadTool,
   createWriteTool,
+  createEditTool,
   createGlobTool,
   createGrepTool,
   createSkillTool,
