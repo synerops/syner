@@ -12,6 +12,7 @@ export { Bash, executeBash, createBashTool } from './bash'
 export { Fetch, executeFetch, createFetchTool } from './fetch'
 export { Read, executeRead, createReadTool } from './read'
 export { Write, executeWrite, createWriteTool } from './write'
+export { Edit, executeEdit, createEditTool } from './edit'
 export { Glob, executeGlob, createGlobTool } from './glob'
 export { Grep, executeGrep, createGrepTool } from './grep'
 export { executeSkill, createSkillTool, type ExecuteSkillOptions, type CreateSkillToolOptions } from './skill'
@@ -28,11 +29,12 @@ import { createBashTool } from './bash'
 import { createFetchTool } from './fetch'
 import { createReadTool } from './read'
 import { createWriteTool } from './write'
+import { createEditTool } from './edit'
 import { createGlobTool } from './glob'
 import { createGrepTool } from './grep'
 
 // Sandbox tools (created automatically with sandbox)
-export type SandboxToolName = 'Bash' | 'Fetch' | 'Read' | 'Write' | 'Glob' | 'Grep'
+export type SandboxToolName = 'Bash' | 'Fetch' | 'Read' | 'Write' | 'Edit' | 'Glob' | 'Grep'
 
 // Special tools (created manually with extra params)
 export type SpecialToolName = 'Skill' | 'Task'
@@ -49,6 +51,7 @@ export function createTools(sandbox: Sandbox, options?: CreateToolsOptions): Rec
     Fetch: createFetchTool(sandbox),
     Read: createReadTool(sandbox),
     Write: createWriteTool(sandbox),
+    Edit: createEditTool(sandbox),
     Glob: createGlobTool(sandbox),
     Grep: createGrepTool(sandbox),
   }
