@@ -7,6 +7,8 @@ export interface SandboxConfig {
   branch?: string
   workdir?: string
   timeout?: number
+  /** Environment variables injected into the sandbox */
+  env?: Record<string, string>
 }
 
 /**
@@ -18,11 +20,12 @@ export async function createAgentSandbox(config: SandboxConfig): Promise<{ sandb
     repoUrl,
     branch = 'main',
     workdir = 'workspace', // relative to home
-    timeout = 300000 // 5 minutes
+    timeout = 300000, // 5 minutes
+    env,
   } = config
 
   console.log(`[Sandbox] Creating sandbox...`)
-  const sandbox = await Sandbox.create({ runtime: 'node24', timeout })
+  const sandbox = await Sandbox.create({ runtime: 'node24', timeout, env })
 
   // Get home directory
   const homeResult = await sandbox.runCommand('sh', ['-c', 'echo $HOME'])
