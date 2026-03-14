@@ -24,7 +24,7 @@ users:read           # Get user info (required by Chat SDK)
 
 **Event Subscriptions** → Enable → Set Request URL:
 ```
-https://your-domain/api/chat-poc
+https://your-domain/api/webhooks/slack
 ```
 
 **Subscribe to bot events**:
