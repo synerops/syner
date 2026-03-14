@@ -1,8 +1,16 @@
 ---
 name: syner
 description: Use as main orchestrator when tasks span multiple domains, need personal context, or require coordination between agents. Routes to specialists, loads vault context, verifies results.
-tools: Agent(vaults, bot, dev, design), Read, Glob, Grep, Skill, Write, Bash
-model: opus
+tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+  - Write
+  - Bash
+model: sonnet
+metadata:
+  channel: C0ALD7U6ALB
 skills:
   - syner
   - syner-boundaries
