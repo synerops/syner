@@ -1,76 +1,252 @@
-# @syner/slack
+# @syner/slack -- Agent Reference
 
-### Exports
+Complete export reference for `@syner/slack`. Source of truth: `src/index.ts` re-exports from 5 modules.
 
-```typescript
-import {
-  createSlackChat,
-  createHandler,
-  createCommandHandler,
-  createSlackClient,
-  streamReply,
-  sendReply,
-  convertMarkdown,
-  type SlackEvent,
-  type SlackCommandPayload,
-  type SlackMentionContext,
-} from '@syner/slack'
-```
+## Modules
 
-### Key Types
+| File | Purpose |
+|------|---------|
+| `src/types.ts` | Slack API types, event interfaces, type guards |
+| `src/client.ts` | WebClient factory, messaging functions (send, stream, reactions) |
+| `src/handler.ts` | Next.js route handlers for events and slash commands |
+| `src/chat.ts` | Chat SDK adapter for Slack |
+| `src/convert.ts` | Markdown to Slack mrkdwn conversion |
+
+## Exported Types
+
+### Event Types
 
 ```typescript
-interface SlackMentionContext {
-  text: string       // cleaned mention text
-  channel: string    // channel ID
-  threadId?: string  // thread timestamp
-  userId: string     // sender user ID
+interface SlackEventEnvelope {
+  token: string
+  team_id: string
+  api_app_id: string
+  event: SlackEvent
+  type: 'event_callback' | 'url_verification'
+  event_id: string
+  event_time: number
+  authorizations?: SlackAuthorization[]
+  is_ext_shared_channel?: boolean
+  event_context?: string
 }
 
-interface SlackCommandPayload {
+interface SlackUrlVerification {
+  type: 'url_verification'
+  token: string
+  challenge: string
+}
+
+interface SlackAuthorization {
+  enterprise_id: string | null
+  team_id: string
+  user_id: string
+  is_bot: boolean
+  is_enterprise_install: boolean
+}
+
+interface SlackBaseEvent {
+  type: string
+  event_ts: string
+}
+
+interface SlackMessageEvent extends SlackBaseEvent {
+  type: 'message'
+  channel: string
+  user: string
+  text: string
+  ts: string
+  thread_ts?: string
+  subtype?: string
+  bot_id?: string
+  client_msg_id?: string
+  team?: string
+  blocks?: unknown[]
+  files?: SlackFile[]
+}
+
+interface SlackAppMentionEvent extends SlackBaseEvent {
+  type: 'app_mention'
+  channel: string
+  user: string
+  text: string
+  ts: string
+  thread_ts?: string
+  client_msg_id?: string
+  team?: string
+  blocks?: unknown[]
+}
+
+interface SlackFile {
+  id: string
+  name: string
+  title: string
+  mimetype: string
+  filetype: string
+  url_private: string
+  url_private_download?: string
+  permalink: string
+  size: number
+}
+
+type SlackEvent = SlackMessageEvent | SlackAppMentionEvent | SlackBaseEvent
+```
+
+### Configuration Types
+
+```typescript
+interface SlackClientConfig {
+  botToken: string
+}
+
+interface SlackHandlerConfig {
+  signingSecret: string
+  afterFn?: (callback: () => Promise<void> | void) => void
+  onMessage?: (event: SlackMessageEvent, envelope: SlackEventEnvelope) => Promise<void>
+  onAppMention?: (event: SlackAppMentionEvent, envelope: SlackEventEnvelope) => Promise<void>
+}
+
+interface SlackCommandHandlerConfig {
+  signingSecret: string
+  afterFn?: (callback: () => Promise<void> | void) => void
+  onCommand?: (command: SlackSlashCommand) => Promise<SlackCommandResponse | void>
+}
+
+interface StreamReplyOptions {
+  channel: string
+  threadTs: string
+  teamId: string
+  userId: string
+  textStream: AsyncIterable<string>
+  updateIntervalMs?: number  // default: 500
+}
+```
+
+### Slash Command Types
+
+```typescript
+interface SlackSlashCommand {
+  token: string
+  team_id: string
+  team_domain: string
+  enterprise_id?: string
+  enterprise_name?: string
+  channel_id: string
+  channel_name: string
+  user_id: string
+  user_name: string
   command: string
   text: string
+  api_app_id: string
+  is_enterprise_install: string
   response_url: string
   trigger_id: string
-  channel_id: string
-  user_id: string
+}
+
+interface SlackCommandResponse {
+  text: string
+  response_type?: 'ephemeral' | 'in_channel'
+  blocks?: unknown[]
 }
 ```
 
-### Functions
+### Chat SDK Types
 
-| Function | Signature | Description |
-|----------|-----------|-------------|
-| `createSlackChat` | `(config, handlers) => { webhooks }` | Chat SDK path — recommended |
-| `createHandler` | `(opts) => (req: Request) => Response` | Direct event handler |
-| `createCommandHandler` | `(opts) => (req: Request) => Response` | Slash command handler |
-| `streamReply` | `(client, opts) => Promise<void>` | Progressive message updates |
-| `sendReply` | `(client, opts) => Promise<void>` | Single message reply |
-| `convertMarkdown` | `(md: string) => string` | Markdown → mrkdwn |
-| `createSlackClient` | `(opts) => WebClient` | Raw Slack WebClient |
+```typescript
+interface SlackChatConfig {
+  botToken: string
+  signingSecret: string
+  botName?: string
+}
 
-### Constraints
+interface MentionHandler {
+  onMention: (context: MentionContext) => Promise<string>
+}
 
-1. **`streamReply` requires a thread** — `threadTs` is mandatory. Calling without it silently fails.
-2. **Always convert to mrkdwn** — Slack renders markdown incorrectly. Use `convertMarkdown()` or let `streamReply`/`sendReply` handle it automatically.
-3. **Rate limiting** — `streamReply` rate-limits updates to 500ms by default. Do not override below 300ms or Slack will throttle.
-4. **3-second acknowledgment deadline** — Slack expects a response within 3 seconds. Use `afterFn` (Next.js `after()`) for background processing.
-5. **Bot loop prevention** — `createHandler` and `createSlackChat` skip bot messages automatically. Do not add your own bot-detection logic.
-6. **Barrel imports only** — Import from `@syner/slack`, not from subpaths. There is one export path.
-7. **Two paths are mutually exclusive** — Use Chat SDK path OR direct handler path. Do not mix `createSlackChat` with `createHandler` in the same route.
+interface MentionContext {
+  text: string       // cleaned message text (bot mention stripped)
+  channel: string    // channel ID (slack: prefix stripped)
+  threadId: string   // REQUIRED -- thread identifier
+  userId: string     // author's user ID
+}
+```
 
-### Dependencies
+Note: `Chat` and `SlackAdapter` are re-exported from `chat` and `@chat-adapter/slack` respectively.
 
-| Package | Why |
-|---------|-----|
-| `@slack/web-api` | Slack Web API client |
-| `chat` + `@chat-adapter/slack` | Chat SDK stack |
-| `md-to-slack` | Markdown conversion |
+## Exported Functions
 
-### Status
+### Client & Messaging (`src/client.ts`)
 
-Experimental (v0.0.1). Both paths deployed in `apps/bot`. API surface not yet stabilized.
+```typescript
+function createSlackClient(config: SlackClientConfig): WebClient
 
--- syner/slack
+function sendReply(
+  client: WebClient,
+  channel: string,
+  threadTs: string,
+  text: string
+): Promise<string | undefined>
 
+function streamReply(
+  client: WebClient,
+  options: StreamReplyOptions
+): Promise<void>
 
+function addReaction(
+  client: WebClient,
+  channel: string,
+  timestamp: string,
+  emoji: string
+): Promise<void>
+
+function removeReaction(
+  client: WebClient,
+  channel: string,
+  timestamp: string,
+  emoji: string
+): Promise<void>
+```
+
+### Handlers (`src/handler.ts`)
+
+```typescript
+function createHandler(config: SlackHandlerConfig): (request: Request) => Promise<Response>
+
+function createCommandHandler(config: SlackCommandHandlerConfig): (request: Request) => Promise<Response>
+```
+
+Both handlers verify Slack request signatures (HMAC-SHA256, timing-safe) and reject requests older than 5 minutes.
+
+### Chat SDK (`src/chat.ts`)
+
+```typescript
+function createSlackChat(
+  config: SlackChatConfig,
+  handler: MentionHandler
+): { chat: Chat; slack: SlackAdapter; webhooks: Chat['webhooks'] }
+```
+
+### Conversion (`src/convert.ts`)
+
+```typescript
+function convertMarkdown(text: string): string
+```
+
+Converts standard markdown to Slack mrkdwn. Used internally by `sendReply`, `streamReply`, and command responses.
+
+## Type Guards
+
+```typescript
+function isMessageEvent(event: SlackEvent): event is SlackMessageEvent
+function isAppMentionEvent(event: SlackEvent): event is SlackAppMentionEvent
+function isUrlVerification(payload: SlackEventEnvelope | SlackUrlVerification): payload is SlackUrlVerification
+```
+
+## Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `@slack/web-api` | Slack WebClient |
+| `chat` | Vercel Chat SDK |
+| `@chat-adapter/slack` | Chat SDK Slack adapter |
+| `@chat-adapter/state-memory` | In-memory state for Chat SDK |
+| `md-to-slack` | Markdown to mrkdwn conversion |
