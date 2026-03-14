@@ -8,13 +8,13 @@ import {
 } from '@syner/osprotocol'
 
 // Re-export all tools
-export { Bash, executeBash, createBashTool } from './bash'
-export { Fetch, executeFetch, createFetchTool } from './fetch'
-export { Read, executeRead, createReadTool } from './read'
-export { Write, executeWrite, createWriteTool } from './write'
+export { Bash, executeBash, createBashTool, bashInputSchema, executeBashWithSandbox } from './bash'
+export { Fetch, executeFetch, createFetchTool, fetchInputSchema, executeFetchWithSandbox } from './fetch'
+export { Read, executeRead, createReadTool, readInputSchema, executeReadWithSandbox } from './read'
+export { Write, executeWrite, createWriteTool, writeInputSchema, executeWriteWithSandbox } from './write'
 export { Edit, executeEdit, createEditTool } from './edit'
-export { Glob, executeGlob, createGlobTool } from './glob'
-export { Grep, executeGrep, createGrepTool } from './grep'
+export { Glob, executeGlob, createGlobTool, globInputSchema, executeGlobWithSandbox } from './glob'
+export { Grep, executeGrep, createGrepTool, grepInputSchema, executeGrepWithSandbox } from './grep'
 export { executeSkill, createSkillTool, type ExecuteSkillOptions, type CreateSkillToolOptions } from './skill'
 
 // Vault tools (factory functions, take VaultStore instance)

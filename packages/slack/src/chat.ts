@@ -47,8 +47,11 @@ export function createSlackChat(config: SlackChatConfig, handler: MentionHandler
     // Chat SDK prefixes channel IDs with "slack:", strip it
     const channelId = thread.channel.id.replace(/^slack:/, '')
 
+    // Strip only Slack user ID mentions (bot self-mention), not @everyone or @channel
+    const cleanText = message.text.replace(/^@U[A-Z0-9]+\s*/, '').trim()
+
     const context: MentionContext = {
-      text: message.text,
+      text: cleanText,
       channel: channelId,
       threadId: thread.id,
       userId: message.author.userId,

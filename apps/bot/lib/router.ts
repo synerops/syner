@@ -84,12 +84,16 @@ export async function classifyAndRoute(
     }
 
     case 'chain':
+      console.warn('[Router] chain intent not yet implemented, falling back to direct')
       return handleDirect(message, context, sessionOptions)
   }
 }
 
 /**
  * Direct: simple Q&A through the session.
+ *
+ * Session uses two-phase execution: first tries without tools (fast),
+ * escalates to sandbox only if the LLM requests tool calls.
  */
 async function handleDirect(
   message: string,

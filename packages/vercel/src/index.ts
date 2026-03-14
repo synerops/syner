@@ -16,6 +16,20 @@ export {
   executeEdit,
   executeGlob,
   executeGrep,
+  // Sandbox-bound execute functions
+  executeBashWithSandbox,
+  executeFetchWithSandbox,
+  executeReadWithSandbox,
+  executeWriteWithSandbox,
+  executeGlobWithSandbox,
+  executeGrepWithSandbox,
+  // Input schemas (zod)
+  bashInputSchema,
+  fetchInputSchema,
+  readInputSchema,
+  writeInputSchema,
+  globInputSchema,
+  grepInputSchema,
   // Tool factories
   createBashTool,
   createFetchTool,

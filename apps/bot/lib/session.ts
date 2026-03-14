@@ -3,6 +3,10 @@
  *
  * Creates agent sessions that can be used from any interface (Slack, Chat API, etc.)
  * Encapsulates: agent config, sandbox, tools, skills, and generation.
+ *
+ * Uses lazy sandbox initialization: tools are defined immediately (so the LLM
+ * sees them), but the sandbox is only created when a tool is first executed.
+ * If the LLM can answer without tools, no sandbox is ever created.
  */
 
 import { ToolLoopAgent, stepCountIs } from 'ai'
@@ -11,8 +15,8 @@ import {
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, getModel, type AgentCard } from '@syner/sdk/agents'
-import { createToolSession, type ToolSession } from './tools'
+import { getAgentByName, getModel, getModelFallbacks, type AgentCard } from '@syner/sdk/agents'
+import { createLazyToolSession, type ToolSession } from './tools'
 import {
   createContext,
   createAction,
@@ -73,17 +77,14 @@ function getProjectRoot(): string {
 /**
  * Create a session for an agent
  *
- * @example
- * ```ts
- * const session = await createSession({ agent: 'syner' })
- * const result = await session.generate('What can you do?')
- * await session.cleanup()
- * ```
+ * Tools are provided to the LLM immediately (lazy initialization), but the
+ * sandbox is only created if/when the LLM actually calls a tool. This means
+ * conversational messages get fast responses with no sandbox overhead.
  */
 export async function createSession(options?: SessionOptions): Promise<Session> {
   const onStatus = options?.onStatus || (() => {})
 
-  // 1. Get agent config (prefer provided config over fs lookup)
+  // 1. Get agent config
   let agent: AgentCard
   if (options?.agent) {
     agent = options.agent
@@ -97,72 +98,34 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     agent = foundAgent
   }
 
-  // 2. Create tool session (sandbox) if agent has tools
+  // 2. Create lazy tool session (no sandbox yet — created on first tool call)
   let toolSession: ToolSession | undefined
-  let workdir = '.'
+  let agentTools: Record<string, unknown> = {}
 
   if (agent.tools && agent.tools.length > 0) {
-    await onStatus('Cloning repository...')
-    // Generate ephemeral GitHub token before sandbox creation
-    const sandboxEnv: Record<string, string> = {}
-    try {
-      const { getToken } = await import('@syner/github')
-      const token = await getToken()
-      sandboxEnv.GITHUB_TOKEN = token
-    } catch {
-      // GitHub auth not available — agent will work without it
-    }
-
-    toolSession = await createToolSession(agent.tools, { env: sandboxEnv })
-    workdir = toolSession.workdir
+    toolSession = createLazyToolSession(agent.tools, undefined, onStatus)
+    agentTools = toolSession.tools
   }
 
-  // 3. Load skills if agent has them
-  let skillContext = ''
-  let agentTools = toolSession?.tools || {}
-
-  if (agent.skills && agent.skills.length > 0 && toolSession) {
-    const skills = await loadSkills(workdir, agent.skills)
-
-    // Add skill descriptions to system prompt (inline mode)
-    skillContext = buildInlineSkillContext(skills)
-
-    // Add Skill tool for fork mode (invoke skills as subagents)
-    const skillTool = createSkillTool({
-      repoRoot: workdir,
-      availableSkills: agent.skills,
-      tools: toolSession.tools,
-      model: getModel(agent),
-    })
-
-    agentTools = {
-      ...agentTools,
-      skill: skillTool,
-    }
-  }
-
-  // 4. Create the ToolLoopAgent
+  // 3. Create the ToolLoopAgent with lazy tools
   const loopAgent = new ToolLoopAgent({
     id: agent.name,
     model: getModel(agent),
-    instructions: `${agent.instructions}\n\n${skillContext}\n\n## Working Directory\n\nThe repository is available at: ${workdir}`,
+    instructions: agent.instructions,
     tools: agentTools,
     stopWhen: stepCountIs(10),
   })
 
-  // 5. Return session interface
+  // 4. Return session interface
   return {
     agent,
-    workdir,
+    get workdir() { return toolSession?.workdir || '.' },
 
     async generate(prompt: string): Promise<Result<GenerateResult>> {
       await onStatus('Thinking...')
       const startTime = Date.now()
 
-      // Resolve vault context if store is provided
-      const loadedSources: ContextSource[] = toolSession
-        ? [{ type: 'skill' as const, ref: 'tools', summary: 'sandbox tools' }]
-        : []
+      const loadedSources: ContextSource[] = []
       const missingTopics: string[] = []
 
       if (options?.vaultStore) {
@@ -187,10 +150,14 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
       })
 
       const toolCallsList: string[] = []
+      const fallbacks = getModelFallbacks(agent)
 
       try {
         const result = await loopAgent.generate({
           prompt,
+          providerOptions: {
+            gateway: { models: fallbacks },
+          },
 
           experimental_onToolCallStart({ toolCall }) {
             options?.onToolStart?.(toolCall.toolName)
@@ -206,6 +173,9 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
             options?.onStepFinish?.(stepNumber, toolNames)
           },
         })
+
+        const usedTools = toolCallsList.length > 0
+        console.log(`[Session][${agent.name}] ${usedTools ? 'full' : 'fast'} path: ${result.text?.length} chars, ${result.steps.length} steps, tools: ${toolCallsList.join(', ') || 'none'}`)
 
         const output: GenerateResult = {
           text: result.text || '',
@@ -226,7 +196,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
         await options?.onResult?.(ospResult)
         return ospResult
       } catch (error) {
-        console.error('[Session] generate() error:', error)
+        console.error(`[Session][${agent.name}] ERROR:`, error instanceof Error ? error.message : error)
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false }

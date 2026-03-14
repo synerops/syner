@@ -4,6 +4,8 @@ description: Ecosystem Builder — Creates, maintains, and improves Syner. Skill
 tools: [Read, Glob, Grep, Bash, Skill, Write, Task]
 model: opus
 background: true
+metadata:
+  channel: C0AKAPUAGJF
 skills:
   - create-syner
   - create-syner-app
