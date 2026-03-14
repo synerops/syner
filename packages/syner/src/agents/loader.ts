@@ -11,6 +11,7 @@ export interface AgentCard {
   tools?: string[]
   skills?: string[]
   channel?: string
+  metadata?: Record<string, unknown>
 }
 
 interface AgentsRegistry {
@@ -43,6 +44,7 @@ async function buildRegistry(projectRoot: string): Promise<AgentsRegistry> {
       const { data, content: body } = matter(content)
 
       const name = data.name || path.basename(file, '.md')
+      const meta = data.metadata as Record<string, unknown> | undefined
       const agent: AgentCard = {
         name,
         description: data.description,
@@ -50,7 +52,8 @@ async function buildRegistry(projectRoot: string): Promise<AgentsRegistry> {
         model: data.model,
         tools: data.tools ? String(data.tools).split(',').map(t => t.trim()) : undefined,
         skills: data.skills,
-        channel: data.channel,
+        channel: meta?.channel as string | undefined,
+        metadata: meta,
       }
 
       agents.set(name, agent)
