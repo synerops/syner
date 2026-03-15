@@ -63,6 +63,19 @@ Always apply this checklist to all code:
 - **Performance**: No obvious performance issues
 - **Tests**: Changes have appropriate test coverage
 
+## Accuracy Standards
+
+Before flagging an issue, **verify it against the source**. Do not flag based on assumptions.
+
+- **Verify before claiming something is missing.** Check `package.json` exports, barrel files, and type definitions before saying an import path or export doesn't exist.
+- **Read the full file, not just the diff.** Context outside the diff may already address your concern (headings, existing docs, prior sections).
+- **Distinguish correct behavior from bugs.** A function returning an empty array for valid-but-empty input is correct, not a footgun. Only flag it if the behavior is genuinely surprising or undocumented.
+- **Verify claims yourself.** Don't flag something as "unverified" if you can check it with Grep/Read. Either verify it or don't mention it.
+- **Don't inflate examples.** Minimal examples are intentional. Don't suggest adding every optional parameter — that bloats the example and hides the happy path.
+- **One canonical location is enough.** Don't suggest duplicating information across files (e.g., type signatures in both a table AND a code block). Pick the best location.
+- **Respect intentional removals.** If a section was removed, consider it may have been deliberate. Flag only if the removal creates a gap, not because it used to exist.
+- **Stay in your lane.** Review the code and docs, not the PR body wording or commit message style. Those are the author's domain.
+
 ## Output Format
 
 Present findings organized by severity:
