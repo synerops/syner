@@ -138,7 +138,7 @@ interface InvokeOptions {
 
 #### logFriction(result: Result, storagePath?: string): Promise\<Friction\>
 
-Extracts a friction event from a failed/partial osprotocol `Result`. Appends to JSONL at `storagePath` (default: `.syner/ops/friction.jsonl`). Auto-increments `frequency` when the same `skillRef + failureType` pair already exists. Creates parent directories if needed.
+Extracts a friction event from a failed/partial osprotocol `Result`. Appends a new JSONL line at `storagePath` (default: `.syner/ops/friction.jsonl`) with `frequency` set to the previous maximum + 1 for the same `skillRef + failureType` pair (or 1 if new). Prior lines are not updated — the file grows by one line per call. `analyzeFriction` sums frequency across all lines in a group. Creates parent directories if needed.
 
 #### readFrictionLog(storagePath?: string): Promise\<Friction[]\>
 
@@ -200,7 +200,8 @@ Returns `Verification` with `status: 'passed' | 'partial' | 'failed'`. Sets `esc
 
 - Do not call `logFriction()` with a passing Result — it extracts failure details from the verification and will produce meaningless friction events for passed results.
 - Do not trust `result.verification` from `invokeRemote()` alone — always use `validateRemoteResult()` or `invokeAndVerify()` to re-validate locally.
-- `evaluate()` currently only evaluates thresholds where `metric === 'verification_pass_rate'`. Other metric names are silently ignored.
+- `evaluate()` currently only evaluates thresholds where `metric === 'verification_pass_rate'`. Other metric names are silently ignored. Note: an empty test suite returns `passed: true` (vacuous truth — zero regressions, `[].every()` is true).
+- Friction JSONL is append-only with no compaction API. In high-friction environments the file will grow unboundedly.
 - `analyzeFriction()` is a pure function — it does not read from disk. Call `readFrictionLog()` first.
 - Friction JSONL is append-only. There is no delete or compaction API.
 

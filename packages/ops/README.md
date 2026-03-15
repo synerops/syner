@@ -18,7 +18,8 @@ import {
 Single dependency: `@syner/osprotocol` (workspace).
 
 ```
-bun add @syner/ops
+// package.json (workspace dependency)
+"@syner/ops": "workspace:*"
 ```
 
 ## For Developers
@@ -147,7 +148,7 @@ const { remote, local } = await invokeAndVerify(
   { timeout: 15000 }
 )
 // local.status => 'passed' | 'partial' | 'failed'
-// local.assertions => 6 checks (structure, context, action, verification, effect-mapping, duration)
+// local.assertions => up to 6 checks (structure, context, action, verification, effect-mapping, duration)
 // local.escalation => { strategy: 'escalate', reason: '...' } when status !== 'passed'
 ```
 
