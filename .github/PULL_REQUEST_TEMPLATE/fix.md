@@ -12,26 +12,29 @@
 | | |
 |---|---|
 | **Closes** | #{issue-number} |
-| **Type** | `feature` · `fix` · `refactor` · `docs` · `chore` |
 | **Package** | `{package-or-app}` |
+
+### Root cause
+
+<!-- What caused the bug? Be specific. -->
 
 ### What changed
 
-<!-- Key changes in this PR -->
+<!-- What does this PR change to resolve it? -->
 
 -
 
+### Reproduction
+
+<!-- Steps to reproduce the original bug (optional if obvious) -->
+
+1.
+
 ### Test plan
 
-<!-- How to verify this works -->
+<!-- How to verify the fix works and doesn't regress -->
 
 - [ ]
-
-### Breaking changes
-
-<!-- Delete this section if none -->
-
-None
 
 ---
 

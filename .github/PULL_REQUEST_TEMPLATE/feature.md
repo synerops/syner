@@ -12,14 +12,21 @@
 | | |
 |---|---|
 | **Closes** | #{issue-number} |
-| **Type** | `feature` · `fix` · `refactor` · `docs` · `chore` |
 | **Package** | `{package-or-app}` |
+
+### Motivation
+
+<!-- What problem does this solve? Why is this needed? -->
 
 ### What changed
 
-<!-- Key changes in this PR -->
+<!-- Key changes, organized by area -->
 
 -
+
+### How it works
+
+<!-- Brief explanation of the approach/design for reviewers -->
 
 ### Test plan
 
