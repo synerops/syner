@@ -121,7 +121,7 @@ async function handleDelegate(message: string, targetAgent: string): Promise<str
     ? `https://${process.env.VERCEL_URL}`
     : 'http://localhost:3001'
 
-  const res = await fetch(`${baseUrl}/agent`, {
+  const res = await fetch(`${baseUrl}/api/agent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
