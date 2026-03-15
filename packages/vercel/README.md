@@ -60,6 +60,7 @@ import { createAgentSandbox, createTools, stopSandbox } from '@syner/vercel'
 
 const { sandbox } = await createAgentSandbox({ repoUrl })
 const tools = createTools(sandbox)  // all 7 tools share one sandbox
+// Or pick specific tools: createToolsByName(sandbox, ['Bash', 'Read'])
 
 // Always clean up
 await stopSandbox(sandbox)

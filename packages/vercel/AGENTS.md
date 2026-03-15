@@ -101,7 +101,7 @@ interface SkillConfig {
   instructions: string
   tools?: string[]
   agent?: string
-  context?: 'inline' | 'fork'
+  context?: 'inline' | 'fork'  // default: 'inline'
   filePath: string
   command?: string
 }
@@ -216,7 +216,7 @@ Loads multiple skills by name. Returns a Map of name to SkillConfig, skipping an
 
 ### buildSkillInstructions(skill: SkillConfig, args: string): string
 
-Replaces `$ARGUMENTS` with the full args string and `$N` with positional arguments (space-split). Returns the processed instruction body.
+Replaces `$ARGUMENTS` with the full args string and `$N` with positional arguments (0-based, space-split: `$0` = first arg, `$1` = second, etc.). Returns the processed instruction body.
 
 ### buildInlineSkillContext(skills: Map\<string, SkillConfig\>): string
 
@@ -247,11 +247,11 @@ Wraps a Next.js config to add `/agent -> /api/agent` rewrite. Reads `SKILL.md` f
 | Error condition | Source | Behavior |
 |----------------|--------|----------|
 | Repo clone fails | `createAgentSandbox` | Stops sandbox, throws `Error("Failed to clone repo: {stderr}")` |
-| Skill not found | `executeSkill` | Returns OspResult with verification status `fail`, missing entry `"skill:{ref} -- not found in repository"` |
+| Skill not found | `executeSkill` | Returns OspResult with verification status `fail`, missing entry `"skill:{ref} — not found in repository"` |
 | Skill not in allowlist | `createSkillTool` | Returns string `"Error: Skill \"{name}\" not available. Available skills: ..."` |
 | Subagent throws | `executeSkill` | Returns OspResult with verification status `fail`, output contains error message |
-| Edit old_string not found | `executeEditWithSandbox` | Returns `"Error: old_string not found in {file_path}"` |
-| Edit old_string not unique | `executeEditWithSandbox` | Returns `"Error: old_string appears {n} times in {file_path}. Use replace_all or provide more context to make it unique."` |
+| Edit old_string not found | `createEditTool` | Returns `"Error: old_string not found in {file_path}"` |
+| Edit old_string not unique | `createEditTool` | Returns `"Error: old_string appears {n} times in {file_path}. Use replace_all or provide more context to make it unique."` |
 | Fetch response too large | `executeFetchWithSandbox` | Truncates at 50,000 chars, appends `"[Truncated: {n} chars omitted]"` |
 | Vault file not found | `createVaultRead` | Returns `{ error: "Vault file not found: {path}" }` |
 | Preconditions unmet | `createAgentHandler` | Returns 412 with `{ error: "Preconditions not met", unmet: [...], result }` |
@@ -278,7 +278,7 @@ Wraps a Next.js config to add `/agent -> /api/agent` rewrite. Reads `SKILL.md` f
 
 9. **withSyner only adds a single rewrite.** It maps `/agent` to `/api/agent`. It reads `SKILL.md` from the project root for manifest parsing but does not use the manifest for routing. The manifest is available via `synerConfig.manifest` for your own handler.
 
-10. **createAgentHandler preconditions are caller-verified.** The handler reads preconditions from the manifest and marks them all as `met: true` by default. The caller is responsible for overriding with actual checks. The `checkPreconditions` call will pass unless you explicitly set `met: false`.
+10. **createAgentHandler preconditions are always met.** The handler hardcodes `met: true` for all preconditions from the manifest. There is no API in `AgentHandlerConfig` to inject real checks — the 412 path is effectively dead code until an override mechanism is added. This is a known limitation.
 
 ## Dependencies
 
