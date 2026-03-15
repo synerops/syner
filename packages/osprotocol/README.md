@@ -4,8 +4,9 @@
 
 ## Quick Start
 
-```bash
-bun add @syner/osprotocol
+```jsonc
+// package.json (workspace dependency)
+"@syner/osprotocol": "workspace:*"
 ```
 
 ```typescript

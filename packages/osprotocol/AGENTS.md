@@ -438,7 +438,7 @@ Runtime type guards for untrusted input. Each narrows `unknown` to the correspon
 | `validateVerification(x)` | `Verification` | `status` in `['passed','failed','partial']`, `assertions: array` |
 | `validateResult(x)` | `Result` | Valid `context` + valid `action` + valid `verification` + `duration: number` |
 | `validateRun(x)` | `Run` | `id: string`, `status` in 9 valid statuses, `results: array`, `startedAt: string`, valid `approval`/`timeout`/`retry`/`activity`/`lastHeartbeat` if present |
-| `validateApproval(x)` | `Approval` | `required: boolean`, optional `reviewer: string`, `decision` in `['approved','rejected']`, `reason: string`, `timestamp: string` |
+| `validateApproval(x)` | `Approval` | `required: boolean`, optional `reviewer: string`, optional `decision` in `['approved','rejected']`, optional `reason: string`, optional `timestamp: string` |
 
 ```typescript
 import { validateRun } from '@syner/osprotocol'
@@ -468,7 +468,7 @@ All validator functions return `boolean` -- they never throw. Factory functions 
 
 4. **Do not mutate Run status directly.** Use `updateRunStatus(run, newStatus)`. It enforces the state machine. Invalid transitions throw. Terminal states (`completed`, `failed`, `cancelled`, `timed_out`) have no outbound transitions.
 
-5. **Do not call `verify()` without mapping effects to results.** `verify(effects, results)` expects a `Record<string, boolean>` keyed by the exact `effect.description` string. Missing keys default to `false`. Mismatched keys silently fail assertions.
+5. **Do not call `verify()` without mapping effects to results.** `verify(effects, results)` expects a `Record<string, boolean>` keyed by the exact `effect.description` string. Missing keys default to `false`. Mismatched keys silently fail assertions. Note: calling `verify()` with an empty `effects` array returns `status: 'passed'` (vacuous truth — 0/0 passed).
 
 6. **Do not assume `parseSkillManifest()` is dependency-free.** It is the one function that pulls in `gray-matter` (the package's single runtime dependency). If you only need types and validators, you still import from `@syner/osprotocol` but be aware the parser module is in the bundle.
 
