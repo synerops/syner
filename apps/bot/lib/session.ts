@@ -9,13 +9,13 @@
  * If the LLM can answer without tools, no sandbox is ever created.
  */
 
-import { ToolLoopAgent, stepCountIs } from 'ai'
+import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
   createSkillTool,
   loadSkills,
   buildInlineSkillContext,
 } from '@syner/vercel'
-import { getAgentByName, getModel, getModelFallbacks, type AgentCard } from '@syner/sdk/agents'
+import { getAgentByName, resolveModel, type AgentCard } from '@syner/sdk/agents'
 import { createLazyToolSession, type ToolSession } from './tools'
 import {
   createContext,
@@ -100,23 +100,27 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
 
   // 2. Create lazy tool session (no sandbox yet — created on first tool call)
   let toolSession: ToolSession | undefined
-  let agentTools: Record<string, unknown> = {}
-
   if (agent.tools && agent.tools.length > 0) {
     toolSession = createLazyToolSession(agent.tools, undefined, onStatus)
-    agentTools = toolSession.tools
   }
 
-  // 3. Create the ToolLoopAgent with lazy tools
+  // 3. Resolve model tier and fallback chain
+  const tier = agent.model ?? 'sonnet'
+  const { model, fallbacks, modelId } = resolveModel(tier)
+
+  // 4. Create the ToolLoopAgent
   const loopAgent = new ToolLoopAgent({
     id: agent.name,
-    model: getModel(agent),
+    model,
     instructions: agent.instructions,
-    tools: agentTools,
+    tools: toolSession?.tools ?? ({} as ToolSet),
     stopWhen: stepCountIs(10),
+    providerOptions: {
+      gateway: { models: fallbacks },
+    },
   })
 
-  // 4. Return session interface
+  // 5. Return session interface
   return {
     agent,
     get workdir() { return toolSession?.workdir || '.' },
@@ -150,14 +154,10 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
       })
 
       const toolCallsList: string[] = []
-      const fallbacks = getModelFallbacks(agent)
 
       try {
         const result = await loopAgent.generate({
           prompt,
-          providerOptions: {
-            gateway: { models: fallbacks },
-          },
 
           experimental_onToolCallStart({ toolCall }) {
             options?.onToolStart?.(toolCall.toolName)
@@ -175,7 +175,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
         })
 
         const usedTools = toolCallsList.length > 0
-        console.log(`[Session][${agent.name}] ${usedTools ? 'full' : 'fast'} path: ${result.text?.length} chars, ${result.steps.length} steps, tools: ${toolCallsList.join(', ') || 'none'}`)
+        console.log(`[Session][${agent.name}] model=${modelId} tier=${tier} path=${usedTools ? 'tools' : 'direct'} steps=${result.steps.length} tools=[${toolCallsList}]`)
 
         const output: GenerateResult = {
           text: result.text || '',
@@ -196,7 +196,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
         await options?.onResult?.(ospResult)
         return ospResult
       } catch (error) {
-        console.error(`[Session][${agent.name}] ERROR:`, error instanceof Error ? error.message : error)
+        console.error(`[Session][${agent.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.message : error)
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false }

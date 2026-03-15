@@ -17,9 +17,9 @@ import {
   executeGlobWithSandbox,
   executeGrepWithSandbox,
   type SandboxConfig,
+  type AgentSandbox,
 } from '@syner/vercel'
 import { tool, type Tool } from 'ai'
-import type { Sandbox } from '@vercel/sandbox'
 
 // Default repo configuration
 const DEFAULT_REPO_URL = 'https://github.com/synerops/syner.git'
@@ -118,11 +118,11 @@ export function createLazyToolSession(
   }
 
   // Lazy state — sandbox created on first tool call
-  let sandbox: Sandbox | null = null
-  let initPromise: Promise<Sandbox> | null = null
+  let sandbox: AgentSandbox | null = null
+  let initPromise: Promise<AgentSandbox> | null = null
   let resolvedWorkdir = '.'
 
-  async function ensureSandbox(): Promise<Sandbox> {
+  async function ensureSandbox(): Promise<AgentSandbox> {
     if (sandbox) return sandbox
     if (initPromise) return initPromise
 
@@ -156,7 +156,7 @@ export function createLazyToolSession(
 
     lazyTools[trimmed] = tool({
       description: def.description,
-      inputSchema: def.inputSchema,
+      inputSchema: def.inputSchema as never,
       execute: async (input) => {
         const sb = await ensureSandbox()
         return def.executeWithSandbox(sb, input as never)

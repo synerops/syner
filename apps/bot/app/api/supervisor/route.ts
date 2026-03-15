@@ -5,17 +5,7 @@
  * GET: list pending approvals. POST: submit a decision.
  */
 
-import type { Approval } from '@syner/osprotocol'
-
-/** In-memory store for pending approvals (replaced by durable storage later) */
-const pendingApprovals = new Map<string, PendingApproval>()
-
-export interface PendingApproval {
-  runId: string
-  description: string
-  requestedAt: string
-  approval: Approval
-}
+import { pendingApprovals } from '@/lib/supervisor'
 
 /**
  * GET /api/supervisor — List pending approval requests
@@ -70,30 +60,4 @@ export async function POST(request: Request) {
     reason: body.reason,
     processedAt: pending.approval.timestamp,
   })
-}
-
-/**
- * Register a pending approval (called internally by chain steps).
- */
-export function registerApproval(
-  runId: string,
-  description: string
-): PendingApproval {
-  const pending: PendingApproval = {
-    runId,
-    description,
-    requestedAt: new Date().toISOString(),
-    approval: {
-      required: true,
-    },
-  }
-  pendingApprovals.set(runId, pending)
-  return pending
-}
-
-/**
- * Check if an approval has been decided.
- */
-export function getApprovalStatus(runId: string): Approval | undefined {
-  return pendingApprovals.get(runId)?.approval
 }
