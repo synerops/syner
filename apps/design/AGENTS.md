@@ -1,63 +1,62 @@
 # syner.design
 
-Agentic design system — components that AI agents can understand and generate.
+### What agents can do here
 
-## Structure
+- **Generate slide decks** via `POST /api/slides/generate` — no auth required in dev
+- **Retrieve slides** via `GET /api/slides/[deckId]/[index]` — immutable URLs after generation
+- **Read component examples** in `apps/design/app/components/page.tsx` (usage example, not canonical spec)
 
-<!-- auto:structure -->
+### Component spec for generation
+
+When generating UI that uses `@syner/ui`, agents should know:
+
 ```
-apps/design/
-├── app/
-│   ├── layout.tsx                  # Root layout
-│   └── page.tsx                    # Landing page
-├── agents/
-│   └── design.md                   # Lead agent definition
-├── components/                     # (coming soon)
-└── lib/
-    └── utils.ts                    # Utilities
+Card primitive:
+  Import: @syner/ui/components/card
+  Variants: default | bracket
+  Sub-components: CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction
+
+  bracket variant rules:
+    - No CardHeader/CardContent/CardFooter wrappers — direct children only
+    - Text sizes: label 8px, title 20px, description 9px
+    - Optional decorative circle: absolute top-6 right-6 size-2 rounded-full
+    - Optional action link at bottom: text-[9px] font-medium
+
+  standard variant rules:
+    - Use CardHeader > (CardTitle + CardDescription + optional CardAction)
+    - Use CardContent for body
+    - Use CardFooter for actions
 ```
-<!-- /auto:structure -->
 
-## Vision
+### Slide templates
 
-Traditional design systems are for humans writing code.
-syner.design is for agents generating interfaces.
+Slide types are defined in `@syner/ui/slides/types`. Rendering logic is in `@syner/ui/slides/registry`. Agents constructing slide payloads should read those files for the `Slide` and `Style` type contracts.
 
-- Components described in markdown specs
-- Tokens that LLMs understand natively
-- Patterns agents can compose
+```typescript
+import type { Slide, Style } from '@syner/ui/slides/types'
+```
 
-## Conventions
+### Agent-relevant files
 
-- **Components** in `components/{name}/`
-- **Specs** in `components/{name}/SPEC.md`
-- **Tokens** in `lib/tokens/`
+| File | Purpose |
+|------|---------|
+| `apps/design/app/api/slides/generate/route.tsx` | Slide generation — input/output contract |
+| `apps/design/app/api/slides/[deckId]/[index]/route.tsx` | Slide retrieval |
+| `apps/design/app/components/page.tsx` | Live Card usage examples (not canonical spec) |
+| `packages/ui/slides/types.ts` | Slide/Style type definitions |
+| `packages/ui/slides/registry.ts` | Template registry and rendering |
 
-## Adding a component (when ready)
+---
 
-1. Create component directory:
-   ```bash
-   mkdir -p components/{name}
-   ```
+## Status
 
-2. Create implementation:
-   ```
-   components/{name}/index.tsx
-   ```
+| Capability | Status |
+|-----------|--------|
+| Landing page | Production |
+| Card primitive showcase (`/components`) | Production |
+| Slide generation API (`POST /api/slides/generate`) | Production |
+| Slide retrieval API (`GET /api/slides/[deckId]/[index]`) | Production |
+| Additional component primitives | Not yet implemented |
+| Design token documentation | Not yet implemented |
+| Agent-readable component specs (markdown) | Not yet implemented |
 
-3. Create spec for agents:
-   ```
-   components/{name}/SPEC.md
-   ```
-
-   Spec should describe:
-   - What the component does
-   - When to use it
-   - Props and variants
-   - Composition patterns
-
-## What NOT to do
-
-- Don't create components without specs
-- Don't use design patterns agents can't describe
-- Don't couple to specific frameworks unnecessarily
