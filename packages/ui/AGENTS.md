@@ -149,7 +149,7 @@ const jsx = renderSlide({
 3. **Templates must be registered before `renderSlide()`.** Either import `@syner/ui/slides/templates` (registers all 5 built-ins) or call `registerTemplate()` explicitly.
 4. **Do not register duplicate template names.** `registerTemplate()` throws. Use `listTemplates()` to check.
 5. **Font loaders are server-side only.** `loadGeistSans()` and `loadGeistMono()` use `node:fs/promises`. They work in Next.js route handlers and API routes. They fail client-side.
-6. **The `content` field is polymorphic with no runtime validation.** Passing `string[]` to a `metrics` template (which expects `Record`) silently renders nothing. Match the content shape to the template.
+6. **The `content` field is polymorphic with no runtime validation.** Passing the wrong shape (e.g., `string[]` to a `metrics` template expecting `Record`) produces undefined behavior. Match the content shape to the template.
 7. **`fontSize` is a number, not a string.** `{ fontSize: 48 }` works. `{ fontSize: "48px" }` does not. No CSS units in `Style` fields.
 
 ### Valid Import Paths
@@ -191,7 +191,8 @@ Anything else will fail to resolve. Do not use bare `@syner/ui` — there is no 
 
 | Package | Why |
 |---------|-----|
-| `radix-ui` | Primitives for Separator, Slot (asChild pattern) |
+| `radix-ui` | Primitives for Separator, Slot (asChild pattern). Provides built-in WAI-ARIA attributes |
+| `lucide-react` | Icon primitives used by components |
 | `class-variance-authority` | Typed component variants |
 | `clsx` + `tailwind-merge` | Class name composition (`cn()`) |
 | `geist` | Geist font family (Sans, Mono, Pixel variants) |

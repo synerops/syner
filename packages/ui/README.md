@@ -29,9 +29,9 @@ import "@syner/ui/globals.css"
 
 `@syner/ui` is an internal package in the syner monorepo. All apps already depend on it. No separate install needed.
 
-```bash
-# If starting a new app, add the dependency
-bun add @syner/ui
+```jsonc
+// package.json (workspace dependency)
+"@syner/ui": "workspace:*"
 ```
 
 ### Components
@@ -147,8 +147,8 @@ export default function RootLayout({ children }) {
 ```
 
 Available fonts:
-- `geistSans` / `GeistSans` — primary text
-- `geistMono` / `GeistMono` — code blocks
+- `geistSans` (alias for `GeistSans`) — primary text
+- `geistMono` (alias for `GeistMono`) — code blocks
 - `geistPixelSquare`, `geistPixelGrid`, `geistPixelCircle`, `geistPixelTriangle`, `geistPixelLine` — pixel variants
 
 CSS variables registered: `--font-geist-sans`, `--font-geist-mono`, `--font-geist-pixel-square`
@@ -203,4 +203,4 @@ Import paths must match `package.json` exports exactly. Use `@syner/ui/component
 Ensure your app imports `@syner/ui/globals.css` in its root layout. The stylesheet includes `@source` directives that scan both `packages/ui` and `apps/` for class usage.
 
 **Dark mode not working**
-Add the `dark` class to your `<html>` element. The theme uses `&:is(.dark *)` as the custom variant selector.
+Add the `dark` class to your `<html>` element. The theme uses `&:is(.dark *)` as the custom variant selector. For dynamic switching, use a theme provider like `next-themes` with `attribute="class"`.
