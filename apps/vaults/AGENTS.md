@@ -7,8 +7,9 @@
 ```yaml
 # agents/vaults.md frontmatter
 name: vaults
-channel: C0AKWADSSTW
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task, Skill]
+metadata:
+  channel: C0AKWADSSTW
 model: sonnet
 skills:
   - find-ideas
@@ -37,7 +38,7 @@ curl -X POST https://bot.syner.dev/agent \
 | `grow-note` | Draft document or structure proposal for a given thought or file |
 | `track-idea` | Evolution timeline of a concept across notes and git history |
 | `load-all` | Full synthesized context across all vaults |
-| `vaults-grow-specialist` | PKM specialist observation, proposal, and graduation lifecycle |
+| `vaults-grow-specialist` | PKM specialist observation, proposal, and graduation lifecycle (user-invoked only) |
 
 ### Discovery patterns
 
@@ -91,7 +92,7 @@ Fields: current focus, recent queries, key entities, handoff notes.
 
 2. **Vaults are local and gitignored.** Do not expect vault content in CI, in Vercel runtime, or on other machines. Skills that depend on vaults fail silently in those environments.
 
-3. **Vaults are private context, not data.** Read for understanding. Do not extract fields or assume schema. Do not modify vault notes except for state writes to `.syner/plans/state.md`.
+3. **Vaults are private context, not data.** Read for understanding. Do not extract fields or assume schema. Do not modify vault notes except for state writes to `.syner/plans/state.md` (create the file on first write if it does not exist).
 
 4. **`_`-prefixed files are always ignored.** Skip any file or folder starting with `_` in all discovery patterns.
 
