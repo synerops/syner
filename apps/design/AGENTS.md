@@ -4,7 +4,7 @@
 
 - **Generate slide decks** via `POST /api/slides/generate` — no auth required in dev
 - **Retrieve slides** via `GET /api/slides/[deckId]/[index]` — immutable URLs after generation
-- **Read component specs** in `apps/design/app/components/page.tsx` to understand the Card primitive API
+- **Read component examples** in `apps/design/app/components/page.tsx` (usage example, not canonical spec)
 
 ### Component spec for generation
 
@@ -42,7 +42,7 @@ import type { Slide, Style } from '@syner/ui/slides/types'
 |------|---------|
 | `apps/design/app/api/slides/generate/route.tsx` | Slide generation — input/output contract |
 | `apps/design/app/api/slides/[deckId]/[index]/route.tsx` | Slide retrieval |
-| `apps/design/app/components/page.tsx` | Live Card usage examples |
+| `apps/design/app/components/page.tsx` | Live Card usage examples (not canonical spec) |
 | `packages/ui/slides/types.ts` | Slide/Style type definitions |
 | `packages/ui/slides/registry.ts` | Template registry and rendering |
 

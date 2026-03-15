@@ -59,7 +59,7 @@ const response = await fetch('https://syner.design/api/slides/generate', {
     slides: [
       {
         template: 'title',
-        title: 'My Deck',
+        heading: 'My Deck',
         subtitle: 'Built with syner.design',
       },
     ],
@@ -76,7 +76,7 @@ const { deckId, slides } = await response.json()
 
 **`GET /api/slides/[deckId]/[index]`**
 
-Returns the PNG image for a given deck and slide index. Immutable cache headers (1 year).
+Redirects (302) to the Vercel Blob public URL for the PNG. Immutable cache headers (1 year) on the blob itself.
 
 ```
 GET /api/slides/abc123/0
