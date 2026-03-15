@@ -162,7 +162,7 @@ Flow:
 2. Check sender repo permissions (admin/maintain/write/triage)
 3. Add 👀 reaction to show processing
 4. Load context: CLAUDE.md or README.md, changed files (PRs), last 20 comments
-5. `generateText` with `claude-sonnet-4-20250514`, up to 15 tool steps
+5. `generateText` with `claude-sonnet-4-20250514`, up to 15 tool steps (note: `createSession` defaults to 10 steps)
 6. Post response as a new comment
 
 ### Webhook: Slack

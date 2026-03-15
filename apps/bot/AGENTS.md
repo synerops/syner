@@ -73,6 +73,6 @@ Run `/vercel-setup` to configure all variables in Vercel production.
 | Slack slash commands (/syner) | Production |
 | Lazy sandbox initialization | Production |
 | Message routing (direct/delegate) | Production |
-| Chain orchestration | Planned |
+| Chain orchestration | Planned — chain intent keywords silently fall back to direct execution (no error) |
 | Supervisor durable storage | Planned |
 
