@@ -4,8 +4,9 @@
 
 ## Quick Start
 
-```bash
-bun add @syner/sdk
+```jsonc
+// package.json (workspace dependency)
+"@syner/sdk": "workspace:*"
 ```
 
 ```typescript

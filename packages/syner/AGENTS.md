@@ -192,7 +192,7 @@ Builds and caches the full skill registry by scanning `SKILL.md` files from pred
 - `apps/bot/skills`
 - `packages/github/skills`
 
-Returns a `{ skills: Map<string, { skill, path }>, list: Skill[] }`. Results are cached per projectRoot.
+Returns a `{ skills: Map<string, { skill, path }>, list: Skill[] }` (internal type, not exported — use the return type implicitly). Results are cached per projectRoot.
 
 ### getSkillBySlug(projectRoot, slug): Promise\<SkillContent | null\>
 
@@ -208,7 +208,7 @@ Skills with `visibility: 'public'` or `'instance'`.
 
 ### getPrivateSkills(projectRoot, app): Promise\<Skill[]\>
 
-Private skills scoped to a specific app directory.
+Private skills scoped to a specific app directory. Returns `[]` if the app has no private skills in the registry — this is correct behavior, not an error.
 
 ### getCategories(skills): string[]
 
@@ -275,9 +275,9 @@ Returns fallback model IDs for the agent's tier.
 
 | Tier | Fallbacks |
 |------|-----------|
-| `opus` | `claude-opus-4.5`, `claude-opus-4`, `claude-sonnet-4.6` |
-| `sonnet` | `claude-sonnet-4.5`, `claude-sonnet-4`, `claude-haiku-4.5` |
-| `haiku` | `claude-3.5-haiku` |
+| `opus` | `anthropic/claude-opus-4.5`, `anthropic/claude-opus-4`, `anthropic/claude-sonnet-4.6` |
+| `sonnet` | `anthropic/claude-sonnet-4.5`, `anthropic/claude-sonnet-4`, `anthropic/claude-haiku-4.5` |
+| `haiku` | `anthropic/claude-3.5-haiku` |
 
 ### execute\<T\>(options): Promise\<Result\<string\>\>
 
@@ -344,7 +344,7 @@ logger.info('Skill resolved', { slug: 'find-ideas', confidence: 1.0 })
 
 9. **Agent model selection requires `@ai-sdk/gateway` at runtime.** The `getModel()` function calls `gateway()` from `@ai-sdk/gateway`. This is a direct dependency, not optional.
 
-10. **Context `targeted` scope uses keyword matching, not semantic search.** It splits the query on whitespace and checks if any term appears in the file path or content. This is adequate for explicit queries but will miss synonyms.
+10. **Context `targeted` scope uses keyword matching, not semantic search.** `execute()` passes the full task string as the query. The resolver splits it on whitespace and checks if any term appears in the file path or content. This is adequate for explicit queries but will miss synonyms.
 
 ## Dependencies
 
