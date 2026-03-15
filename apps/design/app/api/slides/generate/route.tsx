@@ -5,7 +5,7 @@ import { put } from "@vercel/blob";
 import { nanoid } from "nanoid";
 import type { Slide, Style } from "@syner/ui/slides/types";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 interface RenderedSlide {
   index: number;
