@@ -17,7 +17,7 @@ curl https://dev.syner.dev/api/skills
     "slug": "syner-skill-reviewer",
     "description": "Audit a skill and report what needs attention...",
     "version": "0.0.5",
-    "category": "dev"
+    "category": "Dev"
   }
 ]
 ```
@@ -125,5 +125,5 @@ Returns this app's own SKILL.md parsed as an osprotocol manifest. Cached in-memo
 | `/api/review/skill` | Experimental -- basic checks (frontmatter, spec, voice) |
 | `/agent` manifest | Functional -- cached in-memory |
 | `/docs` | Functional -- Fumadocs wired, single index page |
-| 19 Claude Code skills | Functional -- the primary value today |
+| 18 Claude Code skills | Functional -- the primary value today |
 

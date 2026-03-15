@@ -42,7 +42,7 @@ Skills are discovered from the monorepo filesystem at **build time**. The homepa
 
 The resolve endpoint (`/api/skills/resolve`) is `force-dynamic` and reads the filesystem at runtime. On Vercel, this means it depends on the monorepo being available at runtime -- which it may not be. Use the static `/api/skills` endpoint for reliable agent discovery in production.
 
-### Skills (19 via Claude Code)
+### Skills (18 via Claude Code)
 
 The real value of syner.dev today is the skills that run locally:
 
