@@ -4,7 +4,7 @@
     <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="40"/>
   </picture>
   <br/>
-  <strong>{title}</strong>
+  <strong>syner/{author}</strong>
 </p>
 
 ---
