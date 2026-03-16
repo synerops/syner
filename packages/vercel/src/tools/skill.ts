@@ -46,6 +46,11 @@ export class SkillLoader {
     return this.index.skills.map(s => s.name)
   }
 
+  /** Check if a skill exists in the index */
+  has(name: string): boolean {
+    return this.skillMap.has(name)
+  }
+
   /** Skill descriptions for system prompt injection */
   describeSkills(): string {
     if (this.index.skills.length === 0) return ''
@@ -106,10 +111,9 @@ export class SkillLoader {
       if (!skillCall) return {}
 
       const skillName = skillCall.args.name as string
-      const content = this.loadContent(skillName)
 
-      if (!content) {
-        // Skill not found — inject error as tool result so the loop continues
+      // Validate against index first (no disk I/O)
+      if (!this.has(skillName)) {
         return {
           messages: [
             ...messages,
@@ -118,7 +122,26 @@ export class SkillLoader {
               content: [{
                 type: 'tool-result' as const,
                 toolCallId: skillCall.toolCallId,
-                result: `Skill "${skillName}" not found. Available: ${this.names.join(', ')}`,
+                result: `Skill "${skillName}" not found in index. Available: ${this.names.join(', ')}`,
+              }],
+            },
+          ],
+        }
+      }
+
+      // Load content from disk (skill exists in index)
+      const content = this.loadContent(skillName)
+
+      if (!content) {
+        return {
+          messages: [
+            ...messages,
+            {
+              role: 'tool' as const,
+              content: [{
+                type: 'tool-result' as const,
+                toolCallId: skillCall.toolCallId,
+                result: `Skill "${skillName}" exists in index but content not found on disk.`,
               }],
             },
           ],
@@ -170,14 +193,17 @@ export class SkillLoader {
       const [command, ...rest] = trimmed.split(/\s+/)
       const skillName = command.slice(1)
 
-      const content = this.loadContent(skillName)
-      if (content) {
-        const args = rest.join(' ')
-        const processed = content
-          .replace(/\$ARGUMENTS/g, args)
-          .replace(/\$(\d+)/g, (_, n) => rest[parseInt(n)] || '')
+      // Validate against index before disk I/O
+      if (this.has(skillName)) {
+        const content = this.loadContent(skillName)
+        if (content) {
+          const args = rest.join(' ')
+          const processed = content
+            .replace(/\$ARGUMENTS/g, args)
+            .replace(/\$(\d+)/g, (_, n) => rest[parseInt(n)] || '')
 
-        return `${processed}\n\n---\n\nUser request: ${args || trimmed}`
+          return `${processed}\n\n---\n\nUser request: ${args || trimmed}`
+        }
       }
     }
 
