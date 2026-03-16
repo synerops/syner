@@ -39,13 +39,9 @@ export {
   createGlobTool,
   createGrepTool,
   createSkillTool,
-  // Skill execution
-  executeSkill,
-  // Registry
-  createTools,
-  createToolsByName,
+  createRunTool,
 } from './tools'
-export type { ToolName, SandboxToolName, SpecialToolName, CreateSkillToolOptions, ExecuteSkillOptions } from './tools'
+export type { ToolName, SandboxToolName, SpecialToolName, SkillIndex, SkillIndexEntry, CreateRunToolOptions } from './tools'
 
 // Skills
 export {

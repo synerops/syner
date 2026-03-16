@@ -1,7 +1,6 @@
 import {
   createAgentSandbox,
   stopSandbox,
-  createToolsByName,
   // Input schemas (zod)
   bashInputSchema,
   fetchInputSchema,
@@ -66,34 +65,6 @@ const TOOL_DEFS = {
 } as const
 
 type ToolDefName = keyof typeof TOOL_DEFS
-
-/**
- * Create tools with a shared sandbox session (eager — sandbox created immediately)
- */
-export async function createToolSession(
-  toolNames?: string[],
-  config?: Partial<SandboxConfig>
-): Promise<ToolSession> {
-  const sandboxConfig: SandboxConfig = {
-    repoUrl: config?.repoUrl || DEFAULT_REPO_URL,
-    branch: config?.branch || DEFAULT_BRANCH,
-    workdir: config?.workdir || 'workspace',
-    timeout: config?.timeout || 300000,
-    env: config?.env,
-  }
-
-  const { sandbox, workdir } = await createAgentSandbox(sandboxConfig)
-
-  const tools = toolNames && toolNames.length > 0
-    ? createToolsByName(sandbox, toolNames)
-    : {}
-
-  return {
-    tools,
-    workdir,
-    cleanup: () => stopSandbox(sandbox),
-  }
-}
 
 /**
  * Create tools with lazy sandbox initialization.
