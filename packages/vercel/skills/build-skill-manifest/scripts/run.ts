@@ -2,7 +2,7 @@
 /**
  * Build skills manifest + verify SkillLoader
  *
- * Usage: bun packages/vercel/scripts/build-skill-manifest.ts
+ * Usage: bun packages/vercel/skills/build-skill-manifest/scripts/run.ts
  *
  * 1. Scans skill directories with buildSkillsManifest
  * 2. Writes index.json to public/.well-known/skills/
@@ -15,7 +15,7 @@ import { SkillLoader } from '@syner/vercel'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import path from 'path'
 
-const ROOT = path.resolve(import.meta.dir, '../../..')
+const ROOT = path.resolve(import.meta.dir, '../../../../..')
 
 const SKILL_DIRS = [
   path.join(ROOT, 'skills/syner'),
