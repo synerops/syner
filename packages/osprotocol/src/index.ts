@@ -48,6 +48,10 @@ export {
   updateRunStatus,
 } from './types/run'
 
+// Run adapter contract
+export { type RunAdapter } from './types/run-adapter'
+export { type RunRequest, type RunEvent } from './types/run-request'
+
 // Schemas — for consumers that want runtime validation
 export {
   ContextSourceSchema,
