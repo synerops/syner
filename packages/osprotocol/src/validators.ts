@@ -2,7 +2,7 @@ import type { Context } from './types/context'
 import type { Action } from './types/action'
 import type { Verification } from './types/verification'
 import type { Result } from './types/result'
-import type { Run, RunStatus, Approval } from './types/run'
+import type { Run, RunStatus, Approval, Cancel } from './types/run'
 
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null && !Array.isArray(x)
@@ -55,19 +55,27 @@ export function validateResult(x: unknown): x is Result {
 }
 
 const VALID_RUN_STATUSES: RunStatus[] = [
-  'pending', 'running', 'waiting_approval', 'approved', 'rejected',
-  'completed', 'failed', 'cancelled', 'timed_out',
+  'pending', 'in-progress', 'awaiting',
+  'completed', 'failed', 'cancelled',
 ]
 
 export function validateApproval(x: unknown): x is Approval {
   if (!isObject(x)) return false
-  if (typeof x.required !== 'boolean') return false
-  if (x.reviewer !== undefined && !isString(x.reviewer)) return false
-  if (x.decision !== undefined) {
-    if (!['approved', 'rejected'].includes(x.decision as string)) return false
-  }
+  if (typeof x.approved !== 'boolean') return false
+  if (!isString(x.timestamp)) return false
   if (x.reason !== undefined && !isString(x.reason)) return false
-  if (x.timestamp !== undefined && !isString(x.timestamp)) return false
+  if (x.approvedBy !== undefined && !isString(x.approvedBy)) return false
+  if (x.metadata !== undefined && !isObject(x.metadata)) return false
+  return true
+}
+
+export function validateCancel(x: unknown): x is Cancel {
+  if (!isObject(x)) return false
+  if (x.reason !== undefined && !isString(x.reason)) return false
+  if (x.graceful !== undefined && typeof x.graceful !== 'boolean') return false
+  if (x.gracefulTimeoutMs !== undefined && typeof x.gracefulTimeoutMs !== 'number') return false
+  if (x.allowVeto !== undefined && typeof x.allowVeto !== 'boolean') return false
+  if (x.metadata !== undefined && !isObject(x.metadata)) return false
   return true
 }
 
@@ -79,10 +87,11 @@ export function validateRun(x: unknown): x is Run {
   if (!isArray(x.results)) return false
   if (!isString(x.startedAt)) return false
   if (x.approval !== undefined && !validateApproval(x.approval)) return false
+  if (x.cancel !== undefined && !validateCancel(x.cancel)) return false
   if (x.timeout !== undefined) {
     if (!isObject(x.timeout)) return false
     if (typeof (x.timeout as Record<string, unknown>).duration !== 'number') return false
-    if (!['fail', 'escalate', 'cancel'].includes((x.timeout as Record<string, unknown>).strategy as string)) return false
+    if (!['fail', 'cancel', 'continue'].includes((x.timeout as Record<string, unknown>).strategy as string)) return false
   }
   if (x.retry !== undefined) {
     if (!isObject(x.retry)) return false

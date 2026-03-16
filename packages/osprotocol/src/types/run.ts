@@ -2,28 +2,23 @@ import type { Result } from './result'
 
 export type RunStatus =
   | 'pending'
-  | 'running'
-  | 'waiting_approval'
-  | 'approved'
-  | 'rejected'
+  | 'in-progress'
+  | 'awaiting'
   | 'completed'
   | 'failed'
   | 'cancelled'
-  | 'timed_out'
 
 export type RunActivity = 'idle' | 'executing' | 'waiting' | 'thinking'
 
 export interface Progress {
   current: number
-  total: number
   label?: string
 }
 
 export interface Timeout {
   /** Duration in milliseconds */
   duration: number
-  strategy: 'fail' | 'escalate' | 'cancel'
-  target?: string
+  strategy: 'fail' | 'cancel' | 'continue'
 }
 
 export interface Retry {
@@ -31,16 +26,27 @@ export interface Retry {
   /** Delay in milliseconds */
   delay: number
   backoff?: 'linear' | 'exponential'
+  /** Maximum delay in milliseconds (caps exponential backoff) */
+  maxDelayMs?: number
 }
 
 export interface Approval {
-  required: boolean
-  /** Agent ID as plain string */
-  reviewer?: string
-  decision?: 'approved' | 'rejected'
+  approved: boolean
   reason?: string
+  /** Agent ID as plain string */
+  approvedBy?: string
   /** ISO 8601 timestamp */
-  timestamp?: string
+  timestamp: string
+  metadata?: Record<string, unknown>
+}
+
+export interface Cancel {
+  reason?: string
+  graceful?: boolean
+  /** Timeout in milliseconds for graceful cancellation */
+  gracefulTimeoutMs?: number
+  allowVeto?: boolean
+  metadata?: Record<string, unknown>
 }
 
 export interface Run<T = unknown> {
@@ -51,6 +57,7 @@ export interface Run<T = unknown> {
   approval?: Approval
   timeout?: Timeout
   retry?: Retry
+  cancel?: Cancel
   startedAt: string
   completedAt?: string
   chain?: string
@@ -69,11 +76,9 @@ export function createRun(partial: Partial<Run> & Pick<Run, 'id'>): Run {
 }
 
 const validTransitions: Record<string, RunStatus[]> = {
-  pending: ['running'],
-  running: ['completed', 'failed', 'cancelled', 'waiting_approval', 'timed_out'],
-  waiting_approval: ['approved', 'rejected'],
-  approved: ['running'],
-  rejected: ['cancelled', 'running'],
+  pending: ['in-progress'],
+  'in-progress': ['awaiting', 'completed', 'failed', 'cancelled'],
+  awaiting: ['in-progress', 'cancelled'],
 }
 
 export function updateRunStatus(run: Run, newStatus: RunStatus): Run {

@@ -28,6 +28,7 @@ export { type Result, type OspResult, createResult } from './types/result'
 export {
   validateAction,
   validateApproval,
+  validateCancel,
   validateContext,
   validateResult,
   validateRun,
@@ -43,6 +44,7 @@ export {
   type Timeout,
   type Retry,
   type Approval,
+  type Cancel,
   type Run,
   createRun,
   updateRunStatus,
