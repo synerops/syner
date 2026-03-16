@@ -41,7 +41,7 @@ export {
   createSkillTool,
   createTaskTool,
 } from './tools'
-export type { ToolName, SandboxToolName, SpecialToolName, SkillIndex, SkillIndexEntry, CreateTaskToolOptions } from './tools'
+export type { SkillIndex, SkillIndexEntry, CreateTaskToolOptions } from './tools'
 
 // Skills
 export {
