@@ -39,9 +39,9 @@ export {
   createGlobTool,
   createGrepTool,
   createSkillTool,
-  createRunTool,
+  createWorkflowTool,
 } from './tools'
-export type { ToolName, SandboxToolName, SpecialToolName, SkillIndex, SkillIndexEntry, CreateRunToolOptions } from './tools'
+export type { ToolName, SandboxToolName, SpecialToolName, SkillIndex, SkillIndexEntry, CreateWorkflowToolOptions } from './tools'
 
 // Skills
 export {

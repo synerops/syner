@@ -117,7 +117,7 @@ export function createLazyToolSession(
 
   for (const name of toolNames) {
     const trimmed = name.trim()
-    if (['Skill', 'Task'].includes(trimmed)) continue
+    if (['Skill', 'Workflow'].includes(trimmed)) continue
 
     const def = TOOL_DEFS[trimmed as ToolDefName]
     if (!def) {
