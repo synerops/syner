@@ -7,7 +7,6 @@ import {
   verify,
   createResult,
   type Result,
-  type OspResult,
 } from '@syner/osprotocol'
 
 export interface ExecuteSkillOptions {
@@ -37,7 +36,7 @@ export async function executeSkill(
   ref: string,
   input: string,
   options: ExecuteSkillOptions
-): Promise<OspResult<string>> {
+): Promise<Result<string>> {
   const { repoRoot, tools, model } = options
 
   // 1. Load skill
@@ -71,7 +70,7 @@ async function executeSkillWithConfig(
   skill: SkillConfig,
   input: string,
   options: ExecuteSkillOptions
-): Promise<OspResult<string>> {
+): Promise<Result<string>> {
   const { repoRoot, tools, model, abortSignal } = options
   const name = skill.name
 
@@ -123,7 +122,7 @@ async function executeSkillWithConfig(
     const output = result.text || 'Skill completed with no output'
     const verification = verify(action.expectedEffects, { 'Skill completed successfully': true })
 
-    const ospResult: OspResult<string> = {
+    const ospResult: Result<string> = {
       ...createResult(context, action, verification, output),
       duration: Date.now() - startTime,
     }
@@ -135,7 +134,7 @@ async function executeSkillWithConfig(
     const errorMessage = error instanceof Error ? error.message : String(error)
     const verification = verify(action.expectedEffects, { 'Skill completed successfully': false })
 
-    const ospResult: OspResult<string> = {
+    const ospResult: Result<string> = {
       ...createResult(context, action, verification, errorMessage),
       duration: Date.now() - startTime,
     }

@@ -3,7 +3,6 @@
  *
  * Implementations:
  * - FileSystemVaultStore (local, fs/promises)
- * - BlobVaultStore (Vercel Blob, serverless)
  */
 export interface VaultStore {
   /** List vault files matching a glob pattern */

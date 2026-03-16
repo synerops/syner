@@ -91,7 +91,7 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
           )
         }
 
-        const visibility: SkillVisibility = manifest.visibility || 'instance'
+        const visibility: SkillVisibility = (manifest.metadata?.visibility as SkillVisibility) || 'instance'
 
         const skill: Skill = {
           slug,

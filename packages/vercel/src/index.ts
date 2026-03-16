@@ -84,6 +84,14 @@ export {
 } from './lib'
 export type { TimeoutAction, ProgressEvent } from './lib'
 
+// Durable agent (re-export from @workflow/ai)
+export { DurableAgent } from '@workflow/ai/agent'
+export type {
+  DurableAgentOptions,
+  DurableAgentStreamOptions,
+  DurableAgentStreamResult,
+} from '@workflow/ai/agent'
+
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'
 export type { AgentSandbox, SandboxConfig } from './sandbox'

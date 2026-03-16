@@ -1,4 +1,4 @@
-import type { SkillManifest } from '@syner/osprotocol'
+import type { Skill as OspSkill } from '@syner/osprotocol'
 
 export type SkillVisibility = 'public' | 'instance' | 'private'
 
@@ -10,7 +10,7 @@ export interface Skill {
   version?: string
   author?: string
   visibility: SkillVisibility
-  manifest?: SkillManifest
+  manifest?: OspSkill
 }
 
 export interface SkillContent extends Skill {

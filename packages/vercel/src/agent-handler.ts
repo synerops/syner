@@ -7,13 +7,13 @@ import {
   type Context,
   type Action,
   type Result,
-  type SkillManifest,
+  type Skill,
 } from '@syner/osprotocol'
 
 export interface AgentHandlerConfig {
   agentId: string
   skillRef: string
-  manifest?: SkillManifest
+  manifest?: Skill
   handler: (req: Request, context: Context, action: Action) => Promise<unknown>
   onResult?: (result: Result) => Promise<void>
 }
@@ -32,16 +32,9 @@ export function createAgentHandler(config: AgentHandlerConfig) {
       missing: [],
     })
 
-    // 2. Build action with preconditions from manifest
-    const preconditions = (config.manifest?.preconditions || []).map((check) => ({
-      check,
-      met: true, // Caller must override with actual checks
-    }))
-
-    const expectedEffects = (config.manifest?.effects || []).map((desc) => ({
-      description: desc,
-      verifiable: true,
-    }))
+    // 2. Build action (preconditions/effects come from caller, not manifest)
+    const preconditions: { check: string; met: boolean }[] = []
+    const expectedEffects: { description: string; verifiable: boolean }[] = []
 
     const action = createAction({
       description: `Handle ${req.method} ${config.skillRef}`,
