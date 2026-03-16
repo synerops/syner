@@ -65,6 +65,25 @@ export type { SynerConfig } from './with-syner'
 export { createAgentHandler } from './agent-handler'
 export type { AgentHandlerConfig } from './agent-handler'
 
+// Run adapter
+export { VercelRunAdapter } from './run'
+export type { VercelRunAdapterConfig } from './run'
+
+// Run helpers
+export {
+  approvalToken,
+  isQuorumMet,
+  createAutoApproval,
+  resolveTimeoutAction,
+  createTimeoutRace,
+  computeDelay,
+  shouldRetry,
+  checkBeforeCancel,
+  gracefulTimeout,
+  createProgressEvent,
+} from './lib'
+export type { TimeoutAction, ProgressEvent } from './lib'
+
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'
 export type { AgentSandbox, SandboxConfig } from './sandbox'
