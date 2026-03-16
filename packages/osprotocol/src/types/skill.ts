@@ -11,8 +11,7 @@ export interface OutputField {
   description?: string
 }
 
-export interface SkillManifest {
-  // v1 fields (existing SKILL.md frontmatter)
+export interface Skill {
   name?: string
   description?: string
   category?: string
@@ -20,8 +19,6 @@ export interface SkillManifest {
     version?: string
     author?: string
   }
-
-  // v2 fields (all optional for backwards compatibility)
   preconditions?: string[]
   effects?: string[]
   verification?: string[]
@@ -30,6 +27,3 @@ export interface SkillManifest {
   visibility?: 'public' | 'private' | 'instance'
   notFor?: string[]
 }
-
-/** @deprecated Use SkillManifest instead */
-export type SkillManifestV2 = SkillManifest

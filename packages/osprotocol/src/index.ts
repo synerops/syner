@@ -15,9 +15,8 @@ export {
 export {
   type InputField,
   type OutputField,
-  type SkillManifest,
-  type SkillManifestV2,
-} from './types/skill-manifest'
+  type Skill,
+} from './types/skill'
 
 export {
   type Assertion,

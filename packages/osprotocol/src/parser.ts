@@ -1,8 +1,8 @@
 import matter from 'gray-matter'
-import type { SkillManifest, InputField, OutputField } from './types/skill-manifest'
+import type { Skill, InputField, OutputField } from './types/skill'
 
 export interface ParseResult {
-  skill: SkillManifest
+  skill: Skill
   warnings: string[]
 }
 
@@ -76,7 +76,7 @@ export function parseSkillManifest(content: string): ParseResult {
   const { data, content: body } = matter(content)
   const warnings: string[] = []
 
-  const manifest: SkillManifest = {}
+  const manifest: Skill = {}
 
   // Standard Agent Skills fields — always from top-level frontmatter
   if (data.name) manifest.name = data.name
