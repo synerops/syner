@@ -16,14 +16,6 @@ export { Edit, executeEdit, createEditTool } from './edit'
 export { Glob, executeGlob, createGlobTool, globInputSchema, executeGlobWithSandbox } from './glob'
 export { Grep, executeGrep, createGrepTool, grepInputSchema, executeGrepWithSandbox } from './grep'
 export { executeSkill, createSkillTool, type ExecuteSkillOptions, type CreateSkillToolOptions } from './skill'
-
-// Vault tools (factory functions, take VaultStore instance)
-export { createVaultRead } from './vault-read'
-export { createVaultWrite } from './vault-write'
-export { createVaultDelete } from './vault-delete'
-export { createVaultList } from './vault-list'
-export { createVaultGlob } from './vault-glob'
-
 // Import creators for registry
 import { createBashTool } from './bash'
 import { createFetchTool } from './fetch'
