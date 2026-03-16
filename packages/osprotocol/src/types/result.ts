@@ -1,18 +1,6 @@
-import type { Context } from './context'
-import type { Action } from './action'
-import type { Verification } from './verification'
+export type { Result } from '../schemas'
 
-export interface Result<T = unknown> {
-  context: Context
-  action: Action
-  verification: Verification
-  output?: T
-  duration: number
-  chain?: string
-}
-
-/** @deprecated Use Result instead */
-export type OspResult<T = unknown> = Result<T>
+import type { Context, Action, Verification, Result } from '../schemas'
 
 export function createResult<T = unknown>(
   context: Context,
