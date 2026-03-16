@@ -18,7 +18,7 @@ export async function generateStaticParams() {
   const projectRoot = getProjectRoot();
   const skills = await getSkillsList(projectRoot);
   return skills.map((skill) => ({
-    slug: skill.slug,
+    slug: skill.name,
   }));
 }
 

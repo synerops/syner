@@ -1,9 +1,9 @@
 import { glob } from 'glob'
 import matter from 'gray-matter'
-import { parseSkillManifest } from '@syner/osprotocol'
+import { parseSkillManifest, type Skill } from '@syner/osprotocol'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import type { Skill, SkillContent, SkillVisibility } from './types'
+import type { SkillContent, SkillVisibility } from './types'
 
 // Predefined allowed paths - security: only serve skills from these directories
 const SKILL_SOURCES = [
@@ -93,15 +93,18 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
 
         const visibility: SkillVisibility = (manifest.metadata?.visibility as SkillVisibility) || 'instance'
 
+        // Single Skill type — enrich via metadata
         const skill: Skill = {
-          slug,
           name: manifest.name || slug,
           description: manifest.description || '',
-          category,
-          version: manifest.metadata?.version,
-          author: manifest.metadata?.author,
-          visibility,
-          manifest,
+          license: manifest.license,
+          compatibility: manifest.compatibility,
+          metadata: {
+            ...manifest.metadata,
+            slug,
+            category,
+            visibility,
+          },
         }
 
         skills.set(slug, { skill, path: filePath })
@@ -114,8 +117,10 @@ async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
 
   // Sort by category, then by name
   list.sort((a, b) => {
-    if (a.category !== b.category) {
-      return a.category.localeCompare(b.category)
+    const catA = a.metadata?.category || 'Other'
+    const catB = b.metadata?.category || 'Other'
+    if (catA !== catB) {
+      return catA.localeCompare(catB)
     }
     return a.name.localeCompare(b.name)
   })
@@ -182,25 +187,27 @@ export async function getSkillBySlug(projectRoot: string, slug: string): Promise
 
 export async function getPublicSkills(projectRoot: string): Promise<Skill[]> {
   const { list } = await getSkillsRegistry(projectRoot)
-  return list.filter((s) => s.visibility === 'public')
+  return list.filter((s) => s.metadata?.visibility === 'public')
 }
 
 export async function getInstanceSkills(projectRoot: string): Promise<Skill[]> {
   const { list } = await getSkillsRegistry(projectRoot)
-  return list.filter((s) => s.visibility === 'instance' || s.visibility === 'public')
+  return list.filter((s) => s.metadata?.visibility === 'instance' || s.metadata?.visibility === 'public')
 }
 
 export async function getPrivateSkills(projectRoot: string, app: string): Promise<Skill[]> {
   const { list } = await getSkillsRegistry(projectRoot)
   const appSource = `apps/${app}/skills`
   return list.filter((s) => {
-    if (s.visibility !== 'private') return false
-    const entry = cachedRegistry?.skills.get(s.slug)
+    if (s.metadata?.visibility !== 'private') return false
+    const slug = s.metadata?.slug
+    if (!slug) return false
+    const entry = cachedRegistry?.skills.get(slug)
     return entry?.path.includes(appSource)
   })
 }
 
 export function getCategories(skills: Skill[]): string[] {
-  const categories = new Set(skills.map((s) => s.category))
+  const categories = new Set(skills.map((s) => s.metadata?.category || 'Other'))
   return Array.from(categories).sort()
 }

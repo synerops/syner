@@ -1,29 +1,26 @@
-import type { Skill as OspSkill } from '@syner/osprotocol'
+import type { Skill } from '@syner/osprotocol'
 
 export type SkillVisibility = 'public' | 'instance' | 'private'
 
-export interface Skill {
-  slug: string
-  name: string
-  description: string
-  category: string
-  version?: string
-  author?: string
-  visibility: SkillVisibility
-  manifest?: OspSkill
-}
-
+/**
+ * A Skill with its full markdown content loaded.
+ * Used when rendering skill details (e.g. in a modal).
+ */
 export interface SkillContent extends Skill {
   content: string
 }
 
+/**
+ * Group skills by their metadata.category field.
+ */
 export function groupByCategory(skills: Skill[]): Record<string, Skill[]> {
   return skills.reduce(
     (acc, skill) => {
-      if (!acc[skill.category]) {
-        acc[skill.category] = []
+      const category = skill.metadata?.category || 'Other'
+      if (!acc[category]) {
+        acc[category] = []
       }
-      acc[skill.category].push(skill)
+      acc[category].push(skill)
       return acc
     },
     {} as Record<string, Skill[]>
