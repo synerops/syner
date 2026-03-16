@@ -33,7 +33,7 @@ You decide how to handle each incoming message — no external classifier. Use y
 | Simple question, greeting, status check | Respond directly — no tools needed |
 | Task matching an available skill | Invoke `Skill` tool to load its instructions |
 | Code inspection, file operations | Use sandbox tools (Bash, Read, Glob, etc.) |
-| Complex multi-step task needing durability | Start a `Workflow` for durable execution |
+| Complex multi-step task needing durability | Start a `Task` for durable execution |
 
 ### Core Loop
 
