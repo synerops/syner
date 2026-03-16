@@ -12,11 +12,11 @@ interface SkillsCatalogProps {
 }
 
 export function SkillsCatalog({ skills }: SkillsCatalogProps) {
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [selectedName, setSelectedName] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: selectedSkill, isLoading } = useSWR<SkillContent>(
-    selectedSlug ? `/api/skills/${selectedSlug}` : null,
+    selectedName ? `/api/skills/${selectedName}` : null,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -28,15 +28,15 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
   const grouped = groupByCategory(skills);
   const categories = Object.keys(grouped).sort();
 
-  function handleSkillClick(slug: string) {
-    setSelectedSlug(slug);
+  function handleSkillClick(name: string) {
+    setSelectedName(name);
     setModalOpen(true);
   }
 
   function handleModalClose(open: boolean) {
     setModalOpen(open);
     if (!open) {
-      setSelectedSlug(null);
+      setSelectedName(null);
     }
   }
 
@@ -55,9 +55,9 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 {grouped[category].map((skill: Skill) => (
                   <SkillCard
-                    key={skill.slug}
+                    key={skill.name}
                     skill={skill}
-                    onClick={() => handleSkillClick(skill.slug)}
+                    onClick={() => handleSkillClick(skill.name)}
                   />
                 ))}
               </div>
@@ -90,11 +90,11 @@ function SkillCard({
     >
       <div className="flex items-start justify-between gap-2">
         <h4 className="font-mono text-sm font-medium text-black dark:text-white">
-          /{skill.slug}
+          /{skill.name}
         </h4>
-        {skill.version && (
+        {skill.metadata?.version && (
           <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800">
-            v{skill.version}
+            v{skill.metadata.version}
           </span>
         )}
       </div>

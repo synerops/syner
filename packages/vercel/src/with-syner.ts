@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { parseSkillManifest } from '@syner/osprotocol'
-import type { SkillManifest } from '@syner/osprotocol'
+import type { Skill } from '@syner/osprotocol'
 
 interface NextConfig {
   rewrites?: () => Promise<Array<{ source: string; destination: string }>> | Array<{ source: string; destination: string }>
@@ -10,7 +10,7 @@ interface NextConfig {
 
 export interface SynerConfig {
   skillPath?: string
-  manifest?: SkillManifest
+  manifest?: Skill
 }
 
 export function withSyner(nextConfig: NextConfig = {}, synerConfig: SynerConfig = {}): NextConfig {

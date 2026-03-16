@@ -1,0 +1,252 @@
+{
+  "skills": [
+    {
+      "name": "backlog-hygiene",
+      "description": "Cleans your backlog. Detects stale items, duplicates, dependency chains, and implicit items buried inside notes that should be tracked separately.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "bot-grow-specialist",
+      "description": "Evolve lead bot specialists from friction observations to autonomous subagents. Use when conversations fail, responses miss the mark, or lead handling breaks down.",
+      "files": [
+        "SKILL.md",
+        "references/review.md",
+        "references/refine.md",
+        "references/promote.md",
+        "references/audit.md",
+        "references/graduate.md",
+        "references/status.md",
+        "references/observe.md"
+      ]
+    },
+    {
+      "name": "create-syner",
+      "description": "Scaffold syner components. Orchestrates creation of skills, agents, and apps by delegating to specialized skills. Use when creating new components or when the user says \"crear\", \"new\", \"scaffold\".",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "create-syner-agent",
+      "description": "Create syner agents. Use when creating new agents, or when user says \"crear agente\", \"new agent\", \"subagent\".",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "create-syner-app",
+      "description": "Scaffold new applications following the syner common stack. Use when creating new apps, projects, or when the user says \"nueva app\", \"create app\", \"new project\", or \"scaffold\".",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "create-syner-skill",
+      "description": "Create syner skills. Use when creating new skills, or when user says \"crear skill\", \"new skill\", \"add capability\".",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "dev-find-ideas",
+      "description": "Generate ideas by combining expert perspectives. Use when you want fresh ideas, need creative inspiration, say \"find ideas\", \"combine experts\", \"brainstorm\", or want to explore what emerges from crossing disciplines.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "dev-grow-specialist",
+      "description": "Evolve ecosystem building specialists from friction observations to autonomous subagents. Use when skill creation fails, reviews miss issues, tests are unclear, or maintenance patterns repeat.",
+      "files": [
+        "SKILL.md",
+        "references/review.md",
+        "references/refine.md",
+        "references/promote.md",
+        "references/audit.md",
+        "references/graduate.md",
+        "references/status.md",
+        "references/observe.md"
+      ]
+    },
+    {
+      "name": "find-ideas",
+      "description": "Orchestrate the ideas system. Mine vaults for ideas, analyze maturity, and route to the right skill or agent. The entry point for idea discovery that connects find-links, grow-note, track-idea, and cross-app routing.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "find-links",
+      "description": "Bridge two domains you've been circling. Find unexpected connections between two different areas, topics, or projects in your notes. Use when you sense a link but can't articulate it, or to discover non-obvious relationships.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "github-cli",
+      "description": "Use gh CLI directly for all GitHub operations including issues, PRs, and API calls. Use when interacting with GitHub from the command line.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "github-create-pr",
+      "description": "Create GitHub PRs using templates. Use when \"crear pr\", \"create pr\", \"abrir pr\", \"open pr\", \"submit pr\".",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "grow-note",
+      "description": "Promote daily thoughts into real assets. Transform scattered daily notes, fleeting thoughts, and rough ideas into structured, actionable documents. Use when a thought has matured enough to become a proper article, plan, or reference document.",
+      "files": [
+        "SKILL.md",
+        "references/scout-evolution.md",
+        "references/thought-to-document.md",
+        "references/document-to-structure.md"
+      ]
+    },
+    {
+      "name": "load-all",
+      "description": "Load your full life + work state. Discovers and reads all notes across all app vaults, building a unified context of your knowledge, projects, goals, and current thinking. Use when starting a new session or when you need the AI to understand your complete situation.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner",
+      "description": "Orchestrator for tasks that need your personal context. Routes to specialists or executes directly. Use when the task spans multiple areas, benefits from understanding your full situation, or you're unsure which skill to use. Loads context proportionally - simple requests get simple responses.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-boundaries",
+      "description": "Validate that proposals respect Syner's operational boundaries. Use before executing significant actions, when reviewing skill outputs, or when unsure if an approach stays within limits. Triggers on \"check boundaries\", \"validate approach\", \"is this within scope\", or before destructive/complex operations.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-daily-briefing",
+      "description": "Daily coach that tells you what to do first. Analyzes GitHub activity, detects patterns, and gives opinionated recommendations. Use when asked for \"briefing\", \"daily status\", or on scheduled CI runs.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-enhance-skills",
+      "description": "Improve an existing skill by auditing and applying fixes. Use when asked to \"enhance skill\", \"improve skill\", \"fix skill issues\", or when code-reviewer detects skill file changes. Delegates to syner-skill-reviewer for audit, then proposes and applies fixes with user confirmation.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-fix-symlinks",
+      "description": "Fix skill and agent symlinks. Use when symlinks are broken, skills/agents not showing up, or after creating new ones.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-gh-auth",
+      "description": "Authenticate gh CLI using GitHub App tokens. Use BEFORE any gh command (issues, PRs, API calls). Use when gh auth fails, when \"not logged in\" errors appear, or proactively before GitHub operations.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-grow-orchestration",
+      "description": "Evolve orchestration decisions through maturity levels (L0→L3). Use when routing is unclear, components overlap, context loading is wrong, or boundaries are violated.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "syner-readme-enhancer",
+      "description": "Enhance READMEs for apps and packages by analyzing actual code. Detects maturity level, special capabilities (plan mode), and generates honest, focused READMEs. Use when creating or updating README files.",
+      "files": [
+        "SKILL.md",
+        "references/separation.md",
+        "references/examples.md"
+      ]
+    },
+    {
+      "name": "syner-skill-reviewer",
+      "description": "Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on \"review this skill\", \"audit skill\", \"check skill quality\", \"is this skill safe\", or when evaluating skills before publishing.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "test-syner-agent",
+      "description": "Test syner agents using output-first methodology. Use when testing an agent, validating behavior, or debugging agent output.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "track-idea",
+      "description": "Track idea evolution - proactively surfaces evolved ideas worth revisiting, or traces a specific concept manually.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "update-docs",
+      "description": "",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "update-syner-app",
+      "description": "Update existing applications to match the current syner standard stack. Ensures all apps maintain the same foundation and tooling.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "vaults-grow-specialist",
+      "description": "Evolve PKM specialists from friction observations to autonomous subagents. Use when the ideas system fails you, when retrieval breaks, or when synthesis falls short.",
+      "files": [
+        "SKILL.md",
+        "references/review.md",
+        "references/refine.md",
+        "references/promote.md",
+        "references/audit.md",
+        "references/graduate.md",
+        "references/status.md",
+        "references/observe.md"
+      ]
+    },
+    {
+      "name": "vercel-setup",
+      "description": "Configure Vercel environment variables for syner.bot. Use when deploying the bot, setting up env vars, or troubleshooting deployment issues.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "whats-next",
+      "description": "Tells you what to work on today. Synthesizes backlog items, grow observations, tasks, and GitHub issues into an opinionated action plan with prioritization and cross-referencing.",
+      "files": [
+        "SKILL.md",
+        "references/scoring.md",
+        "references/report-format.md",
+        "references/cross-reference.md",
+        "references/synthesis.md",
+        "references/sources.md"
+      ]
+    },
+    {
+      "name": "workflow-reviewer",
+      "description": "Review GitHub Actions workflows before running. Use when about to trigger a workflow, debugging workflow failures, or auditing workflow logic. Triggers on \"review workflow\", \"check this workflow\", \"before I run this\", \"why did this fail\".",
+      "files": [
+        "SKILL.md"
+      ]
+    }
+  ]
+}

@@ -39,13 +39,9 @@ export {
   createGlobTool,
   createGrepTool,
   createSkillTool,
-  // Skill execution
-  executeSkill,
-  // Registry
-  createTools,
-  createToolsByName,
+  createTaskTool,
 } from './tools'
-export type { ToolName, SandboxToolName, SpecialToolName, CreateSkillToolOptions, ExecuteSkillOptions } from './tools'
+export type { SkillIndex, SkillIndexEntry, CreateTaskToolOptions } from './tools'
 
 // Skills
 export {
@@ -83,6 +79,14 @@ export {
   createProgressEvent,
 } from './lib'
 export type { TimeoutAction, ProgressEvent } from './lib'
+
+// Durable agent (re-export from @workflow/ai)
+export { DurableAgent } from '@workflow/ai/agent'
+export type {
+  DurableAgentOptions,
+  DurableAgentStreamOptions,
+  DurableAgentStreamResult,
+} from '@workflow/ai/agent'
 
 // Sandbox management
 export { createAgentSandbox, stopSandbox } from './sandbox'

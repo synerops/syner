@@ -3,11 +3,15 @@
  *
  * Receives Slack events and responds using the unified session system.
  * Uses Chat SDK for message handling and automatic markdown conversion.
+ *
+ * Routing is LLM-driven: the agent's system prompt + available tools
+ * (Skill, delegate) let the LLM decide whether to respond directly,
+ * invoke a skill, or delegate to another agent.
  */
 
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { classifyAndRoute } from '@/lib/router'
+import { createSession } from '@/lib/session'
 import { env } from '@/lib/env'
 interface AgentCard {
   name: string
@@ -104,18 +108,14 @@ function getChat() {
             ].join('\n')
           }
 
-          // Route through classifier: direct, chain, or delegate
-          const response = await classifyAndRoute(
-            context.text,
-            { channel: context.channel, agent },
-            {
-              onStatus: (status) => {
-                console.log(`[Slack][${agent.name}] Status: ${status}`)
-              },
-            }
-          )
-
-          return response
+          // LLM-driven routing: the agent decides via its tools
+          const session = await createSession({ agent })
+          try {
+            const result = await session.generate(context.text)
+            return result.output?.text || '_No response_'
+          } finally {
+            await session.cleanup()
+          }
         },
       }
     )

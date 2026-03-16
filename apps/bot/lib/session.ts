@@ -4,17 +4,14 @@
  * Creates agent sessions that can be used from any interface (Slack, Chat API, etc.)
  * Encapsulates: agent config, sandbox, tools, skills, and generation.
  *
- * Uses lazy sandbox initialization: tools are defined immediately (so the LLM
- * sees them), but the sandbox is only created when a tool is first executed.
- * If the LLM can answer without tools, no sandbox is ever created.
+ * Skill injection: hybrid pattern (prepareStep + preprocessing)
+ * - Skill tool has NO execute — calling it pauses the loop
+ * - prepareStep injects skill content as user message (high attention priority)
+ * - Explicit /skillname in prompt preprocessed before the loop starts
  */
 
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
-import {
-  createSkillTool,
-  loadSkills,
-  buildInlineSkillContext,
-} from '@syner/vercel'
+import { SkillLoader } from '@syner/vercel'
 import { getAgentByName, resolveModel, type AgentCard } from '@syner/sdk/agents'
 import { createLazyToolSession, type ToolSession } from './tools'
 import {
@@ -30,13 +27,9 @@ import type { VaultStore } from '@syner/sdk/context'
 import path from 'path'
 
 export interface Session {
-  /** Agent configuration */
   agent: AgentCard
-  /** Working directory in sandbox (if tools enabled) */
   workdir: string
-  /** Generate a response for the given prompt */
   generate(prompt: string): Promise<Result<GenerateResult>>
-  /** Cleanup sandbox and resources */
   cleanup(): Promise<void>
 }
 
@@ -47,40 +40,23 @@ export interface GenerateResult {
 }
 
 export interface SessionOptions {
-  /** Agent name (default: 'syner') - ignored if agent config provided */
   agentName?: string
-  /** Full agent config (use this to avoid fs lookups in serverless) */
   agent?: AgentCard
-  /** Vault store for context resolution */
   vaultStore?: VaultStore
-  /** Context request (scope, app, query) for vault loading */
   contextRequest?: ContextRequest
-  /** Callback when status changes (e.g., 'Cloning repository...') */
   onStatus?: (status: string) => void | Promise<void>
-  /** Callback when tool starts */
   onToolStart?: (toolName: string) => void
-  /** Callback when tool finishes */
   onToolFinish?: (toolName: string, durationMs: number, success: boolean) => void
-  /** Callback when step finishes */
   onStepFinish?: (stepNumber: number, toolNames: string[]) => void
-  /** Callback when generation produces a result (success or error) */
   onResult?: (result: Result<GenerateResult>) => Promise<void> | void
 }
 
 const DEFAULT_AGENT = 'syner'
 
-// Project root is two levels up from apps/bot
 function getProjectRoot(): string {
   return path.resolve(process.cwd(), '../..')
 }
 
-/**
- * Create a session for an agent
- *
- * Tools are provided to the LLM immediately (lazy initialization), but the
- * sandbox is only created if/when the LLM actually calls a tool. This means
- * conversational messages get fast responses with no sandbox overhead.
- */
 export async function createSession(options?: SessionOptions): Promise<Session> {
   const onStatus = options?.onStatus || (() => {})
 
@@ -98,29 +74,55 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     agent = foundAgent
   }
 
-  // 2. Create lazy tool session (no sandbox yet — created on first tool call)
+  // 2. Create lazy tool session (sandbox tools)
   let toolSession: ToolSession | undefined
   if (agent.tools && agent.tools.length > 0) {
     toolSession = createLazyToolSession(agent.tools, undefined, onStatus)
   }
 
-  // 3. Resolve model tier and fallback chain
+  // 3. Set up SkillLoader
+  const projectRoot = getProjectRoot()
+  const skillLoader = new SkillLoader({
+    indexPath: path.join(projectRoot, 'public/.well-known/skills/index.json'),
+    skillDirs: [
+      path.join(projectRoot, 'skills'),
+      path.join(projectRoot, 'apps/bot/skills'),
+      path.join(projectRoot, 'apps/dev/skills'),
+      path.join(projectRoot, 'apps/vaults/skills'),
+    ],
+  })
+
+  // 4. Build tools: sandbox tools + Skill tool (no execute)
+  const tools: Record<string, unknown> = {
+    ...(toolSession?.tools ?? {}),
+  }
+  if (skillLoader.names.length > 0) {
+    tools.Skill = skillLoader.createTool()
+  }
+
+  // 5. Build instructions: agent instructions + skill descriptions
+  const skillDescriptions = skillLoader.describeSkills()
+  const instructions = skillDescriptions
+    ? `${agent.instructions}\n\n${skillDescriptions}`
+    : agent.instructions
+
+  // 6. Resolve model
   const tier = agent.model ?? 'sonnet'
   const { model, fallbacks, modelId } = resolveModel(tier)
 
-  // 4. Create the ToolLoopAgent
+  // 7. Create ToolLoopAgent with prepareStep for skill injection
   const loopAgent = new ToolLoopAgent({
     id: agent.name,
     model,
-    instructions: agent.instructions,
-    tools: toolSession?.tools ?? ({} as ToolSet),
+    instructions,
+    tools: tools as ToolSet,
     stopWhen: stepCountIs(10),
+    prepareStep: skillLoader.createPrepareStep(),
     providerOptions: {
       gateway: { models: fallbacks },
     },
   })
 
-  // 5. Return session interface
   return {
     agent,
     get workdir() { return toolSession?.workdir || '.' },
@@ -128,6 +130,9 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
     async generate(prompt: string): Promise<Result<GenerateResult>> {
       await onStatus('Thinking...')
       const startTime = Date.now()
+
+      // Preprocess: detect /skillname and inject content into prompt
+      const processedPrompt = skillLoader.preprocessPrompt(prompt)
 
       const loadedSources: ContextSource[] = []
       const missingTopics: string[] = []
@@ -157,7 +162,7 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
 
       try {
         const result = await loopAgent.generate({
-          prompt,
+          prompt: processedPrompt,
 
           experimental_onToolCallStart({ toolCall }) {
             options?.onToolStart?.(toolCall.toolName)
@@ -183,10 +188,9 @@ export async function createSession(options?: SessionOptions): Promise<Session> 
           toolCalls: toolCallsList,
         }
 
-        const hasText = output.text.length > 0
         const verification = verify(
           action.expectedEffects,
-          { 'Response generated': hasText }
+          { 'Response generated': output.text.length > 0 }
         )
 
         const ospResult = {

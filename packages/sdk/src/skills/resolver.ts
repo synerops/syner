@@ -1,4 +1,4 @@
-import type { Skill } from './types'
+import type { Skill } from '@syner/osprotocol'
 import { getSkillsRegistry } from './loader'
 
 export interface ResolvedSkill {
@@ -52,10 +52,11 @@ function computeOverlap(intentTokens: string[], skillTokens: string[]): number {
 }
 
 /**
- * Build searchable tokens for a skill from its slug, name, and description.
+ * Build searchable tokens for a skill from its name and description.
  */
 function getSkillTokens(skill: Skill): string[] {
-  const parts = [skill.slug, skill.name, skill.description].filter(Boolean)
+  const slug = skill.metadata?.slug || skill.name
+  const parts = [slug, skill.name, skill.description].filter(Boolean)
   return tokenize(parts.join(' '))
 }
 
@@ -80,7 +81,7 @@ export async function resolveSkill(
     const entry = registry.skills.get(slug)
     if (entry) {
       return {
-        slug: entry.skill.slug,
+        slug: entry.skill.metadata?.slug || entry.skill.name,
         skill: entry.skill,
         confidence: 1.0,
         reason: `Exact match: intent starts with /${slug}`,
@@ -104,7 +105,7 @@ export async function resolveSkill(
     if (score > bestScore) {
       bestScore = score
       bestMatch = {
-        slug: entry.skill.slug,
+        slug: entry.skill.metadata?.slug || entry.skill.name,
         skill: entry.skill,
         confidence: Math.min(score, 1.0),
         reason: buildReason(intentTokens, skillTokens, entry.skill),

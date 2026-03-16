@@ -1,5 +1,5 @@
 import {
-  type Run,
+  type Run as OspRun,
   type RunAdapter,
   type RunRequest,
   type RunEvent,
@@ -8,11 +8,9 @@ import {
   createRun,
   updateRunStatus,
 } from '@syner/osprotocol'
-import { approvalToken, createAutoApproval, isQuorumMet } from './lib/approval'
-import { resolveTimeoutAction, createTimeoutRace } from './lib/timeout'
-import { computeDelay, shouldRetry } from './lib/retry'
+import { start, type StartOptions, Run as WorkflowRunHandle } from 'workflow/api'
+import { approvalToken, isQuorumMet } from './lib/approval'
 import { checkBeforeCancel, gracefulTimeout } from './lib/cancel'
-import { createProgressEvent } from './lib/progress'
 
 export interface VercelRunAdapterConfig {
   /** Called when a run event occurs (status transitions) */
@@ -21,17 +19,27 @@ export interface VercelRunAdapterConfig {
   beforeCancel?: () => Promise<boolean>
   /** Number of approvals required for quorum (default: 1) */
   requiredApprovals?: number
+  /** Workflow start options (deploymentId, etc.) */
+  startOptions?: StartOptions
 }
 
 /**
  * VercelRunAdapter implements OSProtocol RunAdapter over Vercel Workflow primitives.
  *
- * Currently provides the adapter logic layer (approval, timeout, retry, cancel).
- * Workflow runtime connection (start, createHook, etc.) will be wired
- * when `workflow` + `@workflow/ai` are installed (#559).
+ * Maps OSProtocol Run lifecycle (pending → in-progress → completed/failed/cancelled)
+ * to Vercel Workflow's `start()`, `run.status`, `run.cancel()`, and hook-based approval.
+ *
+ * To connect a Workflow function, pass it in `request.metadata.workflow`:
+ * ```ts
+ * adapter.start({ prompt: '...', metadata: { workflow: myWorkflowFn } })
+ * ```
+ *
+ * Without a workflow function, operates in protocol-only mode (status tracking
+ * without Workflow runtime).
  */
 export class VercelRunAdapter implements RunAdapter {
-  private runs = new Map<string, Run>()
+  private runs = new Map<string, OspRun>()
+  private workflowHandles = new Map<string, WorkflowRunHandle<unknown>>()
   private approvals = new Map<string, Approval[]>()
   private config: VercelRunAdapterConfig
 
@@ -39,7 +47,7 @@ export class VercelRunAdapter implements RunAdapter {
     this.config = config
   }
 
-  async start(request: RunRequest): Promise<Run> {
+  async start(request: RunRequest): Promise<OspRun> {
     const id = crypto.randomUUID()
     const run = createRun({ id })
 
@@ -48,17 +56,50 @@ export class VercelRunAdapter implements RunAdapter {
 
     await this.emitEvent(run, 'pending', 'pending')
 
-    // TODO: Wire to Workflow `start()` when deps are installed
-    // const workflowRun = await start({ ... })
+    // Workflow `start()` requires a workflow function or metadata object.
+    // Callers provide it via request.metadata.workflow.
+    const workflow = request.metadata?.workflow
+    if (workflow) {
+      // Cast to the union type that start() accepts
+      const wfRun = await start(
+        workflow as Parameters<typeof start>[0],
+        this.config.startOptions,
+      )
+      this.workflowHandles.set(id, wfRun)
+    }
 
     return run
   }
 
-  async get(id: string): Promise<Run> {
-    const run = this.runs.get(id)
+  async get(id: string): Promise<OspRun> {
+    let run = this.runs.get(id)
     if (!run) throw new Error(`Run not found: ${id}`)
 
-    // TODO: Map Workflow internal state to OSProtocol RunStatus
+    // Sync status from Workflow runtime when a handle exists
+    const wfHandle = this.workflowHandles.get(id)
+    if (wfHandle) {
+      run = this.syncWorkflowStatus(id, run, await wfHandle.status)
+    }
+
+    return run
+  }
+
+  /**
+   * Map Workflow runtime status to OSProtocol RunStatus and persist.
+   * Separated from get() to avoid TS narrowing issues.
+   */
+  private syncWorkflowStatus(id: string, run: OspRun, wfStatus: string): OspRun {
+    const terminal = ['completed', 'failed', 'cancelled'] as const
+    if (terminal.includes(run.status as typeof terminal[number])) return run
+
+    if (wfStatus === 'completed' || wfStatus === 'failed') {
+      const ospStatus = wfStatus as 'completed' | 'failed'
+      const updated = updateRunStatus(run, ospStatus)
+      const withTimestamp = { ...updated, completedAt: new Date().toISOString() }
+      this.runs.set(id, withTimestamp)
+      return withTimestamp
+    }
+
     return run
   }
 
@@ -73,16 +114,19 @@ export class VercelRunAdapter implements RunAdapter {
 
     const timeout = gracefulTimeout(cancel)
     if (timeout > 0) {
-      // Graceful: wait for timeout before forcing cancel
       await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+
+    // Cancel the Workflow runtime run if one exists
+    const wfHandle = this.workflowHandles.get(id)
+    if (wfHandle) {
+      await wfHandle.cancel()
     }
 
     const updated = updateRunStatus(run, 'cancelled')
     this.runs.set(id, { ...updated, cancel, completedAt: new Date().toISOString() })
 
     await this.emitEvent(run, run.status, 'cancelled')
-
-    // TODO: Wire to Workflow `cancel()` when deps are installed
   }
 
   async approve(id: string, approval: Approval): Promise<void> {
@@ -99,12 +143,10 @@ export class VercelRunAdapter implements RunAdapter {
       this.runs.set(id, { ...updated, approval })
 
       await this.emitEvent(run, 'awaiting', 'in-progress')
-
-      // TODO: Wire to Workflow `resumeHook(token, approval)` when deps are installed
     }
   }
 
-  private async emitEvent(run: Run, from: Run['status'], to: Run['status']): Promise<void> {
+  private async emitEvent(run: OspRun, from: OspRun['status'], to: OspRun['status']): Promise<void> {
     if (!this.config.onEvent) return
     await this.config.onEvent({
       runId: run.id,

@@ -6,7 +6,6 @@ export interface RunRequest {
     scope: 'none' | 'app' | 'project' | 'targeted' | 'full'
     app?: string
   }
-  tools?: string[]
   metadata?: Record<string, unknown>
 }
 

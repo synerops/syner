@@ -1,211 +1,225 @@
-import { tool, ToolLoopAgent, stepCountIs, type LanguageModel, type Tool } from 'ai'
+import { tool } from 'ai'
+import { readFileSync, existsSync } from 'fs'
+import path from 'path'
 import { z } from 'zod'
-import { loadSkill, buildSkillInstructions, type SkillConfig } from '../skills/loader'
-import {
-  createContext,
-  createAction,
-  verify,
-  createResult,
-  type Result,
-  type OspResult,
-} from '@syner/osprotocol'
 
-export interface ExecuteSkillOptions {
-  /** Repository root path */
-  repoRoot: string
-  /** Tools available to the subagent */
-  tools: Record<string, Tool>
-  /** Model to use for subagent (already instantiated) */
-  model: LanguageModel
-  /** Abort signal for cancellation */
-  abortSignal?: AbortSignal
+export interface SkillIndexEntry {
+  name: string
+  description: string
+  files: string[]
+}
+
+export interface SkillIndex {
+  skills: SkillIndexEntry[]
+}
+
+export interface SkillLoaderOptions {
+  /** Path to the skills index.json */
+  indexPath: string
+  /** Base directories where skill directories live */
+  skillDirs: string[]
 }
 
 /**
- * Execute a skill by name as a standalone function.
+ * Skill loader + tool factory.
  *
- * Loads the skill manifest, creates an osprotocol context/action,
- * runs the skill via a ToolLoopAgent, and returns a typed Result.
- *
- * This is the core execution primitive — `createSkillTool()` delegates here.
- *
- * Note: Unlike `createSkillTool()`, this does NOT cache loaded skills.
- * This is intentional — standalone calls are stateless by design,
- * and callers that need caching should use `createSkillTool()` instead.
+ * Hybrid pattern:
+ * 1. Skill descriptions always in system prompt (agent knows what's available)
+ * 2. Skill tool has NO execute — calling it pauses the loop
+ * 3. prepareStep detects the skill call, injects content as user message
+ * 4. Agent sees skill content with high attention priority (user message > tool result)
+ * 5. Preprocessing for explicit /skillname in user prompts
  */
-export async function executeSkill(
-  ref: string,
-  input: string,
-  options: ExecuteSkillOptions
-): Promise<OspResult<string>> {
-  const { repoRoot, tools, model } = options
+export class SkillLoader {
+  private index: SkillIndex
+  private skillMap: Map<string, SkillIndexEntry>
+  private skillDirs: string[]
 
-  // 1. Load skill
-  const skill = await loadSkill(repoRoot, ref)
-  if (!skill) {
-    const context = createContext({
-      agentId: `skill-${ref}`,
-      skillRef: ref,
-      loaded: [],
-      missing: [`skill:${ref} — not found in repository`],
-    })
-    const action = createAction({
-      description: `Execute skill "${ref}"`,
-      expectedEffects: [{ description: 'Skill completed successfully', verifiable: true }],
-    })
-    const verification = verify(action.expectedEffects, { 'Skill completed successfully': false })
-    return {
-      ...createResult(context, action, verification),
-      duration: 0,
-    }
+  constructor(options: SkillLoaderOptions) {
+    this.skillDirs = options.skillDirs
+    this.index = loadIndex(options.indexPath)
+    this.skillMap = new Map(this.index.skills.map(s => [s.name, s]))
   }
 
-  return executeSkillWithConfig(skill, input, options)
-}
+  /** All available skill names */
+  get names(): string[] {
+    return this.index.skills.map(s => s.name)
+  }
 
-/**
- * Execute a skill from an already-loaded SkillConfig.
- * Internal helper shared by `executeSkill()` and `createSkillTool()`.
- */
-async function executeSkillWithConfig(
-  skill: SkillConfig,
-  input: string,
-  options: ExecuteSkillOptions
-): Promise<OspResult<string>> {
-  const { repoRoot, tools, model, abortSignal } = options
-  const name = skill.name
+  /** Check if a skill exists in the index */
+  has(name: string): boolean {
+    return this.skillMap.has(name)
+  }
 
-  // Build skill instructions with arguments
-  const instructions = buildSkillInstructions(skill, input)
+  /** Skill descriptions for system prompt injection */
+  describeSkills(): string {
+    if (this.index.skills.length === 0) return ''
 
-  // Determine which tools the subagent can use
-  let subagentTools = tools
-  if (skill.tools && skill.tools.length > 0) {
-    const allowedTools = new Set(skill.tools.map(t => t.toLowerCase()))
-    subagentTools = Object.fromEntries(
-      Object.entries(tools).filter(([toolName]) =>
-        allowedTools.has(toolName.toLowerCase())
+    const lines = [
+      '## Available Skills',
+      '',
+      'You can load specialized instructions using the Skill tool.',
+      'Call it when a task matches one of these skills:',
+      '',
+    ]
+
+    for (const skill of this.index.skills) {
+      lines.push(`- **${skill.name}**: ${skill.description}`)
+    }
+
+    return lines.join('\n')
+  }
+
+  /**
+   * Create the Skill tool — NO execute function.
+   *
+   * execute returns true (minimal ack) so the loop continues.
+   * prepareStep on the next step injects the skill content as a user message.
+   *
+   * Without execute, the loop would terminate (AI SDK treats no-execute as stop signal).
+   */
+  createTool() {
+    const skillList = this.index.skills
+      .map(s => `- ${s.name}: ${s.description}`)
+      .join('\n')
+
+    return tool({
+      description: this.index.skills.length > 0
+        ? `Load specialized instructions for a task. Available skills:\n${skillList}`
+        : 'Load specialized instructions. No skills available.',
+      inputSchema: z.object({
+        name: z.string().describe('Skill name to load'),
+      }),
+      execute: async () => true,
+    })
+  }
+
+  /**
+   * prepareStep handler — detects Skill tool calls and injects content.
+   *
+   * Wire this into the ToolLoopAgent's prepareStep:
+   * ```ts
+   * prepareStep: skillLoader.createPrepareStep()
+   * ```
+   */
+  createPrepareStep() {
+    return ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; args: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown; experimental_context: unknown }) => {
+      if (steps.length === 0) return {}
+
+      const lastStep = steps[steps.length - 1]
+      const skillCall = lastStep?.toolCalls?.find(
+        (tc: { toolName: string }) => tc.toolName === 'Skill'
       )
-    )
-  }
+      if (!skillCall) return {}
 
-  // Create subagent with skill instructions
-  const skillAgent = new ToolLoopAgent({
-    id: `skill-${name}`,
-    model,
-    instructions: `${instructions}\n\n## Working Directory\n\nThe repository is available at: ${repoRoot}`,
-    tools: subagentTools,
-    stopWhen: stepCountIs(10),
-  })
+      const skillName = skillCall.args.name as string
 
-  console.log(`[Skill:${name}] Starting subagent for task: "${input.slice(0, 100)}..."`)
+      // Validate against index (no disk I/O)
+      if (!this.has(skillName)) return {}
 
-  const startTime = Date.now()
+      // Load content from disk
+      const content = this.loadContent(skillName)
+      if (!content) return {}
 
-  const context = createContext({
-    agentId: `skill-${name}`,
-    skillRef: name,
-    loaded: [{ type: 'skill' as const, ref: name, summary: skill.description }],
-    missing: [],
-  })
-
-  const action = createAction({
-    description: `Execute skill "${name}": ${input.slice(0, 100)}`,
-    expectedEffects: [{ description: 'Skill completed successfully', verifiable: true }],
-  })
-
-  try {
-    const result = await skillAgent.generate({
-      prompt: input,
-      abortSignal,
-    })
-
-    const output = result.text || 'Skill completed with no output'
-    const verification = verify(action.expectedEffects, { 'Skill completed successfully': true })
-
-    const ospResult: OspResult<string> = {
-      ...createResult(context, action, verification, output),
-      duration: Date.now() - startTime,
-    }
-
-    console.log(`[Skill:${name}] Completed (${ospResult.verification.status})`)
-
-    return ospResult
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    const verification = verify(action.expectedEffects, { 'Skill completed successfully': false })
-
-    const ospResult: OspResult<string> = {
-      ...createResult(context, action, verification, errorMessage),
-      duration: Date.now() - startTime,
-    }
-
-    console.error(`[Skill:${name}] Error (${ospResult.verification.status}):`, errorMessage)
-
-    return ospResult
-  }
-}
-
-export interface CreateSkillToolOptions {
-  /** Repository root path in the sandbox */
-  repoRoot: string
-  /** List of skill names this agent can use */
-  availableSkills: string[]
-  /** Tools available to the subagent */
-  tools: Record<string, Tool>
-  /** Model to use for subagent (already instantiated) */
-  model: LanguageModel
-}
-
-/**
- * Create a Skill tool that invokes skills as subagents (fork mode)
- *
- * The agent calls this tool to delegate work to a skill.
- * The skill runs in its own context with its own instructions.
- * Delegates to `executeSkill()` internally.
- */
-export function createSkillTool(options: CreateSkillToolOptions) {
-  const { repoRoot, availableSkills, tools, model } = options
-
-  // Cache loaded skills
-  const skillCache = new Map<string, SkillConfig>()
-
-  const inputSchema = z.object({
-    name: z.string().describe('Skill name (e.g., create-syner-skill, syner-fix-symlinks)'),
-    task: z.string().describe('The task or arguments to pass to the skill'),
-  })
-
-  return tool({
-    description: `Invoke a skill to handle a specialized task. Available skills: ${availableSkills.join(', ')}`,
-    inputSchema,
-    execute: async (
-      { name, task }: z.infer<typeof inputSchema>,
-      { abortSignal }: { abortSignal?: AbortSignal }
-    ): Promise<string> => {
-      // Validate skill is available
-      if (!availableSkills.includes(name)) {
-        return `Error: Skill "${name}" not available. Available skills: ${availableSkills.join(', ')}`
+      // Inject skill content as user message (high attention priority)
+      // execute() already returned true → tool result is in messages
+      // We append the skill content as a user message
+      return {
+        messages: [
+          ...messages,
+          {
+            role: 'user' as const,
+            content: content,
+          },
+        ],
       }
+    }
+  }
 
-      // Load skill with caching
-      let skill = skillCache.get(name)
-      if (!skill) {
-        const loadedSkill = await loadSkill(repoRoot, name)
-        if (!loadedSkill) {
-          return `Error: Skill "${name}" not found in repository`
+  /** Load full skill content (SKILL.md + support files) as XML-wrapped context */
+  loadContent(name: string): string | null {
+    const entry = this.skillMap.get(name)
+    if (!entry) return null
+
+    const skillDir = findSkillDir(this.skillDirs, name)
+    if (!skillDir) return null
+
+    return loadSkillContent(skillDir, entry)
+  }
+
+  /**
+   * Preprocess a prompt — detect /skillname and prepend content.
+   *
+   * For explicit skill invocations from the user (e.g., Slack `/deploy`).
+   * Returns the prompt unchanged if no skill reference found.
+   */
+  preprocessPrompt(prompt: string): string {
+    const trimmed = prompt.trim()
+
+    if (trimmed.startsWith('/')) {
+      const [command, ...rest] = trimmed.split(/\s+/)
+      const skillName = command.slice(1)
+
+      // Validate against index before disk I/O
+      if (this.has(skillName)) {
+        const content = this.loadContent(skillName)
+        if (content) {
+          const args = rest.join(' ')
+          const processed = content
+            .replace(/\$ARGUMENTS/g, args)
+            .replace(/\$(\d+)/g, (_, n) => rest[parseInt(n)] || '')
+
+          return `${processed}\n\n---\n\nUser request: ${args || trimmed}`
         }
-        skill = loadedSkill
-        skillCache.set(name, skill)
       }
+    }
 
-      // Delegate to executeSkillWithConfig with abortSignal in options
-      const result = await executeSkillWithConfig(
-        skill,
-        task,
-        { repoRoot, tools, model, abortSignal }
-      )
+    return prompt
+  }
+}
 
-      return JSON.stringify(result)
-    },
-  })
+// --- Internal helpers ---
+
+function loadIndex(indexPath: string): SkillIndex {
+  if (!existsSync(indexPath)) {
+    return { skills: [] }
+  }
+  return JSON.parse(readFileSync(indexPath, 'utf-8'))
+}
+
+function findSkillDir(skillDirs: string[], skillName: string): string | null {
+  for (const dir of skillDirs) {
+    const candidate = path.join(dir, skillName, 'SKILL.md')
+    if (existsSync(candidate)) {
+      return path.join(dir, skillName)
+    }
+    const { glob } = require('glob') as typeof import('glob')
+    const files = glob.sync(path.join(dir, '**', skillName, 'SKILL.md'))
+    if (files.length > 0) {
+      return path.dirname(files[0])
+    }
+  }
+  return null
+}
+
+function loadSkillContent(skillDir: string, entry: SkillIndexEntry): string {
+  const parts: string[] = []
+
+  for (const file of entry.files) {
+    const filePath = path.join(skillDir, file)
+    if (!existsSync(filePath)) continue
+
+    try {
+      const content = readFileSync(filePath, 'utf-8')
+      if (file === 'SKILL.md') {
+        parts.push(`<skill-instructions name="${entry.name}">\n${content}\n</skill-instructions>`)
+      } else {
+        parts.push(`<skill-file path="${file}">\n${content}\n</skill-file>`)
+      }
+    } catch {
+      // Skip unreadable files
+    }
+  }
+
+  return parts.join('\n\n')
 }
