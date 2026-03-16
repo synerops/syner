@@ -12,11 +12,7 @@ export {
   createAction,
 } from './types/action'
 
-export {
-  type InputField,
-  type OutputField,
-  type Skill,
-} from './types/skill'
+export { type Skill } from './types/skill'
 
 export {
   type Assertion,
