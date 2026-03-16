@@ -38,10 +38,10 @@ export {
   createEditTool,
   createGlobTool,
   createGrepTool,
-  createSkillTool,
+  SkillLoader,
   createTaskTool,
 } from './tools'
-export type { SkillIndex, SkillIndexEntry, CreateTaskToolOptions } from './tools'
+export type { SkillIndex, SkillIndexEntry, SkillLoaderOptions, CreateTaskToolOptions } from './tools'
 
 // Skills
 export {
