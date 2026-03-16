@@ -1,12 +1,11 @@
 // @syner/osprotocol — Agent execution protocol
 // context → action → verification lifecycle
 
-export { type ContextSource, type Context, type OspContext, createContext } from './types/context'
+export { type ContextSource, type Context, createContext } from './types/context'
 
 export {
   type Effect,
   type Action,
-  type OspAction,
   type Precondition,
   checkPreconditions,
   createAction,
@@ -18,12 +17,11 @@ export {
   type Assertion,
   type Escalation,
   type Verification,
-  type OspVerification,
   escalate,
   verify,
 } from './types/verification'
 
-export { type Result, type OspResult, createResult } from './types/result'
+export { type Result, createResult } from './types/result'
 
 export {
   validateAction,
@@ -49,3 +47,25 @@ export {
   createRun,
   updateRunStatus,
 } from './types/run'
+
+// Schemas — for consumers that want runtime validation
+export {
+  ContextSourceSchema,
+  ContextSchema,
+  PreconditionSchema,
+  EffectSchema,
+  ActionSchema,
+  AssertionSchema,
+  EscalationSchema,
+  VerificationSchema,
+  ResultSchema,
+  SkillSchema,
+  RunStatusSchema,
+  RunActivitySchema,
+  ProgressSchema,
+  TimeoutSchema,
+  RetrySchema,
+  ApprovalSchema,
+  CancelSchema,
+  RunSchema,
+} from './schemas'

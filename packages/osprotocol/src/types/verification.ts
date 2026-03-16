@@ -1,25 +1,6 @@
-import type { Effect } from './action'
+export type { Assertion, Escalation, Verification } from '../schemas'
 
-export interface Assertion {
-  effect: string
-  result: boolean
-  evidence?: string
-}
-
-export interface Escalation {
-  strategy: 'rollback' | 'escalate' | 'retry'
-  target?: string
-  reason: string
-}
-
-export interface Verification {
-  status: 'passed' | 'failed' | 'partial'
-  assertions: Assertion[]
-  escalation?: Escalation
-}
-
-/** @deprecated Use Verification instead */
-export type OspVerification = Verification
+import type { Effect, Assertion, Verification, Escalation } from '../schemas'
 
 export function verify(
   effects: Effect[],

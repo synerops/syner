@@ -1,106 +1,38 @@
-import type { Context } from './types/context'
-import type { Action } from './types/action'
-import type { Verification } from './types/verification'
-import type { Result } from './types/result'
-import type { Run, RunStatus, Approval, Cancel } from './types/run'
-
-function isObject(x: unknown): x is Record<string, unknown> {
-  return typeof x === 'object' && x !== null && !Array.isArray(x)
-}
-
-function isString(x: unknown): x is string {
-  return typeof x === 'string'
-}
-
-function isArray(x: unknown): x is unknown[] {
-  return Array.isArray(x)
-}
+import {
+  ContextSchema,
+  ActionSchema,
+  VerificationSchema,
+  ResultSchema,
+  RunSchema,
+  ApprovalSchema,
+  CancelSchema,
+} from './schemas'
+import type { Context, Action, Verification, Result, Run, Approval, Cancel } from './schemas'
 
 export function validateContext(x: unknown): x is Context {
-  if (!isObject(x)) return false
-  if (!isString(x.agentId)) return false
-  if (!isString(x.skillRef)) return false
-  if (!isArray(x.loaded)) return false
-  if (!isArray(x.missing)) return false
-  if (!isString(x.timestamp)) return false
-  return true
+  return ContextSchema.safeParse(x).success
 }
 
 export function validateAction(x: unknown): x is Action {
-  if (!isObject(x)) return false
-  if (!isString(x.description)) return false
-  if (!isArray(x.preconditions)) return false
-  if (!isArray(x.expectedEffects)) return false
-  if (x.rollbackStrategy !== undefined) {
-    if (!['revert', 'escalate', 'noop'].includes(x.rollbackStrategy as string)) return false
-  }
-  return true
+  return ActionSchema.safeParse(x).success
 }
 
 export function validateVerification(x: unknown): x is Verification {
-  if (!isObject(x)) return false
-  if (!isString(x.status)) return false
-  if (!['passed', 'failed', 'partial'].includes(x.status as string)) return false
-  if (!isArray(x.assertions)) return false
-  return true
+  return VerificationSchema.safeParse(x).success
 }
 
 export function validateResult(x: unknown): x is Result {
-  if (!isObject(x)) return false
-  if (!validateContext(x.context)) return false
-  if (!validateAction(x.action)) return false
-  if (!validateVerification(x.verification)) return false
-  if (typeof x.duration !== 'number') return false
-  return true
-}
-
-const VALID_RUN_STATUSES: RunStatus[] = [
-  'pending', 'in-progress', 'awaiting',
-  'completed', 'failed', 'cancelled',
-]
-
-export function validateApproval(x: unknown): x is Approval {
-  if (!isObject(x)) return false
-  if (typeof x.approved !== 'boolean') return false
-  if (!isString(x.timestamp)) return false
-  if (x.reason !== undefined && !isString(x.reason)) return false
-  if (x.approvedBy !== undefined && !isString(x.approvedBy)) return false
-  if (x.metadata !== undefined && !isObject(x.metadata)) return false
-  return true
-}
-
-export function validateCancel(x: unknown): x is Cancel {
-  if (!isObject(x)) return false
-  if (x.reason !== undefined && !isString(x.reason)) return false
-  if (x.graceful !== undefined && typeof x.graceful !== 'boolean') return false
-  if (x.gracefulTimeoutMs !== undefined && typeof x.gracefulTimeoutMs !== 'number') return false
-  if (x.allowVeto !== undefined && typeof x.allowVeto !== 'boolean') return false
-  if (x.metadata !== undefined && !isObject(x.metadata)) return false
-  return true
+  return ResultSchema.safeParse(x).success
 }
 
 export function validateRun(x: unknown): x is Run {
-  if (!isObject(x)) return false
-  if (!isString(x.id)) return false
-  if (!isString(x.status)) return false
-  if (!VALID_RUN_STATUSES.includes(x.status as RunStatus)) return false
-  if (!isArray(x.results)) return false
-  if (!isString(x.startedAt)) return false
-  if (x.approval !== undefined && !validateApproval(x.approval)) return false
-  if (x.cancel !== undefined && !validateCancel(x.cancel)) return false
-  if (x.timeout !== undefined) {
-    if (!isObject(x.timeout)) return false
-    if (typeof (x.timeout as Record<string, unknown>).duration !== 'number') return false
-    if (!['fail', 'cancel', 'continue'].includes((x.timeout as Record<string, unknown>).strategy as string)) return false
-  }
-  if (x.retry !== undefined) {
-    if (!isObject(x.retry)) return false
-    if (typeof (x.retry as Record<string, unknown>).maxAttempts !== 'number') return false
-    if (typeof (x.retry as Record<string, unknown>).delay !== 'number') return false
-  }
-  if (x.activity !== undefined) {
-    if (!['idle', 'executing', 'waiting', 'thinking'].includes(x.activity as string)) return false
-  }
-  if (x.lastHeartbeat !== undefined && !isString(x.lastHeartbeat)) return false
-  return true
+  return RunSchema.safeParse(x).success
+}
+
+export function validateApproval(x: unknown): x is Approval {
+  return ApprovalSchema.safeParse(x).success
+}
+
+export function validateCancel(x: unknown): x is Cancel {
+  return CancelSchema.safeParse(x).success
 }

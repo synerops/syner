@@ -1,20 +1,6 @@
-export interface ContextSource {
-  type: 'vault' | 'file' | 'api' | 'skill'
-  ref: string
-  summary?: string
-}
+export type { ContextSource, Context } from '../schemas'
 
-export interface Context {
-  agentId: string
-  skillRef: string
-  loaded: ContextSource[]
-  missing: string[]
-  timestamp: string
-  parentContext?: string
-}
-
-/** @deprecated Use Context instead */
-export type OspContext = Context
+import type { Context } from '../schemas'
 
 export function createContext(
   partial: Partial<Context> & Pick<Context, 'agentId' | 'skillRef'>
