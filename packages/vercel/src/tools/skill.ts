@@ -73,8 +73,10 @@ export class SkillLoader {
   /**
    * Create the Skill tool — NO execute function.
    *
-   * When the LLM calls this tool, the agent loop pauses because there's
-   * no execute. prepareStep then injects the skill content as a user message.
+   * execute returns true (minimal ack) so the loop continues.
+   * prepareStep on the next step injects the skill content as a user message.
+   *
+   * Without execute, the loop would terminate (AI SDK treats no-execute as stop signal).
    */
   createTool() {
     const skillList = this.index.skills
@@ -88,7 +90,7 @@ export class SkillLoader {
       inputSchema: z.object({
         name: z.string().describe('Skill name to load'),
       }),
-      // NO execute — pauses the loop, prepareStep handles injection
+      execute: async () => true,
     })
   }
 
@@ -112,54 +114,19 @@ export class SkillLoader {
 
       const skillName = skillCall.args.name as string
 
-      // Validate against index first (no disk I/O)
-      if (!this.has(skillName)) {
-        return {
-          messages: [
-            ...messages,
-            {
-              role: 'tool' as const,
-              content: [{
-                type: 'tool-result' as const,
-                toolCallId: skillCall.toolCallId,
-                result: `Skill "${skillName}" not found in index. Available: ${this.names.join(', ')}`,
-              }],
-            },
-          ],
-        }
-      }
+      // Validate against index (no disk I/O)
+      if (!this.has(skillName)) return {}
 
-      // Load content from disk (skill exists in index)
+      // Load content from disk
       const content = this.loadContent(skillName)
+      if (!content) return {}
 
-      if (!content) {
-        return {
-          messages: [
-            ...messages,
-            {
-              role: 'tool' as const,
-              content: [{
-                type: 'tool-result' as const,
-                toolCallId: skillCall.toolCallId,
-                result: `Skill "${skillName}" exists in index but content not found on disk.`,
-              }],
-            },
-          ],
-        }
-      }
-
-      // Inject: tool result (ack) + skill content as user message
+      // Inject skill content as user message (high attention priority)
+      // execute() already returned true → tool result is in messages
+      // We append the skill content as a user message
       return {
         messages: [
           ...messages,
-          {
-            role: 'tool' as const,
-            content: [{
-              type: 'tool-result' as const,
-              toolCallId: skillCall.toolCallId,
-              result: `Loaded skill "${skillName}". Follow the instructions below.`,
-            }],
-          },
           {
             role: 'user' as const,
             content: content,

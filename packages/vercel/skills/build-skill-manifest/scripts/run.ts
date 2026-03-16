@@ -118,17 +118,19 @@ const withSkillCall = prepareStep({
 
 if (withSkillCall && 'messages' in withSkillCall) {
   const msgs = withSkillCall.messages as Array<{ role: string; content: unknown }>
-  const hasToolResult = msgs.some(m => m.role === 'tool')
-  const hasUserMessage = msgs.filter(m => m.role === 'user').length > 1
+  const userMessages = msgs.filter(m => m.role === 'user')
+  const injectedContent = userMessages.length > 1
+  const lastUser = userMessages[userMessages.length - 1]
+  const hasSkillXml = typeof lastUser?.content === 'string' && lastUser.content.includes('<skill-instructions')
   console.log(`Skill call prepareStep:`)
-  console.log(`  Has tool result: ${hasToolResult ? 'PASS' : 'FAIL'}`)
-  console.log(`  Has injected user message: ${hasUserMessage ? 'PASS' : 'FAIL'}`)
-  console.log(`  Total messages: ${msgs.length} (original 1 + tool result + user message = 3)`)
+  console.log(`  Injected user message: ${injectedContent ? 'PASS' : 'FAIL'}`)
+  console.log(`  Content is XML-wrapped skill: ${hasSkillXml ? 'PASS' : 'FAIL'}`)
+  console.log(`  Total messages: ${msgs.length} (original 1 + skill user message = 2)`)
 } else {
   console.error('Skill call prepareStep: FAIL (no messages returned)')
 }
 
-// Simulate: step with unknown skill
+// Simulate: step with unknown skill (execute returned true, but prepareStep skips injection)
 const withUnknown = prepareStep({
   steps: [{
     toolCalls: [{
@@ -143,13 +145,7 @@ const withUnknown = prepareStep({
   experimental_context: undefined,
 })
 
-if (withUnknown && 'messages' in withUnknown) {
-  const msgs = withUnknown.messages as Array<{ role: string; content: unknown }>
-  const toolMsg = msgs.find(m => m.role === 'tool')
-  const hasError = JSON.stringify(toolMsg).includes('not found in index')
-  console.log(`Unknown skill prepareStep:`)
-  console.log(`  Has error in tool result: ${hasError ? 'PASS' : 'FAIL'}`)
-  console.log(`  No user message injected: ${msgs.filter(m => m.role === 'user').length === 1 ? 'PASS' : 'FAIL'}`)
-}
+const unknownIsEmpty = !withUnknown || JSON.stringify(withUnknown) === '{}'
+console.log(`Unknown skill prepareStep: ${unknownIsEmpty ? 'PASS (no injection, empty return)' : 'FAIL'}`)
 
 console.log('\n--- Done ---')
