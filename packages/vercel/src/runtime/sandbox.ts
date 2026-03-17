@@ -11,6 +11,10 @@ export interface SandboxConfig {
 }
 
 // In-memory snapshot cache keyed by "repoUrl#branch"
+// TODO: Replace with external cache (Redis/Vercel KV) so snapshot IDs survive
+// across serverless invocations. The snapshot itself persists on Vercel's side,
+// but the ID is lost when the function instance is recycled.
+// See: https://github.com/synerops/syner — search for "snapshot cache" in backlog.
 const snapshotCache = new Map<string, string>()
 
 function cacheKey(repoUrl: string, branch: string): string {
