@@ -1,6 +1,6 @@
 import { Sandbox, Snapshot } from '@vercel/sandbox'
 
-export type AgentSandbox = Sandbox
+export type SandboxInstance = Sandbox
 
 export interface SandboxConfig {
   repoUrl: string
@@ -35,7 +35,7 @@ async function validateSnapshot(snapshotId: string): Promise<string | null> {
  * Create a sandbox from scratch: clone repo and take a snapshot for future reuse.
  * The source sandbox is stopped by snapshot(), so we create a second one from the snapshot.
  */
-async function createAndSnapshot(config: SandboxConfig & { key: string }): Promise<{ sandbox: AgentSandbox; workdir: string }> {
+async function createAndSnapshot(config: SandboxConfig & { key: string }): Promise<{ sandbox: SandboxInstance; workdir: string }> {
   const {
     repoUrl,
     branch = 'main',
@@ -91,7 +91,7 @@ async function createFromSnapshot(
   snapshotId: string,
   config: Pick<SandboxConfig, 'timeout' | 'env'>,
   workdir: string,
-): Promise<{ sandbox: AgentSandbox; workdir: string }> {
+): Promise<{ sandbox: SandboxInstance; workdir: string }> {
   console.log(`[Sandbox] Warm start: creating from snapshot ${snapshotId}...`)
 
   const sandbox = await Sandbox.create({
@@ -112,7 +112,7 @@ async function createFromSnapshot(
  * - First call: creates sandbox with git source, snapshots it, then creates from snapshot
  * - Subsequent calls: creates directly from cached snapshot (milliseconds)
  */
-export async function createAgentSandbox(config: SandboxConfig): Promise<{ sandbox: AgentSandbox; workdir: string }> {
+export async function createSandbox(config: SandboxConfig): Promise<{ sandbox: SandboxInstance; workdir: string }> {
   const {
     repoUrl,
     branch = 'main',
@@ -141,7 +141,7 @@ export async function createAgentSandbox(config: SandboxConfig): Promise<{ sandb
 /**
  * Stop and cleanup a sandbox
  */
-export async function stopSandbox(sandbox: AgentSandbox): Promise<void> {
+export async function stopSandbox(sandbox: SandboxInstance): Promise<void> {
   console.log(`[Sandbox] Stopping sandbox...`)
   await sandbox.stop()
   console.log(`[Sandbox] Sandbox stopped`)
