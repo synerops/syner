@@ -197,6 +197,11 @@ Uses GitHub App tokens (short-lived, no PATs stored). Auth is centralized throug
 - Prefer const over let, never var
 - camelCase for variables/functions, PascalCase for components
 
+## Code Ownership
+
+- **Internal code** (package internals, private functions, implementation details) — Claude's responsibility. Naming conventions like `skills_` underscore suffix for closure variables are fine as long as the code is correct.
+- **Public API** (exports, Runtime interface, types consumers use) — Ronny's responsibility. Always get approval before changing public surface area.
+
 ## Philosophy
 
 See `PHILOSOPHY.md` for full principles:

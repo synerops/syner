@@ -15,8 +15,9 @@ import {
 } from '@syner/osprotocol'
 import { resolveContext, type ContextRequest } from '@syner/sdk/context'
 import type { VaultStore } from '@syner/sdk/context'
-import { SkillLoader, SkillsMap, type SkillDescriptor } from '../skills'
-import { createSkillTool, createPrepareStep, preprocessPrompt } from '../tools/skill'
+import { SkillsMap } from '../skills'
+import { loadSkills } from '../skills/loader'
+import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
 import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
@@ -43,7 +44,7 @@ import path from 'path'
 
 export interface RuntimeConfig {
   agents?: { dir?: string }
-  skills?: { index?: string; dirs?: string[] }
+  skills?: { index?: string; dir?: string }
 }
 
 export interface GenerateResult {
@@ -153,28 +154,19 @@ function getProjectRoot(): string {
 
 export function createRuntime(config?: RuntimeConfig): Runtime {
   const projectRoot = getProjectRoot()
-  const skillIndex = config?.skills?.index ?? path.join(projectRoot, 'public/.well-known/skills/index.json')
-  const skillDirs = config?.skills?.dirs ?? [
-    path.join(projectRoot, 'skills'),
-    path.join(projectRoot, 'apps/bot/skills'),
-    path.join(projectRoot, 'apps/dev/skills'),
-    path.join(projectRoot, 'apps/vaults/skills'),
-  ]
+  const skillsDir = config?.skills?.dir ?? path.join(projectRoot, 'public/.well-known/skills')
+  const skillIndex = config?.skills?.index ?? path.join(skillsDir, 'index.json')
 
   // --- Maps ---
   const agents_ = new Map<string, AgentCard>()
   const tools_ = buildToolDefs()
-  const skillLoader = new SkillLoader({ indexPath: skillIndex, skillDirs })
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
 
   /** Load/refresh agents + skills from disk into the Maps */
   async function start(): Promise<void> {
-    // Load skills index
-    await skillLoader.load()
-    skills_ = skillLoader.skills
+    skills_ = await loadSkills(skillIndex)
 
-    // Load agents
     const registry = await getAgentsRegistry(projectRoot)
     agents_.clear()
     for (const [name, card] of registry.agents) {
@@ -270,22 +262,19 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
     // 4. Skill tool (execute: true + prepareStep injection)
     if (skills_.size > 0) {
-      activeTools.Skill = createSkillTool(skillLoader)
+      activeTools.Skill = createSkillTool(skills_)
     }
 
     // 5. Task tool (RunAdapter)
     activeTools.Task = createTaskTool({ runAdapter })
 
     // 6. System prompt (agent.instructions + skill descriptions)
-    const skillDescriptions = skillLoader.describeSkills()
+    const skillDescriptions = skills_.describe()
     const instructions = skillDescriptions
       ? `${agent.instructions}\n\n${skillDescriptions}`
       : agent.instructions
 
-    // 7. Preprocess prompt (/skillname detection)
-    const processedPrompt = await preprocessPrompt(skillLoader, prompt)
-
-    // 8. Vault context (optional)
+    // 7. Vault context (optional)
     const loadedSources: ContextSource[] = []
     const missingTopics: string[] = []
 
@@ -298,7 +287,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
       missingTopics.push(...brief.gaps)
     }
 
-    // 9. OSProtocol wrapping
+    // 8. OSProtocol wrapping
     const context = createContext({
       agentId: agent.name,
       skillRef: `runtime:${agent.name}`,
@@ -313,14 +302,14 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
     const toolCallsList: string[] = []
 
-    // 10. Execute via ToolLoopAgent
+    // 9. Execute via ToolLoopAgent
     const loopAgent = new ToolLoopAgent({
       id: agent.name,
       model,
       instructions,
       tools: activeTools as ToolSet,
       stopWhen: stepCountIs(10),
-      prepareStep: createPrepareStep(skillLoader) as never,
+      prepareStep: createPrepareStep(skills_, skillsDir) as never,
       providerOptions: {
         gateway: { models: fallbacks },
       },
@@ -328,7 +317,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
     try {
       const result = await loopAgent.generate({
-        prompt: processedPrompt,
+        prompt,
 
         experimental_onToolCallStart({ toolCall }) {
           options?.onToolStart?.(toolCall.toolName)

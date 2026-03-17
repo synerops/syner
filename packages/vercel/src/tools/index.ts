@@ -6,5 +6,5 @@ export { Write, executeWrite, createWriteTool, writeInputSchema, executeWriteWit
 export { Edit, executeEdit, createEditTool } from './edit'
 export { Glob, executeGlob, createGlobTool, globInputSchema, executeGlobWithSandbox } from './glob'
 export { Grep, executeGrep, createGrepTool, grepInputSchema, executeGrepWithSandbox } from './grep'
-export { createSkillTool, createPrepareStep, preprocessPrompt } from './skill'
+export { createSkillTool, createPrepareStep } from './skill'
 export { createTaskTool, type CreateTaskToolOptions } from './task'

@@ -20,16 +20,10 @@ export interface Instance {
   }>
 }
 
-/** @deprecated Use Instance instead */
-export type RemoteInstanceCard = Instance
-
 export interface Invoke {
   skill: string
   input: Record<string, unknown>
 }
-
-/** @deprecated Use Invoke instead */
-export type RemoteInvokeInput = Invoke
 
 export interface InvokeOptions {
   timeout?: number

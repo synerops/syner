@@ -13,7 +13,7 @@ export interface DeployResult {
 
 /**
  * Deploy an approved change proposal.
- * Only proceeds if decision.decision === 'approved'.
+ * Only proceeds if decision.approved is true.
  */
 export async function deploy(
   proposal: Proposal,
@@ -21,11 +21,11 @@ export async function deploy(
 ): Promise<DeployResult> {
   const timestamp = new Date().toISOString()
 
-  if (decision.decision !== 'approved') {
+  if (!decision.approved) {
     return {
       deployed: false,
       proposal,
-      reason: `Rejected by ${decision.reviewer ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
+      reason: `Rejected by ${decision.approvedBy ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
       timestamp,
     }
   }
@@ -50,7 +50,7 @@ export async function deploy(
   return {
     deployed: true,
     proposal,
-    reason: `Approved by ${decision.reviewer ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
+    reason: `Approved by ${decision.approvedBy ?? 'unknown'}: ${decision.reason ?? 'no reason'}`,
     timestamp,
     artifactPath,
   }

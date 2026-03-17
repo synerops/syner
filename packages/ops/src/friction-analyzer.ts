@@ -9,8 +9,6 @@ export interface Pattern {
   suggestedCategory: Category
 }
 
-/** @deprecated Use Pattern instead */
-export type FrictionPattern = Pattern
 
 interface AnalyzerOptions {
   minFrequency?: number

@@ -11,9 +11,6 @@ export interface Friction {
   lastSeen: string
 }
 
-/** @deprecated Use Friction instead */
-export type FrictionEvent = Friction
-
 const DEFAULT_PATH = '.syner/ops/friction.jsonl'
 
 export async function logFriction(
