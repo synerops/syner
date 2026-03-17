@@ -11,7 +11,8 @@
  */
 
 import { buildSkillsManifest } from '@syner/sdk/skills'
-import { SkillLoader } from '@syner/vercel'
+import { SkillLoader } from '../../../src/skills'
+import { createSkillTool, createPrepareStep, preprocessPrompt } from '../../../src/tools/skill'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import path from 'path'
 
@@ -35,7 +36,11 @@ console.log('Scanning:', SKILL_DIRS.filter(d => existsSync(d)).join('\n  '))
 const manifest = await buildSkillsManifest(SKILL_DIRS)
 console.log(`Found ${manifest.skills.length} skills:`)
 for (const skill of manifest.skills) {
-  console.log(`  - ${skill.name} (${skill.files.length} files): ${skill.description.slice(0, 80)}`)
+  const extras = [
+    skill.command ? `cmd=${skill.command}` : '',
+    skill.agent ? `agent=${skill.agent}` : '',
+  ].filter(Boolean).join(' ')
+  console.log(`  - ${skill.name} (${skill.files.length} files)${extras ? ` [${extras}]` : ''}: ${skill.description.slice(0, 80)}`)
 }
 
 if (manifest.skills.length === 0) {
@@ -55,6 +60,7 @@ const loader = new SkillLoader({
   indexPath: INDEX_PATH,
   skillDirs: SKILL_DIRS,
 })
+await loader.load()
 
 console.log(`Loader.names: [${loader.names.join(', ')}]`)
 
@@ -69,9 +75,16 @@ console.log(`\ndescribeSkills() (${description.length} chars):`)
 console.log(description.split('\n').slice(0, 8).join('\n'))
 if (description.split('\n').length > 8) console.log('  ...')
 
+// Test commands()
+const commands = loader.skills.commands()
+console.log(`\nskills.commands(): ${commands.size} commands`)
+for (const [name, info] of commands) {
+  console.log(`  /${name} → ${info.skillName} (agent: ${info.agent})`)
+}
+
 // --- Step 4: Test loadContent ---
 console.log('\n--- Step 4: Test loadContent ---')
-const content = loader.loadContent(firstName)
+const content = await loader.loadContent(firstName)
 if (content) {
   console.log(`loadContent("${firstName}"): ${content.length} chars`)
   console.log(`First 200 chars:\n${content.slice(0, 200)}...`)
@@ -79,30 +92,30 @@ if (content) {
   console.error(`loadContent("${firstName}"): null — skill in index but not on disk!`)
 }
 
-console.log(`\nloadContent("nonexistent"): ${loader.loadContent('nonexistent')}`)
+console.log(`\nloadContent("nonexistent"): ${await loader.loadContent('nonexistent')}`)
 
 // --- Step 5: Test preprocessPrompt ---
 console.log('\n--- Step 5: Test preprocessPrompt ---')
-const plain = loader.preprocessPrompt('hello world')
+const plain = await preprocessPrompt(loader, 'hello world')
 console.log(`preprocessPrompt("hello world"): ${plain === 'hello world' ? 'PASS (unchanged)' : 'FAIL (modified)'}`)
 
-const skillPrompt = loader.preprocessPrompt(`/${firstName} some args`)
+const skillPrompt = await preprocessPrompt(loader, `/${firstName} some args`)
 const changed = skillPrompt !== `/${firstName} some args`
 console.log(`preprocessPrompt("/${firstName} some args"): ${changed ? `PASS (${skillPrompt.length} chars)` : 'FAIL (unchanged)'}`)
 
-const unknownPrompt = loader.preprocessPrompt('/nonexistent-skill test')
+const unknownPrompt = await preprocessPrompt(loader, '/nonexistent-skill test')
 console.log(`preprocessPrompt("/nonexistent-skill test"): ${unknownPrompt === '/nonexistent-skill test' ? 'PASS (unchanged)' : 'FAIL (modified)'}`)
 
 // --- Step 6: Test createPrepareStep ---
 console.log('\n--- Step 6: Test createPrepareStep ---')
-const prepareStep = loader.createPrepareStep()
+const prepareStepFn = createPrepareStep(loader)
 
 // Simulate: no steps yet
-const noSteps = prepareStep({ steps: [], messages: [], stepNumber: 0, model: null, experimental_context: undefined })
+const noSteps = await prepareStepFn({ steps: [], messages: [], stepNumber: 0, model: null, experimental_context: undefined })
 console.log(`No steps: ${JSON.stringify(noSteps) === '{}' ? 'PASS (empty)' : 'FAIL'}`)
 
 // Simulate: step with Skill tool call
-const withSkillCall = prepareStep({
+const withSkillCall = await prepareStepFn({
   steps: [{
     toolCalls: [{
       toolName: 'Skill',
@@ -131,7 +144,7 @@ if (withSkillCall && 'messages' in withSkillCall) {
 }
 
 // Simulate: step with unknown skill (execute returned true, but prepareStep skips injection)
-const withUnknown = prepareStep({
+const withUnknown = await prepareStepFn({
   steps: [{
     toolCalls: [{
       toolName: 'Skill',

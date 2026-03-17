@@ -1,68 +1,10 @@
-/**
- * Slack Webhook Handler
- *
- * Receives Slack events and responds using the unified session system.
- * Uses Chat SDK for message handling and automatic markdown conversion.
- *
- * Routing is LLM-driven: the agent's system prompt + available tools
- * (Skill, delegate) let the LLM decide whether to respond directly,
- * invoke a skill, or delegate to another agent.
- */
-
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { createSession } from '@/lib/session'
+import { runtime } from '@/lib/runtime'
 import { env } from '@/lib/env'
-interface AgentCard {
-  name: string
-  description?: string
-  instructions: string
-  model?: 'opus' | 'sonnet' | 'haiku'
-  tools?: string[]
-  skills?: string[]
-  channel?: string
-  metadata?: Record<string, unknown>
-}
 
 export const maxDuration = 60
 
-// Fetch agents from the static API endpoint (works in Vercel)
-async function fetchAgentsByChannel(): Promise<Map<string, AgentCard>> {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3001'
-
-  try {
-    const res = await fetch(`${baseUrl}/api/agents`, {
-      headers: {
-        'x-vercel-protection-bypass':
-          process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
-      },
-      next: { revalidate: 3600 },
-    })
-
-    if (!res.ok) {
-      console.error('[Slack] Failed to fetch agents:', res.status)
-      return new Map()
-    }
-
-    const agents: AgentCard[] = await res.json()
-    const map = new Map<string, AgentCard>()
-
-    for (const agent of agents) {
-      if (agent.channel) {
-        map.set(agent.channel, agent)
-      }
-    }
-
-    return map
-  } catch (error) {
-    console.error('[Slack] Error fetching agents:', error)
-    return new Map()
-  }
-}
-
-// Lazy-init chat instance
 let chatInstance: ReturnType<typeof createSlackChat> | null = null
 
 function getChat() {
@@ -75,16 +17,13 @@ function getChat() {
     }
 
     chatInstance = createSlackChat(
-      {
-        botToken,
-        signingSecret,
-      },
+      { botToken, signingSecret },
       {
         async onMention(context) {
           console.log('[Slack] Mention received:', context.text?.slice(0, 100))
 
-          // Find agent for this channel (fetches from static API endpoint)
-          const agents = await fetchAgentsByChannel()
+          // Find agent for this channel via Map
+          const agents = await runtime.byChannel()
           const agent = agents.get(context.channel)
 
           if (!agent) {
@@ -108,16 +47,10 @@ function getChat() {
             ].join('\n')
           }
 
-          // LLM-driven routing: the agent decides via its tools
-          const session = await createSession({ agent })
-          try {
-            const result = await session.generate(context.text)
-            return result.output?.text || '_No response_'
-          } finally {
-            await session.cleanup()
-          }
+          const result = await runtime.generate(agent, context.text)
+          return result.output?.text || '_No response_'
         },
-      }
+      },
     )
   }
 
@@ -136,7 +69,7 @@ export async function POST(request: Request): Promise<Response> {
     console.error('[Slack] Error:', error)
     return new Response(
       JSON.stringify({ error: 'Slack webhook error' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
     )
   }
 }

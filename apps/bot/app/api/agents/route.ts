@@ -1,14 +1,8 @@
-import { NextResponse } from "next/server";
-import { getAgentsList } from "@syner/sdk/agents";
-import path from "path";
+import { NextResponse } from 'next/server'
+import { runtime } from '@/lib/runtime'
 
 // ISR: revalidate every hour
-export const revalidate = 3600;
-
-// Project root is two levels up from apps/dev
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), "../..");
-}
+export const revalidate = 3600
 
 export async function GET(request: Request) {
   // In Vercel: require bypass header
@@ -20,15 +14,13 @@ export async function GET(request: Request) {
   }
 
   try {
-    const projectRoot = getProjectRoot();
-    const agents = await getAgentsList(projectRoot);
-
-    return NextResponse.json(agents);
+    if (runtime.agents.size === 0) await runtime.start()
+    return NextResponse.json([...runtime.agents.values()])
   } catch (error) {
-    console.error("Error fetching agents:", error);
+    console.error('Error fetching agents:', error)
     return NextResponse.json(
-      { error: "Failed to fetch agents" },
-      { status: 500 }
-    );
+      { error: 'Failed to fetch agents' },
+      { status: 500 },
+    )
   }
 }
