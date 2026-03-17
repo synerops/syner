@@ -1,6 +1,6 @@
-import { getInstanceCard } from '../../../lib/instance'
+import { runtime } from '@/lib/runtime'
 
 export async function GET() {
-  const card = await getInstanceCard()
-  return Response.json(card)
+  if (runtime.agents.size === 0) await runtime.start()
+  return Response.json(runtime.card())
 }

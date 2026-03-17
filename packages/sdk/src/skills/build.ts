@@ -9,6 +9,8 @@ export interface SkillIndexEntry {
   name: string
   description: string
   files: string[]
+  command?: string
+  agent?: string
 }
 
 export interface SkillIndex {
@@ -43,6 +45,7 @@ export async function buildSkillsManifest(skillDirs: string[]): Promise<SkillInd
     for (const skillFile of skillFiles) {
       try {
         const content = await readFile(skillFile, 'utf-8')
+        const { data: frontmatter } = matter(content)
         const { skill: manifest } = parseSkillManifest(content)
 
         const skillDir = path.dirname(skillFile)
@@ -62,7 +65,10 @@ export async function buildSkillsManifest(skillDirs: string[]): Promise<SkillInd
           }
         }
 
-        skills.push({ name, description, files })
+        const entry: SkillIndexEntry = { name, description, files }
+        if (frontmatter.command) entry.command = frontmatter.command
+        if (frontmatter.agent) entry.agent = frontmatter.agent
+        skills.push(entry)
       } catch (error) {
         console.error(`[buildSkillsManifest] Error parsing ${skillFile}:`, error)
       }

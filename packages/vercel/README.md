@@ -10,9 +10,9 @@ bun add @syner/vercel
 
 ```typescript
 // Create sandbox tools for an agent
-import { createAgentSandbox, createTools, stopSandbox } from '@syner/vercel'
+import { createSandbox, createTools, stopSandbox } from '@syner/vercel'
 
-const { sandbox, workdir } = await createAgentSandbox({
+const { sandbox, workdir } = await createSandbox({
   repoUrl: 'https://github.com/synerops/syner',
 })
 const tools = createTools(sandbox)
@@ -56,9 +56,9 @@ import { Bash, Fetch } from '@syner/vercel'
 ### Shared sandbox (recommended for multi-call workflows)
 
 ```typescript
-import { createAgentSandbox, createTools, stopSandbox } from '@syner/vercel'
+import { createSandbox, createTools, stopSandbox } from '@syner/vercel'
 
-const { sandbox } = await createAgentSandbox({ repoUrl })
+const { sandbox } = await createSandbox({ repoUrl })
 const tools = createTools(sandbox)  // all 7 tools share one sandbox
 // Or pick specific tools: createToolsByName(sandbox, ['Bash', 'Read'])
 
