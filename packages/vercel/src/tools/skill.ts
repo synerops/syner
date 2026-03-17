@@ -1,6 +1,7 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import type { SkillLoader } from '../skills'
+import type { SkillsMap } from '../skills'
+import { loadSkillContent } from '../skills/loader'
 
 /**
  * Create the Skill tool — what the LLM calls.
@@ -8,16 +9,13 @@ import type { SkillLoader } from '../skills'
  * execute returns true (minimal ack) so the loop continues.
  * prepareStep on the next step injects the skill content as a user message.
  */
-export function createSkillTool(loader: SkillLoader) {
-  const skillList = loader.names
-    .map(name => {
-      const entry = loader.getEntry(name)
-      return `- ${name}: ${entry?.description || ''}`
-    })
+export function createSkillTool(skills: SkillsMap) {
+  const skillList = [...skills.values()]
+    .map(s => `- ${s.name}: ${s.description}`)
     .join('\n')
 
   return tool({
-    description: loader.names.length > 0
+    description: skills.size > 0
       ? `Load specialized instructions for a task. Available skills:\n${skillList}`
       : 'Load specialized instructions. No skills available.',
     inputSchema: z.object({
@@ -29,8 +27,11 @@ export function createSkillTool(loader: SkillLoader) {
 
 /**
  * prepareStep handler — detects Skill tool calls and injects content.
+ *
+ * Reads pre-rendered content from .well-known/skills/{name}.json (static asset).
+ * Uses in-memory cache — first read hits disk, subsequent reads are free.
  */
-export function createPrepareStep(loader: SkillLoader) {
+export function createPrepareStep(skills: SkillsMap, skillsDir: string) {
   return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; args: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown; experimental_context: unknown }) => {
     if (steps.length === 0) return {}
 
@@ -41,9 +42,9 @@ export function createPrepareStep(loader: SkillLoader) {
     if (!skillCall) return {}
 
     const skillName = skillCall.args.name as string
-    if (!loader.has(skillName)) return {}
+    if (!skills.has(skillName)) return {}
 
-    const content = await loader.loadContent(skillName)
+    const content = await loadSkillContent(skillsDir, skillName)
     if (!content) return {}
 
     return {
@@ -56,33 +57,4 @@ export function createPrepareStep(loader: SkillLoader) {
       ],
     }
   }
-}
-
-/**
- * Preprocess a prompt — detect /skillname and prepend content.
- *
- * For explicit skill invocations from the user (e.g., Slack `/deploy`).
- * Returns the prompt unchanged if no skill reference found.
- */
-export async function preprocessPrompt(loader: SkillLoader, prompt: string): Promise<string> {
-  const trimmed = prompt.trim()
-
-  if (trimmed.startsWith('/')) {
-    const [command, ...rest] = trimmed.split(/\s+/)
-    const skillName = command.slice(1)
-
-    if (loader.has(skillName)) {
-      const content = await loader.loadContent(skillName)
-      if (content) {
-        const args = rest.join(' ')
-        const processed = content
-          .replace(/\$ARGUMENTS/g, args)
-          .replace(/\$(\d+)/g, (_, n) => rest[parseInt(n)] || '')
-
-        return `${processed}\n\n---\n\nUser request: ${args || trimmed}`
-      }
-    }
-  }
-
-  return prompt
 }

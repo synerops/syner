@@ -1,8 +1,8 @@
-import type { FrictionPattern, Proposal, ChangeCategory, MetricThreshold } from '@syner/ops'
+import type { Pattern, Proposal, Category, Threshold } from '@syner/ops'
 import type { Skill } from '@syner/osprotocol'
 
 export function generateCandidate(
-  pattern: FrictionPattern,
+  pattern: Pattern,
   skill: Skill
 ): Proposal {
   const category = categorizeChange(pattern)
@@ -17,7 +17,7 @@ export function generateCandidate(
   }
 }
 
-function categorizeChange(pattern: FrictionPattern): ChangeCategory {
+function categorizeChange(pattern: Pattern): Category {
   // Trust the analyzer's suggestion, but override for high-severity structural issues
   if (pattern.severity === 'high' && pattern.suggestedCategory === 'new-skill') {
     return 'structural'
@@ -25,7 +25,7 @@ function categorizeChange(pattern: FrictionPattern): ChangeCategory {
   return pattern.suggestedCategory
 }
 
-function estimateMetrics(pattern: FrictionPattern, category: ChangeCategory): MetricThreshold[] {
+function estimateMetrics(pattern: Pattern, category: Category): Threshold[] {
   const baseReduction = category === 'skill-tweak' ? 0.5 : category === 'new-skill' ? 0.7 : 0.9
 
   return [
@@ -42,7 +42,7 @@ function estimateMetrics(pattern: FrictionPattern, category: ChangeCategory): Me
   ]
 }
 
-function buildDescription(pattern: FrictionPattern, skill: Skill): string {
+function buildDescription(pattern: Pattern, skill: Skill): string {
   const skillName = skill.name || pattern.skillRef
   return `Fix "${pattern.pattern}" in ${skillName} (observed ${pattern.frequency}x, severity: ${pattern.severity})`
 }

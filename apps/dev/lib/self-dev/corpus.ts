@@ -55,7 +55,7 @@ async function readDecisions(storagePath: string): Promise<SelfDevDecision[]> {
 function extractPatterns(decisions: SelfDevDecision[]): string[] {
   const seen = new Set<string>()
   for (const d of decisions) {
-    const status = d.approval.decision === 'approved' ? 'approved' : 'rejected'
+    const status = d.approval.approved ? 'approved' : 'rejected'
     seen.add(`${d.proposal.category}:${status}`)
   }
   return Array.from(seen)

@@ -13,8 +13,6 @@ export interface TestResult {
   error?: string
 }
 
-/** @deprecated Use Test instead */
-export type TestCase = Test
 
 export interface Evaluation {
   proposal: Proposal
@@ -24,8 +22,6 @@ export interface Evaluation {
   metricResults: Metric[]
 }
 
-/** @deprecated Use Evaluation instead */
-export type EvalResult = Evaluation
 
 export interface Metric {
   metric: string
@@ -34,8 +30,6 @@ export interface Metric {
   passed: boolean
 }
 
-/** @deprecated Use Metric instead */
-export type MetricResult = Metric
 
 export function evaluate(
   proposal: Proposal,

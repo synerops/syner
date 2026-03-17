@@ -1,18 +1,19 @@
 #!/usr/bin/env bun
 /**
- * Build skills manifest + verify SkillLoader
+ * Build skills manifest + per-skill content files
  *
  * Usage: bun packages/vercel/skills/build-skill-manifest/scripts/run.ts
  *
- * 1. Scans skill directories with buildSkillsManifest
- * 2. Writes index.json to public/.well-known/skills/
- * 3. Verifies SkillLoader reads it correctly
- * 4. Tests has(), loadContent(), preprocessPrompt(), createPrepareStep()
+ * Progressive disclosure (agentskills.io):
+ * 1. index.json — metadata at startup (~100 tokens per skill)
+ * 2. {name}.json — full content on activation (<5000 tokens)
  */
 
-import { buildSkillsManifest } from '@syner/sdk/skills'
-import { SkillLoader } from '../../../src/skills'
-import { createSkillTool, createPrepareStep, preprocessPrompt } from '../../../src/tools/skill'
+import { buildSkillsManifest, buildSkillContent } from '@syner/sdk/skills'
+import { loadSkills } from '../../../src/skills/loader'
+import { SkillsMap } from '../../../src/skills'
+import { createSkillTool, createPrepareStep } from '../../../src/tools/skill'
+import { loadSkillContent } from '../../../src/skills/loader'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import path from 'path'
 
@@ -48,73 +49,68 @@ if (manifest.skills.length === 0) {
   process.exit(1)
 }
 
-// --- Step 2: Write index.json ---
-console.log('\n--- Step 2: Write index.json ---')
+// --- Step 2: Write index.json + per-skill content files ---
+console.log('\n--- Step 2: Write index.json + per-skill content files ---')
 mkdirSync(OUTPUT_DIR, { recursive: true })
 writeFileSync(INDEX_PATH, JSON.stringify(manifest, null, 2))
-console.log(`Written to: ${INDEX_PATH}`)
+console.log(`Index: ${INDEX_PATH}`)
 
-// --- Step 3: Verify SkillLoader ---
-console.log('\n--- Step 3: Verify SkillLoader ---')
-const loader = new SkillLoader({
-  indexPath: INDEX_PATH,
-  skillDirs: SKILL_DIRS,
-})
-await loader.load()
+let contentCount = 0
+for (const skill of manifest.skills) {
+  const content = await buildSkillContent(SKILL_DIRS, skill)
+  if (content) {
+    const skillPath = path.join(OUTPUT_DIR, `${skill.name}.json`)
+    writeFileSync(skillPath, JSON.stringify(content, null, 2))
+    contentCount++
+  }
+}
+console.log(`Content files: ${contentCount}/${manifest.skills.length} written`)
 
-console.log(`Loader.names: [${loader.names.join(', ')}]`)
+// --- Step 3: Verify loadSkills ---
+console.log('\n--- Step 3: Verify loadSkills ---')
+const skills = await loadSkills(INDEX_PATH)
 
-// Test has()
+console.log(`SkillsMap size: ${skills.size}`)
 const firstName = manifest.skills[0].name
-console.log(`\nhas("${firstName}"): ${loader.has(firstName)}`)
-console.log(`has("nonexistent"): ${loader.has('nonexistent')}`)
+console.log(`has("${firstName}"): ${skills.has(firstName)}`)
+console.log(`has("nonexistent"): ${skills.has('nonexistent')}`)
 
-// Test describeSkills()
-const description = loader.describeSkills()
-console.log(`\ndescribeSkills() (${description.length} chars):`)
+// Test describe()
+const description = skills.describe()
+console.log(`\ndescribe() (${description.length} chars):`)
 console.log(description.split('\n').slice(0, 8).join('\n'))
 if (description.split('\n').length > 8) console.log('  ...')
 
 // Test commands()
-const commands = loader.skills.commands()
-console.log(`\nskills.commands(): ${commands.size} commands`)
+const commands = skills.commands()
+console.log(`\ncommands(): ${commands.size} commands`)
 for (const [name, info] of commands) {
   console.log(`  /${name} → ${info.skillName} (agent: ${info.agent})`)
 }
 
-// --- Step 4: Test loadContent ---
-console.log('\n--- Step 4: Test loadContent ---')
-const content = await loader.loadContent(firstName)
+// --- Step 4: Test loadSkillContent ---
+console.log('\n--- Step 4: Test loadSkillContent ---')
+const content = await loadSkillContent(OUTPUT_DIR, firstName)
 if (content) {
-  console.log(`loadContent("${firstName}"): ${content.length} chars`)
+  console.log(`loadSkillContent("${firstName}"): ${content.length} chars`)
   console.log(`First 200 chars:\n${content.slice(0, 200)}...`)
 } else {
-  console.error(`loadContent("${firstName}"): null — skill in index but not on disk!`)
+  console.error(`loadSkillContent("${firstName}"): null — content file missing!`)
 }
 
-console.log(`\nloadContent("nonexistent"): ${await loader.loadContent('nonexistent')}`)
+// Security: path traversal rejected
+const traversal = await loadSkillContent(OUTPUT_DIR, '../../etc/passwd')
+console.log(`loadSkillContent("../../etc/passwd"): ${traversal === null ? 'PASS (rejected)' : 'FAIL (should be null)'}`)
 
-// --- Step 5: Test preprocessPrompt ---
-console.log('\n--- Step 5: Test preprocessPrompt ---')
-const plain = await preprocessPrompt(loader, 'hello world')
-console.log(`preprocessPrompt("hello world"): ${plain === 'hello world' ? 'PASS (unchanged)' : 'FAIL (modified)'}`)
+console.log(`\nloadSkillContent("nonexistent"): ${await loadSkillContent(OUTPUT_DIR, 'nonexistent')}`)
 
-const skillPrompt = await preprocessPrompt(loader, `/${firstName} some args`)
-const changed = skillPrompt !== `/${firstName} some args`
-console.log(`preprocessPrompt("/${firstName} some args"): ${changed ? `PASS (${skillPrompt.length} chars)` : 'FAIL (unchanged)'}`)
+// --- Step 5: Test createPrepareStep ---
+console.log('\n--- Step 5: Test createPrepareStep ---')
+const prepareStepFn = createPrepareStep(skills, OUTPUT_DIR)
 
-const unknownPrompt = await preprocessPrompt(loader, '/nonexistent-skill test')
-console.log(`preprocessPrompt("/nonexistent-skill test"): ${unknownPrompt === '/nonexistent-skill test' ? 'PASS (unchanged)' : 'FAIL (modified)'}`)
-
-// --- Step 6: Test createPrepareStep ---
-console.log('\n--- Step 6: Test createPrepareStep ---')
-const prepareStepFn = createPrepareStep(loader)
-
-// Simulate: no steps yet
 const noSteps = await prepareStepFn({ steps: [], messages: [], stepNumber: 0, model: null, experimental_context: undefined })
 console.log(`No steps: ${JSON.stringify(noSteps) === '{}' ? 'PASS (empty)' : 'FAIL'}`)
 
-// Simulate: step with Skill tool call
 const withSkillCall = await prepareStepFn({
   steps: [{
     toolCalls: [{
@@ -143,7 +139,6 @@ if (withSkillCall && 'messages' in withSkillCall) {
   console.error('Skill call prepareStep: FAIL (no messages returned)')
 }
 
-// Simulate: step with unknown skill (execute returned true, but prepareStep skips injection)
 const withUnknown = await prepareStepFn({
   steps: [{
     toolCalls: [{
