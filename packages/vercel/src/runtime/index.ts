@@ -19,7 +19,7 @@ import { SkillLoader, SkillsMap, type SkillDescriptor } from '../skills'
 import { createSkillTool, createPrepareStep, preprocessPrompt } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
-import { createSandbox, stopSandbox, type SandboxInstance } from './sandbox'
+import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
 import {
   bashInputSchema,
   fetchInputSchema,
@@ -65,7 +65,7 @@ export interface GenerateOptions {
 export interface ToolDef {
   description: string
   inputSchema: unknown
-  executeWithSandbox: (sandbox: SandboxInstance, input: never) => Promise<unknown>
+  executeWithSandbox: (sandbox: Sandbox, input: never) => Promise<unknown>
 }
 
 export interface AgentCardOutput {
@@ -223,10 +223,10 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
     // 2. Lazy sandbox (created on first tool use, shared per generate call)
     //    Uses snapshot caching: first call clones + snapshots, subsequent calls restore instantly.
-    let sandbox: SandboxInstance | null = null
-    let initPromise: Promise<SandboxInstance> | null = null
+    let sandbox: Sandbox | null = null
+    let initPromise: Promise<Sandbox> | null = null
 
-    async function ensureSandbox(): Promise<SandboxInstance> {
+    async function ensureSandbox(): Promise<Sandbox> {
       if (sandbox) return sandbox
       if (initPromise) return initPromise
       initPromise = (async () => {
