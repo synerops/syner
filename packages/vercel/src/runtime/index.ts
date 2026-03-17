@@ -222,6 +222,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
     const { model, fallbacks, modelId } = resolveModel(tier)
 
     // 2. Lazy sandbox (created on first tool use, shared per generate call)
+    //    Uses snapshot caching: first call clones + snapshots, subsequent calls restore instantly.
     let sandbox: AgentSandbox | null = null
     let initPromise: Promise<AgentSandbox> | null = null
 
@@ -230,11 +231,10 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
       if (initPromise) return initPromise
       initPromise = (async () => {
         try {
-          await onStatus('Cloning repository...')
+          await onStatus('Preparing sandbox...')
           const result = await createAgentSandbox({
             repoUrl: DEFAULT_REPO_URL,
             branch: DEFAULT_BRANCH,
-            workdir: 'workspace',
             timeout: 300000,
           })
           sandbox = result.sandbox
