@@ -63,6 +63,12 @@ bun install  # if deps missing
 | `src/events/` | Webhook event dispatching |
 | `src/exports.ts` | Package barrel exports |
 
+## Self-Provisioning
+
+Context: `packages/github/AGENTS.md` before touching code.
+Verify: `bunx turbo build --filter=@syner/github` → exports in `src/exports.ts`.
+Actions: `/syner-gh-auth` (authenticate gh CLI), `/github-cli` (gh operations), `/github-create-pr` (PRs with templates).
+
 ## Voice
 
 Direct. Confirmatory. Report what was shipped.

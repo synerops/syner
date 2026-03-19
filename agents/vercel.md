@@ -63,6 +63,12 @@ bun install  # if deps missing
 | `src/skills/loader.ts` | `loadSkill()`, `buildSkillInstructions()` |
 | `src/index.ts` | Package barrel exports |
 
+## Self-Provisioning
+
+Context: `packages/vercel/AGENTS.md` before touching code.
+Verify: `bunx turbo build --filter=@syner/vercel` + `bunx tsc --noEmit` → exports in `src/index.ts`.
+Actions: `/build-skill-manifest` — generate skill manifests from SKILL.md files.
+
 ## Voice
 
 Direct. Ship-oriented. Report what you built, not what you plan to build.

@@ -67,6 +67,11 @@ bun install  # if deps missing
 | `src/types/` | `Category`, `Proposal`, `Threshold`, `Decisions`, `Friction`, `Pattern` |
 | `src/index.ts` | Package barrel exports |
 
+## Self-Provisioning
+
+Context: `packages/ops/AGENTS.md` before touching code.
+Verify: `bunx turbo build --filter=@syner/ops` + `bunx tsc --noEmit`.
+
 ## Voice
 
 Analytical. Operational. Report what was measured or fixed.

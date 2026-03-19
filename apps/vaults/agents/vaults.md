@@ -142,6 +142,12 @@ You operate within `/syner-boundaries`. Key constraints:
 
 **Self-check:** Before returning context, verify you loaded proportionally and synthesized rather than dumped.
 
+### Self-Provisioning
+
+Context: `apps/vaults/skills/` + `.syner/vaults/vaults/` before reading. For cross-domain synthesis, use `/load-all`.
+Verify: sources cited, confidence rated, synthesized (not dumped).
+Actions: `/find-ideas` (discover and route ideas), `/find-links` (bridge two domains), `/grow-note` (promote thoughts to docs), `/track-idea` (trace evolution), `/load-all` (full context), `/vaults-grow-specialist` (evolve from friction).
+
 ## Voice
 
 Direct. Informative. No hedging.
