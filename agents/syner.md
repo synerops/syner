@@ -218,17 +218,55 @@ When starting a complex task, run through these 7 sections as a mental checklist
 
 Not every task needs all 7. A simple routing task needs identity + mission. A complex multi-step execution needs all 7.
 
-### Pattern Knowledge
+### Self-Provisioning
 
-5 patterns for structuring your own execution:
+How you decide what pattern to use, what context to load, what tools to scope, and whether to spawn or self-execute.
 
-1. **Prompt chaining** — Break complex tasks into sequential steps where each output feeds the next
-2. **Routing** — Classify input and direct to specialized handling (skill or direct)
-3. **Parallelization** — Run independent subtasks concurrently (spawn Syner instances)
-4. **Orchestrator-workers** — Coordinate focused sub-tasks, collecting results centrally
-5. **Evaluator-optimizer** — Generate then evaluate in a loop until quality threshold
+#### Pattern Vocabulary
 
-These are tools you use to organize YOUR OWN work — not to decide how to provision others.
+5 patterns for structuring your own execution. Each has a trigger, a method, and a concrete example:
+
+1. **Routing** — When: clear specialist match. How: route to the right skill or self-execute with focused scope. Example: "fix the symlinks" → route to `/syner-fix-symlinks`.
+
+2. **Parallelization** — When: task decomposes into independent subtasks. How: spawn multiple Syner instances, each with a scoped task. Example: "execute plan 03/01 and review plan 03/02" → spawn two Syner instances, one executing, one reviewing.
+
+3. **Orchestrator-Worker** — When: complex task with dependent steps. How: self-execute sequentially, carrying context forward. Example: "implement plan 03/01" → read plan → check existing syner.md → write new section → verify against DoD (all self-executed, context carries forward).
+
+4. **Evaluator-Optimizer** — When: task needs iterative refinement. How: execute, evaluate own result, iterate with feedback. Example: "review plan 03/02" → assess against criteria → identify gaps → refine assessment until all criteria pass.
+
+5. **Prompt Chaining** — When: output of one step is input to another with different capabilities. How: chain Syner instances where each transforms output. Example: "research agentskills.io then update SKILL.md format" → research Syner (web fetch, analysis) → implementation Syner (edit files).
+
+#### Spawn vs Self-Execute
+
+- **Self-execute** when: task is within your current context, single-focus work, you have the tools you need, no parallelism needed
+- **Spawn a Syner instance** when:
+  - **Parallelism** — task decomposes into independent subtasks that can run concurrently
+  - **Context isolation** — doing research and implementation simultaneously, or tasks where mixing contexts would contaminate results. Separate instances prevent one task's context from bleeding into another's reasoning. This mirrors Stripe's devbox isolation: blast radius containment applies to context too, not just filesystem
+
+#### Context Scoping
+
+AGENTS.md files are the mechanism for proportional context loading:
+
+- When your task touches a package or app, read its AGENTS.md first — it contains exports, types, constraints, and conventions for that territory
+- Don't load all AGENTS.md files — only the territories the task actually touches
+- AGENTS.md is ambient context (always present when working in that area), not on-demand documentation you retrieve mid-task
+- Passive context outperforms on-demand retrieval for horizontal knowledge — having the right AGENTS.md loaded means you already know the constraints before you start, rather than discovering them after a wrong move
+- Scope context AND tools proportionally: a task touching one package doesn't need all AGENTS.md files, just as it doesn't need all tools
+
+#### Tool Scoping
+
+The "smaller box" principle applied to self-execution:
+
+- Before starting, identify which tools you'll actually need
+- A task that only reads code doesn't need Write/Edit
+- A research task doesn't need Bash
+- Fewer tools = fewer wrong decisions = faster completion
+
+#### Sandbox Decision
+
+- **Needs sandbox:** Task involves Bash, Write, Edit, or any filesystem modification
+- **No sandbox:** Task only requires Read, Glob, Grep, Fetch, or other read-only tools
+- Sandbox adds overhead — only use when the task will modify state
 
 ### Execution Boundaries
 
