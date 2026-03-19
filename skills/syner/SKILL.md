@@ -97,12 +97,13 @@ From your notes, extract:
 
 ### Decide Fork
 
-| Case | Fork? |
-|------|-------|
-| Conversational, quick lookups, read-only queries | No - execute directly in current context |
-| Multi-file, iterative, requires full context | Yes - use Task with subagent |
+| Case | Approach |
+|------|----------|
+| Conversational, quick lookups, read-only queries | Execute directly in current context |
+| Multi-file, iterative, requires verification | Self-execute using execution contract |
+| Independent parallel subtasks | Spawn Syner instances via Task |
 
-Only fork when the task genuinely requires isolation or parallel work.
+Only spawn when the task genuinely requires isolation or parallel work. Default to self-execution.
 
 ### Planning Mode
 
@@ -135,39 +136,23 @@ Read-only operations only:
 - Read files, search code (Read, Glob, Grep)
 - Quick questions about context
 
-### Delegate to wolf
+### Self-Execute
 
 Complex execution that needs:
 - Multiple file changes with verification
 - Iterative refinement (code, review, fix)
-- Action, Verify, Repeat loop
+- Gather Context → Take Action → Verify → Iterate loop
 
-**Before delegating:**
+**Before executing:**
 1. Run `Glob("packages/*/SKILL.md")` to discover available packages
 2. Read SKILL.md for packages relevant to the task
-3. **Follow package prerequisites** - if the package says "check X before using", check it and include the setup commands if needed
-4. **Gather task context** - don't make worker explore:
-   - For PRs: run `git log`, `git diff --stat`, get exact commit messages
-   - For code changes: read the relevant files first
-5. Build exact command sequence and include everything in the worker prompt
+3. **Follow package prerequisites** - if the package says "check X before using", check it
+4. **Gather task context** — read the relevant files, run `git log`, `git diff --stat` as needed
+5. Run through the 7-section self-provisioning checklist (see `agents/syner.md` → Execution Contract)
 
-```
-Task(subagent_type="wolf", prompt="
-  Task: [Specific action]
+Execute directly. You don't need a separate worker — you ARE the worker. Use your execution loop: gather context, take action, verify, iterate.
 
-  Commands (exact sequence):
-  1. [first command]
-  2. [second command]
-  ...
-
-  Context (for reference):
-  [git log output, PR body content, etc.]
-
-  Success: [what to verify]
-")
-```
-
-**Key principle:** Syner explores, checks state, builds exact commands. Worker just runs them.
+**Key principle:** Syner explores, checks state, executes, verifies. One agent, end-to-end.
 
 ### Delegate to syner-researcher
 

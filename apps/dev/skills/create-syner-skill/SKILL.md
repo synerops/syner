@@ -241,10 +241,10 @@ When referencing other skills, use the name not the path:
 
 ```markdown
 # Good
-Delegate to `/wolf` for execution.
+Self-execute using the execution contract.
 
 # Bad
-Read `../wolf/SKILL.md` and follow instructions.
+Read another skill's SKILL.md and follow instructions inline.
 ```
 
 ## Symlinks

@@ -62,7 +62,7 @@ For each finding, determine the concrete change:
 | Skill references (B3) | Use `/skill-name` format |
 | Missing input handling (B4) | Add default or AskUserQuestion |
 | Output structure (B5) | Add explicit template |
-| Missing delegation (B6) | Add wolf delegation |
+| Missing delegation (B6) | Add subagent delegation |
 
 ## Step 4: Confirm Changes
 

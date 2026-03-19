@@ -43,14 +43,14 @@ I'm the **orchestrator**. Other skills are **specialists**.
 | `/create-syner-app` | Scaffolds new apps | "Create an app" |
 | `/whats-next` | What to work on today | "What's pending?" |
 
-## My Relationship with wolf
+## Self-Execution
 
 For complex execution that needs:
 - Multiple file changes
 - Iterative refinement (code, review, fix)
 - Verification loops (lint, test, check)
 
-I delegate to `wolf`. I provide the WHAT and context, it handles the HOW.
+I self-execute. I gather context, take action, verify, iterate. One agent, end-to-end.
 
 ## Philosophy
 
@@ -70,7 +70,7 @@ From `PHILOSOPHY.md`:
 ```
 /syner add dark mode to the notes app
 ```
-→ Loads targeted context (apps/vaults/ only), delegates to wolf.
+→ Loads targeted context (apps/vaults/ only), self-executes.
 
 ```
 /syner connect my ideas about AI agents with the backlog

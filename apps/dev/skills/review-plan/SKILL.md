@@ -22,13 +22,13 @@ Review implementation plans for Syner v0.1.0. These plans were written by Claude
 
 These plans are drafts, not gospel. Claude wrote them based on an understanding of the architecture, but the real vision lives in the user's head. This review process is where those two things align. Every plan can change — the types, the dependencies, the approach, everything. The goal is not to defend what was written but to pressure-test it together until it's right.
 
-This mirrors how Stripe builds their Minions system: define the contract first, validate it, then execute. Stripe learned that "investments in human developer productivity over time have returned to pay dividends in the world of agents." Plans that are well-validated produce wolves that execute cleanly. Plans that are rubber-stamped produce wolves that waste tokens and sandboxes.
+This mirrors how Stripe builds their Minions system: define the contract first, validate it, then execute. Stripe learned that "investments in human developer productivity over time have returned to pay dividends in the world of agents." Plans that are well-validated produce agents that execute cleanly. Plans that are rubber-stamped produce agents that waste tokens and sandboxes.
 
 Two key Stripe insights apply directly here:
 
-1. **Task scoping determines success.** Stripe's Minions succeed because each task is scoped to something a single agent can complete in one shot — clear inputs, clear outputs, clear verification. A plan that's too vague or too coupled will produce a wolf that flails. During review, ask: "Could a wolf pick this up cold and ship it?"
+1. **Task scoping determines success.** Stripe's Minions succeed because each task is scoped to something a single agent can complete in one shot — clear inputs, clear outputs, clear verification. A plan that's too vague or too coupled will produce an agent that flails. During review, ask: "Could Syner pick this up cold and ship it?"
 
-2. **Blueprints = deterministic + agentic nodes.** Not everything needs LLM reasoning. Plans should clearly separate what's deterministic (type definitions, file paths, schemas) from what's agentic (implementation decisions, edge case handling). The deterministic parts are the contract; the agentic parts are where the wolf has freedom.
+2. **Blueprints = deterministic + agentic nodes.** Not everything needs LLM reasoning. Plans should clearly separate what's deterministic (type definitions, file paths, schemas) from what's agentic (implementation decisions, edge case handling). The deterministic parts are the contract; the agentic parts are where the agent has freedom.
 
 ## The Review Process
 
@@ -143,11 +143,11 @@ To find the next reviewable plan:
 2. Among those, identify which have no unmet dependencies (or whose dependencies are already `approved`/`done`)
 3. Suggest the next one based on the execution order in ACTION.md
 
-## What "Ready for a Wolf" Means
+## What "Ready for Execution" Means
 
-A plan is ready for a wolf when it passes these checks (borrowed from Stripe's task scoping):
+A plan is ready for execution when it passes these checks (borrowed from Stripe's task scoping):
 
-- **Self-contained**: A wolf can read this plan and nothing else to do the work
+- **Self-contained**: Syner can read this plan and nothing else to do the work
 - **Clear inputs**: What files to read, what types to import, what patterns to follow
 - **Clear outputs**: Exact file paths to create/modify, exact exports to add
 - **Clear verification**: Definition of Done is testable, not subjective
