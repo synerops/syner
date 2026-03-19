@@ -221,30 +221,6 @@ See `PHILOSOPHY.md` for full principles:
 - **Vaults vs content** - `.syner/vaults/` is private thinking (gitignored); `apps/*/content/` is published docs (committed)
 - **Vaults are local** - Don't expect your full context in CI or other machines
 
-## Vision 2026 Workflow
-
-When the user asks to work on vision-2026 issues:
-
-1. **Auth:** `/syner-gh-auth`
-2. **Find work:** `gh issue list --repo synerops/syner --label vision-2026 --state open --json number,title,labels,body -L 100`
-3. **Filter:**
-   - Skip issues labeled `epic` (parent tracking only)
-   - Skip issues labeled `in-progress` (another session owns it)
-   - Skip issues labeled `backlog` (TODO for later)
-   - Parse "## Dependencies" section — check each dep issue is closed: `gh issue view {n} --json state`
-   - Pick the first issue with ALL dependencies met
-4. **Claim:** `gh issue edit {n} --add-label in-progress`
-5. **Branch:** `git checkout -b vision-2026/{n} feat/vision-2026`
-6. **Read context:**
-   - Read all files listed in "## Research" section
-   - Read all files listed in "## Current Code" section
-7. **Implement:** Follow "## Implementation" section exactly
-8. **Verify:** Run all checks in "## Acceptance" section
-9. **PR:** Create PR to `feat/vision-2026` with `Closes #{n}` in body
-10. **Close:** After PR merges, close issue manually (`Closes #N` only works on merge to `main`):
-    - `gh issue close {n} --repo synerops/syner --reason completed`
-    - `gh issue edit {n} --repo synerops/syner --remove-label in-progress`
-
 ## Recommended Action
 
 Read [SYNER.md](./SYNER.md) and [PHILOSOPHY.md](./PHILOSOPHY.md)

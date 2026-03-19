@@ -166,9 +166,9 @@ When testing agents that consume other agents' output:
 2. Feed output to consumer agent
 3. Verify the handoff works
 
-Example: `skill-reviewer → syner-worker`
+Example: `skill-reviewer → wolf`
 - skill-reviewer produces text report with issues
-- syner-worker consumes it, executes fixes
+- wolf consumes it, executes fixes
 - Verify worker can parse reviewer's output format
 
 ### Search Guide

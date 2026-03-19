@@ -135,7 +135,7 @@ Read-only operations only:
 - Read files, search code (Read, Glob, Grep)
 - Quick questions about context
 
-### Delegate to syner-worker
+### Delegate to wolf
 
 Complex execution that needs:
 - Multiple file changes with verification
@@ -152,7 +152,7 @@ Complex execution that needs:
 5. Build exact command sequence and include everything in the worker prompt
 
 ```
-Task(subagent_type="syner-worker", prompt="
+Task(subagent_type="wolf", prompt="
   Task: [Specific action]
 
   Commands (exact sequence):
