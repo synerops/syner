@@ -389,6 +389,7 @@ const summary = {
   total: allPlans.length,
   byStatus: {
     draft: allPlans.filter(p => p.status === "draft").length,
+    refining: allPlans.filter(p => p.status === "refining").length,
     approved: allPlans.filter(p => p.status === "approved").length,
     "in-progress": allPlans.filter(p => p.status === "in-progress").length,
     review: allPlans.filter(p => p.status === "review").length,

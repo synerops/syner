@@ -95,6 +95,7 @@ If a plan has NO existing decisions, this is a fresh review — use the full rev
 
 6. **Wait for the verdict.** The user decides one of:
    - **Approved** — plan is good, add frontmatter `status: approved`
+   - **Refining** — plan needs active clarification and iteration, add frontmatter `status: refining`
    - **Refactor** — plan needs changes, discuss what and why, then edit
    - **Defer** — plan is valid but not needed yet, leave as draft
 
