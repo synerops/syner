@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSkillBySlug, getSkillsList } from "syner/skills";
+import { getSkillBySlug, getSkillsList } from "@syner/sdk/skills";
 import path from "path";
 
 // ISR: revalidate every hour
@@ -18,7 +18,7 @@ export async function generateStaticParams() {
   const projectRoot = getProjectRoot();
   const skills = await getSkillsList(projectRoot);
   return skills.map((skill) => ({
-    slug: skill.slug,
+    slug: skill.name,
   }));
 }
 

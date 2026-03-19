@@ -10,6 +10,11 @@
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./fonts": "./src/fonts/index.ts",
+    "./fonts/satori": "./src/fonts/satori.ts",
+    "./slides": "./src/slides/index.ts",
+    "./slides/types": "./src/slides/types.ts",
+    "./slides/registry": "./src/slides/registry.ts",
+    "./slides/templates": "./src/slides/templates/index.ts",
     "./branding": "./src/branding/index.ts"
   },
   "dependencies": {

@@ -1,0 +1,31 @@
+{
+  "name": "@syner/osprotocol",
+  "version": "0.0.1",
+  "description": "Agent execution protocol — context, action, verification lifecycle",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synerops/syner.git",
+    "directory": "packages/osprotocol"
+  }
+}

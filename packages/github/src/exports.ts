@@ -7,8 +7,11 @@
 // Auth/Octokit
 export {
   getToken,
+  clearTokenCache,
   createOctokit,
   createThrottledOctokit,
+  isTokenValid,
+  getTokenStatus,
   type ThrottlingCallbacks,
 } from './lib/octokit'
 

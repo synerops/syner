@@ -1,106 +1,161 @@
 # @syner/github
 
-github integration for syner agents. auth, tools, actions, and webhooks in one package.
+GitHub App authentication, Octokit client factories, issue/comment/label actions, webhook verification, and Vercel AI SDK tools for repository operations.
 
-## what it does
+## Quick Start
 
-- **auth**: generate short-lived tokens from GitHub App (no PATs to leak)
-- **tools**: AI SDK tools so agents can read repos, search code, create PRs
-- **actions**: programmatic issue/comment/reaction creation
-- **events**: webhook signature verification and typed event handling
-
-## how it fits
-
-```
-agent prompt
-    ↓
-┌─────────────────────────────────────────────┐
-│               @syner/github                 │
-├─────────────┬─────────────┬─────────────────┤
-│    auth     │    tools    │    actions      │
-│  (tokens)   │  (AI SDK)   │  (outbound)     │
-└──────┬──────┴──────┬──────┴────────┬────────┘
-       │             │               │
-       ▼             ▼               ▼
-   gh CLI      generateText()   octokit.rest
+```bash
+bun add @syner/github
 ```
 
-## cli
+### Environment variables
 
-authenticate `gh` CLI for any subsequent commands:
+```bash
+GITHUB_APP_ID=123456                      # GitHub App ID
+GITHUB_APP_INSTALLATION_ID=78901234       # Installation ID for target org
+GITHUB_APP_PRIVATE_KEY="-----BEGIN RSA..." # Private key contents (or use PEM_PATH)
+GITHUB_APP_PEM_PATH=/path/to/key.pem     # Alternative: path to PEM file
+GITHUB_WEBHOOK_SECRET=whsec_...           # Webhook secret for signature verification
+```
+
+You need either `GITHUB_APP_PRIVATE_KEY` (key contents) or `GITHUB_APP_PEM_PATH` (file path), not both.
+
+### Authenticate the GitHub CLI
 
 ```bash
 bunx @syner/github create-app-token | gh auth login --with-token
 ```
 
-## tools (for agents)
+This prints a short-lived installation token to stdout, designed to pipe into `gh auth login`.
 
-give your AI agent GitHub superpowers:
+### Make your first API call
 
-```typescript
-import { createAllTools, createOctokit } from "@syner/github"
-import { generateText } from "ai"
+```ts
+import { createOctokit, createComment } from '@syner/github'
 
 const octokit = createOctokit()
-const tools = createAllTools({ octokit })
 
-await generateText({
-  model: anthropic("claude-sonnet-4-20250514"),
-  tools,
-  prompt: "Read the README from synerops/syner and summarize it",
+await createComment({
+  octokit,
+  owner: 'synerops',
+  repo: 'syner',
+  issueNumber: 42,
+  body: 'Hello from @syner/github',
 })
 ```
 
-available tools:
-- `getFileContent` - read files from any repo
-- `listDirectory` - browse repo structure
-- `getRepoInfo` - get repo metadata
-- `searchCode` - search across repos
-- `createPullRequest` - create PRs programmatically
+---
 
-## actions (outbound operations)
+## For Developers
 
-create issues, comments, reactions directly:
+### Setup
 
-```typescript
-import { createIssue, createComment, addReaction } from "@syner/github/actions"
+1. Register a [GitHub App](https://docs.github.com/en/apps/creating-github-apps) with the permissions your use case needs (issues read/write, pull requests read/write, contents read, etc.)
+2. Install the App on your organization or repository
+3. Set the four environment variables above
+4. Import from `@syner/github` — auth is handled automatically
 
-await createIssue({ owner, repo, title, body })
-await createComment({ owner, repo, issue_number, body })
-await addReaction({ owner, repo, comment_id, content: "+1" })
+### Package exports
+
+| Import path | Contents |
+|---|---|
+| `@syner/github` | Everything (barrel re-export) |
+| `@syner/github/octokit` | `getToken`, `createOctokit`, `createThrottledOctokit`, `clearTokenCache`, `isTokenValid`, `getTokenStatus` |
+| `@syner/github/actions` | Issue CRUD, comment CRUD, labels, reactions, thread reading |
+| `@syner/github/events` | Webhook signature verification, event type definitions |
+| `@syner/github/tools` | Vercel AI SDK tools, `createAllTools` factory |
+
+### Token lifecycle
+
+`getToken()` generates a GitHub App installation token and caches it for 55 minutes (tokens expire at 60 minutes). Concurrent calls during a cache miss are deduplicated — only one API request is made.
+
+```ts
+import { getToken, isTokenValid, getTokenStatus, clearTokenCache } from '@syner/github/octokit'
+
+// Get a token (cached automatically)
+const token = await getToken()
+
+// Check cache status
+isTokenValid()              // boolean
+getTokenStatus()            // { cached: boolean, expiresIn?: number }
+
+// Force refresh (e.g., after key rotation)
+clearTokenCache()
 ```
 
-## events (webhook handling)
+### Octokit factories
 
-verify and type GitHub webhooks:
+Two factories, both pre-wired with GitHub App auth:
 
-```typescript
-import { verifyWebhookSignature, type IssueEvent } from "@syner/github/events"
+```ts
+import { createOctokit, createThrottledOctokit } from '@syner/github/octokit'
 
-const isValid = verifyWebhookSignature(body, signature, secret)
-const event: IssueEvent = JSON.parse(body)
+// Standard — no rate limit handling
+const octokit = createOctokit()
+
+// Throttled — auto-retries on rate limits
+const throttled = createThrottledOctokit({
+  onRateLimit: (retryAfter, retryCount) => {
+    console.log(`Rate limit hit, retry #${retryCount + 1} after ${retryAfter}s`)
+  },
+  onSecondaryRateLimit: (retryAfter) => {
+    console.log(`Abuse limit, retry after ${retryAfter}s`)
+  },
+})
 ```
 
-## plan mode
+`createThrottledOctokit` uses `@octokit/plugin-throttling`. It retries primary rate limits up to 2 times and always retries secondary (abuse) limits.
 
-See `.syner/plans/README.md` for plan structure. Each plan lives in `.syner/plans/{id}-{slug}/README.md` with 3 sections: What/How, Definition of Done, Deliveries.
+### Webhook integration
 
-## setup
+Wire webhook verification into your route handler:
 
-| variable | required | description |
-|----------|----------|-------------|
-| `GITHUB_APP_ID` | yes | your GitHub App ID |
-| `GITHUB_APP_INSTALLATION_ID` | yes | installation ID for target org |
-| `GITHUB_APP_PRIVATE_KEY` | one of | PEM key contents |
-| `GITHUB_APP_PEM_PATH` | these | path to PEM file |
+```ts
+import { verifyWebhookSignature, extractWebhookHeaders } from '@syner/github/events'
 
-## skill
+export async function POST(request: Request) {
+  const rawBody = await request.text()
+  const { signature, event, deliveryId } = extractWebhookHeaders(request.headers)
 
-- `/syner-gh-auth` - authenticate gh CLI before GitHub operations
+  const valid = verifyWebhookSignature({
+    payload: rawBody,
+    signature: signature!,
+    secret: process.env.GITHUB_WEBHOOK_SECRET!,
+  })
 
-## why github app auth
+  if (!valid) {
+    return new Response('Unauthorized', { status: 401 })
+  }
 
-- no stored tokens - generated on demand, expire fast
-- fine-grained - only permissions the app has
-- audit trail - actions attributed to app, not user
-- higher rate limits - 5000 req/hour vs 60 for unauthenticated
+  // Process the event...
+  const payload = JSON.parse(rawBody)
+}
+```
+
+Signature verification uses HMAC-SHA256 with timing-safe comparison. The `extractWebhookHeaders` helper works with both `Headers` objects and plain `Record<string, string>`.
+
+### Architecture
+
+```
+GitHub App
+  |
+  ├── Webhooks ──> verifyWebhookSignature() ──> syner.bot event handler
+  |
+  └── API calls
+        |
+        ├── getToken() ──> cached installation token ──> CLI (gh auth)
+        |
+        ├── createOctokit() ──> actions (comments, issues, labels)
+        |
+        └── createThrottledOctokit() ──> tools (AI SDK) ──> agent execution
+```
+
+### Troubleshooting
+
+| Error | Cause | Fix |
+|---|---|---|
+| `Missing required environment variables: GITHUB_APP_ID or GITHUB_APP_INSTALLATION_ID` | Env vars not set | Set `GITHUB_APP_ID` and `GITHUB_APP_INSTALLATION_ID` |
+| `Missing private key: set GITHUB_APP_PRIVATE_KEY or GITHUB_APP_PEM_PATH` | Neither key var is set | Set one of the two private key variables |
+| 401 from GitHub API | Token expired or wrong App credentials | Check App ID and installation ID match; `clearTokenCache()` if rotating keys |
+| 403 from actions/tools | App lacks required permissions | Check App installation permissions in GitHub settings |
+| 404 from `removeLabel` | Label not on the issue | Check issue labels before removing |

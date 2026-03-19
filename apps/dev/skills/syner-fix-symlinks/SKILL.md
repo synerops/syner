@@ -47,7 +47,7 @@ agents/
 - `agents/dev.md` → `../apps/dev/agents/dev.md`
 - `agents/bot.md` → `../apps/bot/agents/bot.md`
 - `agents/design.md` → `../apps/design/agents/design.md`
-- `agents/wiki.md` → `../apps/vaults/agents/wiki.md`
+- `agents/vaults.md` → `../apps/vaults/agents/vaults.md`
 
 **Shared agents are real files:**
 - `agents/syner.md` (orchestrator)
@@ -63,7 +63,7 @@ agents/
 
 ### Agents
 1. `.claude/agents` IS `agents/` (symlink) - work in `agents/` only
-2. Lead agents (dev, bot, design, wiki) symlink to `../apps/{app}/agents/{name}.md`
+2. Lead agents (dev, bot, design, vaults) symlink to `../apps/{app}/agents/{name}.md`
 3. Shared agents (syner, syner-worker, syner-researcher, code-reviewer, release-manager) are real files
 4. Never symlink to `../../agents/...` from within `agents/` (circular)
 
@@ -132,7 +132,7 @@ ls agents/*.md 2>/dev/null          # shared agents + symlinks
 file agents/*.md
 
 # 3. Verify:
-#    - Lead agents (dev, bot, design, wiki) = symlinks to ../apps/*/agents/
+#    - Lead agents (dev, bot, design, vaults) = symlinks to ../apps/*/agents/
 #    - Shared agents (syner, syner-*, code-reviewer, release-manager) = real files
 ```
 
@@ -149,7 +149,7 @@ ln -s ../apps/{app}/skills/{name} {name}
 ```bash
 cd agents
 
-# For lead agents (dev, bot, design, wiki):
+# For lead agents (dev, bot, design, vaults):
 rm -f {name}.md
 ln -s ../apps/{app}/agents/{name}.md {name}.md
 

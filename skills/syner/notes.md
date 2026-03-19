@@ -8,7 +8,7 @@ Vaults live at two levels:
 
 ```
 .syner/vaults/              # Centralized vault location
-  wiki/                     # wiki app vaults
+  vaults/                   # vaults app vaults
   bot/                      # bot app vaults
   dev/                      # dev app vaults
   {app}/                    # any app can have vaults

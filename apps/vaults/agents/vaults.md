@@ -1,7 +1,8 @@
 ---
 name: vaults
 description: Use when you need vault context, personal history, or idea synthesis. Reads and synthesizes notes. Returns structured context with sources.
-channel: C0AKWADSSTW
+metadata:
+  channel: C0AKWADSSTW
 tools: [Glob, Read, Grep, Write, Skill]
 model: sonnet
 background: false

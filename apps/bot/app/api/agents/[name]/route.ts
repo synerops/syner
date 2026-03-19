@@ -1,30 +1,21 @@
-import { NextResponse } from "next/server";
-import { getAgentsList, getAgentByName } from "syner/agents";
-import path from "path";
+import { NextResponse } from 'next/server'
+import { runtime } from '@/lib/runtime'
 
 // ISR: revalidate every hour
-export const revalidate = 3600;
+export const revalidate = 3600
 
 // Only serve pre-generated routes, never call fs at runtime
-export const dynamicParams = false;
-
-// Project root is two levels up from apps/dev
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), "../..");
-}
+export const dynamicParams = false
 
 // Pre-generate routes for all agents at build time
 export async function generateStaticParams() {
-  const projectRoot = getProjectRoot();
-  const agents = await getAgentsList(projectRoot);
-  return agents.map((agent) => ({
-    name: agent.name,
-  }));
+  if (runtime.agents.size === 0) await runtime.start()
+  return [...runtime.agents.keys()].map(name => ({ name }))
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ name: string }> },
 ) {
   // In Vercel: require bypass header
   if (process.env.VERCEL_URL) {
@@ -34,13 +25,13 @@ export async function GET(
     }
   }
 
-  const { name } = await params;
-  const projectRoot = getProjectRoot();
-  const agent = await getAgentByName(projectRoot, name);
+  const { name } = await params
+  if (runtime.agents.size === 0) await runtime.start()
+  const agent = runtime.agents.get(name)
 
   if (!agent) {
-    return NextResponse.json({ error: "Agent not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
   }
 
-  return NextResponse.json(agent);
+  return NextResponse.json(agent)
 }

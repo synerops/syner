@@ -1,0 +1,45 @@
+{
+  "name": "@syner/sdk",
+  "version": "0.0.1",
+  "description": "Core package for the Syner ecosystem",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./logger": "./src/logger.ts",
+    "./errors": "./src/errors.ts",
+    "./skills": {
+      "browser": "./src/skills/client.ts",
+      "default": "./src/skills/index.ts"
+    },
+    "./agents": "./src/agents/index.ts",
+    "./tools": "./src/tools/index.ts",
+    "./context": "./src/context/index.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/gateway": "^3.0.0",
+    "@syner/osprotocol": "workspace:*",
+    "ai": "^6.0.116",
+    "glob": "^10.0.0",
+    "gray-matter": "^4.0.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synerops/syner.git",
+    "directory": "packages/sdk"
+  }
+}

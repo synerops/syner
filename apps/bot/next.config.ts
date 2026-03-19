@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 
 const config: NextConfig = {
   // Transpile workspace packages
-  transpilePackages: ['@syner/github'],
+  transpilePackages: ['@syner/github', '@syner/vercel'],
 }
 
 export default config

@@ -44,22 +44,69 @@ function getConfig(): AppConfig {
   };
 }
 
+interface CachedToken {
+  token: string;
+  expiresAt: number;
+}
+
+let tokenCache: CachedToken | null = null;
+let pendingTokenRequest: Promise<string> | null = null;
+const TOKEN_TTL = 55 * 60 * 1000; // 55 minutes
+
 export async function getToken(): Promise<string> {
-  const config = getConfig();
+  if (tokenCache && Date.now() < tokenCache.expiresAt) {
+    return tokenCache.token;
+  }
 
-  const octokit = new Octokit({
-    authStrategy: createAppAuth,
-    auth: {
-      appId: config.appId,
-      privateKey: config.privateKey,
-      installationId: config.installationId,
-    },
-  });
+  // Dedup concurrent calls during cache miss
+  if (pendingTokenRequest) {
+    return pendingTokenRequest;
+  }
 
-  const auth = (await octokit.auth({ type: "installation" })) as {
-    token: string;
-  };
-  return auth.token;
+  pendingTokenRequest = (async () => {
+    try {
+      const config = getConfig();
+      const octokit = new Octokit({
+        authStrategy: createAppAuth,
+        auth: {
+          appId: config.appId,
+          privateKey: config.privateKey,
+          installationId: config.installationId,
+        },
+      });
+
+      const auth = (await octokit.auth({ type: "installation" })) as {
+        token: string;
+      };
+
+      tokenCache = {
+        token: auth.token,
+        expiresAt: Date.now() + TOKEN_TTL,
+      };
+
+      return auth.token;
+    } finally {
+      pendingTokenRequest = null;
+    }
+  })();
+
+  return pendingTokenRequest;
+}
+
+export function clearTokenCache(): void {
+  tokenCache = null;
+  pendingTokenRequest = null;
+}
+
+export function isTokenValid(): boolean {
+  return tokenCache !== null && Date.now() < tokenCache.expiresAt;
+}
+
+export function getTokenStatus(): { cached: boolean; expiresIn?: number } {
+  if (!tokenCache || Date.now() >= tokenCache.expiresAt) {
+    return { cached: false };
+  }
+  return { cached: true, expiresIn: tokenCache.expiresAt - Date.now() };
 }
 
 /**

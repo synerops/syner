@@ -124,3 +124,55 @@ export async function addReaction(options: AddReactionOptions): Promise<void> {
     content: reaction,
   })
 }
+
+export interface Comment {
+  id: number
+  author: string
+  body: string
+  createdAt: string
+  updatedAt: string
+  isBot: boolean
+}
+
+export interface ReadThreadOptions {
+  octokit: Octokit
+  owner: string
+  repo: string
+  issueNumber: number
+  /** Max comments to return (default: all) */
+  limit?: number
+}
+
+/**
+ * Reads all comments on an issue or pull request with auto-pagination.
+ *
+ * @param options - Read thread options
+ * @returns Array of comments sorted by createdAt ascending
+ */
+export async function readThread(options: ReadThreadOptions): Promise<Comment[]> {
+  const { octokit, owner, repo, issueNumber, limit } = options
+
+  const responses = await octokit.paginate(octokit.issues.listComments, {
+    owner,
+    repo,
+    issue_number: issueNumber,
+    per_page: 100,
+  })
+
+  const comments: Comment[] = responses.map((c) => ({
+    id: c.id,
+    author: c.user?.login ?? 'unknown',
+    body: c.body ?? '',
+    createdAt: c.created_at,
+    updatedAt: c.updated_at,
+    isBot: c.user?.type === 'Bot',
+  }))
+
+  comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+
+  if (limit && limit > 0) {
+    return comments.slice(0, limit)
+  }
+
+  return comments
+}

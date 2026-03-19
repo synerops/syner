@@ -1,114 +1,78 @@
 # syner.bot
 
-Integration platform — receives webhooks from GitHub, Slack, and more. Responds using AI agents with tool access.
+syner.bot speaks osprotocol. Every response from `POST /api/agent` and `POST /api/chat` is a `Result<GenerateResult>`.
 
-## Structure
-
-<!-- auto:structure -->
-```
-apps/bot/
-├── app/
-│   └── api/
-│       ├── chat/route.ts           # Direct chat endpoint (local dev)
-│       └── webhooks/
-│           ├── github/route.ts     # GitHub webhook handler
-│           └── slack/route.ts      # Slack webhook handler
-├── agents/
-│   └── bot.md                      # Lead agent definition
-├── lib/
-│   ├── agents/
-│   │   ├── index.ts                # Agent exports
-│   │   ├── loader.ts               # Load agents from markdown
-│   │   └── models.ts               # Model configuration
-│   ├── tools/
-│   │   ├── index.ts                # Tool exports
-│   │   └── registry.ts             # Tool session management
-│   ├── env.ts                      # Environment validation
-│   ├── errors.ts                   # Error handling
-│   └── logger.ts                   # Logging utilities
-├── skills/
-│   └── vercel-setup/SKILL.md       # Deployment configuration skill
-└── vaults/
-    └── bot/index.md                # Bot-specific context
-```
-<!-- /auto:structure -->
-
-## Conventions
-
-- **Webhooks** go in `app/api/webhooks/{platform}/route.ts`
-- **Agents** defined in markdown with YAML frontmatter specifying tools
-- **Tools** come from `@syner/vercel` package
-- **Skills** in `skills/{name}/SKILL.md`
-
-## Webhook flow
+### Invoke an agent
 
 ```
-Request → Verify signature → Find agent for channel → Create sandbox → ToolLoopAgent → Response
+POST /api/agent
+Headers:
+  Content-Type: application/json
+  x-vercel-protection-bypass: <VERCEL_AUTOMATION_BYPASS_SECRET>
+
+Body:
+  { "agentName": "dev", "task": "what's blocking #494?" }
 ```
 
-1. Webhook receives event (GitHub mention, Slack message)
-2. Signature verified using platform secret
-3. Agent loaded based on channel mapping
-4. Vercel Sandbox created with repo cloned
-5. ToolLoopAgent runs with tools (Bash, Read, Grep, etc.)
-6. Response posted back to platform
+### Discover available agents
 
-## Adding a new integration
+```
+GET /api/agents
+Headers:
+  x-vercel-protection-bypass: <VERCEL_AUTOMATION_BYPASS_SECRET>
+```
 
-1. Create webhook handler:
-   ```
-   app/api/webhooks/{platform}/route.ts
-   ```
+Returns an array of `AgentCard` objects. Each card includes `name`, `description`, `instructions`, `model`, `tools`, `skills`, and optionally `channel`.
 
-2. Define agent in `agents/{name}.md`:
-   ```yaml
-   ---
-   name: {name}
-   model: claude-sonnet-4-5
-   tools: [Bash, Read, Grep]
-   ---
-   ```
+### Delegate from within a session
 
-3. Add channel mapping in `lib/agents/loader.ts`
+Messages starting with `@agentname` are automatically classified as `delegate` intent and routed via `POST /api/agent`:
 
-4. Add env vars to `.env.example` and `lib/env.ts`
+```
+@dev summarize all open vision-2026 issues
+```
 
-5. Update README.md integrations section
+No extra setup needed — the router handles it.
 
-## Available tools
-
-Tools from `@syner/vercel` running in sandbox:
-
-| Tool | Description |
-|------|-------------|
-| `Bash` | Execute commands |
-| `Read` | Read files |
-| `Write` | Write files |
-| `Glob` | Find files by pattern |
-| `Grep` | Search content |
-| `Fetch` | Fetch URLs |
+---
 
 ## Environment variables
 
-```bash
-# Required
-ANTHROPIC_API_KEY=
+**Required:**
 
-# GitHub
-GITHUB_APP_ID=
-GITHUB_APP_INSTALLATION_ID=
-GITHUB_APP_PRIVATE_KEY=
-GITHUB_WEBHOOK_SECRET=
+| Variable | Purpose |
+|----------|---------|
+| `ANTHROPIC_API_KEY` | LLM calls via `@ai-sdk/anthropic` |
+| `GITHUB_APP_ID` | GitHub App identity |
+| `GITHUB_APP_INSTALLATION_ID` | Installation to act as |
+| `GITHUB_APP_PRIVATE_KEY` | Sign GitHub App JWTs |
+| `GITHUB_WEBHOOK_SECRET` | Verify incoming GitHub events |
 
-# Slack
-SLACK_BOT_TOKEN=
-SLACK_SIGNING_SECRET=
-```
+**Optional:**
 
-## What NOT to do
+| Variable | Purpose |
+|----------|---------|
+| `SLACK_BOT_TOKEN` | Post messages as @synerbot |
+| `SLACK_SIGNING_SECRET` | Verify incoming Slack events |
+| `CRON_SECRET` | Protect scheduled endpoints |
+| `SYNER_INSTANCE_SECRET` | Grant internal scope on `/api/agents` |
 
-- Don't create tools here — they belong in `packages/vercel`
-- Don't hardcode agent instructions — use markdown files
-- Don't skip signature verification on webhooks
-- Don't store secrets in code — use environment variables
-- Don't run agents without sandbox isolation
+Run `/vercel-setup` to configure all variables in Vercel production.
+
+---
+
+## Status
+
+| Feature | Status |
+|---------|--------|
+| POST /api/chat | Production |
+| POST /api/agent | Production |
+| GET /api/agents | Production |
+| GitHub webhook (@synerbot) | Production |
+| Slack webhook (mentions) | Production |
+| Slack slash commands (/syner) | Production |
+| Lazy sandbox initialization | Production |
+| Message routing (direct/delegate) | Production |
+| Chain orchestration | Planned — chain intent keywords silently fall back to direct execution (no error) |
+| Supervisor durable storage | Planned |
+
