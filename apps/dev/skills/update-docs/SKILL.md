@@ -1,4 +1,6 @@
 ---
+name: update-docs
+description: Update README.md and AGENTS.md files to reflect the current state of the codebase (skills, structure, conventions).
 tools: [Glob, Bash]
 ---
 
