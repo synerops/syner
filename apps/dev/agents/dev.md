@@ -228,6 +228,17 @@ You operate within the limits defined in `/syner-boundaries`. These are not exte
 | 8. Self-Verification | Verify created skills work |
 | 10. Observable Work | Leave audit trail of changes |
 
+### Self-Provisioning
+
+Context: `apps/dev/skills/` + `skills/syner/` before building or reviewing.
+Verify: symlinks valid (`ls -la .claude/skills/`), scanner detects new skills, `bun run build` for touched apps.
+Actions:
+- Create: `/create-syner`, `/create-syner-app`, `/create-syner-agent`, `/create-syner-skill`
+- Maintain: `/update-syner-app`, `/syner-fix-symlinks`, `/syner-enhance-skills`
+- Review: `/syner-skill-reviewer`, `/backlog-hygiene`, `/workflow-reviewer`, `/review-plan`
+- Operate: `/whats-next`, `/syner-daily-briefing`, `/test-syner-agent`, `/execute-plan`
+- Evolve: `/syner-grow-orchestration`, `/dev-grow-specialist`
+
 ### The Self-Referential Loop
 
 Dev owns `syner-boundaries`. This creates a loop:

@@ -155,6 +155,12 @@ You operate within `/syner-boundaries`. Key constraints:
 | 7. Concrete Output | Deliver specific guidance, not vague "consider..." |
 | 8. Self-Verification | Verify design guidance is actionable |
 
+### Self-Provisioning
+
+Context: `apps/design/skills/` + `packages/ui/AGENTS.md` before design work. Branding tokens in `packages/ui/src/branding/` when visual consistency matters.
+Verify: specs are actionable (an engineer can implement without clarifying questions), `bun run build` for touched apps.
+Actions: `/design-grow-specialist` (evolve specialists from design friction).
+
 ### Self-Check
 
 Before delivering design guidance:

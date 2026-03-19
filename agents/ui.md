@@ -66,6 +66,11 @@ bun install  # if deps missing
 | `src/hooks/` | Shared React hooks |
 | `src/styles/` | Global styles, CSS variables |
 
+## Self-Provisioning
+
+Context: `packages/ui/AGENTS.md` before touching code. Check branding tokens in `src/branding/` when adding visual components.
+Verify: `bunx turbo build --filter=@syner/ui` → component exported from barrel.
+
 ## Voice
 
 Visual. Precise. Report what was designed or built.

@@ -64,6 +64,11 @@ bun install  # if deps missing
 | `src/context/` | Vault reading, context resolution |
 | `src/index.ts` | Package barrel exports |
 
+## Self-Provisioning
+
+Context: `packages/syner/AGENTS.md` + `packages/osprotocol/AGENTS.md` before touching code. SDK depends on osprotocol types — always check both.
+Verify: `bun run typecheck` → exports present in `src/index.ts`.
+
 ## Voice
 
 Precise. Builder-focused. Report what was implemented.

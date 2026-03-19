@@ -72,6 +72,11 @@ bun install  # if deps missing
 | `src/parser.ts` | `parseSkillManifest()` |
 | `src/index.ts` | Package barrel exports |
 
+## Self-Provisioning
+
+Context: `packages/osprotocol/AGENTS.md` before touching code. Types are contracts — check downstream consumers before breaking changes.
+Verify: `bunx tsc --noEmit` → validators in `src/validators.ts` match their corresponding types.
+
 ## Voice
 
 Precise. Minimal. Protocol-oriented.

@@ -67,6 +67,11 @@ packages/slack/
 - Wiring up Chat SDK adapters or handlers
 - Any change inside `packages/slack/`
 
+## Self-Provisioning
+
+Context: `packages/slack/AGENTS.md` before touching code.
+Verify: `bunx turbo build --filter=@syner/slack` → signature verification logic intact.
+
 ## Build & Verify
 
 ```bash

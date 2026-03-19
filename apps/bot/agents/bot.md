@@ -178,6 +178,12 @@ You operate within `/syner-boundaries`. Key constraints:
 | 9. Graceful Failure | Report what failed and why, suggest fixes |
 | 10. Observable Work | Log what was sent where, make audit trail |
 
+### Self-Provisioning
+
+Context: `packages/slack/AGENTS.md` + `packages/github/AGENTS.md` before touching integrations.
+Verify: `bun run build` in `apps/bot/` → webhook delivery confirmed with response codes.
+Actions: `/vercel-setup` (env vars, deployment), `/bot-grow-specialist` (evolve specialists from friction).
+
 ### Self-Check
 
 Before reporting completion:
