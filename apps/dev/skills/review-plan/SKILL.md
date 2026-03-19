@@ -47,7 +47,7 @@ Also use `Read` to load the actual source files that the plan references — und
 Don't ask the user which plan to review. Run the scan script:
 
 ```bash
-bun run skills/review-plan/scripts/scan-plans.ts
+bun run {project_root}/skills/review-plan/scripts/scan-plans.ts
 ```
 
 This outputs JSON with:
@@ -97,6 +97,8 @@ If a plan has NO existing decisions, this is a fresh review — use the full rev
    - **Approved** — plan is good, add frontmatter `status: approved`
    - **Refactor** — plan needs changes, discuss what and why, then edit
    - **Defer** — plan is valid but not needed yet, leave as draft
+
+   CONTEXT.md is the authoritative source for plan lifecycle — status values, transition rules, and what each state means. When in doubt about lifecycle behavior, read it rather than inferring from this skill.
 
 ## Recording Decisions
 
