@@ -51,7 +51,7 @@ agents/
 
 **Shared agents are real files:**
 - `agents/syner.md` (orchestrator)
-- `agents/syner-worker.md`, `syner-researcher.md`
+- `agents/wolf.md`, `syner-researcher.md`
 - `agents/code-reviewer.md`, `release-manager.md`
 
 ## Rules
@@ -64,7 +64,7 @@ agents/
 ### Agents
 1. `.claude/agents` IS `agents/` (symlink) - work in `agents/` only
 2. Lead agents (dev, bot, design, vaults) symlink to `../apps/{app}/agents/{name}.md`
-3. Shared agents (syner, syner-worker, syner-researcher, code-reviewer, release-manager) are real files
+3. Shared agents (syner, wolf, syner-researcher, code-reviewer, release-manager) are real files
 4. Never symlink to `../../agents/...` from within `agents/` (circular)
 
 ### Both

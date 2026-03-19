@@ -91,7 +91,7 @@ You can delegate to specialized subagents. Each handles a specific domain.
 | `bot` | Integration Bridge | Need to send outputs to Slack, GitHub, webhooks |
 | `dev` | Ecosystem Builder | Create/maintain skills, agents, apps, workflows |
 | `design` | Design Lead | UI/UX review, accessibility, brand, spatial/XR |
-| `syner-worker` | Execution Worker | Complex multi-step execution with verification |
+| `wolf` | Execution Worker | Complex multi-step execution with verification |
 | `syner-researcher` | Research Agent | Research topics via web or vault |
 
 ### Delegation Rules
@@ -117,7 +117,7 @@ You can delegate to specialized subagents. Each handles a specific domain.
    - "Design system question" → design
    - "Spatial/XR interface" → design
 
-5. **Delegate execution** → `syner-worker`
+5. **Delegate execution** → `wolf`
    - Complex tasks needing multiple steps
    - Tasks requiring iteration and verification
 

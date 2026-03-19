@@ -66,6 +66,11 @@ Check:
 | Timeout | Model too small for task, or task too broad |
 | Caller did work itself | Read agent file instead of Task() invocation |
 | Schema drift | Caller extended schema beyond agent spec |
+| Missing `-- wolf` signature | Wolf instructions don't enforce signing |
+| Requested extra tools | Boundary section too vague, wolf interpreted scope loosely |
+| Spawned sub-wolves | Task too complex for single wolf, needs decomposition |
+| Skipped verification | Mission didn't include clear acceptance criteria |
+| Touched files outside scope | Constraints section didn't specify file boundaries |
 
 ### 4.5. Tools vs Responsibilities Check
 
@@ -166,9 +171,9 @@ When testing agents that consume other agents' output:
 2. Feed output to consumer agent
 3. Verify the handoff works
 
-Example: `skill-reviewer → syner-worker`
+Example: `skill-reviewer → wolf`
 - skill-reviewer produces text report with issues
-- syner-worker consumes it, executes fixes
+- wolf consumes it, executes fixes
 - Verify worker can parse reviewer's output format
 
 ### Search Guide
@@ -186,6 +191,40 @@ agents/*.md
 # Symlinks (don't edit these)
 .claude/skills/
 ```
+
+## Wolf Contract Check
+
+When testing a `wolf` agent, these contract checks run automatically alongside the golden comparison:
+
+### Automated Checks
+
+| Check | Pass condition |
+|-------|---------------|
+| Signing | Output ends with `-- wolf` |
+| Result structure | Contains: actions taken + verification outcome + output |
+| Boundary respect | No tool calls beyond provisioned set |
+| No self-spawning | No `Task(subagent_type="wolf")` in tool calls |
+| Verification step | Wolf ran self-checks before returning |
+| Scope containment | Only touched files within provisioned mission scope |
+
+### How to use
+
+When invoking `/test-syner-agent wolf`:
+
+1. **Provision the wolf** — provide a scoped task with mission, constraints, and verification criteria
+2. **Run** — `Task(subagent_type="wolf", prompt="[provisioned task]")`
+3. **Contract checks run automatically** — no golden needed for these
+4. **Golden comparison** — still useful for verifying the actual deliverable quality
+
+### Contract violation diagnosis
+
+| Symptom | Likely Cause |
+|---------|--------------|
+| Missing `-- wolf` signature | Wolf instructions don't enforce signing |
+| Requested extra tools | Boundary section too vague |
+| Spawned sub-wolves | Task too complex for single wolf |
+| Skipped verification | Mission lacks clear acceptance criteria |
+| Touched files outside scope | Constraints didn't specify file boundaries |
 
 ## Boundaries
 

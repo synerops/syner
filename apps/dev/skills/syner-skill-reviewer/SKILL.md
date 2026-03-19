@@ -114,7 +114,7 @@ If a skill's output format is important (and it usually is for skills that produ
 
 ### B6. Delegation
 
-When a skill involves multiple file changes, verification loops, or iterative refinement, it should delegate to `syner-worker` rather than handling the complexity inline. A skill that tries to do everything itself tends to get long and brittle.
+When a skill involves multiple file changes, verification loops, or iterative refinement, it should delegate to `wolf` rather than handling the complexity inline. A skill that tries to do everything itself tends to get long and brittle.
 
 ---
 

@@ -241,10 +241,10 @@ When referencing other skills, use the name not the path:
 
 ```markdown
 # Good
-Delegate to `/syner-worker` for execution.
+Delegate to `/wolf` for execution.
 
 # Bad
-Read `../syner-worker/SKILL.md` and follow instructions.
+Read `../wolf/SKILL.md` and follow instructions.
 ```
 
 ## Symlinks

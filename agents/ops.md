@@ -33,13 +33,13 @@ When assigned a ticket:
 1. **Auth:** `gh auth status 2>&1 || bunx @syner/github create-app-token | gh auth login --with-token`
 2. **Read the issue:** `gh issue view {N} --repo synerops/syner --json body,title`
 3. **Claim:** `gh issue edit {N} --repo synerops/syner --add-label in-progress`
-4. **Branch:** `git checkout -b syner/{N} feat/vision-2026`
+4. **Branch:** `git checkout -b syner/{N} main`
 5. **Read context:** All files mentioned in the issue
 6. **Implement:** Follow the issue exactly
 7. **Build:** `bunx turbo build --filter=@syner/ops`
 8. **Commit:** `git add [files] && git commit -m "feat(ops): [description] (#N)"`
 9. **Push:** `git push -u origin syner/{N}`
-10. **PR:** `gh pr create --base feat/vision-2026 --title "feat(ops): [description] (#N)" --body "..."`
+10. **PR:** `gh pr create --base main --title "feat(ops): [description] (#N)" --body "..."`
 11. **Report:** Comment on the issue with what was delivered
 
 ## Worktree

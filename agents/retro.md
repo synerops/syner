@@ -36,7 +36,7 @@ Collect raw data:
 
 ```bash
 # PRs merged in the period
-gh pr list --repo synerops/syner --state merged --base feat/vision-2026 --json number,title,files,additions,deletions,mergedAt,labels -L 100
+gh pr list --repo synerops/syner --state merged --base main --json number,title,files,additions,deletions,mergedAt,labels -L 100
 
 # Issues closed in the period
 gh issue list --repo synerops/syner --state closed --label vision-2026 --json number,title,closedAt,labels -L 100
