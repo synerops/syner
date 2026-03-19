@@ -66,9 +66,9 @@ Check:
 | Timeout | Model too small for task, or task too broad |
 | Caller did work itself | Read agent file instead of Task() invocation |
 | Schema drift | Caller extended schema beyond agent spec |
-| Missing `-- wolf` signature | Wolf instructions don't enforce signing |
-| Requested extra tools | Boundary section too vague, wolf interpreted scope loosely |
-| Spawned sub-wolves | Task too complex for single wolf, needs decomposition |
+| Missing `-- syner` signature | Agent instructions don't enforce signing |
+| Requested extra tools | Boundary section too vague, agent interpreted scope loosely |
+| Spawned unnecessary sub-agents | Task too complex for single agent, needs decomposition |
 | Skipped verification | Mission didn't include clear acceptance criteria |
 | Touched files outside scope | Constraints section didn't specify file boundaries |
 
@@ -171,10 +171,10 @@ When testing agents that consume other agents' output:
 2. Feed output to consumer agent
 3. Verify the handoff works
 
-Example: `skill-reviewer → wolf`
+Example: `skill-reviewer → syner`
 - skill-reviewer produces text report with issues
-- wolf consumes it, executes fixes
-- Verify worker can parse reviewer's output format
+- syner consumes it, self-executes fixes
+- Verify agent can parse reviewer's output format
 
 ### Search Guide
 
@@ -192,27 +192,26 @@ agents/*.md
 .claude/skills/
 ```
 
-## Wolf Contract Check
+## Syner Execution Contract Check
 
-When testing a `wolf` agent, these contract checks run automatically alongside the golden comparison:
+When testing a `syner` agent's execution contract, these checks run automatically alongside the golden comparison:
 
 ### Automated Checks
 
 | Check | Pass condition |
 |-------|---------------|
-| Signing | Output ends with `-- wolf` |
+| Signing | Output ends with `-- syner` |
 | Result structure | Contains: actions taken + verification outcome + output |
 | Boundary respect | No tool calls beyond provisioned set |
-| No self-spawning | No `Task(subagent_type="wolf")` in tool calls |
-| Verification step | Wolf ran self-checks before returning |
+| Verification step | Agent ran self-checks before returning |
 | Scope containment | Only touched files within provisioned mission scope |
 
 ### How to use
 
-When invoking `/test-syner-agent wolf`:
+When invoking `/test-syner-agent syner`:
 
-1. **Provision the wolf** — provide a scoped task with mission, constraints, and verification criteria
-2. **Run** — `Task(subagent_type="wolf", prompt="[provisioned task]")`
+1. **Provision the task** — provide a scoped task with mission, constraints, and verification criteria
+2. **Run** — `Task(subagent_type="syner", prompt="[provisioned task]")`
 3. **Contract checks run automatically** — no golden needed for these
 4. **Golden comparison** — still useful for verifying the actual deliverable quality
 
@@ -220,9 +219,9 @@ When invoking `/test-syner-agent wolf`:
 
 | Symptom | Likely Cause |
 |---------|--------------|
-| Missing `-- wolf` signature | Wolf instructions don't enforce signing |
+| Missing `-- syner` signature | Agent instructions don't enforce signing |
 | Requested extra tools | Boundary section too vague |
-| Spawned sub-wolves | Task too complex for single wolf |
+| Spawned unnecessary sub-agents | Task too complex, needs decomposition |
 | Skipped verification | Mission lacks clear acceptance criteria |
 | Touched files outside scope | Constraints didn't specify file boundaries |
 

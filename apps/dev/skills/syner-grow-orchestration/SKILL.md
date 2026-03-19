@@ -39,7 +39,7 @@ This skill follows the grow methodology:
 | `routing` | Unclear delegation criteria | When to fork vs execute directly? |
 | `context` | Loading too much or too little | Full context when targeted sufficed |
 | `delegation` | Wrong routing decisions | Sent to worker when specialist was better |
-| `naming` | Confusing names | User can't tell syner from wolf |
+| `naming` | Confusing names | User can't tell orchestrator from specialist |
 | `boundary` | Violated principles | Skill that hoards instead of routes |
 
 ## Commands

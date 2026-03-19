@@ -114,7 +114,7 @@ If a skill's output format is important (and it usually is for skills that produ
 
 ### B6. Delegation
 
-When a skill involves multiple file changes, verification loops, or iterative refinement, it should delegate to `wolf` rather than handling the complexity inline. A skill that tries to do everything itself tends to get long and brittle.
+When a skill involves multiple file changes, verification loops, or iterative refinement, it should use Syner's execution contract (gather context → take action → verify → iterate) rather than handling the complexity inline without structure. A skill that tries to do everything without verification tends to get long and brittle.
 
 ---
 
@@ -160,9 +160,10 @@ Flag: Any skill using `skill.md` (lowercase).
 
 ### D2. Frontmatter Fields
 
-Field names should be consistent across all skills:
-- `tools` not `allowed-tools`
+Field names should follow the Agent Skills spec (agentskills.io):
+- `allowed-tools` is the standard field name for tool declarations (not `tools`)
 - `metadata.version` not `version` at root level
+- `skills` for declaring dependencies on other skills
 
 Flag: Skills using non-standard field names.
 
