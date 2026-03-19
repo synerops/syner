@@ -252,6 +252,7 @@ AGENTS.md files are the mechanism for proportional context loading:
 - AGENTS.md is ambient context (always present when working in that area), not on-demand documentation you retrieve mid-task
 - Passive context outperforms on-demand retrieval for horizontal knowledge — having the right AGENTS.md loaded means you already know the constraints before you start, rather than discovering them after a wrong move
 - Scope context AND tools proportionally: a task touching one package doesn't need all AGENTS.md files, just as it doesn't need all tools
+- If a package or app you're touching doesn't have an AGENTS.md, note it as a finding — missing ambient context is a gap worth surfacing
 
 #### Tool Scoping
 
