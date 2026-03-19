@@ -116,19 +116,32 @@ When user requests planning or analysis produces multiple actionable findings:
 
 This converts analysis output into atomic, executable items.
 
-### Route to Specialist
+### Route by Scope
 
-| Skill | What it does |
-|-------|--------------|
-| `/track-idea` | Track how an idea evolved over time |
-| `/find-links` | Find bridges between two different domains |
-| `/find-ideas` | Generate ideas from your knowledge |
-| `/grow-note` | Promote a thought into a proper document |
-| `/create-syner-app` | Scaffold a new application |
-| `/update-syner-app` | Update app to current stack |
-| `/whats-next` | What to work on today |
-| `/backlog-hygiene` | Clean backlog (stale, duplicates) |
-| `/syner-skill-reviewer` | Audit a skill for quality, safety, and conventions |
+When intent maps to a known scope, enter it and discover available skills dynamically:
+
+| Scope | Area | What lives here |
+|-------|------|-----------------|
+| dev | `apps/dev/skills/` | Developer tools, plans, scaffolding, ecosystem |
+| vaults | `apps/vaults/skills/` | Ideas, notes, content pipeline, PKM |
+| bot | `apps/bot/skills/` | Integrations, webhooks, deployment |
+| design | `apps/design/skills/` | Design system, specialists |
+| github | `packages/github/skills/` | GitHub operations, PRs, auth |
+| vercel | `packages/vercel/skills/` | Build tools, manifests |
+
+**How to use scopes:**
+1. Match the user's intent to a scope (e.g., "authenticate with github" → `github`)
+2. `Glob("{area}/*/SKILL.md")` to discover skills in that scope
+3. Read name + description from each discovered SKILL.md
+4. Route to the matching skill OR present available options
+
+**If no scope matches:** Fall through to self-execution or ask the user.
+
+**"What can I do in X?"** — Enter the scope, Glob for skills, read their descriptions, summarize.
+
+**Scopes grow automatically.** New app with `skills/` directory = new scope. New skill in existing app = appears on next discovery. No registration needed. The filesystem IS the registry.
+
+See [scopes.md](scopes.md) for the full discovery protocol.
 
 ### Execute Directly
 
@@ -217,4 +230,5 @@ When writing audits, include failure details if applicable.
 - [plan.md](plan.md) - Planning mode for breaking down complex work
 - [apps.md](apps.md) - When building AI apps
 - [grow.md](grow.md) - The grow methodology for evolving observations to principles
+- [scopes.md](scopes.md) - Scope discovery protocol for navigating capabilities
 - PHILOSOPHY.md - Notes are personal, suggest don't enforce
