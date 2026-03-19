@@ -47,7 +47,7 @@ Also use `Read` to load the actual source files that the plan references — und
 Don't ask the user which plan to review. Run the scan script:
 
 ```bash
-bun run {project_root}/skills/review-plan/scripts/scan-plans.ts
+bun run {project_root}/skills/syner/scripts/plans/scan.ts
 ```
 
 This outputs JSON with:
