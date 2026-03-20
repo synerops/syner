@@ -5,7 +5,7 @@ tools: [Read, Glob, Bash]
 skills: [syner-gh-auth]
 metadata:
   author: syner
-  version: "0.0.1"
+  version: "0.0.2"
 ---
 
 # GitHub Create PR
@@ -96,7 +96,27 @@ EOF
   --base main
 ```
 
-### 7. Report Result
+### 7. Auto-merge (if requested)
+
+If `--auto-merge` flag is passed, enable auto-merge after PR creation:
+
+```bash
+gh pr merge {{pr_number}} --auto --squash
+```
+
+Requires branch protection rules on the repo. If it fails, report the error but don't block — the PR is already created.
+
+### 8. Watch checks (if requested)
+
+If `--watch` flag is passed, monitor checks after PR creation:
+
+```bash
+gh pr checks {{pr_number}} --watch
+```
+
+Blocks until all checks complete, then reports pass/fail.
+
+### 9. Report Result
 
 Output the PR URL and number.
 
@@ -120,6 +140,8 @@ GitHub also uses these templates in the web UI when creating PRs.
 | `--template` | Force specific template | `--template=skill` |
 | `--title` | Override title | `--title="Add feature X"` |
 | `--draft` | Create as draft | `--draft` |
+| `--auto-merge` | Enable auto-merge (squash) | `--auto-merge` |
+| `--watch` | Watch checks after creation | `--watch` |
 | `--base` | Target branch | `--base=develop` |
 
 ## Output
