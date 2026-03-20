@@ -2,6 +2,8 @@ name: Vercel React Best Practices
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 14 * * 1-5'  # 9am EST (UTC-5), weekdays
 
 jobs:
   fix:
