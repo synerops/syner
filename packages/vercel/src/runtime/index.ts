@@ -23,17 +23,23 @@ import { VercelRunAdapter } from './adapter'
 import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
 import {
   bashInputSchema,
+  type BashInput,
+  executeBash,
   fetchInputSchema,
+  type FetchInput,
+  executeFetch,
   readInputSchema,
+  type ReadInput,
+  executeRead,
   writeInputSchema,
+  type WriteInput,
+  executeWrite,
   globInputSchema,
+  type GlobInput,
+  executeGlob,
   grepInputSchema,
-  executeBashWithSandbox,
-  executeFetchWithSandbox,
-  executeReadWithSandbox,
-  executeWriteWithSandbox,
-  executeGlobWithSandbox,
-  executeGrepWithSandbox,
+  type GrepInput,
+  executeGrep,
 } from '../tools'
 import { tool, type Tool } from 'ai'
 import path from 'path'
@@ -63,12 +69,6 @@ export interface GenerateOptions {
   onResult?: (result: Result<GenerateResult>) => Promise<void> | void
 }
 
-export interface ToolDef {
-  description: string
-  inputSchema: unknown
-  executeWithSandbox: (sandbox: Sandbox, input: never) => Promise<unknown>
-}
-
 export interface AgentCardOutput {
   name: string
   description: string
@@ -86,10 +86,8 @@ export interface AgentCardOutput {
 }
 
 export interface Runtime {
-  /** Map<name, AgentCard> — lazy-loaded, cached. Call load() to populate. */
+  /** Map<name, AgentCard> — lazy-loaded, cached. Call start() to populate. */
   agents: Map<string, AgentCard>
-  /** Map<name, ToolDef> — all available sandbox tools */
-  tools: Map<string, ToolDef>
   /** SkillsMap — all discovered skills with domain methods. Live reference, reflects post-start() state. */
   readonly skills: SkillsMap
   /** Load/refresh agents + skills from disk */
@@ -103,50 +101,11 @@ export interface Runtime {
 }
 
 // ---------------------------------------------------------------------------
-// Tool definitions (sandbox-bound)
+// createRuntime
 // ---------------------------------------------------------------------------
 
 const DEFAULT_REPO_URL = 'https://github.com/synerops/syner.git'
 const DEFAULT_BRANCH = 'main'
-
-function buildToolDefs(): Map<string, ToolDef> {
-  const map = new Map<string, ToolDef>()
-  map.set('Bash', {
-    description: 'Execute a command in the sandbox shell',
-    inputSchema: bashInputSchema,
-    executeWithSandbox: executeBashWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  map.set('Fetch', {
-    description: 'Fetch URL content as markdown (truncated to 50k chars)',
-    inputSchema: fetchInputSchema,
-    executeWithSandbox: executeFetchWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  map.set('Read', {
-    description: 'Read a file from the sandbox filesystem',
-    inputSchema: readInputSchema,
-    executeWithSandbox: executeReadWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  map.set('Write', {
-    description: 'Write content to a file (creates parent directories if needed)',
-    inputSchema: writeInputSchema,
-    executeWithSandbox: executeWriteWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  map.set('Glob', {
-    description: 'Find files matching a glob pattern',
-    inputSchema: globInputSchema,
-    executeWithSandbox: executeGlobWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  map.set('Grep', {
-    description: 'Search file contents with regex',
-    inputSchema: grepInputSchema,
-    executeWithSandbox: executeGrepWithSandbox as ToolDef['executeWithSandbox'],
-  })
-  return map
-}
-
-// ---------------------------------------------------------------------------
-// createRuntime
-// ---------------------------------------------------------------------------
 
 function getProjectRoot(): string {
   return path.resolve(process.cwd(), '../..')
@@ -159,7 +118,6 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
   // --- Maps ---
   const agents_ = new Map<string, AgentCard>()
-  const tools_ = buildToolDefs()
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
 
@@ -238,25 +196,65 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
       return initPromise
     }
 
-    // 3. Filter tools from runtime.tools by agent.tools
+    // 3. Build active tools from agent.tools
     const activeTools: Record<string, Tool> = {}
 
     if (agent.tools && agent.tools.length > 0) {
       for (const name of agent.tools) {
-        const trimmed = name.trim()
-        if (['Skill', 'Task'].includes(trimmed)) continue
+        if (['Skill', 'Task'].includes(name)) continue
 
-        const def = tools_.get(trimmed)
-        if (!def) continue
-
-        activeTools[trimmed] = tool({
-          description: def.description,
-          inputSchema: def.inputSchema as never,
-          execute: async (input) => {
-            const sb = await ensureSandbox()
-            return def.executeWithSandbox(sb, input as never)
-          },
-        })
+        if (name === 'Bash') {
+          activeTools.Bash = tool({
+            description: 'Execute a command in the sandbox shell',
+            inputSchema: bashInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeBash(sb, input as BashInput)
+            },
+          })
+        } else if (name === 'Fetch') {
+          activeTools.Fetch = tool({
+            description: 'Fetch URL content as markdown (truncated to 50k chars)',
+            inputSchema: fetchInputSchema,
+            execute: (input) => executeFetch(input as FetchInput),
+          })
+        } else if (name === 'Read') {
+          activeTools.Read = tool({
+            description: 'Read a file from the sandbox filesystem',
+            inputSchema: readInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeRead(sb, input as ReadInput)
+            },
+          })
+        } else if (name === 'Write') {
+          activeTools.Write = tool({
+            description: 'Write content to a file (creates parent directories if needed)',
+            inputSchema: writeInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeWrite(sb, input as WriteInput)
+            },
+          })
+        } else if (name === 'Glob') {
+          activeTools.Glob = tool({
+            description: 'Find files matching a glob pattern',
+            inputSchema: globInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeGlob(sb, input as GlobInput)
+            },
+          })
+        } else if (name === 'Grep') {
+          activeTools.Grep = tool({
+            description: 'Search file contents with regex',
+            inputSchema: grepInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeGrep(sb, input as GrepInput)
+            },
+          })
+        }
       }
     }
 
@@ -377,7 +375,6 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
 
   return {
     agents: agents_,
-    tools: tools_,
     get skills() { return skills_ },
     start,
     byChannel,
