@@ -47,7 +47,8 @@ function getChat() {
             ].join('\n')
           }
 
-          const result = await runtime.generate(agent, context.text)
+          const instance = runtime.agent(agent.name)
+          const result = await instance.generate(context.text)
           return result.output?.text || '_No response_'
         },
       },
