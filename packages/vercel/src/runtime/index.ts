@@ -85,6 +85,13 @@ export interface AgentCardOutput {
   }>
 }
 
+export interface AgentInstance {
+  readonly name: string
+  readonly description: string
+  card(): AgentCardOutput
+  generate(prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
+}
+
 export interface Runtime {
   /** Map<name, AgentCard> — lazy-loaded, cached. Call start() to populate. */
   agents: Map<string, AgentCard>
@@ -94,10 +101,8 @@ export interface Runtime {
   start(): Promise<void>
   /** Get agents indexed by Slack channel */
   byChannel(): Promise<Map<string, AgentCard>>
-  /** A2A discovery card */
-  card(): AgentCardOutput
-  /** Full generate lifecycle */
-  generate(agent: AgentCard, prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
+  /** Get an agent instance by name */
+  agent(name: string): AgentInstance
 }
 
 // ---------------------------------------------------------------------------
@@ -137,240 +142,257 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
     return getAgentsByChannel(projectRoot)
   }
 
-  /** A2A discovery card */
-  function card(): AgentCardOutput {
-    const agent = agents_.get('bot')
+  /** Create an AgentInstance that owns its card and generate lifecycle */
+  function createAgentInstance(agentCard: AgentCard): AgentInstance {
+    function card(): AgentCardOutput {
+      // Filter skills by agent's skill list, or show all if not defined
+      const agentSkills = agentCard.skills
+        ? [...skills_.values()].filter(s => agentCard.skills!.includes(s.name))
+        : [...skills_.values()]
 
-    return {
-      name: agent?.name || 'syner',
-      description: agent?.description || '',
-      url: process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : 'http://localhost:3001',
-      version: '0.1.0',
-      capabilities: { streaming: false, pushNotifications: false },
-      skills: [...skills_.values()].map(s => ({
-        id: s.name,
-        name: s.name,
-        description: s.description,
-      })),
-    }
-  }
-
-  /** Full generate lifecycle */
-  async function generate(
-    agent: AgentCard,
-    prompt: string,
-    options?: GenerateOptions,
-  ): Promise<Result<GenerateResult>> {
-    const onStatus = options?.onStatus ?? (() => {})
-    await onStatus('Thinking...')
-    const startTime = Date.now()
-
-    // 1. Resolve model
-    const tier = agent.model ?? 'sonnet'
-    const { model, fallbacks, modelId } = resolveModel(tier)
-
-    // 2. Lazy sandbox (created on first tool use, shared per generate call)
-    //    Uses snapshot caching: first call clones + snapshots, subsequent calls restore instantly.
-    let sandbox: Sandbox | null = null
-    let initPromise: Promise<Sandbox> | null = null
-
-    async function ensureSandbox(): Promise<Sandbox> {
-      if (sandbox) return sandbox
-      if (initPromise) return initPromise
-      initPromise = (async () => {
-        try {
-          await onStatus('Preparing sandbox...')
-          const result = await createSandbox({
-            repoUrl: DEFAULT_REPO_URL,
-            branch: DEFAULT_BRANCH,
-            timeout: 300000,
-          })
-          sandbox = result.sandbox
-          return sandbox
-        } finally {
-          initPromise = null
-        }
-      })()
-      return initPromise
-    }
-
-    // 3. Build active tools from agent.tools
-    const activeTools: Record<string, Tool> = {}
-
-    if (agent.tools && agent.tools.length > 0) {
-      for (const name of agent.tools) {
-        if (['Skill', 'Task'].includes(name)) continue
-
-        if (name === 'Bash') {
-          activeTools.Bash = tool({
-            description: 'Execute a command in the sandbox shell',
-            inputSchema: bashInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeBash(sb, input as BashInput)
-            },
-          })
-        } else if (name === 'Fetch') {
-          activeTools.Fetch = tool({
-            description: 'Fetch URL content as markdown (truncated to 50k chars)',
-            inputSchema: fetchInputSchema,
-            execute: (input) => executeFetch(input as FetchInput),
-          })
-        } else if (name === 'Read') {
-          activeTools.Read = tool({
-            description: 'Read a file from the sandbox filesystem',
-            inputSchema: readInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeRead(sb, input as ReadInput)
-            },
-          })
-        } else if (name === 'Write') {
-          activeTools.Write = tool({
-            description: 'Write content to a file (creates parent directories if needed)',
-            inputSchema: writeInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeWrite(sb, input as WriteInput)
-            },
-          })
-        } else if (name === 'Glob') {
-          activeTools.Glob = tool({
-            description: 'Find files matching a glob pattern',
-            inputSchema: globInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeGlob(sb, input as GlobInput)
-            },
-          })
-        } else if (name === 'Grep') {
-          activeTools.Grep = tool({
-            description: 'Search file contents with regex',
-            inputSchema: grepInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeGrep(sb, input as GrepInput)
-            },
-          })
-        }
+      return {
+        name: agentCard.name,
+        description: agentCard.description || '',
+        url: process.env.VERCEL_PROJECT_PRODUCTION_URL
+          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+          : 'http://localhost:3001',
+        version: '0.1.0',
+        capabilities: { streaming: false, pushNotifications: false },
+        skills: agentSkills.map(s => ({
+          id: s.name,
+          name: s.name,
+          description: s.description,
+        })),
       }
     }
 
-    // 4. Skill tool (execute: true + prepareStep injection)
-    if (skills_.size > 0) {
-      activeTools.Skill = createSkillTool(skills_)
-    }
+    async function generate(
+      prompt: string,
+      options?: GenerateOptions,
+    ): Promise<Result<GenerateResult>> {
+      const onStatus = options?.onStatus ?? (() => {})
+      await onStatus('Thinking...')
+      const startTime = Date.now()
 
-    // 5. Task tool (RunAdapter)
-    activeTools.Task = createTaskTool({ runAdapter })
+      // 1. Resolve model
+      const tier = agentCard.model ?? 'sonnet'
+      const { model, fallbacks, modelId } = resolveModel(tier)
 
-    // 6. System prompt (agent.instructions + skill descriptions)
-    const skillDescriptions = skills_.describe()
-    const instructions = skillDescriptions
-      ? `${agent.instructions}\n\n${skillDescriptions}`
-      : agent.instructions
+      // 2. Lazy sandbox (created on first tool use, shared per generate call)
+      //    Uses snapshot caching: first call clones + snapshots, subsequent calls restore instantly.
+      let sandbox: Sandbox | null = null
+      let initPromise: Promise<Sandbox> | null = null
 
-    // 7. Vault context (optional)
-    const loadedSources: ContextSource[] = []
-    const missingTopics: string[] = []
-
-    if (options?.vaultStore) {
-      const request = options.contextRequest ?? { scope: 'none' as const }
-      const brief = await resolveContext(request, options.vaultStore)
-      for (const source of brief.sources) {
-        loadedSources.push({ type: 'vault' as const, ref: source })
+      async function ensureSandbox(): Promise<Sandbox> {
+        if (sandbox) return sandbox
+        if (initPromise) return initPromise
+        initPromise = (async () => {
+          try {
+            await onStatus('Preparing sandbox...')
+            const result = await createSandbox({
+              repoUrl: DEFAULT_REPO_URL,
+              branch: DEFAULT_BRANCH,
+              timeout: 300000,
+            })
+            sandbox = result.sandbox
+            return sandbox
+          } finally {
+            initPromise = null
+          }
+        })()
+        return initPromise
       }
-      missingTopics.push(...brief.gaps)
-    }
 
-    // 8. OSProtocol wrapping
-    const context = createContext({
-      agentId: agent.name,
-      skillRef: `runtime:${agent.name}`,
-      loaded: loadedSources,
-      missing: missingTopics,
-    })
+      // 3. Build active tools from agent.tools
+      const activeTools: Record<string, Tool> = {}
 
-    const action = createAction({
-      description: `Generate response for: ${prompt.slice(0, 100)}`,
-      expectedEffects: [{ description: 'Response generated', verifiable: true }],
-    })
+      if (agentCard.tools && agentCard.tools.length > 0) {
+        for (const name of agentCard.tools) {
+          if (['Skill', 'Task'].includes(name)) continue
 
-    const toolCallsList: string[] = []
+          if (name === 'Bash') {
+            activeTools.Bash = tool({
+              description: 'Execute a command in the sandbox shell',
+              inputSchema: bashInputSchema,
+              execute: async (input) => {
+                const sb = await ensureSandbox()
+                return executeBash(sb, input as BashInput)
+              },
+            })
+          } else if (name === 'Fetch') {
+            activeTools.Fetch = tool({
+              description: 'Fetch URL content as markdown (truncated to 50k chars)',
+              inputSchema: fetchInputSchema,
+              execute: (input) => executeFetch(input as FetchInput),
+            })
+          } else if (name === 'Read') {
+            activeTools.Read = tool({
+              description: 'Read a file from the sandbox filesystem',
+              inputSchema: readInputSchema,
+              execute: async (input) => {
+                const sb = await ensureSandbox()
+                return executeRead(sb, input as ReadInput)
+              },
+            })
+          } else if (name === 'Write') {
+            activeTools.Write = tool({
+              description: 'Write content to a file (creates parent directories if needed)',
+              inputSchema: writeInputSchema,
+              execute: async (input) => {
+                const sb = await ensureSandbox()
+                return executeWrite(sb, input as WriteInput)
+              },
+            })
+          } else if (name === 'Glob') {
+            activeTools.Glob = tool({
+              description: 'Find files matching a glob pattern',
+              inputSchema: globInputSchema,
+              execute: async (input) => {
+                const sb = await ensureSandbox()
+                return executeGlob(sb, input as GlobInput)
+              },
+            })
+          } else if (name === 'Grep') {
+            activeTools.Grep = tool({
+              description: 'Search file contents with regex',
+              inputSchema: grepInputSchema,
+              execute: async (input) => {
+                const sb = await ensureSandbox()
+                return executeGrep(sb, input as GrepInput)
+              },
+            })
+          }
+        }
+      }
 
-    // 9. Execute via ToolLoopAgent
-    const loopAgent = new ToolLoopAgent({
-      id: agent.name,
-      model,
-      instructions,
-      tools: activeTools as ToolSet,
-      stopWhen: stepCountIs(10),
-      prepareStep: createPrepareStep(skills_, skillsDir) as never,
-      providerOptions: {
-        gateway: { models: fallbacks },
-      },
-    })
+      // 4. Skill tool (execute: true + prepareStep injection)
+      if (skills_.size > 0) {
+        activeTools.Skill = createSkillTool(skills_)
+      }
 
-    try {
-      const result = await loopAgent.generate({
-        prompt,
+      // 5. Task tool (RunAdapter)
+      activeTools.Task = createTaskTool({ runAdapter })
 
-        experimental_onToolCallStart({ toolCall }) {
-          options?.onToolStart?.(toolCall.toolName)
-        },
+      // 6. System prompt (agent.instructions + skill descriptions)
+      const skillDescriptions = skills_.describe()
+      const instructions = skillDescriptions
+        ? `${agentCard.instructions}\n\n${skillDescriptions}`
+        : agentCard.instructions
 
-        experimental_onToolCallFinish({ toolCall, durationMs, success }) {
-          toolCallsList.push(toolCall.toolName)
-          options?.onToolFinish?.(toolCall.toolName, durationMs, success)
-        },
+      // 7. Vault context (optional)
+      const loadedSources: ContextSource[] = []
+      const missingTopics: string[] = []
 
-        onStepFinish({ stepNumber, toolCalls }) {
-          const toolNames = toolCalls?.map((tc: { toolName: string }) => tc.toolName) || []
-          options?.onStepFinish?.(stepNumber, toolNames)
+      if (options?.vaultStore) {
+        const request = options.contextRequest ?? { scope: 'none' as const }
+        const brief = await resolveContext(request, options.vaultStore)
+        for (const source of brief.sources) {
+          loadedSources.push({ type: 'vault' as const, ref: source })
+        }
+        missingTopics.push(...brief.gaps)
+      }
+
+      // 8. OSProtocol wrapping
+      const context = createContext({
+        agentId: agentCard.name,
+        skillRef: `runtime:${agentCard.name}`,
+        loaded: loadedSources,
+        missing: missingTopics,
+      })
+
+      const action = createAction({
+        description: `Generate response for: ${prompt.slice(0, 100)}`,
+        expectedEffects: [{ description: 'Response generated', verifiable: true }],
+      })
+
+      const toolCallsList: string[] = []
+
+      // 9. Execute via ToolLoopAgent
+      const loopAgent = new ToolLoopAgent({
+        id: agentCard.name,
+        model,
+        instructions,
+        tools: activeTools as ToolSet,
+        stopWhen: stepCountIs(10),
+        prepareStep: createPrepareStep(skills_, skillsDir) as never,
+        providerOptions: {
+          gateway: { models: fallbacks },
         },
       })
 
-      const usedTools = toolCallsList.length > 0
-      console.log(`[Runtime][${agent.name}] model=${modelId} tier=${tier} path=${usedTools ? 'tools' : 'direct'} steps=${result.steps.length} tools=[${toolCallsList}]`)
+      try {
+        const result = await loopAgent.generate({
+          prompt,
 
-      const output: GenerateResult = {
-        text: result.text || '',
-        steps: result.steps.length,
-        toolCalls: toolCallsList,
-      }
+          experimental_onToolCallStart({ toolCall }) {
+            options?.onToolStart?.(toolCall.toolName)
+          },
 
-      const verification = verify(
-        action.expectedEffects,
-        { 'Response generated': output.text.length > 0 },
-      )
+          experimental_onToolCallFinish({ toolCall, durationMs, success }) {
+            toolCallsList.push(toolCall.toolName)
+            options?.onToolFinish?.(toolCall.toolName, durationMs, success)
+          },
 
-      const ospResult = {
-        ...createResult(context, action, verification, output),
-        duration: Date.now() - startTime,
-      }
-      await options?.onResult?.(ospResult)
-      return ospResult
-    } catch (error) {
-      console.error(`[Runtime][${agent.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.message : error)
-      const verification = verify(
-        action.expectedEffects,
-        { 'Response generated': false },
-      )
+          onStepFinish({ stepNumber, toolCalls }) {
+            const toolNames = toolCalls?.map((tc: { toolName: string }) => tc.toolName) || []
+            options?.onStepFinish?.(stepNumber, toolNames)
+          },
+        })
 
-      const ospResult: Result<GenerateResult> = {
-        ...createResult(context, action, verification),
-        output: undefined,
-        duration: Date.now() - startTime,
-      }
-      await options?.onResult?.(ospResult)
-      return ospResult
-    } finally {
-      if (sandbox) {
-        await stopSandbox(sandbox)
+        const usedTools = toolCallsList.length > 0
+        console.log(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} path=${usedTools ? 'tools' : 'direct'} steps=${result.steps.length} tools=[${toolCallsList}]`)
+
+        const output: GenerateResult = {
+          text: result.text || '',
+          steps: result.steps.length,
+          toolCalls: toolCallsList,
+        }
+
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': output.text.length > 0 },
+        )
+
+        const ospResult = {
+          ...createResult(context, action, verification, output),
+          duration: Date.now() - startTime,
+        }
+        await options?.onResult?.(ospResult)
+        return ospResult
+      } catch (error) {
+        console.error(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.message : error)
+        const verification = verify(
+          action.expectedEffects,
+          { 'Response generated': false },
+        )
+
+        const ospResult: Result<GenerateResult> = {
+          ...createResult(context, action, verification),
+          output: undefined,
+          duration: Date.now() - startTime,
+        }
+        await options?.onResult?.(ospResult)
+        return ospResult
+      } finally {
+        if (sandbox) {
+          await stopSandbox(sandbox)
+        }
       }
     }
+
+    return {
+      name: agentCard.name,
+      description: agentCard.description || '',
+      card,
+      generate,
+    }
+  }
+
+  /** Get an agent instance by name */
+  function agent(name: string): AgentInstance {
+    const card = agents_.get(name)
+    if (!card) throw new Error(`Agent not found: ${name}`)
+    return createAgentInstance(card)
   }
 
   return {
@@ -378,7 +400,6 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
     get skills() { return skills_ },
     start,
     byChannel,
-    card,
-    generate,
+    agent,
   }
 }

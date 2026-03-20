@@ -17,13 +17,9 @@ export async function POST(request: Request) {
   // Ensure agents are loaded
   if (runtime.agents.size === 0) await runtime.start()
 
-  const agent = runtime.agents.get(name)
-  if (!agent) {
-    return Response.json({ error: `Agent "${name}" not found` }, { status: 404 })
-  }
-
   try {
-    const result = await runtime.generate(agent, prompt)
+    const agent = runtime.agent(name)
+    const result = await agent.generate(prompt)
 
     console.log(`[Chat] request=${requestId} agent=${name} steps=${result.output?.steps} verification=${result.verification.status}`)
 

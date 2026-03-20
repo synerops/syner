@@ -27,24 +27,25 @@ async function handleCommand(command: SlackSlashCommand): Promise<SlackCommandRe
       response_type: 'ephemeral',
     }
   }
-  const agent = runtime.agents.get(cmdConfig.agent)
-  if (!agent) {
-    return {
-      text: `Agent "${cmdConfig.agent}" not found for command "${commandName}".`,
-      response_type: 'ephemeral',
-    }
-  }
 
   const prompt = `/${cmdConfig.skillName} ${commandArgs}`.trim()
   console.log(`[SlashCommand][${cmdConfig.agent}] Invoking: ${prompt}`)
 
-  const result = await runtime.generate(agent, prompt, {
-    onStatus: (status) => console.log(`[SlashCommand][${cmdConfig.agent}] Status: ${status}`),
-  })
+  try {
+    const agent = runtime.agent(cmdConfig.agent)
+    const result = await agent.generate(prompt, {
+      onStatus: (status) => console.log(`[SlashCommand][${cmdConfig.agent}] Status: ${status}`),
+    })
 
-  return {
-    text: result.output?.text || '_No response_',
-    response_type: 'in_channel',
+    return {
+      text: result.output?.text || '_No response_',
+      response_type: 'in_channel',
+    }
+  } catch {
+    return {
+      text: `Agent "${cmdConfig.agent}" not found for command "${commandName}".`,
+      response_type: 'ephemeral',
+    }
   }
 }
 

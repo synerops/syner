@@ -27,11 +27,10 @@ export async function GET(
 
   const { name } = await params
   if (runtime.agents.size === 0) await runtime.start()
-  const agent = runtime.agents.get(name)
 
-  if (!agent) {
+  try {
+    return NextResponse.json(runtime.agent(name).card())
+  } catch {
     return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
   }
-
-  return NextResponse.json(agent)
 }
