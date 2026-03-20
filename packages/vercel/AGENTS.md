@@ -7,14 +7,16 @@
 ```typescript
 // Primary API
 import { createRuntime } from '@syner/vercel'
-import type { Runtime, RuntimeConfig, GenerateResult, GenerateOptions, ToolDef, AgentCardOutput } from '@syner/vercel'
+import type { Runtime, RuntimeConfig, GenerateResult, GenerateOptions, AgentCardOutput } from '@syner/vercel'
 
 // Skills types (for consumers interacting with runtime.skills)
 import type { SkillDescriptor, CommandInfo, SkillsMap } from '@syner/vercel'
 
-// Tool factories (advanced — via subpath export)
-import { createSkillTool, createPrepareStep, preprocessPrompt } from '@syner/vercel/tools'
-import { createBashTool, createFetchTool, createReadTool, createWriteTool, createEditTool, createGlobTool, createGrepTool } from '@syner/vercel/tools'
+// Tool schemas + execute functions (advanced — via subpath export)
+import { bashInputSchema, executeBash, fetchInputSchema, executeFetch } from '@syner/vercel/tools'
+import { readInputSchema, executeRead, writeInputSchema, executeWrite } from '@syner/vercel/tools'
+import { globInputSchema, executeGlob, grepInputSchema, executeGrep } from '@syner/vercel/tools'
+import { createSkillTool, createPrepareStep } from '@syner/vercel/tools'
 ```
 
 ## Runtime API
@@ -23,12 +25,11 @@ import { createBashTool, createFetchTool, createReadTool, createWriteTool, creat
 const runtime = createRuntime(config?)
 
 // Maps
-runtime.agents    // Map<string, AgentCard> — call runtime.load() to populate
-runtime.tools     // Map<string, ToolDef> — sandbox tools
+runtime.agents    // Map<string, AgentCard> — call runtime.start() to populate
 runtime.skills    // SkillsMap — skills with domain methods
 
 // Methods
-await runtime.load()              // Load agents + skills from disk
+await runtime.start()             // Load agents + skills from disk
 await runtime.byChannel()         // Map<channelId, AgentCard>
 runtime.card()                    // A2A discovery card (sync)
 await runtime.generate(agent, prompt, options?)  // Full lifecycle
@@ -88,11 +89,21 @@ interface AgentCardOutput {
 }
 ```
 
+## Tool Architecture
+
+Tools are pure operations: schema + execute function. No `ToolDef` abstraction.
+
+- **Sandbox tools** (Bash, Read, Write, Glob, Grep): `execute(sandbox, input)` — the runtime binds the sandbox at call time
+- **Native tools** (Fetch): `execute(input)` — no sandbox needed, uses native `fetch()`
+- **Composite tools** (Skill, Task): created via factory functions with runtime dependencies
+
+The runtime's `generate()` method binds tools to the lazy sandbox directly, eliminating the intermediate Map layer.
+
 ## Dependencies
 
 | Package | Why |
 |---------|-----|
-| `@vercel/sandbox` | Sandbox container runtime for all tool execution |
+| `@vercel/sandbox` | Sandbox container runtime for tool execution |
 | `ai` | AI SDK `tool()`, `ToolLoopAgent` |
 | `zod` | Input schema definitions |
 | `@syner/osprotocol` | Context/Action/Result lifecycle |
@@ -102,7 +113,7 @@ interface AgentCardOutput {
 
 ## Constraints
 
-1. **Always call `runtime.load()` before using agents/skills.** Maps start empty.
+1. **Always call `runtime.start()` before using agents/skills.** Maps start empty.
 2. **Skills index is the source of truth.** `public/.well-known/skills/index.json` — no filesystem scanning.
 3. **ToolLoopAgent step limit is 10.** Hardcoded in `generate()`.
 4. **Sandbox lifecycle is per-generate.** Created lazily on first tool use, stopped in finally block.

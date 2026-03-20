@@ -1,4 +1,3 @@
-import { tool } from 'ai'
 import { Sandbox } from '@vercel/sandbox'
 import { z } from 'zod'
 
@@ -9,10 +8,7 @@ export const globInputSchema = z.object({
 
 export type GlobInput = z.infer<typeof globInputSchema>
 
-/**
- * Execute glob with a provided sandbox (for session reuse)
- */
-export async function executeGlobWithSandbox(
+export async function executeGlob(
   sandbox: Sandbox,
   { pattern, path }: GlobInput
 ): Promise<string> {
@@ -33,36 +29,4 @@ export async function executeGlobWithSandbox(
     return `Error: ${stderr}`
   }
   return stdout || 'No files found'
-}
-
-/**
- * Execute glob with a new ephemeral sandbox (standalone use)
- */
-export async function executeGlob(input: GlobInput): Promise<string> {
-  const sandbox = await Sandbox.create({ runtime: 'node24', timeout: 60000 })
-  try {
-    return await executeGlobWithSandbox(sandbox, input)
-  } finally {
-    await sandbox.stop()
-  }
-}
-
-/**
- * Standalone Glob tool (creates its own sandbox)
- */
-export const Glob = tool({
-  description: 'Find files matching a glob pattern',
-  inputSchema: globInputSchema,
-  execute: executeGlob,
-})
-
-/**
- * Create a Glob tool that uses a shared sandbox
- */
-export function createGlobTool(sandbox: Sandbox) {
-  return tool({
-    description: 'Find files matching a glob pattern',
-    inputSchema: globInputSchema,
-    execute: (input) => executeGlobWithSandbox(sandbox, input),
-  })
 }

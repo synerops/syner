@@ -1,4 +1,3 @@
-import { tool } from 'ai'
 import { Sandbox } from '@vercel/sandbox'
 import { z } from 'zod'
 
@@ -10,10 +9,7 @@ export const readInputSchema = z.object({
 
 export type ReadInput = z.infer<typeof readInputSchema>
 
-/**
- * Execute read with a provided sandbox (for session reuse)
- */
-export async function executeReadWithSandbox(
+export async function executeRead(
   sandbox: Sandbox,
   { file_path, offset, limit }: ReadInput
 ): Promise<string> {
@@ -30,36 +26,4 @@ export async function executeReadWithSandbox(
   const stdout = await result.stdout()
   const stderr = await result.stderr()
   return result.exitCode === 0 ? stdout : `Error: ${stderr || stdout}`
-}
-
-/**
- * Execute read with a new ephemeral sandbox (standalone use)
- */
-export async function executeRead(input: ReadInput): Promise<string> {
-  const sandbox = await Sandbox.create({ runtime: 'node24', timeout: 60000 })
-  try {
-    return await executeReadWithSandbox(sandbox, input)
-  } finally {
-    await sandbox.stop()
-  }
-}
-
-/**
- * Standalone Read tool (creates its own sandbox)
- */
-export const Read = tool({
-  description: 'Read a file from the filesystem with optional line offset and limit',
-  inputSchema: readInputSchema,
-  execute: executeRead,
-})
-
-/**
- * Create a Read tool that uses a shared sandbox
- */
-export function createReadTool(sandbox: Sandbox) {
-  return tool({
-    description: 'Read a file from the filesystem with optional line offset and limit',
-    inputSchema: readInputSchema,
-    execute: (input) => executeReadWithSandbox(sandbox, input),
-  })
 }
