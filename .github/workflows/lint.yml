@@ -5,6 +5,8 @@ on:
     - cron: '0 9 * * *' # Daily at 9am UTC
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -32,15 +34,19 @@ jobs:
         continue-on-error: true
 
       - name: Generate GitHub App token
-        if: steps.lint.outcome == 'failure'
+        if: steps.lint.outcome == 'failure' && github.event_name != 'pull_request'
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.SYNERBOT_APP_ID }}
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
 
+      - name: Fail check on PR
+        if: steps.lint.outcome == 'failure' && github.event_name == 'pull_request'
+        run: exit 1
+
       - name: Create issue if lint failed
-        if: steps.lint.outcome == 'failure'
+        if: steps.lint.outcome == 'failure' && github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
