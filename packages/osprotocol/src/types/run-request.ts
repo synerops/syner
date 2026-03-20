@@ -2,11 +2,7 @@ import type { RunStatus } from '../schemas'
 
 export interface RunRequest {
   prompt: string
-  context?: {
-    scope: 'none' | 'app' | 'project' | 'targeted' | 'full'
-    app?: string
-  }
-  metadata?: Record<string, unknown>
+  agent: string
 }
 
 export interface RunEvent {

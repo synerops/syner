@@ -52,6 +52,15 @@ export {
 export { type RunAdapter } from './types/run-adapter'
 export { type RunRequest, type RunEvent } from './types/run-request'
 
+// System contract — session-level resource registry
+export {
+  type System,
+  type WorkflowProvider,
+  type SandboxProvider,
+  type AgentProvider,
+  type McpClient,
+} from './types/system'
+
 // Schemas — for consumers that want runtime validation
 export {
   ContextSourceSchema,
