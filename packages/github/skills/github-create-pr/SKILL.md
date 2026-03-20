@@ -106,7 +106,17 @@ gh pr merge {{pr_number}} --auto --squash
 
 Requires branch protection rules on the repo. If it fails, report the error but don't block — the PR is already created.
 
-### 8. Report Result
+### 8. Watch checks (if requested)
+
+If `--watch` flag is passed, monitor checks after PR creation:
+
+```bash
+gh pr checks {{pr_number}} --watch
+```
+
+Blocks until all checks complete, then reports pass/fail.
+
+### 9. Report Result
 
 Output the PR URL and number.
 
@@ -131,6 +141,7 @@ GitHub also uses these templates in the web UI when creating PRs.
 | `--title` | Override title | `--title="Add feature X"` |
 | `--draft` | Create as draft | `--draft` |
 | `--auto-merge` | Enable auto-merge (squash) | `--auto-merge` |
+| `--watch` | Watch checks after creation | `--watch` |
 | `--base` | Target branch | `--base=develop` |
 
 ## Output
