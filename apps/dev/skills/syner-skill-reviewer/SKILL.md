@@ -20,9 +20,10 @@ This is Dev's quality gate. Review before skills go live.
 1. **Locate** target skill(s):
    - With argument: find that specific skill
    - Without argument: discover ALL skills using `Glob` with `**/SKILL.md`
-2. **Read** each SKILL.md completely — batch all Read calls in parallel
-3. **Pick review depth** based on context (see below)
-4. **Report** findings per skill, then ecosystem consistency
+2. **Exclude external skills**: Read `skills-lock.json` (if it exists). Any skill listed in its `skills` object is externally installed via `npx skills add` — skip it from review. These skills follow their own conventions and are not managed by syner.
+3. **Read** each SKILL.md completely — batch all Read calls in parallel
+4. **Pick review depth** based on context (see below)
+5. **Report** findings per skill, then ecosystem consistency
 
 ## How to Find Skills
 

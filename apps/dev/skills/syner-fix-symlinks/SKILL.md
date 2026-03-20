@@ -30,8 +30,15 @@ This is a maintenance skill. Run after creating skills/agents or when they aren'
 
 skills/
   ├── {name}/ (real dir)     ← shared skill (only syner currently)
+  ├── {name}/ (real dir)     ← external skill (listed in skills-lock.json, skip)
   └── {name} → ../apps/...   ← symlink to app/package skill
 ```
+
+### External Skills
+
+Skills installed via `npx skills add` are real directories in `skills/` tracked by `skills-lock.json` at the project root. These are NOT managed by this skill — skip them entirely during checks and fixes.
+
+**Detection:** Before processing, read `skills-lock.json` (if it exists). Any skill name listed in its `skills` object is external. Do not classify it as orphan, missing, or malformed.
 
 ### Agents
 
@@ -81,6 +88,7 @@ When checking symlinks, classify each into one of these states:
 | `malformed` | Symlink exists but path has wrong depth (for example `../../../apps/...` instead of `../apps/...`) | Recreate with correct path |
 | `broken` | Symlink exists but target doesn't exist | Remove or recreate if source found |
 | `orphan` | Symlink exists but no matching source in apps/packages | Remove (confirm first) |
+| `external` | Real directory listed in skills-lock.json | Skip (not managed) |
 
 ### Path Validation
 
@@ -112,13 +120,16 @@ Before running any commands, ensure cwd is the project root:
 ### Check Skills (default)
 
 ```bash
+# 0. Load external skills list (skip these)
+cat skills-lock.json 2>/dev/null  # parse .skills keys → external set
+
 # 1. Find all skill sources
 ls apps/*/skills/*/SKILL.md packages/*/skills/*/SKILL.md 2>/dev/null
 
-# 2. Check current state
+# 2. Check current state (exclude external skills from results)
 file skills/*
 
-# 3. Compare and report
+# 3. Compare and report (skip any name in external set)
 ```
 
 ### Check Agents
