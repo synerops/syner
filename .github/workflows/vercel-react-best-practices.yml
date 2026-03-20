@@ -173,7 +173,7 @@ jobs:
           gh issue create \
             --title "fix(react): typecheck errors after best practices" \
             --label "bug" \
-            --assignee "rbadillap" \
+            --assignee "${{ github.repository_owner }}" \
             --body "$(cat <<EOF
           ## Context
 
