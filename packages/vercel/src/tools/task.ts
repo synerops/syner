@@ -23,11 +23,7 @@ export function createTaskTool(options: CreateTaskToolOptions) {
 
   const inputSchema = z.object({
     prompt: z.string().describe('Task description'),
-    scope: z.enum(['none', 'app', 'project', 'targeted', 'full'])
-      .optional()
-      .default('none')
-      .describe('Context scope for the task'),
-    app: z.string().optional().describe('App name when scope is "app"'),
+    agent: z.string().describe('Agent to handle this task'),
   })
 
   return tool({
@@ -37,11 +33,11 @@ export function createTaskTool(options: CreateTaskToolOptions) {
       'Do NOT use for simple questions — respond directly instead.',
     ].join(' '),
     inputSchema,
-    execute: async ({ prompt, scope, app }): Promise<string> => {
+    execute: async ({ prompt, agent }): Promise<string> => {
       try {
         const run = await runAdapter.start({
           prompt,
-          context: { scope, app },
+          agent,
         })
 
         return JSON.stringify({

@@ -56,18 +56,6 @@ export class VercelRunAdapter implements RunAdapter {
 
     await this.emitEvent(run, 'pending', 'pending')
 
-    // Workflow `start()` requires a workflow function or metadata object.
-    // Callers provide it via request.metadata.workflow.
-    const workflow = request.metadata?.workflow
-    if (workflow) {
-      // Cast to the union type that start() accepts
-      const wfRun = await start(
-        workflow as Parameters<typeof start>[0],
-        this.config.startOptions,
-      )
-      this.workflowHandles.set(id, wfRun)
-    }
-
     return run
   }
 
