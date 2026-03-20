@@ -6,9 +6,8 @@ name: Skill Review
 # See: .syner/analysis/skill-review-refactor.md
 
 on:
-  # Testing: 3x/day to observe behavior. Change to 1x/day after validation.
   schedule:
-    - cron: '0 0,8,16 * * *'  # 3x/day: 12am, 8am, 4pm UTC
+    - cron: '0 14 * * 1-5'  # 9am EST (UTC-5), weekdays
   workflow_dispatch:
 
 jobs:
