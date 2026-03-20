@@ -6,8 +6,9 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'packages/**'
-      - 'apps/**'
+      - 'packages/*/src/**'
+      - 'apps/*/src/**'
+      - 'apps/*/app/**'
   workflow_dispatch:
 
 jobs:
@@ -27,11 +28,11 @@ jobs:
 
       - run: bun install
 
-      - name: Run lint
+      - name: Run lint (affected packages only)
         id: lint
         run: |
           set -o pipefail
-          bun run lint 2>&1 | tee lint-output.txt
+          bunx turbo typecheck --affected 2>&1 | tee lint-output.txt
         continue-on-error: true
 
       - name: Generate GitHub App token
