@@ -242,6 +242,6 @@ jobs:
               --title "$TITLE" \
               --label "skill-review" \
               --label "needs-decision" \
-              --assignee "rbadillap" \
+              --assignee "${{ github.repository_owner }}" \
               --body "$BODY"
           done
