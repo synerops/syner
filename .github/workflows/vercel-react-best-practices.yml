@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
-      issues: write
       id-token: write
+    outputs:
+      branch_name: ${{ steps.branch.outputs.name }}
+      verification: ${{ steps.result.outputs.status }}
+      shot: ${{ steps.result.outputs.shot }}
 
     steps:
       - name: Checkout repository
@@ -34,6 +36,14 @@ jobs:
         with:
           app-id: ${{ vars.SYNERBOT_APP_ID }}
           private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Configure git with App token
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config user.name "synerbot[bot]"
+          git config user.email "synerbot[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
 
       - name: Create branch
         id: branch
@@ -74,7 +84,7 @@ jobs:
         id: verify1
         run: |
           set -o pipefail
-          bun run lint 2>&1 | tee lint-output.txt
+          bun run lint 2>&1 | tee /tmp/lint-output.txt
         continue-on-error: true
 
       # ── Shot 2: Fix remaining errors (last chance) ──
@@ -88,7 +98,7 @@ jobs:
             Here are the errors:
 
             ```
-            $(cat lint-output.txt)
+            $(cat /tmp/lint-output.txt)
             ```
 
             Fix ALL these errors. This is your last chance — if they persist, an issue
@@ -106,39 +116,83 @@ jobs:
         if: steps.verify1.outcome == 'failure'
         run: |
           set -o pipefail
-          bun run lint 2>&1 | tee lint-output-2.txt
+          bun run lint 2>&1 | tee /tmp/lint-output-2.txt
         continue-on-error: true
 
-      # ── Push whatever we have ──
-      - name: Push changes
+      # ── Determine result ──
+      - name: Determine result
+        id: result
         run: |
-          git add -A
-          git commit -m "fix(react): apply vercel best practices" || true
-          git push -u origin ${{ steps.branch.outputs.name }}
+          if [ "${{ steps.verify1.outcome }}" = "success" ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+            echo "shot=1" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.verify2.outcome }}" = "success" ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+            echo "shot=2" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "shot=2" >> $GITHUB_OUTPUT
+          fi
 
-      # ── PR if verification passed ──
+      # ── Push if there are changes ──
+      - name: Push branch
+        run: |
+          if ! git diff --quiet HEAD origin/main; then
+            git push -u origin ${{ steps.branch.outputs.name }}
+          else
+            echo "No changes to push"
+          fi
+
+      # ── Upload lint errors for issue job ──
+      - name: Upload lint output
+        if: steps.result.outputs.status == 'failed'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-output
+          path: /tmp/lint-output*.txt
+          retention-days: 7
+
+  pr:
+    needs: fix
+    if: needs.fix.outputs.verification == 'passed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
       - name: Create PR
-        if: steps.verify1.outcome == 'success' || steps.verify2.outcome == 'success'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          if git diff --quiet HEAD origin/main; then
-            echo "No changes to PR"
+          BRANCH="${{ needs.fix.outputs.branch_name }}"
+
+          if ! git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch $BRANCH not found on remote (no changes were pushed)"
             exit 0
           fi
 
-          CHANGED=$(git diff --name-only origin/main | head -30)
-          SHOT="1"
-          if [ "${{ steps.verify2.outcome }}" = "success" ]; then
-            SHOT="2"
-          fi
+          CHANGED=$(git diff --name-only origin/main "origin/$BRANCH" | head -30)
 
           gh label create "autofix" --color "0e8a16" 2>/dev/null || true
 
           gh pr create \
             --title "fix(react): apply vercel best practices" \
             --label "autofix" \
-            --head "${{ steps.branch.outputs.name }}" \
+            --head "$BRANCH" \
             --body "$(cat <<EOF
           ## Summary
 
@@ -146,8 +200,8 @@ jobs:
 
           Scanned all TSX files in \`apps/\` and \`packages/ui/\`.
 
-          - Typecheck: **passed** (shot ${SHOT})
-          - Branch: \`${{ steps.branch.outputs.name }}\`
+          - Typecheck: **passed** (shot ${{ needs.fix.outputs.shot }})
+          - Branch: \`$BRANCH\`
 
           ### Files changed
 
@@ -161,14 +215,41 @@ jobs:
           EOF
           )"
 
-      # ── Issue if both shots failed ──
+  issue:
+    needs: fix
+    if: needs.fix.outputs.verification == 'failed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.SYNERBOT_APP_ID }}
+          private-key: ${{ secrets.SYNERBOT_APP_PRIVATE_KEY }}
+
+      - name: Download lint output
+        uses: actions/download-artifact@v4
+        with:
+          name: lint-output
+          path: /tmp
+
       - name: Create issue
-        if: steps.verify1.outcome == 'failure' && steps.verify2.outcome == 'failure'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          CHANGED=$(git diff --name-only origin/main || true)
-          ERRORS=$(cat lint-output-2.txt 2>/dev/null || cat lint-output.txt)
+          BRANCH="${{ needs.fix.outputs.branch_name }}"
+          CHANGED=$(git diff --name-only origin/main "origin/$BRANCH" || true)
+          ERRORS=$(cat /tmp/lint-output-2.txt 2>/dev/null || cat /tmp/lint-output.txt)
 
           gh label create "bug" --color "d73a4a" 2>/dev/null || true
 
@@ -181,7 +262,7 @@ jobs:
 
           The [vercel-react-best-practices](https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices) workflow ran two shots and typecheck still fails.
 
-          **Branch:** \`${{ steps.branch.outputs.name }}\`
+          **Branch:** \`$BRANCH\`
           This branch has all changes applied — use it as your starting point.
 
           ## Typecheck errors (after shot 2)
@@ -205,7 +286,7 @@ jobs:
 
           ## Next steps
 
-          - Checkout branch \`${{ steps.branch.outputs.name }}\` — all changes are there
+          - Checkout branch \`$BRANCH\` — all changes are there
           - The errors above are the remaining issues to fix manually
           - Once fixed, create a PR from that branch
 
