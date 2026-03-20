@@ -5,7 +5,7 @@ tools: [Read, Glob, Bash]
 skills: [syner-gh-auth]
 metadata:
   author: syner
-  version: "0.0.2"
+  version: "0.0.3"
 ---
 
 # GitHub Create PR
@@ -96,25 +96,25 @@ EOF
   --base main
 ```
 
-### 7. Auto-merge (if requested)
+### 7. Watch checks (if `--watch` or `--auto-merge`)
 
-If `--auto-merge` flag is passed, enable auto-merge after PR creation:
-
-```bash
-gh pr merge {{pr_number}} --auto --squash
-```
-
-Requires branch protection rules on the repo. If it fails, report the error but don't block — the PR is already created.
-
-### 8. Watch checks (if requested)
-
-If `--watch` flag is passed, monitor checks after PR creation:
+If `--watch` or `--auto-merge` flag is passed, wait for checks to complete:
 
 ```bash
 gh pr checks {{pr_number}} --watch
 ```
 
 Blocks until all checks complete, then reports pass/fail.
+
+### 8. Auto-merge (if requested)
+
+If `--auto-merge` flag is passed, merge after checks pass:
+
+```bash
+gh pr merge {{pr_number}} --squash
+```
+
+This runs AFTER `--watch` completes successfully. If checks failed, skip merge and report the failure.
 
 ### 9. Report Result
 
@@ -140,7 +140,7 @@ GitHub also uses these templates in the web UI when creating PRs.
 | `--template` | Force specific template | `--template=skill` |
 | `--title` | Override title | `--title="Add feature X"` |
 | `--draft` | Create as draft | `--draft` |
-| `--auto-merge` | Enable auto-merge (squash) | `--auto-merge` |
+| `--auto-merge` | Watch checks, then squash merge | `--auto-merge` |
 | `--watch` | Watch checks after creation | `--watch` |
 | `--base` | Target branch | `--base=develop` |
 
