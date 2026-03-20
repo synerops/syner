@@ -131,11 +131,11 @@ jobs:
             SHOT="2"
           fi
 
-          gh label create "react-best-practices" --color "61dafb" 2>/dev/null || true
+          gh label create "autofix" --color "0e8a16" 2>/dev/null || true
 
           gh pr create \
             --title "fix(react): apply vercel best practices" \
-            --label "react-best-practices" \
+            --label "autofix" \
             --head "${{ steps.branch.outputs.name }}" \
             --body "$(cat <<EOF
           ## Summary
@@ -168,13 +168,11 @@ jobs:
           CHANGED=$(git diff --name-only origin/main || true)
           ERRORS=$(cat lint-output-2.txt 2>/dev/null || cat lint-output.txt)
 
-          gh label create "react-best-practices" --color "61dafb" 2>/dev/null || true
-          gh label create "needs-fix" --color "d73a4a" 2>/dev/null || true
+          gh label create "bug" --color "d73a4a" 2>/dev/null || true
 
           gh issue create \
             --title "fix(react): typecheck errors after best practices" \
-            --label "react-best-practices" \
-            --label "needs-fix" \
+            --label "bug" \
             --assignee "rbadillap" \
             --body "$(cat <<EOF
           ## Context
