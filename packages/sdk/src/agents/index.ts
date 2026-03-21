@@ -2,3 +2,4 @@ export { getAgentsRegistry, getAgentsList, getAgentByName, getAgentsByChannel, i
 export type { AgentCard } from './loader'
 export { resolveModel, MODEL_IDS, FALLBACK_MODELS } from './models'
 export type { ModelTier } from './models'
+export type { Agent, AgentCardOutput, GenerateResult, GenerateOptions } from './types'
