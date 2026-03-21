@@ -25,6 +25,7 @@ import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
 import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
+import { createSystem } from './system'
 import {
   bashInputSchema,
   type BashInput,
@@ -92,6 +93,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
   const agents_ = new Map<string, AgentCard>()
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
+  const _system = createSystem()
 
   /** Load/refresh agents + skills from disk into the Maps */
   async function start(): Promise<void> {
@@ -133,7 +135,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
       }
     }
 
-    async function generate(
+    async function spawn(
       prompt: string,
       options?: GenerateOptions,
     ): Promise<Result<GenerateResult>> {
@@ -351,7 +353,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
       name: agentCard.name,
       description: agentCard.description || '',
       card,
-      generate,
+      spawn,
     }
   }
 

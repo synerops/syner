@@ -38,5 +38,5 @@ export interface Agent {
   readonly name: string
   readonly description: string
   card(): AgentCardOutput
-  generate(prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
+  spawn(prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
 }
