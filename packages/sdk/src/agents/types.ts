@@ -1,6 +1,4 @@
 import type { Result } from '@syner/osprotocol'
-import type { VaultStore } from '../context/vault-store'
-import type { ContextRequest } from '../context/types'
 
 export interface GenerateResult {
   text: string
@@ -9,8 +7,6 @@ export interface GenerateResult {
 }
 
 export interface GenerateOptions {
-  vaultStore?: VaultStore
-  contextRequest?: ContextRequest
   onStatus?: (status: string) => void | Promise<void>
   onToolStart?: (toolName: string) => void
   onToolFinish?: (toolName: string, durationMs: number, success: boolean) => void
