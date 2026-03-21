@@ -1,5 +1,6 @@
 import { glob } from 'glob'
 import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
 import matter from 'gray-matter'
 import path from 'path'
 
@@ -21,6 +22,21 @@ export interface AgentCard {
 interface AgentsRegistry {
   agents: Map<string, AgentCard>
   list: AgentCard[]
+}
+
+// ---------------------------------------------------------------------------
+// AgentsMap — domain-aware collection (parallel to SkillsMap)
+// ---------------------------------------------------------------------------
+
+export class AgentsMap extends Map<string, AgentCard> {
+  /** Get agents indexed by their Slack channel ID */
+  byChannel(): Map<string, AgentCard> {
+    const map = new Map<string, AgentCard>()
+    for (const agent of this.values()) {
+      if (agent.channel) map.set(agent.channel, agent)
+    }
+    return map
+  }
 }
 
 // Singleton cache
@@ -117,5 +133,28 @@ export async function getAgentsByChannel(projectRoot: string): Promise<Map<strin
     }
   }
 
+  return map
+}
+
+/**
+ * Load agents from a pre-built JSON index (parallel to loadSkills pattern).
+ *
+ * Falls back to filesystem discovery if the index doesn't exist (dev without build step).
+ */
+export async function loadAgents(indexPath: string, projectRoot?: string): Promise<AgentsMap> {
+  if (!existsSync(indexPath)) {
+    if (projectRoot) {
+      const registry = await getAgentsRegistry(projectRoot)
+      return new AgentsMap(registry.agents)
+    }
+    return new AgentsMap()
+  }
+
+  const raw = await readFile(indexPath, 'utf-8')
+  const { agents } = JSON.parse(raw) as { agents: AgentCard[] }
+  const map = new AgentsMap()
+  for (const agent of agents) {
+    map.set(agent.name, agent)
+  }
   return map
 }

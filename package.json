@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "build-agents": "bun run scripts/build-agents-registry.ts",
     "start": "turbo start",
     "agent-github": "bun packages/github/bin/syner-agent-github",
     "changeset": "changeset",

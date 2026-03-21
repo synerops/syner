@@ -22,8 +22,11 @@ function getChat() {
         async onMention(context) {
           console.log('[Slack] Mention received:', context.text?.slice(0, 100))
 
-          // Find agent for this channel via Map
-          const agents = await runtime.byChannel()
+          // Ensure agents are loaded
+          if (runtime.agents.size === 0) await runtime.start()
+
+          // Find agent for this channel
+          const agents = runtime.agents.byChannel()
           const agent = agents.get(context.channel)
 
           if (!agent) {
