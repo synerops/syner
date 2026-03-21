@@ -15,10 +15,7 @@ import {
   verify,
   createResult,
   type Result,
-  type ContextSource,
 } from '@syner/osprotocol'
-import { resolveContext, type ContextRequest } from '@syner/sdk/context'
-import type { VaultStore } from '@syner/sdk/context'
 import { SkillsMap } from '../skills'
 import { loadSkills } from '../skills/loader'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
@@ -248,25 +245,12 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
         ? `${agentCard.instructions}\n\n${skillDescriptions}`
         : agentCard.instructions
 
-      // 7. Vault context (optional)
-      const loadedSources: ContextSource[] = []
-      const missingTopics: string[] = []
-
-      if (options?.vaultStore) {
-        const request = options.contextRequest ?? { scope: 'none' as const }
-        const brief = await resolveContext(request, options.vaultStore)
-        for (const source of brief.sources) {
-          loadedSources.push({ type: 'vault' as const, ref: source })
-        }
-        missingTopics.push(...brief.gaps)
-      }
-
-      // 8. OSProtocol wrapping
+      // 7. OSProtocol wrapping
       const context = createContext({
         agentId: agentCard.name,
         skillRef: `runtime:${agentCard.name}`,
-        loaded: loadedSources,
-        missing: missingTopics,
+        loaded: [],
+        missing: [],
       })
 
       const action = createAction({

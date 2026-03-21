@@ -13,8 +13,3 @@ export * from './agents'
 // Tools (contracts — adapters implement execute)
 export { Tools, type ToolName } from './tools'
 
-// Context
-export * from './context'
-
-// Execution bridge
-export { execute, type ExecuteOptions, type SkillExecutor } from './execute'
