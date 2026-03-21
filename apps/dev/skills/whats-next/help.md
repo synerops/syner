@@ -59,7 +59,7 @@ Written to `.syner/reports/triage-{date}.md` with:
 - **First Move** — Single highest-impact action
 - **Focus Area** — Domain needing most attention
 - **Decisions Blocking Work** — Issues waiting on decisions
-- **Priority Items** — P1/P2/P3 categorized list
+- **Priority Items** — Top priority / This week / Later categorized list
 - **Cross-Reference Map** — Related items across sources
 
 ### Console Summary
@@ -68,7 +68,7 @@ Brief summary printed after report is written:
 ```
 First move: [action]
 Focus area: [domain] ([N] signals)
-Items: [X] P1, [Y] P2, [Z] P3
+Items: [X] top priority, [Y] this week, [Z] later
 ```
 
 ## Troubleshooting
