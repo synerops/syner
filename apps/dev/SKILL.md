@@ -9,12 +9,12 @@ metadata:
 
 # syner.dev
 
-I am the developer portal for the Syner ecosystem.
+Developer portal for the Syner ecosystem.
 
-## I am for
+## Audience
 Developers building agents, skills, and integrations with the Syner platform.
 
-## I am NOT
+## Out of Scope
 - A runtime execution environment. Use syner.bot for that.
 - A design system. Use syner.design for that.
 

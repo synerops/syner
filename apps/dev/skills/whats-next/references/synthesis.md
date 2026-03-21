@@ -13,8 +13,8 @@ Transform raw data from all sources into opinionated recommendations.
 
 The "first move" is the single most important action. Select it by:
 
-1. Find the highest-scoring P1 item
-2. If multiple P1s, prefer:
+1. Find the top item from the ordered priority criteria
+2. If multiple items tie at top, prefer:
    - Items that unblock other work
    - Items with clear, concrete next steps
    - Items the user mentioned recently
@@ -35,7 +35,7 @@ The "first move" is the single most important action. Select it by:
 Identify which domain (bot, notes, dev) has the most signals:
 
 1. Count items per domain across all sources
-2. Weight by priority tier (P1 = 3, P2 = 2, P3 = 1)
+2. Weight by priority bucket (top priority = 3, this week = 2, later = 1)
 3. Domain with highest weighted count = focus area
 
 **Format:**
@@ -72,7 +72,7 @@ Group related items into patterns:
 **Pattern: [theme]**
 - [Source]: [item description]
 - [Source]: [item description]
-Combined score: [total], Priority: [tier]
+Priority: [Top priority/This week/Later]
 ```
 
 ## Synthesis Rules
@@ -81,7 +81,7 @@ Combined score: [total], Priority: [tier]
 2. **Be specific** — "Fix OAuth" not "Address auth issues"
 3. **Connect the dots** — Show how items relate
 4. **Acknowledge uncertainty** — If sources conflict, say so
-5. **Proportional context** — More detail for P1, less for P3
+5. **Proportional context** — More detail for top-priority items, less for later items
 
 ## Anti-Patterns
 

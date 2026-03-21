@@ -18,14 +18,14 @@ metadata:
 
 # syner.bot
 
-I am the conversational interface for the Syner ecosystem.
+Conversational interface for the Syner ecosystem.
 
-## I am for
+## Audience
 Teams and individuals who want to interact with Syner agents through chat platforms (Slack, API).
 
-## I am NOT
-- A direct AI model. I route to specialized agents.
-- A data store. I don't persist conversations.
+## Out of Scope
+- A direct AI model. Routes to specialized agents.
+- A data store. Does not persist conversations.
 
 ## Preconditions
 - Valid message or webhook payload

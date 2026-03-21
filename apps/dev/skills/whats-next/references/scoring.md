@@ -1,77 +1,38 @@
-# Prioritization Scoring
+# Prioritization Criteria
 
-Calculate priority scores for each item/pattern to determine what to work on first.
+Order items by applying these criteria in sequence. The first criterion that distinguishes two items determines which comes first.
 
-## Base Score Factors
+## Ordered Criteria
 
-| Factor | Weight | Description |
-|--------|--------|-------------|
-| Friction frequency (7d) | +5/occurrence | Each friction observation in last 7 days |
-| Has related backlog | +3 | Backlog item documents this pattern |
-| Has GitHub issue | +2 | Issue tracks this work |
-| Issue `needs-decision` label | +10 | Blocked waiting for decision |
-| Issue > 7 days old | +3 | Aging issue needs attention |
-| Task in progress | +5 | Active work happening |
-| Affects orchestration | +4 | Touches /syner, routing, or core skills |
-| Cross-domain | +3 | Impacts multiple apps/packages |
+1. **Needs decision** — Has `needs-decision` label or is blocked waiting for human input. Always comes first; nothing else can move until a decision is made.
 
-## Priority Tiers
+2. **Blocks other work** — Resolving this unblocks one or more other in-progress items. Prefer items that unblock more work.
 
-| Tier | Score | Meaning |
-|------|-------|---------|
-| P1 | >= 15 | Work on this today |
-| P2 | 8-14 | Work on this this week |
-| P3 | < 8 | Nice to have, schedule later |
+3. **Recurring friction** — Observed in `.syner/ops/` in the last 7 days. More observations = higher priority.
 
-## Example Calculations
+4. **Age** — Older unresolved items before newer ones. Items open more than 7 days signal neglect.
 
-### Example 1: Repeated friction with issue
-- Friction: "gh auth fails" observed 3 times in 7 days (+15)
-- Has related backlog item (+3)
-- Has open issue #23 (+2)
-- Issue older than 7 days (+3)
-- **Total: 23 → P1**
+5. **Effort** — When all else is equal, prefer lower-effort items (quick wins keep momentum).
 
-### Example 2: New backlog item
-- No friction observations (+0)
-- Backlog item exists (+3)
-- No issue yet (+0)
-- **Total: 3 → P3**
+## Priority Buckets
 
-### Example 3: Core skill friction
-- Friction: "/syner routing fails" observed once (+5)
-- Affects orchestration (+4)
-- No backlog yet (+0)
-- **Total: 9 → P2**
+After ordering, group items into three buckets — use model judgment for cut-offs based on the signals present:
+
+- **Top priority** — Do today. Items clearly distinguished by criteria 1–3.
+- **This week** — Plan to address. Items with moderate signals.
+- **Later** — Schedule or backlog. Items with few signals.
 
 ## Tie-Breaking
 
-When scores are equal, prioritize by:
+When two items are equal across all criteria:
 
-1. **Effort** — Lower effort first (quick wins)
-2. **Recency** — More recent friction first
-3. **Specificity** — More concrete items over vague ones
+1. **Recency** — More recent friction first
+2. **Specificity** — More concrete items over vague ones
 
-## Score Adjustments
+## Urgency Overrides
 
-### Penalties
-- **Stale item** (no activity 30d): -5
-- **Blocked by other item**: -3 (unless blocker is P1)
-- **Vague description**: -2
+These always jump to top priority regardless of other criteria:
 
-### Bonuses
-- **User mentioned it today**: +8 (direct signal)
-- **Failed build/test**: +10 (urgent)
-- **Security concern**: +15 (always high priority)
-
-## Output
-
-For each item, record:
-```
-Item: [description]
-Score: [total]
-Tier: [P1/P2/P3]
-Breakdown:
-  - [factor]: +X
-  - [factor]: +Y
-```
+- Failed build or test blocking deploys
+- Security concern
+- User mentioned it in this session

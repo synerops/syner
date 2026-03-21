@@ -68,17 +68,16 @@ Connect related items across sources. See `references/cross-reference.md` for lo
 4. Build relationship map: which items describe the same underlying pattern
 5. Identify orphaned items (friction with no backlog, backlog with no issue, etc.)
 
-## Phase 3: Score
+## Phase 3: Prioritize
 
-Calculate priority scores. See `references/scoring.md` for algorithm.
+Order items using criteria in `references/scoring.md`. Apply criteria in sequence — the first criterion that distinguishes two items determines which comes first.
 
 For each item/pattern:
-1. Count friction frequency (last 7 days)
-2. Check for related backlog/task/issue
-3. Check issue labels and age
-4. Check if affects orchestration or crosses domains
-5. Sum weights to get score
-6. Assign tier: P1 (>=15), P2 (8-14), P3 (<8)
+1. Check for `needs-decision` label or decision-blocked state
+2. Check if item blocks other in-progress work
+3. Count friction frequency (last 7 days)
+4. Check issue age (older unresolved = higher priority)
+5. Estimate effort (prefer quick wins when other criteria are equal)
 
 ## Phase 4: Synthesize
 
@@ -115,7 +114,7 @@ ALWAYS provide:
 - **Report path**: Location of written triage report
 - **First move**: Single highest-priority action with reasoning
 - **Focus area**: Domain with most signals
-- **Items**: Count by priority tier (P1, P2, P3)
+- **Items**: Count by priority (top priority, this week, later)
 
 ## Boundaries
 

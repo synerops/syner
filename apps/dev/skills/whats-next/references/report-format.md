@@ -39,23 +39,23 @@ Related items:
 
 ## Priority Items
 
-### P1 — Work on today
-- [ ] [Item] (score: X)
-- [ ] [Item] (score: X)
+### Top Priority — Work on today
+- [ ] [Item]
+- [ ] [Item]
 
-### P2 — Work on this week
-- [ ] [Item] (score: X)
-- [ ] [Item] (score: X)
+### This Week
+- [ ] [Item]
+- [ ] [Item]
 
-### P3 — Schedule later
-- [ ] [Item] (score: X)
+### Later
+- [ ] [Item]
 
 ## Cross-Reference Map
 
-| Pattern | Sources | Combined Score |
-|---------|---------|----------------|
-| Auth flow | 3 frictions, 1 backlog, 1 issue | 23 |
-| Build perf | 2 frictions, 1 task | 12 |
+| Pattern | Sources | Priority |
+|---------|---------|----------|
+| Auth flow | 3 frictions, 1 backlog, 1 issue | Top priority |
+| Build perf | 2 frictions, 1 task | This week |
 
 ## Sources Summary
 
@@ -89,7 +89,7 @@ Triage complete. Report: .syner/reports/triage-2024-01-15.md
 
 First move: [action]
 Focus area: [domain] ([N] signals)
-Items: [X] P1, [Y] P2, [Z] P3
+Items: [X] top priority, [Y] this week, [Z] later
 ```
 
 ## Historical Reports
@@ -97,6 +97,6 @@ Items: [X] P1, [Y] P2, [Z] P3
 Keep reports for reference. Don't delete old reports automatically.
 
 Use historical reports to:
-- Track how many P1s clear per week
+- Track how many top-priority items clear per week
 - Identify recurring patterns
 - Measure friction reduction over time
