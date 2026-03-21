@@ -1,7 +1,10 @@
 import { tool } from 'ai'
 import { z } from 'zod'
+import { buildSkillContent, type SkillIndexEntry } from '@syner/sdk/skills'
 import type { SkillsMap } from '../skills'
-import { loadSkillContent } from '../skills/loader'
+
+// In-memory cache for loaded skill content
+const contentCache = new Map<string, string>()
 
 /**
  * Create the Skill tool — what the LLM calls.
@@ -28,10 +31,9 @@ export function createSkillTool(skills: SkillsMap) {
 /**
  * prepareStep handler — detects Skill tool calls and injects content.
  *
- * Reads pre-rendered content from .well-known/skills/{name}.json (static asset).
- * Uses in-memory cache — first read hits disk, subsequent reads are free.
+ * Reads skill content from filesystem via buildSkillContent (with in-memory cache).
  */
-export function createPrepareStep(skills: SkillsMap, skillsDir: string) {
+export function createPrepareStep(skills: SkillsMap, skillDirs: string[]) {
   return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; args: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown; experimental_context: unknown }) => {
     if (steps.length === 0) return {}
 
@@ -42,17 +44,31 @@ export function createPrepareStep(skills: SkillsMap, skillsDir: string) {
     if (!skillCall) return {}
 
     const skillName = skillCall.args.name as string
-    if (!skills.has(skillName)) return {}
+    const descriptor = skills.get(skillName)
+    if (!descriptor) return {}
 
-    const content = await loadSkillContent(skillsDir, skillName)
-    if (!content) return {}
+    // Check cache first
+    let content = contentCache.get(skillName)
+    if (!content) {
+      const entry: SkillIndexEntry = {
+        name: descriptor.name,
+        description: descriptor.description,
+        files: descriptor.files,
+        command: descriptor.command,
+        agent: descriptor.agent,
+      }
+      const result = await buildSkillContent(skillDirs, entry)
+      if (!result) return {}
+      content = result.content
+      contentCache.set(skillName, content)
+    }
 
     return {
       messages: [
         ...messages,
         {
           role: 'user' as const,
-          content: content,
+          content,
         },
       ],
     }

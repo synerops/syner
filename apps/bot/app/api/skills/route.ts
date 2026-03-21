@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireBypass } from '@/lib/bypass'
-import { agents } from '@/lib/registry'
+import { skills } from '@/lib/registry'
 
 export const revalidate = 3600
 
@@ -9,12 +9,12 @@ export async function GET(request: Request) {
   if (denied) return denied
 
   try {
-    const list = await agents.list()
+    const list = await skills.list()
     return NextResponse.json(list)
   } catch (error) {
-    console.error('Error fetching agents:', error)
+    console.error('Error fetching skills:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch agents' },
+      { error: 'Failed to fetch skills' },
       { status: 500 },
     )
   }

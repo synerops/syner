@@ -1,7 +1,7 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  loadAgents,
   AgentsMap,
+  getAgentsRegistry,
   resolveModel,
   type AgentCard,
   type Agent,
@@ -9,6 +9,7 @@ import {
   type GenerateResult,
   type GenerateOptions,
 } from '@syner/sdk/agents'
+import { buildSkillsManifest } from '@syner/sdk/skills'
 import {
   createContext,
   createAction,
@@ -17,7 +18,6 @@ import {
   type Result,
 } from '@syner/osprotocol'
 import { SkillsMap } from '../skills'
-import { loadSkills } from '../skills/loader'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
@@ -51,8 +51,7 @@ import path from 'path'
 // ---------------------------------------------------------------------------
 
 export interface RuntimeConfig {
-  agents?: { dir?: string; index?: string }
-  skills?: { index?: string; dir?: string }
+  skills?: { dir?: string }
 }
 
 // Agent, AgentCardOutput, GenerateResult, GenerateOptions — defined in @syner/sdk/agents
@@ -79,11 +78,17 @@ function getProjectRoot(): string {
   return path.resolve(process.cwd(), '../..')
 }
 
-export function createRuntime(config?: RuntimeConfig): Runtime {
+export function createRuntime(_config?: RuntimeConfig): Runtime {
   const projectRoot = getProjectRoot()
-  const skillsDir = config?.skills?.dir ?? path.join(projectRoot, 'public/.well-known/skills')
-  const skillIndex = config?.skills?.index ?? path.join(skillsDir, 'index.json')
-  const agentsIndex = config?.agents?.index ?? path.join(projectRoot, 'public/.well-known/agents/index.json')
+
+  // Skill source directories for buildSkillsManifest
+  const SKILL_DIRS = [
+    path.join(projectRoot, 'skills/syner'),
+    path.join(projectRoot, 'apps/vaults/skills'),
+    path.join(projectRoot, 'apps/dev/skills'),
+    path.join(projectRoot, 'apps/bot/skills'),
+    path.join(projectRoot, 'packages/github/skills'),
+  ]
 
   // --- Maps ---
   let agents_ = new AgentsMap()
@@ -91,10 +96,15 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
   const runAdapter = new VercelRunAdapter()
   const _system = createSystem()
 
-  /** Load/refresh agents + skills */
+  /** Load/refresh agents + skills from filesystem */
   async function start(): Promise<void> {
-    skills_ = await loadSkills(skillIndex)
-    agents_ = await loadAgents(agentsIndex, projectRoot)
+    // Skills: build manifest from filesystem, populate SkillsMap
+    const manifest = await buildSkillsManifest(SKILL_DIRS)
+    skills_ = new SkillsMap(manifest.skills.map(s => [s.name, s]))
+
+    // Agents: discover from filesystem
+    const registry = await getAgentsRegistry(projectRoot)
+    agents_ = new AgentsMap(registry.agents)
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
@@ -256,7 +266,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
         instructions,
         tools: activeTools as ToolSet,
         stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_, skillsDir) as never,
+        prepareStep: createPrepareStep(skills_, SKILL_DIRS) as never,
         providerOptions: {
           gateway: { models: fallbacks },
         },

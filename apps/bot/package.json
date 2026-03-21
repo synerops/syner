@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
-    "prebuild": "bun run ../../scripts/build-agents-registry.ts",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@syner/github": "workspace:*",
+    "@syner/osprotocol": "workspace:*",
+    "@syner/sdk": "workspace:*",
     "@syner/slack": "workspace:*",
     "@syner/vercel": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.0",
