@@ -84,7 +84,7 @@ export function createRuntime(): Runtime {
 
     agents_ = agentEntries
     skills_ = new SkillsMap(
-      [...skillEntries.values()].map(e => [e.slug, e])
+      [...skillEntries.values()].map(e => [e.name, e])
     )
   }
 
