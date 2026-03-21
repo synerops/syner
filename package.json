@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "build-agents": "bun run scripts/build-agents-registry.ts",
     "start": "turbo start",
     "agent-github": "bun packages/github/bin/syner-agent-github",
     "changeset": "changeset",
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
+    "gray-matter": "^4.0.3",
     "turbo": "^2"
   }
 }

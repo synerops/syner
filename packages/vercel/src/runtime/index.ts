@@ -1,7 +1,7 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  getAgentsRegistry,
-  getAgentsByChannel,
+  loadAgents,
+  AgentsMap,
   resolveModel,
   type AgentCard,
   type Agent,
@@ -51,21 +51,19 @@ import path from 'path'
 // ---------------------------------------------------------------------------
 
 export interface RuntimeConfig {
-  agents?: { dir?: string }
+  agents?: { dir?: string; index?: string }
   skills?: { index?: string; dir?: string }
 }
 
 // Agent, AgentCardOutput, GenerateResult, GenerateOptions — defined in @syner/sdk/agents
 
 export interface Runtime {
-  /** Map<name, AgentCard> — lazy-loaded, cached. Call start() to populate. */
-  agents: Map<string, AgentCard>
+  /** AgentsMap — domain-aware collection with byChannel(). Call start() to populate. */
+  agents: AgentsMap
   /** SkillsMap — all discovered skills with domain methods. Live reference, reflects post-start() state. */
   readonly skills: SkillsMap
-  /** Load/refresh agents + skills from disk */
+  /** Load/refresh agents + skills */
   start(): Promise<void>
-  /** Get agents indexed by Slack channel */
-  byChannel(): Promise<Map<string, AgentCard>>
   /** Get an agent by name */
   agent(name: string): Agent
 }
@@ -85,27 +83,18 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
   const projectRoot = getProjectRoot()
   const skillsDir = config?.skills?.dir ?? path.join(projectRoot, 'public/.well-known/skills')
   const skillIndex = config?.skills?.index ?? path.join(skillsDir, 'index.json')
+  const agentsIndex = config?.agents?.index ?? path.join(projectRoot, 'public/.well-known/agents/index.json')
 
   // --- Maps ---
-  const agents_ = new Map<string, AgentCard>()
+  let agents_ = new AgentsMap()
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
   const _system = createSystem()
 
-  /** Load/refresh agents + skills from disk into the Maps */
+  /** Load/refresh agents + skills */
   async function start(): Promise<void> {
     skills_ = await loadSkills(skillIndex)
-
-    const registry = await getAgentsRegistry(projectRoot)
-    agents_.clear()
-    for (const [name, card] of registry.agents) {
-      agents_.set(name, card)
-    }
-  }
-
-  /** Get agents by Slack channel (delegates to SDK) */
-  async function byChannel(): Promise<Map<string, AgentCard>> {
-    return getAgentsByChannel(projectRoot)
+    agents_ = await loadAgents(agentsIndex, projectRoot)
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
@@ -349,10 +338,9 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
   }
 
   return {
-    agents: agents_,
+    get agents() { return agents_ },
     get skills() { return skills_ },
     start,
-    byChannel,
     agent,
   }
 }
