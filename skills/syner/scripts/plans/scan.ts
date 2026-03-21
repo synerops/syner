@@ -276,7 +276,7 @@ function scanEpic(
   if (!existsSync(plansDir)) return []
 
   const files = readdirSync(plansDir)
-    .filter(f => f.endsWith(".md"))
+    .filter(f => f.endsWith(".md") && !f.endsWith(".verification.md"))
     .sort()
 
   return files.map(file => {
