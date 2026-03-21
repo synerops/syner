@@ -7,7 +7,8 @@
 ```typescript
 // Primary API
 import { createRuntime } from '@syner/vercel'
-import type { Runtime, RuntimeConfig, GenerateResult, GenerateOptions, AgentInstance, AgentCardOutput } from '@syner/vercel'
+import type { Runtime, RuntimeConfig } from '@syner/vercel'
+import type { Agent, AgentCardOutput, GenerateResult, GenerateOptions } from '@syner/sdk/agents'
 
 // Skills types (for consumers interacting with runtime.skills)
 import type { SkillDescriptor, CommandInfo, SkillsMap } from '@syner/vercel'
@@ -31,14 +32,14 @@ runtime.skills    // SkillsMap — skills with domain methods
 // Methods
 await runtime.start()             // Load agents + skills from disk
 await runtime.byChannel()         // Map<channelId, AgentCard>
-runtime.agent('name')             // AgentInstance — owns card() + generate()
+runtime.agent('name')             // Agent — owns card() + generate()
 
-// AgentInstance
-const instance = runtime.agent('bot')
-instance.name                     // Agent name
-instance.description              // Agent description
-instance.card()                   // A2A discovery card (sync, skills filtered per agent)
-await instance.generate(prompt, options?)  // Full lifecycle
+// Agent (defined in @syner/sdk/agents)
+const agent = runtime.agent('bot')
+agent.name                        // Agent name
+agent.description                 // Agent description
+agent.card()                      // A2A discovery card (sync, skills filtered per agent)
+await agent.generate(prompt, options?)  // Full lifecycle
 ```
 
 ### SkillsMap
@@ -103,7 +104,7 @@ Tools are pure operations: schema + execute function. No `ToolDef` abstraction.
 - **Native tools** (Fetch): `execute(input)` — no sandbox needed, uses native `fetch()`
 - **Composite tools** (Skill, Task): created via factory functions with runtime dependencies
 
-Each `AgentInstance`'s `generate()` method binds tools to the lazy sandbox directly, eliminating the intermediate Map layer.
+Each `Agent`'s `generate()` method binds tools to the lazy sandbox directly, eliminating the intermediate Map layer.
 
 ## Dependencies
 
@@ -121,6 +122,6 @@ Each `AgentInstance`'s `generate()` method binds tools to the lazy sandbox direc
 
 1. **Always call `runtime.start()` before using agents/skills.** Maps start empty.
 2. **Skills index is the source of truth.** `public/.well-known/skills/index.json` — no filesystem scanning.
-3. **ToolLoopAgent step limit is 10.** Hardcoded in `AgentInstance.generate()`.
+3. **ToolLoopAgent step limit is 10.** Hardcoded in `Agent.generate()`.
 4. **Sandbox lifecycle is per-generate.** Created lazily on first tool use, stopped in finally block.
-5. **`AgentInstance` is created per-call.** `runtime.agent(name)` returns a new instance each time — no caching.
+5. **`Agent` is created per-call.** `runtime.agent(name)` returns a new instance each time — no caching.

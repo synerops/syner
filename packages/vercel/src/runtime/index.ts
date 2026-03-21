@@ -4,6 +4,10 @@ import {
   getAgentsByChannel,
   resolveModel,
   type AgentCard,
+  type Agent,
+  type AgentCardOutput,
+  type GenerateResult,
+  type GenerateOptions,
 } from '@syner/sdk/agents'
 import {
   createContext,
@@ -53,44 +57,7 @@ export interface RuntimeConfig {
   skills?: { index?: string; dir?: string }
 }
 
-export interface GenerateResult {
-  text: string
-  steps: number
-  toolCalls: string[]
-}
-
-export interface GenerateOptions {
-  vaultStore?: VaultStore
-  contextRequest?: ContextRequest
-  onStatus?: (status: string) => void | Promise<void>
-  onToolStart?: (toolName: string) => void
-  onToolFinish?: (toolName: string, durationMs: number, success: boolean) => void
-  onStepFinish?: (stepNumber: number, toolNames: string[]) => void
-  onResult?: (result: Result<GenerateResult>) => Promise<void> | void
-}
-
-export interface AgentCardOutput {
-  name: string
-  description: string
-  url: string
-  version: string
-  capabilities: {
-    streaming: boolean
-    pushNotifications: boolean
-  }
-  skills: Array<{
-    id: string
-    name: string
-    description: string
-  }>
-}
-
-export interface AgentInstance {
-  readonly name: string
-  readonly description: string
-  card(): AgentCardOutput
-  generate(prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
-}
+// Agent, AgentCardOutput, GenerateResult, GenerateOptions — defined in @syner/sdk/agents
 
 export interface Runtime {
   /** Map<name, AgentCard> — lazy-loaded, cached. Call start() to populate. */
@@ -101,8 +68,8 @@ export interface Runtime {
   start(): Promise<void>
   /** Get agents indexed by Slack channel */
   byChannel(): Promise<Map<string, AgentCard>>
-  /** Get an agent instance by name */
-  agent(name: string): AgentInstance
+  /** Get an agent by name */
+  agent(name: string): Agent
 }
 
 // ---------------------------------------------------------------------------
@@ -142,8 +109,8 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
     return getAgentsByChannel(projectRoot)
   }
 
-  /** Create an AgentInstance that owns its card and generate lifecycle */
-  function createAgentInstance(agentCard: AgentCard): AgentInstance {
+  /** Create an Agent that owns its card and generate lifecycle */
+  function createAgent(agentCard: AgentCard): Agent {
     function card(): AgentCardOutput {
       // Filter skills by agent's skill list, or show all if not defined
       const agentSkills = agentCard.skills
@@ -388,11 +355,11 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
     }
   }
 
-  /** Get an agent instance by name */
-  function agent(name: string): AgentInstance {
+  /** Get an agent by name */
+  function agent(name: string): Agent {
     const card = agents_.get(name)
     if (!card) throw new Error(`Agent not found: ${name}`)
-    return createAgentInstance(card)
+    return createAgent(card)
   }
 
   return {
