@@ -74,14 +74,14 @@ Pattern: "auth flow problems"
 
 4. **Orphaned tasks** — Tasks with no backlog or issue context may indicate undocumented work.
 
-## Relationship Scoring
+## Relationship Signals
 
-Each relationship type adds to the item's priority score:
+Each relationship type increases the priority of the item. More relationships = stronger signal to prioritize:
 
-| Relationship | Points |
-|--------------|--------|
-| Friction validates backlog | +3 |
-| Backlog has active task | +2 |
-| Backlog has open issue | +2 |
-| Multiple frictions same pattern | +5 per additional |
-| Cross-domain friction | +3 |
+| Relationship | Signal strength |
+|--------------|-----------------|
+| Friction validates backlog | Strong — pain is documented |
+| Backlog has active task | Moderate — work is in progress |
+| Backlog has open issue | Moderate — work is tracked |
+| Multiple frictions same pattern | Strongest — recurring pain |
+| Cross-domain friction | Strong — broad impact |
