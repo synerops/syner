@@ -33,7 +33,7 @@ async function handleCommand(command: SlackSlashCommand): Promise<SlackCommandRe
 
   try {
     const agent = runtime.agent(cmdConfig.agent)
-    const result = await agent.generate(prompt, {
+    const result = await agent.spawn(prompt, {
       onStatus: (status) => console.log(`[SlashCommand][${cmdConfig.agent}] Status: ${status}`),
     })
 

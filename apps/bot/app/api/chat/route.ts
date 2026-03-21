@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
   try {
     const agent = runtime.agent(name)
-    const result = await agent.generate(prompt)
+    const result = await agent.spawn(prompt)
 
     console.log(`[Chat] request=${requestId} agent=${name} steps=${result.output?.steps} verification=${result.verification.status}`)
 
