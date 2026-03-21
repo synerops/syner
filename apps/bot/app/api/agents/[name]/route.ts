@@ -19,13 +19,9 @@ export async function GET(
 
   const { name } = await params
 
-  try {
-    const agent = await agents.get(name)
-    if (!agent) {
-      return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
-    }
-    return NextResponse.json(agent)
-  } catch {
+  const agent = await agents.get(name)
+  if (!agent) {
     return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
   }
+  return NextResponse.json(agent)
 }

@@ -42,14 +42,14 @@ export function SkillModal({
             <DialogTitle className="font-mono text-lg">
               {loading ? "Loading..." : skill ? `/${skill.name}` : "Skill"}
             </DialogTitle>
-            {!loading && skill?.metadata?.version && (
+            {!loading && !!skill?.metadata?.version && (
               <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800">
-                v{skill.metadata.version}
+                v{String(skill.metadata.version)}
               </span>
             )}
             {!loading && skill && (
               <span className="rounded bg-zinc-200 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-                {skill.metadata?.category || 'Other'}
+                {skill.category || 'Other'}
               </span>
             )}
           </div>

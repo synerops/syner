@@ -1,28 +1,51 @@
-import type { Skill } from '@syner/osprotocol'
-
 export type SkillVisibility = 'public' | 'instance' | 'private'
 
 /**
- * A Skill with its full markdown content loaded.
- * Used when rendering skill details (e.g. in a modal).
+ * Unified skill entry — the single shape for skills across the entire codebase.
+ *
+ * Replaces: Skill (osprotocol metadata), SkillIndexEntry (build), SkillDescriptor (vercel).
  */
-export interface SkillContent extends Skill {
+export interface SkillEntry {
+  // Identity
+  name: string
+  slug: string
+  description: string
+  category: string
+  visibility: SkillVisibility
+
+  // Runtime (for content loading and slash command routing)
+  files: string[]
+  command?: string
+  agent?: string
+  path: string
+
+  // Metadata (osprotocol passthrough)
+  license?: string
+  compatibility?: unknown
+  metadata?: Record<string, unknown>
+}
+
+/**
+ * A SkillEntry with its full markdown content loaded.
+ * Used when rendering skill details or injecting into LLM context.
+ */
+export interface SkillContent extends SkillEntry {
   content: string
 }
 
 /**
- * Group skills by their metadata.category field.
+ * Group skills by their category field.
  */
-export function groupByCategory(skills: Skill[]): Record<string, Skill[]> {
+export function groupByCategory(skills: SkillEntry[]): Record<string, SkillEntry[]> {
   return skills.reduce(
     (acc, skill) => {
-      const category = skill.metadata?.category || 'Other'
+      const category = skill.category || 'Other'
       if (!acc[category]) {
         acc[category] = []
       }
       acc[category].push(skill)
       return acc
     },
-    {} as Record<string, Skill[]>
+    {} as Record<string, SkillEntry[]>
   )
 }

@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server";
-import { getSkillsList } from "@syner/sdk/skills";
-import path from "path";
+import { skills } from "@syner/sdk/skills";
 
 // Force static generation - skills only update on deploy
-// (Vercel serverless doesn't have monorepo filesystem at runtime)
 export const dynamic = "force-static";
-
-// Project root is two levels up from apps/dev
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), "../..");
-}
 
 export async function GET() {
   try {
-    const projectRoot = getProjectRoot();
-    const skills = await getSkillsList(projectRoot);
-    return NextResponse.json(skills);
+    const list = await skills.list();
+    return NextResponse.json(list);
   } catch (error) {
     console.error("Error fetching skills:", error);
     return NextResponse.json(

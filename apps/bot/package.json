@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@syner/github": "workspace:*",
-    "@syner/osprotocol": "workspace:*",
     "@syner/sdk": "workspace:*",
     "@syner/slack": "workspace:*",
     "@syner/vercel": "workspace:*",

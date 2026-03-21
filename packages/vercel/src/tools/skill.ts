@@ -1,6 +1,6 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import { buildSkillContent, type SkillIndexEntry } from '@syner/sdk/skills'
+import { buildSkillContent } from '@syner/sdk/skills'
 import type { SkillsMap } from '../skills'
 
 // In-memory cache for loaded skill content
@@ -31,9 +31,10 @@ export function createSkillTool(skills: SkillsMap) {
 /**
  * prepareStep handler — detects Skill tool calls and injects content.
  *
- * Reads skill content from filesystem via buildSkillContent (with in-memory cache).
+ * Uses buildSkillContent with entry.path for filesystem access,
+ * cached in-memory for the lifetime of the process.
  */
-export function createPrepareStep(skills: SkillsMap, skillDirs: string[]) {
+export function createPrepareStep(skills: SkillsMap) {
   return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; args: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown; experimental_context: unknown }) => {
     if (steps.length === 0) return {}
 
@@ -50,14 +51,7 @@ export function createPrepareStep(skills: SkillsMap, skillDirs: string[]) {
     // Check cache first
     let content = contentCache.get(skillName)
     if (!content) {
-      const entry: SkillIndexEntry = {
-        name: descriptor.name,
-        description: descriptor.description,
-        files: descriptor.files,
-        command: descriptor.command,
-        agent: descriptor.agent,
-      }
-      const result = await buildSkillContent(skillDirs, entry)
+      const result = await buildSkillContent(descriptor)
       if (!result) return {}
       content = result.content
       contentCache.set(skillName, content)

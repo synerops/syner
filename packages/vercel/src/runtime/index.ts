@@ -1,7 +1,6 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  AgentsMap,
-  getAgentsRegistry,
+  agents as agentsRegistry,
   resolveModel,
   type AgentCard,
   type Agent,
@@ -9,7 +8,7 @@ import {
   type GenerateResult,
   type GenerateOptions,
 } from '@syner/sdk/agents'
-import { buildSkillsManifest } from '@syner/sdk/skills'
+import { skills as skillsRegistry } from '@syner/sdk/skills'
 import {
   createContext,
   createAction,
@@ -44,21 +43,16 @@ import {
   executeGrep,
 } from '../tools'
 import { tool, type Tool } from 'ai'
-import path from 'path'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface RuntimeConfig {
-  skills?: { dir?: string }
-}
-
 // Agent, AgentCardOutput, GenerateResult, GenerateOptions — defined in @syner/sdk/agents
 
 export interface Runtime {
-  /** AgentsMap — domain-aware collection with byChannel(). Call start() to populate. */
-  agents: AgentsMap
+  /** Agents map — call start() to populate. */
+  agents: Map<string, AgentCard>
   /** SkillsMap — all discovered skills with domain methods. Live reference, reflects post-start() state. */
   readonly skills: SkillsMap
   /** Load/refresh agents + skills */
@@ -74,37 +68,24 @@ export interface Runtime {
 const DEFAULT_REPO_URL = 'https://github.com/synerops/syner.git'
 const DEFAULT_BRANCH = 'main'
 
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), '../..')
-}
-
-export function createRuntime(_config?: RuntimeConfig): Runtime {
-  const projectRoot = getProjectRoot()
-
-  // Skill source directories for buildSkillsManifest
-  const SKILL_DIRS = [
-    path.join(projectRoot, 'skills/syner'),
-    path.join(projectRoot, 'apps/vaults/skills'),
-    path.join(projectRoot, 'apps/dev/skills'),
-    path.join(projectRoot, 'apps/bot/skills'),
-    path.join(projectRoot, 'packages/github/skills'),
-  ]
-
+export function createRuntime(): Runtime {
   // --- Maps ---
-  let agents_ = new AgentsMap()
+  let agents_ = new Map<string, AgentCard>()
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
   const _system = createSystem()
 
-  /** Load/refresh agents + skills from filesystem */
+  /** Load/refresh agents + skills from cached registry */
   async function start(): Promise<void> {
-    // Skills: build manifest from filesystem, populate SkillsMap
-    const manifest = await buildSkillsManifest(SKILL_DIRS)
-    skills_ = new SkillsMap(manifest.skills.map(s => [s.name, s]))
+    const [agentEntries, skillEntries] = await Promise.all([
+      agentsRegistry.entries(),
+      skillsRegistry.entries(),
+    ])
 
-    // Agents: discover from filesystem
-    const registry = await getAgentsRegistry(projectRoot)
-    agents_ = new AgentsMap(registry.agents)
+    agents_ = agentEntries
+    skills_ = new SkillsMap(
+      [...skillEntries.values()].map(e => [e.slug, e])
+    )
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
@@ -266,7 +247,7 @@ export function createRuntime(_config?: RuntimeConfig): Runtime {
         instructions,
         tools: activeTools as ToolSet,
         stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_, SKILL_DIRS) as never,
+        prepareStep: createPrepareStep(skills_) as never,
         providerOptions: {
           gateway: { models: fallbacks },
         },

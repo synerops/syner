@@ -7,7 +7,7 @@ export const dynamicParams = false
 
 export async function generateStaticParams() {
   const list = await skills.list()
-  return list.map(s => ({ slug: s.metadata?.slug || s.name }))
+  return list.map(s => ({ slug: s.slug }))
 }
 
 export async function GET(
@@ -19,13 +19,9 @@ export async function GET(
 
   const { slug } = await params
 
-  try {
-    const skill = await skills.get(slug)
-    if (!skill) {
-      return NextResponse.json({ error: 'Skill not found' }, { status: 404 })
-    }
-    return NextResponse.json(skill)
-  } catch {
+  const skill = await skills.get(slug)
+  if (!skill) {
     return NextResponse.json({ error: 'Skill not found' }, { status: 404 })
   }
+  return NextResponse.json(skill)
 }

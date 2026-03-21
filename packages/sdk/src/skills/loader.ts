@@ -1,213 +1,113 @@
 import { glob } from 'glob'
-import matter from 'gray-matter'
-import { parseSkillManifest, type Skill } from '@syner/osprotocol'
 import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
+import matter from 'gray-matter'
+import { parseSkillManifest } from '@syner/osprotocol'
 import path from 'path'
-import type { SkillContent, SkillVisibility } from './types'
+import { createRegistry } from '../registry'
+import { SKILL_SOURCES, CATEGORY_MAP } from './sources'
+import type { SkillEntry, SkillContent, SkillVisibility } from './types'
 
-// Predefined allowed paths - security: only serve skills from these directories
-const SKILL_SOURCES = [
-  'skills/syner',
-  'apps/vaults/skills',
-  'apps/dev/skills',
-  'apps/bot/skills',
-  'packages/github/skills',
-] as const
-
-// Category mapping based on path
-const CATEGORY_MAP: Record<string, string> = {
-  'skills/syner': 'Orchestration',
-  'apps/vaults/skills': 'Vaults',
-  'apps/dev/skills': 'Dev',
-  'apps/bot/skills': 'Bot',
-  'packages/github/skills': 'Auth',
-}
-
-interface SkillsRegistry {
-  skills: Map<string, { skill: Skill; path: string }>
-  list: Skill[]
-}
-
-// Singleton cache
-let cachedRegistry: SkillsRegistry | null = null
-let cachedProjectRoot: string | null = null
+/** Subdirectories to include as support files alongside SKILL.md */
+const SUPPORT_DIRS = ['scripts', 'references', 'assets'] as const
 
 // Validation: only alphanumeric and hyphens
 const VALID_SLUG = /^[a-z0-9-]+$/
 
-function getCategoryFromPath(filePath: string): string {
-  for (const [source, category] of Object.entries(CATEGORY_MAP)) {
-    if (filePath.includes(source)) {
-      return category
-    }
-  }
-  return 'Other'
-}
+/**
+ * Skills registry — discovers SKILL.md files from predefined source directories.
+ *
+ * Usage:
+ *   await skills.list()
+ *   await skills.get('create-syner-app')
+ *   await skills.filter(s => s.visibility === 'public')
+ *   await skills.filter(s => s.category === 'Orchestration')
+ */
+export const skills = createRegistry<SkillEntry>({
+  key: (skill) => skill.slug,
 
-function getSlugFromPath(filePath: string): string {
-  // Extract skill name from path like "apps/dev/skills/create-syner-app/SKILL.md"
-  const parts = filePath.split('/')
-  const skillIndex = parts.indexOf('SKILL.md')
-  if (skillIndex > 0) {
-    return parts[skillIndex - 1]
-  }
-  // Fallback for skills/syner/SKILL.md pattern
-  if (parts.includes('syner') && parts.includes('skills')) {
-    const synerIndex = parts.lastIndexOf('syner')
-    return parts[synerIndex]
-  }
-  return parts[parts.length - 2]
-}
+  async discover(root) {
+    const result: SkillEntry[] = []
 
-async function buildRegistry(projectRoot: string): Promise<SkillsRegistry> {
-  const skills = new Map<string, { skill: Skill; path: string }>()
-  const list: Skill[] = []
+    for (const source of SKILL_SOURCES) {
+      const sourceDir = path.resolve(root, source)
+      if (!existsSync(sourceDir)) continue
 
-  // Scan all allowed paths
-  for (const source of SKILL_SOURCES) {
-    const pattern = path.join(projectRoot, source, '**/SKILL.md')
-    const files = await glob(pattern)
+      const pattern = path.join(sourceDir, '**/SKILL.md')
+      const skillFiles = await glob(pattern)
 
-    for (const filePath of files) {
-      // Security: verify path is within allowed directories
-      const resolved = path.resolve(filePath)
-      const sourceResolved = path.resolve(projectRoot, source)
-      if (!resolved.startsWith(sourceResolved)) {
-        console.warn(`Skipping file outside allowed directory: ${filePath}`)
-        continue
-      }
-
-      try {
-        const content = await readFile(filePath, 'utf-8')
-        const { skill: manifest } = parseSkillManifest(content)
-
-        const slug = getSlugFromPath(filePath)
-        const category = getCategoryFromPath(filePath)
-
-        if (manifest.name && manifest.name !== slug) {
-          console.warn(
-            `Skill "${slug}": manifest name "${manifest.name}" does not match directory "${slug}". ` +
-            `Per Agent Skills spec, name should match the directory.`
-          )
+      for (const file of skillFiles) {
+        // Security: verify path is within allowed directories
+        const resolved = path.resolve(file)
+        if (!resolved.startsWith(sourceDir)) {
+          console.warn(`Skipping file outside allowed directory: ${file}`)
+          continue
         }
 
-        const visibility: SkillVisibility = (manifest.metadata?.visibility as SkillVisibility) || 'instance'
+        try {
+          const content = await readFile(resolved, 'utf-8')
+          const { data: frontmatter } = matter(content)
+          const { skill: manifest } = parseSkillManifest(content)
 
-        // Single Skill type — enrich via metadata
-        const skill: Skill = {
-          name: manifest.name || slug,
-          description: manifest.description || '',
-          license: manifest.license,
-          compatibility: manifest.compatibility,
-          metadata: {
-            ...manifest.metadata,
+          const skillDir = path.dirname(resolved)
+          const slug = path.basename(skillDir)
+          const category = CATEGORY_MAP[source] || 'Other'
+          const visibility: SkillVisibility = (manifest.metadata?.visibility as SkillVisibility) || 'instance'
+
+          // Collect support files: SKILL.md + scripts/, references/, assets/
+          const files = ['SKILL.md']
+          for (const supportDir of SUPPORT_DIRS) {
+            const supportPath = path.join(skillDir, supportDir)
+            if (!existsSync(supportPath)) continue
+            const supportFiles = await glob(path.join(supportPath, '**/*'), { nodir: true })
+            for (const f of supportFiles) files.push(path.relative(skillDir, f))
+          }
+
+          result.push({
+            name: manifest.name || slug,
             slug,
+            description: manifest.description || '',
             category,
             visibility,
-          },
+            files,
+            command: frontmatter.command,
+            agent: frontmatter.agent,
+            path: resolved,
+            license: manifest.license,
+            compatibility: manifest.compatibility,
+            metadata: { ...manifest.metadata, slug, category, visibility },
+          })
+        } catch (error) {
+          console.error(`Error parsing ${file}:`, error)
         }
-
-        skills.set(slug, { skill, path: filePath })
-        list.push(skill)
-      } catch (error) {
-        console.error(`Error parsing ${filePath}:`, error)
       }
     }
-  }
 
-  // Sort by category, then by name
-  list.sort((a, b) => {
-    const catA = a.metadata?.category || 'Other'
-    const catB = b.metadata?.category || 'Other'
-    if (catA !== catB) {
-      return catA.localeCompare(catB)
-    }
-    return a.name.localeCompare(b.name)
-  })
+    return result.sort((a, b) =>
+      a.category !== b.category
+        ? a.category.localeCompare(b.category)
+        : a.name.localeCompare(b.name)
+    )
+  },
+})
 
-  return { skills, list }
-}
+/**
+ * Load full markdown content for a skill (progressive disclosure).
+ *
+ * Metadata is loaded at startup via skills.list(). Content is loaded
+ * on demand when a skill is activated.
+ */
+export async function getContent(slug: string): Promise<SkillContent | null> {
+  if (!VALID_SLUG.test(slug)) return null
 
-export function invalidateSkillsCache(): void {
-  cachedRegistry = null
-  cachedProjectRoot = null
-}
-
-export async function getSkillsRegistry(projectRoot: string): Promise<SkillsRegistry> {
-  // Invalidate cache if project root changed
-  if (cachedRegistry && cachedProjectRoot === projectRoot) {
-    return cachedRegistry
-  }
-  cachedRegistry = await buildRegistry(projectRoot)
-  cachedProjectRoot = projectRoot
-  return cachedRegistry
-}
-
-export async function getSkillsList(projectRoot: string): Promise<Skill[]> {
-  const index = await getSkillsRegistry(projectRoot)
-  return index.list
-}
-
-export async function getSkillBySlug(projectRoot: string, slug: string): Promise<SkillContent | null> {
-  // Security: validate slug format
-  if (!VALID_SLUG.test(slug)) {
-    return null
-  }
-
-  const index = await getSkillsRegistry(projectRoot)
-  const entry = index.skills.get(slug)
-
-  if (!entry) {
-    return null
-  }
-
-  // Security: double-check path is within allowed directories
-  const resolved = path.resolve(entry.path)
-  const isAllowed = SKILL_SOURCES.some((source) => {
-    const sourceResolved = path.resolve(projectRoot, source)
-    return resolved.startsWith(sourceResolved)
-  })
-
-  if (!isAllowed) {
-    return null
-  }
+  const entry = await skills.get(slug)
+  if (!entry) return null
 
   try {
     const fileContent = await readFile(entry.path, 'utf-8')
     const { content } = matter(fileContent)
-
-    return {
-      ...entry.skill,
-      content,
-    }
+    return { ...entry, content }
   } catch {
     return null
   }
-}
-
-export async function getPublicSkills(projectRoot: string): Promise<Skill[]> {
-  const { list } = await getSkillsRegistry(projectRoot)
-  return list.filter((s) => s.metadata?.visibility === 'public')
-}
-
-export async function getInstanceSkills(projectRoot: string): Promise<Skill[]> {
-  const { list } = await getSkillsRegistry(projectRoot)
-  return list.filter((s) => s.metadata?.visibility === 'instance' || s.metadata?.visibility === 'public')
-}
-
-export async function getPrivateSkills(projectRoot: string, app: string): Promise<Skill[]> {
-  const { list } = await getSkillsRegistry(projectRoot)
-  const appSource = `apps/${app}/skills`
-  return list.filter((s) => {
-    if (s.metadata?.visibility !== 'private') return false
-    const slug = s.metadata?.slug
-    if (!slug) return false
-    const entry = cachedRegistry?.skills.get(slug)
-    return entry?.path.includes(appSource)
-  })
-}
-
-export function getCategories(skills: Skill[]): string[] {
-  const categories = new Set(skills.map((s) => s.metadata?.category || 'Other'))
-  return Array.from(categories).sort()
 }
