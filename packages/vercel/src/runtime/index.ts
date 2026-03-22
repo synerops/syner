@@ -293,7 +293,7 @@ export function createRuntime(): Runtime {
         await options?.onResult?.(ospResult)
         return ospResult
       } catch (error) {
-        console.error(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.message : error)
+        console.error(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.stack : error)
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false },

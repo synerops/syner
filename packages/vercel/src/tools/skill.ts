@@ -35,7 +35,7 @@ export function createSkillTool(skills: SkillsMap) {
  * cached in-memory for the lifetime of the process.
  */
 export function createPrepareStep(skills: SkillsMap) {
-  return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; args: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown; experimental_context: unknown }) => {
+  return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; input: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown }) => {
     if (steps.length === 0) return {}
 
     const lastStep = steps[steps.length - 1]
@@ -44,7 +44,7 @@ export function createPrepareStep(skills: SkillsMap) {
     )
     if (!skillCall) return {}
 
-    const skillName = skillCall.args.name as string
+    const skillName = skillCall.input.name as string
     const descriptor = skills.get(skillName)
     if (!descriptor) return {}
 
@@ -60,10 +60,7 @@ export function createPrepareStep(skills: SkillsMap) {
     return {
       messages: [
         ...messages,
-        {
-          role: 'user' as const,
-          content,
-        },
+        { role: 'user' as const, content },
       ],
     }
   }
