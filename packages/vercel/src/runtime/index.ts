@@ -1,6 +1,5 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  agents as agentsRegistry,
   resolveModel,
   type AgentCard,
   type Agent,
@@ -8,7 +7,7 @@ import {
   type GenerateResult,
   type GenerateOptions,
 } from '@syner/sdk/agents'
-import { skills as skillsRegistry } from '@syner/sdk/skills'
+import type { SkillEntry } from '@syner/sdk/skills'
 import {
   createContext,
   createAction,
@@ -80,17 +79,28 @@ export function createRuntime(): Runtime {
   const runAdapter = new VercelRunAdapter()
   const _system = createSystem()
 
-  /** Load/refresh agents + skills from cached registry */
+  /** Resolve the base URL for fetching static routes */
+  function getBaseUrl(): string {
+    if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+      return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    }
+    return `http://localhost:${process.env.PORT || 3001}`
+  }
+
+  /** Load agents + skills from pre-computed static routes */
   async function start(): Promise<void> {
-    const [agentEntries, skillEntries] = await Promise.all([
-      agentsRegistry.entries(),
-      skillsRegistry.entries(),
+    const baseUrl = getBaseUrl()
+    const headers: Record<string, string> = {}
+    const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+    if (bypass) headers['x-vercel-protection-bypass'] = bypass
+
+    const [agentsData, skillsData] = await Promise.all([
+      fetch(`${baseUrl}/api/agents`, { headers }).then(r => r.json()),
+      fetch(`${baseUrl}/api/skills`, { headers }).then(r => r.json()),
     ])
 
-    agents_ = agentEntries
-    skills_ = new SkillsMap(
-      [...skillEntries.values()].map(e => [e.name, e])
-    )
+    agents_ = new Map((agentsData as AgentCard[]).map(a => [a.name, a]))
+    skills_ = new SkillsMap((skillsData as SkillEntry[]).map(s => [s.name, s]))
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
@@ -252,7 +262,7 @@ export function createRuntime(): Runtime {
         instructions,
         tools: activeTools as ToolSet,
         stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_) as never,
+        prepareStep: createPrepareStep(skills_, getBaseUrl) as never,
         providerOptions: {
           gateway: { models: fallbacks },
         },

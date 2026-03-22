@@ -1,6 +1,6 @@
-export { skills, getContent } from './loader'
+export { skills } from './loader'
 export { SKILL_SOURCES, CATEGORY_MAP } from './sources'
-export type { SkillEntry, SkillContent, SkillVisibility } from './types'
+export type { SkillEntry, SkillVisibility } from './types'
 export { groupByCategory } from './types'
 export { resolveSkill, type ResolvedSkill } from './resolver'
 export { buildSkillContent } from './build'

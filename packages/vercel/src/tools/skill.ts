@@ -1,6 +1,5 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import { buildSkillContent } from '@syner/sdk/skills'
 import type { SkillsMap } from '../skills'
 
 // In-memory cache for loaded skill content
@@ -31,10 +30,10 @@ export function createSkillTool(skills: SkillsMap) {
 /**
  * prepareStep handler — detects Skill tool calls and injects content.
  *
- * Uses buildSkillContent with entry.path for filesystem access,
- * cached in-memory for the lifetime of the process.
+ * Fetches skill content from static /api/skills/[slug] route (pre-rendered at build time).
+ * Cached in-memory for the lifetime of the process.
  */
-export function createPrepareStep(skills: SkillsMap) {
+export function createPrepareStep(skills: SkillsMap, getBaseUrl: () => string) {
   return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; input: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown }) => {
     if (steps.length === 0) return {}
 
@@ -45,16 +44,28 @@ export function createPrepareStep(skills: SkillsMap) {
     if (!skillCall) return {}
 
     const skillName = skillCall.input.name as string
-    const descriptor = skills.get(skillName)
-    if (!descriptor) return {}
+    if (!skills.has(skillName)) return {}
 
     // Check cache first
     let content = contentCache.get(skillName)
     if (!content) {
-      const result = await buildSkillContent(descriptor)
-      if (!result) return {}
-      content = result.content
-      contentCache.set(skillName, content)
+      try {
+        const baseUrl = getBaseUrl()
+        const headers: Record<string, string> = {}
+        const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+        if (bypass) headers['x-vercel-protection-bypass'] = bypass
+
+        const slug = skills.get(skillName)?.slug || skillName
+        const res = await fetch(`${baseUrl}/api/skills/${slug}`, { headers })
+        if (!res.ok) return {}
+
+        const data = await res.json()
+        content = data.content
+        if (!content) return {}
+        contentCache.set(skillName, content)
+      } catch {
+        return {}
+      }
     }
 
     return {

@@ -13,6 +13,9 @@ export interface SkillEntry {
   category: string
   visibility: SkillVisibility
 
+  // Content (markdown body of SKILL.md)
+  content: string
+
   // Runtime (for content loading and slash command routing)
   files: string[]
   command?: string
@@ -23,14 +26,6 @@ export interface SkillEntry {
   license?: string
   compatibility?: unknown
   metadata?: Record<string, unknown>
-}
-
-/**
- * A SkillEntry with its full markdown content loaded.
- * Used when rendering skill details or injecting into LLM context.
- */
-export interface SkillContent extends SkillEntry {
-  content: string
 }
 
 /**

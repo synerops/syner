@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
-import type { SkillContent } from "@syner/sdk/skills";
+import type { SkillEntry } from "@syner/sdk/skills";
 
 interface SkillModalProps {
-  skill: SkillContent | null;
+  skill: SkillEntry | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   loading?: boolean;

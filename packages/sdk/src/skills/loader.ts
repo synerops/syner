@@ -6,13 +6,11 @@ import { parseSkillManifest } from '@syner/osprotocol'
 import path from 'path'
 import { createRegistry } from '../registry'
 import { SKILL_SOURCES, CATEGORY_MAP } from './sources'
-import type { SkillEntry, SkillContent, SkillVisibility } from './types'
+import type { SkillEntry, SkillVisibility } from './types'
 
 /** Subdirectories to include as support files alongside SKILL.md */
 const SUPPORT_DIRS = ['scripts', 'references', 'assets'] as const
 
-// Validation: only alphanumeric and hyphens
-const VALID_SLUG = /^[a-z0-9-]+$/
 
 /**
  * Skills registry — discovers SKILL.md files from predefined source directories.
@@ -23,7 +21,7 @@ const VALID_SLUG = /^[a-z0-9-]+$/
  *   await skills.filter(s => s.visibility === 'public')
  *   await skills.filter(s => s.category === 'Orchestration')
  */
-export const skills = createRegistry<SkillEntry>({
+const _registry = createRegistry<SkillEntry>({
   key: (skill) => skill.slug,
 
   async discover(root) {
@@ -45,9 +43,9 @@ export const skills = createRegistry<SkillEntry>({
         }
 
         try {
-          const content = await readFile(resolved, 'utf-8')
-          const { data: frontmatter } = matter(content)
-          const { skill: manifest } = parseSkillManifest(content)
+          const raw = await readFile(resolved, 'utf-8')
+          const { data: frontmatter, content: body } = matter(raw)
+          const { skill: manifest } = parseSkillManifest(raw)
 
           const skillDir = path.dirname(resolved)
           const slug = path.basename(skillDir)
@@ -69,6 +67,7 @@ export const skills = createRegistry<SkillEntry>({
             description: manifest.description || '',
             category,
             visibility,
+            content: body.trim(),
             files,
             command: frontmatter.command,
             agent: frontmatter.agent,
@@ -92,22 +91,12 @@ export const skills = createRegistry<SkillEntry>({
 })
 
 /**
- * Load full markdown content for a skill (progressive disclosure).
+ * Skills registry — discovers SKILL.md files with full content.
  *
- * Metadata is loaded at startup via skills.list(). Content is loaded
- * on demand when a skill is activated.
+ * Usage:
+ *   await skills.list()
+ *   await skills.get('create-syner-app')   // includes content
+ *   await skills.filter(s => s.visibility === 'public')
+ *   await skills.filter(s => s.category === 'Orchestration')
  */
-export async function getContent(slug: string): Promise<SkillContent | null> {
-  if (!VALID_SLUG.test(slug)) return null
-
-  const entry = await skills.get(slug)
-  if (!entry) return null
-
-  try {
-    const fileContent = await readFile(entry.path, 'utf-8')
-    const { content } = matter(fileContent)
-    return { ...entry, content }
-  } catch {
-    return null
-  }
-}
+export const skills = _registry

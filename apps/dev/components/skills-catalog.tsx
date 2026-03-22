@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { type SkillEntry, type SkillContent, groupByCategory } from "@syner/sdk/skills";
+import { type SkillEntry, groupByCategory } from "@syner/sdk/skills";
 import { SkillModal } from "./skill-modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -15,7 +15,7 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { data: selectedSkill, isLoading } = useSWR<SkillContent>(
+  const { data: selectedSkill, isLoading } = useSWR<SkillEntry>(
     selectedName ? `/api/skills/${selectedName}` : null,
     fetcher,
     {
