@@ -65,8 +65,13 @@ export interface Runtime {
 // createRuntime
 // ---------------------------------------------------------------------------
 
-const DEFAULT_REPO_URL = 'https://github.com/synerops/syner.git'
-const DEFAULT_BRANCH = 'main'
+/**
+ * Sandbox configuration via environment variables:
+ *   SANDBOX_REPO   — Git repo URL for sandbox cloning (default: synerops/syner)
+ *   SANDBOX_BRANCH — Branch to clone in the sandbox (default: main)
+ */
+const SANDBOX_REPO = process.env.SANDBOX_REPO || 'https://github.com/synerops/syner.git'
+const SANDBOX_BRANCH = process.env.SANDBOX_BRANCH || 'main'
 
 export function createRuntime(): Runtime {
   // --- Maps ---
@@ -136,8 +141,8 @@ export function createRuntime(): Runtime {
           try {
             await onStatus('Preparing sandbox...')
             const result = await createSandbox({
-              repoUrl: DEFAULT_REPO_URL,
-              branch: DEFAULT_BRANCH,
+              repoUrl: SANDBOX_REPO,
+              branch: SANDBOX_BRANCH,
               timeout: 300000,
             })
             sandbox = result.sandbox

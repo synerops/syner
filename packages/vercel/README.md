@@ -80,6 +80,15 @@ const handler = createAgentHandler({
 export const POST = handler
 ```
 
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SANDBOX_REPO` | `https://github.com/synerops/syner.git` | Git repo URL for sandbox cloning |
+| `SANDBOX_BRANCH` | `main` | Branch to clone in the sandbox |
+
+Both are optional — defaults work out of the box. Override them to test against a fork or feature branch.
+
 ## Dependencies
 
 | Package | Why |
