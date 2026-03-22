@@ -1,7 +1,6 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  loadAgents,
-  AgentsMap,
+  agents as agentsRegistry,
   resolveModel,
   type AgentCard,
   type Agent,
@@ -9,6 +8,7 @@ import {
   type GenerateResult,
   type GenerateOptions,
 } from '@syner/sdk/agents'
+import { skills as skillsRegistry } from '@syner/sdk/skills'
 import {
   createContext,
   createAction,
@@ -17,7 +17,6 @@ import {
   type Result,
 } from '@syner/osprotocol'
 import { SkillsMap } from '../skills'
-import { loadSkills } from '../skills/loader'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
@@ -44,22 +43,16 @@ import {
   executeGrep,
 } from '../tools'
 import { tool, type Tool } from 'ai'
-import path from 'path'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface RuntimeConfig {
-  agents?: { dir?: string; index?: string }
-  skills?: { index?: string; dir?: string }
-}
-
 // Agent, AgentCardOutput, GenerateResult, GenerateOptions — defined in @syner/sdk/agents
 
 export interface Runtime {
-  /** AgentsMap — domain-aware collection with byChannel(). Call start() to populate. */
-  agents: AgentsMap
+  /** Agents map — call start() to populate. */
+  agents: Map<string, AgentCard>
   /** SkillsMap — all discovered skills with domain methods. Live reference, reflects post-start() state. */
   readonly skills: SkillsMap
   /** Load/refresh agents + skills */
@@ -72,29 +65,32 @@ export interface Runtime {
 // createRuntime
 // ---------------------------------------------------------------------------
 
-const DEFAULT_REPO_URL = 'https://github.com/synerops/syner.git'
-const DEFAULT_BRANCH = 'main'
+/**
+ * Sandbox configuration via environment variables:
+ *   SANDBOX_REPO   — Git repo URL for sandbox cloning (default: synerops/syner)
+ *   SANDBOX_BRANCH — Branch to clone in the sandbox (default: main)
+ */
+const SANDBOX_REPO = process.env.SANDBOX_REPO || 'https://github.com/synerops/syner.git'
+const SANDBOX_BRANCH = process.env.SANDBOX_BRANCH || 'main'
 
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), '../..')
-}
-
-export function createRuntime(config?: RuntimeConfig): Runtime {
-  const projectRoot = getProjectRoot()
-  const skillsDir = config?.skills?.dir ?? path.join(projectRoot, 'public/.well-known/skills')
-  const skillIndex = config?.skills?.index ?? path.join(skillsDir, 'index.json')
-  const agentsIndex = config?.agents?.index ?? path.join(projectRoot, 'public/.well-known/agents/index.json')
-
+export function createRuntime(): Runtime {
   // --- Maps ---
-  let agents_ = new AgentsMap()
+  let agents_ = new Map<string, AgentCard>()
   let skills_ = new SkillsMap()
   const runAdapter = new VercelRunAdapter()
   const _system = createSystem()
 
-  /** Load/refresh agents + skills */
+  /** Load/refresh agents + skills from cached registry */
   async function start(): Promise<void> {
-    skills_ = await loadSkills(skillIndex)
-    agents_ = await loadAgents(agentsIndex, projectRoot)
+    const [agentEntries, skillEntries] = await Promise.all([
+      agentsRegistry.entries(),
+      skillsRegistry.entries(),
+    ])
+
+    agents_ = agentEntries
+    skills_ = new SkillsMap(
+      [...skillEntries.values()].map(e => [e.name, e])
+    )
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
@@ -145,8 +141,8 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
           try {
             await onStatus('Preparing sandbox...')
             const result = await createSandbox({
-              repoUrl: DEFAULT_REPO_URL,
-              branch: DEFAULT_BRANCH,
+              repoUrl: SANDBOX_REPO,
+              branch: SANDBOX_BRANCH,
               timeout: 300000,
             })
             sandbox = result.sandbox
@@ -256,7 +252,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
         instructions,
         tools: activeTools as ToolSet,
         stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_, skillsDir) as never,
+        prepareStep: createPrepareStep(skills_) as never,
         providerOptions: {
           gateway: { models: fallbacks },
         },
@@ -302,7 +298,7 @@ export function createRuntime(config?: RuntimeConfig): Runtime {
         await options?.onResult?.(ospResult)
         return ospResult
       } catch (error) {
-        console.error(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.message : error)
+        console.error(`[Runtime][${agentCard.name}] model=${modelId} tier=${tier} ERROR:`, error instanceof Error ? error.stack : error)
         const verification = verify(
           action.expectedEffects,
           { 'Response generated': false },

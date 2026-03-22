@@ -1,9 +1,9 @@
-import type { Skill } from '@syner/osprotocol'
-import { getSkillsRegistry } from './loader'
+import { skills } from './loader'
+import type { SkillEntry } from './types'
 
 export interface ResolvedSkill {
   slug: string
-  skill: Skill
+  skill: SkillEntry
   confidence: number // 0-1
   reason: string
 }
@@ -54,9 +54,8 @@ function computeOverlap(intentTokens: string[], skillTokens: string[]): number {
 /**
  * Build searchable tokens for a skill from its name and description.
  */
-function getSkillTokens(skill: Skill): string[] {
-  const slug = skill.metadata?.slug || skill.name
-  const parts = [slug, skill.name, skill.description].filter(Boolean)
+function getSkillTokens(skill: SkillEntry): string[] {
+  const parts = [skill.slug, skill.name, skill.description].filter(Boolean)
   return tokenize(parts.join(' '))
 }
 
@@ -68,21 +67,18 @@ function getSkillTokens(skill: Skill): string[] {
  * 2. Fuzzy match: tokenize intent, score each skill by keyword overlap
  * 3. Return best match above threshold (0.3), or null
  */
-export async function resolveSkill(
-  projectRoot: string,
-  intent: string
-): Promise<ResolvedSkill | null> {
-  const registry = await getSkillsRegistry(projectRoot)
+export async function resolveSkill(intent: string): Promise<ResolvedSkill | null> {
+  const entries = await skills.entries()
   const trimmed = intent.trim()
 
   // 1. Exact match: intent starts with `/`
   if (trimmed.startsWith('/')) {
     const slug = trimmed.slice(1).split(/\s/)[0].toLowerCase()
-    const entry = registry.skills.get(slug)
+    const entry = entries.get(slug)
     if (entry) {
       return {
-        slug: entry.skill.metadata?.slug || entry.skill.name,
-        skill: entry.skill,
+        slug: entry.slug,
+        skill: entry,
         confidence: 1.0,
         reason: `Exact match: intent starts with /${slug}`,
       }
@@ -98,17 +94,17 @@ export async function resolveSkill(
   let bestMatch: ResolvedSkill | null = null
   let bestScore = 0
 
-  for (const [, entry] of registry.skills) {
-    const skillTokens = getSkillTokens(entry.skill)
+  for (const [, entry] of entries) {
+    const skillTokens = getSkillTokens(entry)
     const score = computeOverlap(intentTokens, skillTokens)
 
     if (score > bestScore) {
       bestScore = score
       bestMatch = {
-        slug: entry.skill.metadata?.slug || entry.skill.name,
-        skill: entry.skill,
+        slug: entry.slug,
+        skill: entry,
         confidence: Math.min(score, 1.0),
-        reason: buildReason(intentTokens, skillTokens, entry.skill),
+        reason: buildReason(intentTokens, skillTokens, entry),
       }
     }
   }
@@ -124,7 +120,7 @@ export async function resolveSkill(
 /**
  * Build a human-readable reason for why a skill matched.
  */
-function buildReason(intentTokens: string[], skillTokens: string[], skill: Skill): string {
+function buildReason(intentTokens: string[], skillTokens: string[], skill: SkillEntry): string {
   const skillSet = new Set(skillTokens)
   const matched: string[] = []
 

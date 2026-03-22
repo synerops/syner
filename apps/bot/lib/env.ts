@@ -11,6 +11,8 @@ export const env = createEnv({
     AI_GATEWAY_API_KEY: z.string().min(1).optional(),
     SLACK_BOT_TOKEN: z.string().startsWith('xoxb-').optional(),
     SLACK_SIGNING_SECRET: z.string().min(1).optional(),
+    SANDBOX_REPO: z.string().url().optional(),
+    SANDBOX_BRANCH: z.string().min(1).optional(),
   },
   client: {},
   runtimeEnv: {
@@ -22,6 +24,8 @@ export const env = createEnv({
     AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
     SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
     SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
+    SANDBOX_REPO: process.env.SANDBOX_REPO,
+    SANDBOX_BRANCH: process.env.SANDBOX_BRANCH,
   },
   // Skip validation during build (vars available at runtime via Vercel)
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,

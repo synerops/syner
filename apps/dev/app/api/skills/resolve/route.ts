@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server'
-import { getSkillsList } from '@syner/sdk/skills'
-import path from 'path'
+import { skills } from '@syner/sdk/skills'
 
 // Dynamic — POST handler requires runtime execution
 export const dynamic = 'force-dynamic'
-
-// Project root is two levels up from apps/dev
-function getProjectRoot(): string {
-  return path.resolve(process.cwd(), '../..')
-}
 
 function scoreMatch(intent: string, description: string): number {
   const intentTokens = new Set(intent.toLowerCase().split(/\s+/))
@@ -27,10 +21,9 @@ export async function POST(request: Request) {
     )
   }
 
-  const projectRoot = getProjectRoot()
-  const skills = await getSkillsList(projectRoot)
+  const list = await skills.list()
 
-  const matches = skills
+  const matches = list
     .map((skill) => ({
       name: skill.name,
       description: skill.description,
@@ -47,11 +40,10 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const projectRoot = getProjectRoot()
-  const skills = await getSkillsList(projectRoot)
+  const list = await skills.list()
 
   return NextResponse.json(
-    skills.map((s) => ({
+    list.map((s) => ({
       name: s.name,
       description: s.description,
     }))

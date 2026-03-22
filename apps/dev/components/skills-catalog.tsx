@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { type Skill, type SkillContent, groupByCategory } from "@syner/sdk/skills";
+import { type SkillEntry, type SkillContent, groupByCategory } from "@syner/sdk/skills";
 import { SkillModal } from "./skill-modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface SkillsCatalogProps {
-  skills: Skill[];
+  skills: SkillEntry[];
 }
 
 export function SkillsCatalog({ skills }: SkillsCatalogProps) {
@@ -53,7 +53,7 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
                 {category}
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                {grouped[category].map((skill: Skill) => (
+                {grouped[category].map((skill: SkillEntry) => (
                   <SkillCard
                     key={skill.name}
                     skill={skill}
@@ -79,7 +79,7 @@ function SkillCard({
   skill,
   onClick,
 }: {
-  skill: Skill;
+  skill: SkillEntry;
   onClick: () => void;
 }) {
   return (
@@ -92,9 +92,9 @@ function SkillCard({
         <h4 className="font-mono text-sm font-medium text-black dark:text-white">
           /{skill.name}
         </h4>
-        {skill.metadata?.version && (
+        {!!skill.metadata?.version && (
           <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800">
-            v{skill.metadata.version}
+            v{String(skill.metadata.version)}
           </span>
         )}
       </div>

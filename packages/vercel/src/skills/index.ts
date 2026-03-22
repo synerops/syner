@@ -1,18 +1,4 @@
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface SkillDescriptor {
-  name: string
-  description: string
-  files: string[]
-  command?: string
-  agent?: string
-}
-
-export interface SkillIndex {
-  skills: SkillDescriptor[]
-}
+import type { SkillEntry } from '@syner/sdk/skills'
 
 export interface CommandInfo {
   skillName: string
@@ -20,11 +6,14 @@ export interface CommandInfo {
   agent: string
 }
 
-// ---------------------------------------------------------------------------
-// SkillsMap — domain-aware collection
-// ---------------------------------------------------------------------------
-
-export class SkillsMap extends Map<string, SkillDescriptor> {
+/**
+ * SkillsMap — runtime view over skill entries.
+ *
+ * Provides domain methods for the agent loop:
+ * - commands(): maps slash commands to skills
+ * - describe(): generates system prompt content
+ */
+export class SkillsMap extends Map<string, SkillEntry> {
   /** Return skills that expose a slash command */
   commands(): Map<string, CommandInfo> {
     const cmds = new Map<string, CommandInfo>()
