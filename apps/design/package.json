@@ -1,11 +1,13 @@
 {
   "name": "design",
+  "prettier": "@syner/prettier",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3003",
     "build": "next build",
     "start": "next start",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "postinstall": "fumadocs-mdx"
   },
@@ -24,6 +26,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

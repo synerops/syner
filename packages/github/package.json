@@ -1,5 +1,6 @@
 {
   "name": "@syner/github",
+  "prettier": "@syner/prettier",
   "version": "0.1.2",
   "description": "GitHub App authentication and tools for Syner",
   "license": "MIT",
@@ -17,6 +18,7 @@
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -28,8 +30,10 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
+    "eslint": "^9",
     "typescript": "^5.0.0"
   },
   "publishConfig": {

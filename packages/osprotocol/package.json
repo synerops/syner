@@ -1,5 +1,6 @@
 {
   "name": "@syner/osprotocol",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Agent execution protocol — context, action, verification lifecycle",
   "license": "MIT",
@@ -9,6 +10,7 @@
   },
   "files": ["src"],
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -16,8 +18,10 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
+    "eslint": "^9",
     "typescript": "^5.0.0"
   },
   "publishConfig": {

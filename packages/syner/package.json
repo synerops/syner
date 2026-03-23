@@ -1,5 +1,6 @@
 {
   "name": "syner",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Lightweight runtime types and helpers for the Syner ecosystem",
   "license": "MIT",
@@ -15,6 +16,7 @@
   },
   "files": ["src"],
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -23,8 +25,10 @@
     "ai": "^6.0.0"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
+    "eslint": "^9",
     "typescript": "^5.7.0"
   },
   "publishConfig": {

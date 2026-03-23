@@ -1,11 +1,13 @@
 {
   "name": "bot",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -20,11 +22,13 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19",
+    "eslint": "^9",
     "tailwindcss": "^4",
     "typescript": "^5.0.0"
   }

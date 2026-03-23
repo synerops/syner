@@ -1,5 +1,6 @@
 {
   "name": "@syner/ops",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Operational layer — friction, self-development, supervisor contracts",
   "license": "MIT",
@@ -9,14 +10,17 @@
   },
   "files": ["src"],
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
+    "eslint": "^9",
     "typescript": "^5.0.0"
   },
   "publishConfig": {

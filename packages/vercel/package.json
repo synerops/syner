@@ -1,5 +1,6 @@
 {
   "name": "@syner/vercel",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,6 +9,7 @@
     "./tools": "./src/tools/index.ts"
   },
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -20,8 +22,10 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
+    "eslint": "^9",
     "typescript": "^5.0.0"
   }
 }
