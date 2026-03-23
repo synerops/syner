@@ -12,6 +12,7 @@ export {
 } from './types/action'
 
 export { type Skill } from './types/skill'
+export { type AgentCard } from './types/agent'
 
 export {
   type Assertion,
@@ -73,6 +74,7 @@ export {
   VerificationSchema,
   ResultSchema,
   SkillSchema,
+  AgentCardSchema,
   RunStatusSchema,
   RunActivitySchema,
   ProgressSchema,

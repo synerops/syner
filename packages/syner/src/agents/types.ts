@@ -1,18 +1,7 @@
 import type { Result } from '../protocol/result'
 
-export interface AgentCard {
-  name: string
-  description?: string
-  instructions: string
-  model?: 'opus' | 'sonnet' | 'haiku'
-  tools?: string[]
-  skills?: string[]
-  metadata?: Record<string, unknown>
-  protocol?: {
-    version: string
-    capabilities: string[]
-  }
-}
+// Re-export AgentCard from osprotocol — the canonical spec definition
+export type { AgentCard } from '@syner/osprotocol'
 
 export interface GenerateResult {
   text: string
