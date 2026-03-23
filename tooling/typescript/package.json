@@ -1,0 +1,9 @@
+{
+  "name": "@syner/typescript",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./base.json",
+    "./nextjs": "./nextjs.json"
+  }
+}

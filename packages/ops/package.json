@@ -15,6 +15,7 @@
     "@syner/osprotocol": "workspace:*"
   },
   "devDependencies": {
+    "@syner/typescript": "workspace:*",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },
