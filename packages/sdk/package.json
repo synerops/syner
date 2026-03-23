@@ -24,7 +24,6 @@
     "@ai-sdk/anthropic": "^3.0.58",
     "@ai-sdk/gateway": "^3.0.0",
     "@syner/osprotocol": "workspace:*",
-    "syner": "workspace:*",
     "ai": "^6.0.116",
     "glob": "^10.0.0",
     "gray-matter": "^4.0.3",

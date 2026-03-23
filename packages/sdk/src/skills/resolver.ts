@@ -1,5 +1,5 @@
 import { skills } from './loader'
-import type { Skill } from 'syner/skills'
+import type { Skill } from '@syner/osprotocol'
 
 export interface ResolvedSkill {
   slug: string

@@ -1,4 +1,4 @@
-import type { Skill } from 'syner/skills'
+import type { Skill } from '@syner/osprotocol'
 
 /**
  * Internal SDK type for skill discovery — extends Skill with filesystem details.
@@ -11,5 +11,4 @@ export interface SkillDiscovery extends Skill {
   files: string[]    // SKILL.md + support files (scripts/, references/, assets/)
 }
 
-// Re-export Skill from syner for convenience
-export type { Skill } from 'syner/skills'
+export type { Skill } from '@syner/osprotocol'

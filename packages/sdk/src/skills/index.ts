@@ -1,7 +1,6 @@
 export { skills } from './loader'
 export { SKILL_SOURCES, CATEGORY_MAP } from './sources'
 export type { SkillDiscovery } from './types'
-export type { Skill } from 'syner/skills'
-export { groupByCategory } from 'syner/skills'
+export type { Skill } from '@syner/osprotocol'
 export { resolveSkill, type ResolvedSkill } from './resolver'
 export { buildSkillContent } from './build'

@@ -7,7 +7,7 @@ import path from 'path'
 import { createRegistry } from '../registry'
 import { SKILL_SOURCES, CATEGORY_MAP } from './sources'
 import type { SkillDiscovery } from './types'
-import type { Skill } from 'syner/skills'
+import type { Skill } from '@syner/osprotocol'
 
 /** Subdirectories to include as support files alongside SKILL.md */
 const SUPPORT_DIRS = ['scripts', 'references', 'assets'] as const
