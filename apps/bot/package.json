@@ -16,20 +16,20 @@
     "@syner/slack": "workspace:*",
     "@syner/vercel": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.0",
-    "next": "^15.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zod": "^3.23.0"
+    "next": "catalog:react19",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "zod": "catalog:ai"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "tailwindcss": "^4",
-    "typescript": "^5.0.0"
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "eslint": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
   }
 }

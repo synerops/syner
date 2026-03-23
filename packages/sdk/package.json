@@ -17,16 +17,18 @@
     "./tools": "./src/tools/index.ts",
     "./context": "./src/context/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.58",
-    "@ai-sdk/gateway": "^3.0.0",
+    "@ai-sdk/anthropic": "catalog:ai",
+    "@ai-sdk/gateway": "catalog:ai",
     "@syner/osprotocol": "workspace:*",
-    "ai": "^6.0.116",
+    "ai": "catalog:ai",
     "glob": "^10.0.0",
     "gray-matter": "^4.0.3",
     "zod": "^4.3.6"
@@ -34,9 +36,9 @@
   "devDependencies": {
     "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@types/node": "^20.0.0",
-    "eslint": "^9",
-    "typescript": "^5.0.0"
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",

@@ -14,22 +14,24 @@
     "./skills/types": "./src/skills/types.ts",
     "./protocol": "./src/protocol/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*",
-    "@ai-sdk/gateway": "^3.0.0",
-    "ai": "^6.0.0"
+    "@ai-sdk/gateway": "catalog:ai",
+    "ai": "catalog:ai"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@types/node": "^20.0.0",
-    "eslint": "^9",
-    "typescript": "^5.7.0"
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",
