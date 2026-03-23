@@ -1,6 +1,6 @@
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { runtime } from '@/lib/runtime'
+import { runtime, ensureStarted } from '@/lib/runtime'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60
@@ -22,8 +22,7 @@ function getChat() {
         async onMention(context) {
           console.log('[Slack] Mention received:', context.text?.slice(0, 100))
 
-          // Ensure runtime is loaded (fetches from static routes)
-          if (runtime.agents.size === 0) await runtime.start()
+          await ensureStarted()
 
           // Find agent for this channel from runtime's pre-loaded data
           const agent = [...runtime.agents.values()].find(

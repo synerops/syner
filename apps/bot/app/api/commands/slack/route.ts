@@ -1,7 +1,7 @@
 import { after } from 'next/server'
 import { createCommandHandler, type SlackSlashCommand, type SlackCommandResponse } from '@syner/slack'
 import type { CommandInfo } from '@syner/vercel'
-import { runtime } from '@/lib/runtime'
+import { runtime, ensureStarted } from '@/lib/runtime'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60
@@ -12,8 +12,7 @@ async function handleCommand(command: SlackSlashCommand): Promise<SlackCommandRe
 
   console.log(`[SlashCommand] ${command.command} ${command.text} from @${command.user_name}`)
 
-  // Single start() loads both agents and skills
-  if (runtime.agents.size === 0) await runtime.start()
+  await ensureStarted()
   const commands = runtime.skills.commands()
 
   if (!commandName || commandName === 'help') {
