@@ -8,7 +8,7 @@ import {
   createRun,
   updateRunStatus,
 } from '@syner/osprotocol'
-import { start, type StartOptions, Run as WorkflowRunHandle } from 'workflow/api'
+import type { StartOptions, Run as WorkflowRunHandle } from 'workflow/api'
 import { approvalToken, isQuorumMet } from './lib/approval'
 import { checkBeforeCancel, gracefulTimeout } from './lib/cancel'
 

@@ -1,5 +1,5 @@
 import type { AgentProvider } from '@syner/osprotocol'
-import { resolveModel, type ModelTier } from '@syner/sdk/agents'
+import { resolveModel, type ModelTier } from 'syner/agents'
 
 export function createAgentProvider(): AgentProvider {
   return {

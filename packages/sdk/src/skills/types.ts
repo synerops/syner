@@ -1,51 +1,15 @@
-export type SkillVisibility = 'public' | 'instance' | 'private'
+import type { Skill } from 'syner/skills'
 
 /**
- * Unified skill entry — the single shape for skills across the entire codebase.
+ * Internal SDK type for skill discovery — extends Skill with filesystem details.
  *
- * Replaces: Skill (osprotocol metadata), SkillIndexEntry (build), SkillDescriptor (vercel).
+ * These fields are needed by the registry and build tools but never
+ * exposed to consumers or sent over the wire.
  */
-export interface SkillEntry {
-  // Identity
-  name: string
-  slug: string
-  description: string
-  category: string
-  visibility: SkillVisibility
-
-  // Runtime (for content loading and slash command routing)
-  files: string[]
-  command?: string
-  agent?: string
-  path: string
-
-  // Metadata (osprotocol passthrough)
-  license?: string
-  compatibility?: unknown
-  metadata?: Record<string, unknown>
+export interface SkillDiscovery extends Skill {
+  path: string       // absolute path to SKILL.md
+  files: string[]    // SKILL.md + support files (scripts/, references/, assets/)
 }
 
-/**
- * A SkillEntry with its full markdown content loaded.
- * Used when rendering skill details or injecting into LLM context.
- */
-export interface SkillContent extends SkillEntry {
-  content: string
-}
-
-/**
- * Group skills by their category field.
- */
-export function groupByCategory(skills: SkillEntry[]): Record<string, SkillEntry[]> {
-  return skills.reduce(
-    (acc, skill) => {
-      const category = skill.category || 'Other'
-      if (!acc[category]) {
-        acc[category] = []
-      }
-      acc[category].push(skill)
-      return acc
-    },
-    {} as Record<string, SkillEntry[]>
-  )
-}
+// Re-export Skill from syner for convenience
+export type { Skill } from 'syner/skills'

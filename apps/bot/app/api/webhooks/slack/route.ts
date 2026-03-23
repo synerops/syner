@@ -1,7 +1,6 @@
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
 import { runtime } from '@/lib/runtime'
-import { agents as agentsRegistry } from '@/lib/registry'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60
@@ -23,12 +22,17 @@ function getChat() {
         async onMention(context) {
           console.log('[Slack] Mention received:', context.text?.slice(0, 100))
 
-          // Find agent for this channel via metadata
-          const agent = await agentsRegistry.find(a => a.metadata?.channel === context.channel)
+          // Ensure runtime is loaded (fetches from static routes)
+          if (runtime.agents.size === 0) await runtime.start()
+
+          // Find agent for this channel from runtime's pre-loaded data
+          const agent = [...runtime.agents.values()].find(
+            a => a.metadata?.channel === context.channel
+          )
 
           if (!agent) {
-            const allAgents = await agentsRegistry.filter(a => !!a.metadata?.channel)
-            const configuredChannels = allAgents
+            const configuredChannels = [...runtime.agents.values()]
+              .filter(a => a.metadata?.channel)
               .map(a => `• \`${a.metadata?.channel}\` → ${a.name}`)
               .join('\n')
 
@@ -48,8 +52,6 @@ function getChat() {
             ].join('\n')
           }
 
-          // Ensure runtime is loaded for spawn
-          if (runtime.agents.size === 0) await runtime.start()
           const instance = runtime.agent(agent.name)
           const result = await instance.spawn(context.text)
           return result.output?.text || '_No response_'
