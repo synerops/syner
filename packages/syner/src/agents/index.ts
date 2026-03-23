@@ -11,5 +11,5 @@ export class AgentsMap extends Map<string, AgentCard> {
   }
 }
 
-export type { AgentCard, Agent, AgentCardOutput, GenerateResult, GenerateOptions } from './types'
+export type { AgentCard, Agent, AgentCardOutput, AgentStream, GenerateResult, GenerateOptions, StreamOptions } from './types'
 export { resolveModel, MODEL_IDS, FALLBACK_MODELS, type ModelTier } from './models'

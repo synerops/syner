@@ -15,7 +15,7 @@ export interface SlackChatConfig {
 }
 
 export interface MentionHandler {
-  onMention: (context: MentionContext) => Promise<string>
+  onMention: (context: MentionContext) => Promise<string | AsyncIterable<unknown>>
 }
 
 export interface MentionContext {
@@ -59,7 +59,11 @@ export function createSlackChat(config: SlackChatConfig, handler: MentionHandler
 
     try {
       const response = await handler.onMention(context)
-      await thread.post(response)
+      if (typeof response === 'string') {
+        await thread.post({ markdown: response })
+      } else {
+        await thread.post(response as AsyncIterable<string>)
+      }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error'
       await thread.post(`_Error: ${errorMsg}_`)

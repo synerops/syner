@@ -44,9 +44,20 @@ export interface AgentCardOutput {
   }>
 }
 
+export interface StreamOptions {
+  onToolStart?: (toolName: string) => void
+  onToolFinish?: (toolName: string, durationMs: number, success: boolean) => void
+}
+
+export interface AgentStream {
+  fullStream: AsyncIterable<unknown>
+  textStream: AsyncIterable<string>
+}
+
 export interface Agent {
   readonly name: string
   readonly description: string
   card(): AgentCardOutput
   spawn(prompt: string, options?: GenerateOptions): Promise<Result<GenerateResult>>
+  stream(prompt: string, options?: StreamOptions): Promise<AgentStream>
 }

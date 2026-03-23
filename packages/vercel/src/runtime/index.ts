@@ -4,8 +4,10 @@ import {
   type AgentCard,
   type Agent,
   type AgentCardOutput,
+  type AgentStream,
   type GenerateResult,
   type GenerateOptions,
+  type StreamOptions,
 } from 'syner/agents'
 import type { Skill } from 'syner/skills'
 import {
@@ -118,7 +120,7 @@ export function createRuntime(): Runtime {
           ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
           : 'http://localhost:3001',
         version: '0.1.0',
-        capabilities: { streaming: false, pushNotifications: false },
+        capabilities: { streaming: true, pushNotifications: false },
         skills: agentSkills.map(s => ({
           id: s.name,
           name: s.name,
@@ -127,20 +129,10 @@ export function createRuntime(): Runtime {
       }
     }
 
-    async function spawn(
-      prompt: string,
-      options?: GenerateOptions,
-    ): Promise<Result<GenerateResult>> {
-      const onStatus = options?.onStatus ?? (() => {})
-      await onStatus('Thinking...')
-      const startTime = Date.now()
-
-      // 1. Resolve model
+    function prepareExecution(prompt: string) {
       const tier = agentCard.model ?? 'sonnet'
       const { model, fallbacks, modelId } = resolveModel(tier)
 
-      // 2. Lazy sandbox (created on first tool use, shared per generate call)
-      //    Uses snapshot caching: first call clones + snapshots, subsequent calls restore instantly.
       let sandbox: Sandbox | null = null
       let initPromise: Promise<Sandbox> | null = null
 
@@ -149,7 +141,6 @@ export function createRuntime(): Runtime {
         if (initPromise) return initPromise
         initPromise = (async () => {
           try {
-            await onStatus('Preparing sandbox...')
             const result = await createSandbox({
               repoUrl: SANDBOX_REPO,
               branch: SANDBOX_BRANCH,
@@ -164,7 +155,6 @@ export function createRuntime(): Runtime {
         return initPromise
       }
 
-      // 3. Build active tools from agent.tools
       const activeTools: Record<string, Tool> = {}
 
       if (agentCard.tools && agentCard.tools.length > 0) {
@@ -226,21 +216,46 @@ export function createRuntime(): Runtime {
         }
       }
 
-      // 4. Skill tool (execute: true + prepareStep injection)
       if (skills_.size > 0) {
         activeTools.Skill = createSkillTool(skills_)
       }
-
-      // 5. Task tool (RunAdapter)
       activeTools.Task = createTaskTool({ runAdapter })
 
-      // 6. System prompt (agent.instructions + skill descriptions)
       const skillDescriptions = skills_.describe()
       const instructions = skillDescriptions
         ? `${agentCard.instructions}\n\n${skillDescriptions}`
         : agentCard.instructions
 
-      // 7. OSProtocol wrapping
+      const loopAgent = new ToolLoopAgent({
+        id: agentCard.name,
+        model,
+        instructions,
+        tools: activeTools as ToolSet,
+        stopWhen: stepCountIs(10),
+        prepareStep: createPrepareStep(skills_, getBaseUrl) as never,
+        providerOptions: {
+          gateway: { models: fallbacks },
+        },
+      })
+
+      return {
+        loopAgent,
+        tier,
+        modelId,
+        cleanupSandbox: async () => { if (sandbox) await stopSandbox(sandbox) },
+      }
+    }
+
+    async function spawn(
+      prompt: string,
+      options?: GenerateOptions,
+    ): Promise<Result<GenerateResult>> {
+      const onStatus = options?.onStatus ?? (() => {})
+      await onStatus('Thinking...')
+      const startTime = Date.now()
+
+      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution(prompt)
+
       const context = createContext({
         agentId: agentCard.name,
         skillRef: `runtime:${agentCard.name}`,
@@ -254,19 +269,6 @@ export function createRuntime(): Runtime {
       })
 
       const toolCallsList: string[] = []
-
-      // 9. Execute via ToolLoopAgent
-      const loopAgent = new ToolLoopAgent({
-        id: agentCard.name,
-        model,
-        instructions,
-        tools: activeTools as ToolSet,
-        stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_, getBaseUrl) as never,
-        providerOptions: {
-          gateway: { models: fallbacks },
-        },
-      })
 
       try {
         const result = await loopAgent.generate({
@@ -322,9 +324,36 @@ export function createRuntime(): Runtime {
         await options?.onResult?.(ospResult)
         return ospResult
       } finally {
-        if (sandbox) {
-          await stopSandbox(sandbox)
-        }
+        await cleanupSandbox()
+      }
+    }
+
+    async function stream(
+      prompt: string,
+      options?: StreamOptions,
+    ): Promise<AgentStream> {
+      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution(prompt)
+
+      const result = await loopAgent.stream({
+        prompt,
+
+        experimental_onToolCallStart({ toolCall }) {
+          options?.onToolStart?.(toolCall.toolName)
+        },
+
+        experimental_onToolCallFinish({ toolCall, durationMs, success }) {
+          options?.onToolFinish?.(toolCall.toolName, durationMs, success)
+        },
+
+        async onFinish({ steps, text }) {
+          console.log(`[Runtime][${agentCard.name}] stream model=${modelId} tier=${tier} steps=${steps.length} text=${(text || '').length}chars`)
+          await cleanupSandbox()
+        },
+      })
+
+      return {
+        fullStream: result.fullStream,
+        textStream: result.textStream,
       }
     }
 
@@ -333,6 +362,7 @@ export function createRuntime(): Runtime {
       description: agentCard.description || '',
       card,
       spawn,
+      stream,
     }
   }
 
