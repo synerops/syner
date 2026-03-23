@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireBypass } from '@/lib/bypass'
 import { skills } from '@/lib/registry'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
 
 export async function GET(request: Request) {
   const denied = requireBypass(request)
