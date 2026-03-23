@@ -3,7 +3,7 @@ import turboPlugin from "eslint-plugin-turbo"
 import tseslint from "typescript-eslint"
 
 export default tseslint.config(
-  { ignores: ["dist/**", ".next/**", "node_modules/**"] },
+  { ignores: ["dist/**", ".next/**", ".vercel/**", "node_modules/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

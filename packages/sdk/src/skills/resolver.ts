@@ -11,7 +11,7 @@ export interface ResolvedSkill {
 const CONFIDENCE_THRESHOLD = 0.3
 
 function tokenize(text: string): string[] {
-  return text.toLowerCase().split(/[\s\-_\/]+/).filter(w => w.length > 1)
+  return text.toLowerCase().split(/[\s\-_/]+/).filter(w => w.length > 1)
 }
 
 function computeOverlap(intentTokens: string[], skillTokens: string[]): number {
