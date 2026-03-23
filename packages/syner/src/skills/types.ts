@@ -1,29 +1,25 @@
-export type SkillVisibility = 'public' | 'instance' | 'private'
-
-export interface SkillEntry {
+/**
+ * Skill — aligned with the agentskills.io specification.
+ *
+ * Custom fields (slug, category, visibility, command, agent) live in metadata.
+ * Runtime internals (path, files) live in @syner/sdk only.
+ */
+export interface Skill {
   name: string
-  slug: string
   description: string
-  category: string
-  visibility: SkillVisibility
-  content: string
-  files: string[]
-  command?: string
-  agent?: string
-  path: string
   license?: string
-  compatibility?: unknown
+  compatibility?: string
   metadata?: Record<string, unknown>
 }
 
-export function groupByCategory(skills: SkillEntry[]): Record<string, SkillEntry[]> {
+export function groupByCategory(skills: Skill[]): Record<string, Skill[]> {
   return skills.reduce(
     (acc, skill) => {
-      const category = skill.category || 'Other'
+      const category = (skill.metadata?.category as string) || 'Other'
       if (!acc[category]) acc[category] = []
       acc[category].push(skill)
       return acc
     },
-    {} as Record<string, SkillEntry[]>
+    {} as Record<string, Skill[]>
   )
 }

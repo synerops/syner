@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { type SkillEntry, groupByCategory } from "@syner/sdk/skills";
+import { type Skill, groupByCategory } from "syner/skills";
 import { SkillModal } from "./skill-modal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface SkillsCatalogProps {
-  skills: SkillEntry[];
+  skills: Skill[];
 }
 
 export function SkillsCatalog({ skills }: SkillsCatalogProps) {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { data: selectedSkill, isLoading } = useSWR<SkillEntry>(
+  const { data: selectedSkill, isLoading } = useSWR<Skill>(
     selectedName ? `/api/skills/${selectedName}` : null,
     fetcher,
     {
@@ -53,7 +53,7 @@ export function SkillsCatalog({ skills }: SkillsCatalogProps) {
                 {category}
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                {grouped[category].map((skill: SkillEntry) => (
+                {grouped[category].map((skill: Skill) => (
                   <SkillCard
                     key={skill.name}
                     skill={skill}
@@ -79,7 +79,7 @@ function SkillCard({
   skill,
   onClick,
 }: {
-  skill: SkillEntry;
+  skill: Skill;
   onClick: () => void;
 }) {
   return (
