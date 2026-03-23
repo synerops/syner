@@ -7,9 +7,20 @@
     "GITHUB_APP_INSTALLATION_ID",
     "GITHUB_APP_PRIVATE_KEY",
     "SLACK_BOT_TOKEN",
-    "SLACK_SIGNING_SECRET"
+    "SLACK_SIGNING_SECRET",
+    "GITHUB_APP_PEM_PATH"
   ],
-  "globalPassThroughEnv": ["SKIP_ENV_VALIDATION"],
+  "globalPassThroughEnv": [
+    "SKIP_ENV_VALIDATION",
+    "VERCEL_PROJECT_PRODUCTION_URL",
+    "VERCEL_AUTOMATION_BYPASS_SECRET",
+    "PORT",
+    "SANDBOX_REPO",
+    "SANDBOX_BRANCH",
+    "SYNER_BOT_URL",
+    "VERCEL_URL",
+    "AI_GATEWAY_API_KEY"
+  ],
   "tasks": {
     "dev": {
       "cache": false,
@@ -22,6 +33,9 @@
       "cache": false,
       "persistent": true,
       "dependsOn": ["build"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]

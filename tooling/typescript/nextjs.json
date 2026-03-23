@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "declaration": false,
+    "declarationMap": false,
+    "outDir": null,
+    "rootDir": null,
+    "incremental": true,
+    "plugins": [{ "name": "next" }]
+  }
+}

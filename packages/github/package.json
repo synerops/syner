@@ -1,5 +1,6 @@
 {
   "name": "@syner/github",
+  "prettier": "@syner/prettier",
   "version": "0.1.2",
   "description": "GitHub App authentication and tools for Syner",
   "license": "MIT",
@@ -17,19 +18,23 @@
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/anthropic": "catalog:ai",
     "@octokit/auth-app": "^7.0.0",
     "@octokit/plugin-throttling": "^9.0.0",
     "@octokit/rest": "^21.0.0",
-    "ai": "^6.0.116",
-    "zod": "^3.23.0"
+    "ai": "catalog:ai",
+    "zod": "catalog:ai"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@syner/eslint": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",

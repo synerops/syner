@@ -1,5 +1,6 @@
 {
   "name": "@syner/slack",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Slack integration for Syner",
   "type": "module",
@@ -11,6 +12,7 @@
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,7 +23,10 @@
     "md-to-slack": "^1.1.7"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@syner/eslint": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   }
 }

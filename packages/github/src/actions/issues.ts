@@ -47,7 +47,7 @@ async function ensureLabels(
       // Check if label exists
       await octokit.issues.getLabel({ owner, repo, name: label })
       applied.push(label)
-    } catch (error) {
+    } catch {
       // Label doesn't exist, try to create it
       try {
         await octokit.issues.createLabel({

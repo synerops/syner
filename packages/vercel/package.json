@@ -1,5 +1,6 @@
 {
   "name": "@syner/vercel",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,19 +9,23 @@
     "./tools": "./src/tools/index.ts"
   },
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*",
     "@vercel/sandbox": "^1.8.0",
     "@workflow/ai": "^4.0.1-beta.56",
-    "ai": "^6.0.0",
+    "ai": "catalog:ai",
     "syner": "workspace:*",
     "workflow": "^4.2.0-beta.70",
-    "zod": "^3.23.0"
+    "zod": "catalog:ai"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@syner/eslint": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   }
 }

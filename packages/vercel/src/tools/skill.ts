@@ -60,7 +60,7 @@ export function createPrepareStep(skills: SkillsMap, getBaseUrl: () => string): 
         const res = await fetch(`${baseUrl}/api/skills/${slug}`, { headers })
         if (!res.ok) return {}
 
-        const data = await res.json()
+        const data = await res.json() as { content?: string }
         content = data.content
         if (!content) return {}
         contentCache.set(skillName, content)

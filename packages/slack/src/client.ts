@@ -25,7 +25,6 @@ export async function streamReply(
   } = options
 
   let fullText = ''
-  let messageTs: string | undefined
   let lastUpdate = 0
 
   // Post initial "thinking" message
@@ -35,7 +34,7 @@ export async function streamReply(
     text: '_Thinking..._',
   })
 
-  messageTs = initialResponse.ts
+  const messageTs = initialResponse.ts
 
   if (!messageTs) {
     throw new Error('Failed to post initial message')

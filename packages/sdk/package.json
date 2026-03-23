@@ -1,5 +1,6 @@
 {
   "name": "@syner/sdk",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Core package for the Syner ecosystem",
   "license": "MIT",
@@ -16,22 +17,28 @@
     "./tools": "./src/tools/index.ts",
     "./context": "./src/context/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.58",
-    "@ai-sdk/gateway": "^3.0.0",
+    "@ai-sdk/anthropic": "catalog:ai",
+    "@ai-sdk/gateway": "catalog:ai",
     "@syner/osprotocol": "workspace:*",
-    "ai": "^6.0.116",
+    "ai": "catalog:ai",
     "glob": "^10.0.0",
     "gray-matter": "^4.0.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@syner/eslint": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",

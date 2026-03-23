@@ -1,5 +1,6 @@
 {
   "name": "syner",
+  "prettier": "@syner/prettier",
   "version": "0.0.1",
   "description": "Lightweight runtime types and helpers for the Syner ecosystem",
   "license": "MIT",
@@ -13,18 +14,24 @@
     "./skills/types": "./src/skills/types.ts",
     "./protocol": "./src/protocol/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*",
-    "@ai-sdk/gateway": "^3.0.0",
-    "ai": "^6.0.0"
+    "@ai-sdk/gateway": "catalog:ai",
+    "ai": "catalog:ai"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.7.0"
+    "@syner/eslint": "workspace:*",
+    "@syner/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",
