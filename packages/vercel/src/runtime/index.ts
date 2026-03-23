@@ -6,16 +6,16 @@ import {
   type AgentCardOutput,
   type GenerateResult,
   type GenerateOptions,
-} from '@syner/sdk/agents'
-import type { SkillEntry } from '@syner/sdk/skills'
+} from 'syner/agents'
+import type { SkillEntry } from 'syner/skills'
 import {
   createContext,
   createAction,
   verify,
   createResult,
   type Result,
-} from '@syner/osprotocol'
-import { SkillsMap } from '../skills'
+} from 'syner/protocol'
+import { SkillsMap } from 'syner/skills'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
