@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { requireBypass } from '@/lib/bypass'
 import { skills } from '@/lib/registry'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
 export const dynamicParams = false
 
 export async function generateStaticParams() {
@@ -11,12 +10,9 @@ export async function generateStaticParams() {
 }
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const denied = requireBypass(request)
-  if (denied) return denied
-
   const { slug } = await params
 
   const skill = await skills.read(slug)
