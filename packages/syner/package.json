@@ -1,0 +1,38 @@
+{
+  "name": "syner",
+  "version": "0.0.1",
+  "description": "Lightweight runtime types and helpers for the Syner ecosystem",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agents": "./src/agents/index.ts",
+    "./agents/types": "./src/agents/types.ts",
+    "./agents/models": "./src/agents/models.ts",
+    "./skills": "./src/skills/index.ts",
+    "./skills/types": "./src/skills/types.ts",
+    "./protocol": "./src/protocol/index.ts"
+  },
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@syner/osprotocol": "workspace:*",
+    "@ai-sdk/gateway": "^3.0.0",
+    "ai": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synerops/syner.git",
+    "directory": "packages/syner"
+  }
+}
