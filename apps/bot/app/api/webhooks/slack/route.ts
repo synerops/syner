@@ -72,9 +72,6 @@ export async function POST(request: Request): Promise<Response> {
     })
   } catch (error) {
     console.error('[Slack] Error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Slack webhook error' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    )
+    return Response.json({ error: 'Slack webhook error' }, { status: 500 })
   }
 }

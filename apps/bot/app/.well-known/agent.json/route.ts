@@ -1,6 +1,6 @@
-import { runtime } from '@/lib/runtime'
+import { runtime, ensureStarted } from '@/lib/runtime'
 
 export async function GET() {
-  if (runtime.agents.size === 0) await runtime.start()
+  await ensureStarted()
   return Response.json(runtime.agent('bot').card())
 }

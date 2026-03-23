@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server'
 import { skills } from '@/lib/registry'
 
 export const dynamic = 'force-static'
@@ -6,10 +5,10 @@ export const dynamic = 'force-static'
 export async function GET() {
   try {
     const list = await skills.list()
-    return NextResponse.json(list)
+    return Response.json(list)
   } catch (error) {
     console.error('Error fetching skills:', error)
-    return NextResponse.json(
+    return Response.json(
       { error: 'Failed to fetch skills' },
       { status: 500 },
     )
