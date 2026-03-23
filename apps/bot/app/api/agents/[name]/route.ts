@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server'
 import { agents } from '@/lib/registry'
 
 export const dynamic = 'force-static'
@@ -17,7 +16,7 @@ export async function GET(
 
   const agent = await agents.get(name)
   if (!agent) {
-    return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
+    return Response.json({ error: 'Agent not found' }, { status: 404 })
   }
-  return NextResponse.json(agent)
+  return Response.json(agent)
 }

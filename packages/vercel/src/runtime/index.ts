@@ -231,8 +231,8 @@ export function createRuntime(): Runtime {
         model,
         instructions,
         tools: activeTools as ToolSet,
-        stopWhen: stepCountIs(10),
-        prepareStep: createPrepareStep(skills_, getBaseUrl) as never,
+        stopWhen: stepCountIs(20),
+        prepareStep: createPrepareStep(skills_, getBaseUrl),
         providerOptions: {
           gateway: { models: fallbacks },
         },
@@ -334,6 +334,12 @@ export function createRuntime(): Runtime {
     ): Promise<AgentStream> {
       const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution(prompt)
 
+      // Safety net: cleanup sandbox after 5 minutes even if stream is abandoned
+      const cleanupTimeout = setTimeout(async () => {
+        console.warn(`[Runtime][${agentCard.name}] stream timeout — forcing sandbox cleanup`)
+        await cleanupSandbox()
+      }, 300_000)
+
       const result = await loopAgent.stream({
         prompt,
 
@@ -346,6 +352,7 @@ export function createRuntime(): Runtime {
         },
 
         async onFinish({ steps, text }) {
+          clearTimeout(cleanupTimeout)
           console.log(`[Runtime][${agentCard.name}] stream model=${modelId} tier=${tier} steps=${steps.length} text=${(text || '').length}chars`)
           await cleanupSandbox()
         },

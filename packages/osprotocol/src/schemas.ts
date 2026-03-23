@@ -78,6 +78,22 @@ export const SkillSchema = z.object({
   metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
+// --- Agent ---
+
+export const AgentCardSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  instructions: z.string(),
+  model: z.enum(['opus', 'sonnet', 'haiku']).optional(),
+  tools: z.array(z.string()).optional(),
+  skills: z.array(z.string()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  protocol: z.object({
+    version: z.string(),
+    capabilities: z.array(z.string()),
+  }).optional(),
+})
+
 // --- Run ---
 
 export const RunStatusSchema = z.enum([
@@ -148,6 +164,7 @@ export type Escalation = z.infer<typeof EscalationSchema>
 export type Verification = z.infer<typeof VerificationSchema>
 export type Result<T = unknown> = Omit<z.infer<typeof ResultSchema>, 'output'> & { output?: T }
 export type Skill = z.infer<typeof SkillSchema>
+export type AgentCard = z.infer<typeof AgentCardSchema>
 export type Progress = z.infer<typeof ProgressSchema>
 export type Timeout = z.infer<typeof TimeoutSchema>
 export type Retry = z.infer<typeof RetrySchema>

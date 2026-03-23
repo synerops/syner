@@ -1,4 +1,4 @@
-import { tool } from 'ai'
+import { tool, type PrepareStepFunction } from 'ai'
 import { z } from 'zod'
 import type { SkillsMap } from '../skills'
 
@@ -33,17 +33,18 @@ export function createSkillTool(skills: SkillsMap) {
  * Fetches skill content from static /api/skills/[slug] route (pre-rendered at build time).
  * Cached in-memory for the lifetime of the process.
  */
-export function createPrepareStep(skills: SkillsMap, getBaseUrl: () => string) {
-  return async ({ steps, messages }: { steps: Array<{ toolCalls?: Array<{ toolName: string; toolCallId: string; input: Record<string, unknown> }> }>; messages: Array<Record<string, unknown>>; stepNumber: number; model: unknown }) => {
+export function createPrepareStep(skills: SkillsMap, getBaseUrl: () => string): PrepareStepFunction {
+  return async ({ steps, messages }) => {
     if (steps.length === 0) return {}
 
     const lastStep = steps[steps.length - 1]
     const skillCall = lastStep?.toolCalls?.find(
-      (tc: { toolName: string }) => tc.toolName === 'Skill'
+      (tc) => tc.toolName === 'Skill'
     )
     if (!skillCall) return {}
 
-    const skillName = skillCall.input.name as string
+    const input = skillCall.input as Record<string, unknown>
+    const skillName = input.name as string
     if (!skills.has(skillName)) return {}
 
     // Check cache first

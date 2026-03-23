@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server'
 import { skills } from '@/lib/registry'
 
 export const dynamic = 'force-static'
@@ -17,7 +16,7 @@ export async function GET(
 
   const skill = await skills.read(slug)
   if (!skill) {
-    return NextResponse.json({ error: 'Skill not found' }, { status: 404 })
+    return Response.json({ error: 'Skill not found' }, { status: 404 })
   }
-  return NextResponse.json(skill)
+  return Response.json(skill)
 }

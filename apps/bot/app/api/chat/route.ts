@@ -1,4 +1,4 @@
-import { runtime } from '@/lib/runtime'
+import { runtime, ensureStarted } from '@/lib/runtime'
 
 export const maxDuration = 60
 
@@ -14,8 +14,7 @@ export async function POST(request: Request) {
 
   console.log(`[Chat] request=${requestId} agent=${name}`)
 
-  // Ensure agents are loaded
-  if (runtime.agents.size === 0) await runtime.start()
+  await ensureStarted()
 
   try {
     const agent = runtime.agent(name)
