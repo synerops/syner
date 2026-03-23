@@ -231,7 +231,7 @@ export function createRuntime(): Runtime {
         model,
         instructions,
         tools: activeTools as ToolSet,
-        stopWhen: stepCountIs(10),
+        stopWhen: stepCountIs(20),
         prepareStep: createPrepareStep(skills_, getBaseUrl),
         providerOptions: {
           gateway: { models: fallbacks },
