@@ -53,8 +53,8 @@ function getChat() {
           }
 
           const instance = runtime.agent(agent.name)
-          const result = await instance.spawn(context.text)
-          return result.output?.text || '_No response_'
+          const { fullStream } = await instance.stream(context.text)
+          return fullStream
         },
       },
     )

@@ -14,10 +14,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chat-adapter/slack": "^4.19.0",
-    "@chat-adapter/state-memory": "^4.19.0",
+    "@chat-adapter/slack": "^4.21.0",
+    "@chat-adapter/state-memory": "^4.21.0",
     "@slack/web-api": "^7",
-    "chat": "^4.19.0",
+    "chat": "^4.21.0",
     "md-to-slack": "^1.1.7"
   },
   "devDependencies": {
