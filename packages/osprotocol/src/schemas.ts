@@ -75,7 +75,7 @@ export const SkillSchema = z.object({
   description: z.string(),
   license: z.string().optional(),
   compatibility: z.string().optional(),
-  metadata: z.record(z.string(), z.string()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 // --- Run ---

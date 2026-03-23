@@ -1,19 +1,13 @@
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
-import type { SkillEntry } from './types'
+import type { SkillDiscovery } from './types'
 
 /**
  * Build pre-rendered content for a single skill.
- *
- * Reads SKILL.md + support files from the skill directory and wraps them
- * in XML tags for LLM injection.
- *
- * Progressive disclosure:
- * - Registry loads metadata at startup (~100 tokens per skill)
- * - This function loads full content on activation (<5000 tokens)
+ * Reads SKILL.md + support files and wraps in XML tags for LLM injection.
  */
-export async function buildSkillContent(entry: SkillEntry): Promise<{ content: string } | null> {
+export async function buildSkillContent(entry: SkillDiscovery): Promise<{ content: string } | null> {
   const skillDir = path.dirname(entry.path)
   const parts: string[] = []
 

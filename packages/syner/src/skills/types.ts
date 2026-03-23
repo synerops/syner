@@ -1,29 +1,14 @@
-export type SkillVisibility = 'public' | 'instance' | 'private'
+// Re-export Skill from osprotocol — the canonical spec definition
+export type { Skill } from '@syner/osprotocol'
 
-export interface SkillEntry {
-  name: string
-  slug: string
-  description: string
-  category: string
-  visibility: SkillVisibility
-  content: string
-  files: string[]
-  command?: string
-  agent?: string
-  path: string
-  license?: string
-  compatibility?: unknown
-  metadata?: Record<string, unknown>
-}
-
-export function groupByCategory(skills: SkillEntry[]): Record<string, SkillEntry[]> {
+export function groupByCategory<T extends { metadata?: Record<string, unknown> }>(skills: T[]): Record<string, T[]> {
   return skills.reduce(
     (acc, skill) => {
-      const category = skill.category || 'Other'
+      const category = (skill.metadata?.category as string) || 'Other'
       if (!acc[category]) acc[category] = []
       acc[category].push(skill)
       return acc
     },
-    {} as Record<string, SkillEntry[]>
+    {} as Record<string, T[]>
   )
 }

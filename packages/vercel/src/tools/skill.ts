@@ -55,7 +55,7 @@ export function createPrepareStep(skills: SkillsMap, getBaseUrl: () => string) {
         const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
         if (bypass) headers['x-vercel-protection-bypass'] = bypass
 
-        const slug = skills.get(skillName)?.slug || skillName
+        const slug = (skills.get(skillName)?.metadata?.slug as string) || skillName
         const res = await fetch(`${baseUrl}/api/skills/${slug}`, { headers })
         if (!res.ok) return {}
 
