@@ -129,10 +129,37 @@ export function createRuntime(): Runtime {
       }
     }
 
-    function prepareExecution(prompt: string) {
-      const tier = agentCard.model ?? 'sonnet'
-      const { model, fallbacks, modelId } = resolveModel(tier)
+    // Cached per-agent: model, instructions, static tools (Fetch, Skill, Task),
+    // and the list of sandbox tool names. Sandbox-dependent tools are built per
+    // request since they close over a fresh sandbox instance.
+    const tier_ = agentCard.model ?? 'sonnet'
+    const { model: model_, fallbacks: fallbacks_, modelId: modelId_ } = resolveModel(tier_)
 
+    const skillDescriptions_ = skills_.describe()
+    const instructions_ = skillDescriptions_
+      ? `${agentCard.instructions}\n\n${skillDescriptions_}`
+      : agentCard.instructions
+
+    // Static tools — no per-request state
+    const staticTools_: Record<string, Tool> = {}
+    if (agentCard.tools?.includes('Fetch')) {
+      staticTools_.Fetch = tool({
+        description: 'Fetch URL content as markdown (truncated to 50k chars)',
+        inputSchema: fetchInputSchema,
+        execute: (input) => executeFetch(input as FetchInput),
+      })
+    }
+    if (skills_.size > 0) {
+      staticTools_.Skill = createSkillTool(skills_)
+    }
+    staticTools_.Task = createTaskTool({ runAdapter })
+
+    // Which sandbox tools this agent needs
+    const sandboxToolNames_ = (agentCard.tools || []).filter(
+      n => ['Bash', 'Read', 'Write', 'Glob', 'Grep'].includes(n)
+    )
+
+    function prepareExecution() {
       let sandbox: Sandbox | null = null
       let initPromise: Promise<Sandbox> | null = null
 
@@ -155,93 +182,73 @@ export function createRuntime(): Runtime {
         return initPromise
       }
 
-      const activeTools: Record<string, Tool> = {}
-
-      if (agentCard.tools && agentCard.tools.length > 0) {
-        for (const name of agentCard.tools) {
-          if (['Skill', 'Task'].includes(name)) continue
-
-          if (name === 'Bash') {
-            activeTools.Bash = tool({
-              description: 'Execute a command in the sandbox shell',
-              inputSchema: bashInputSchema,
-              execute: async (input) => {
-                const sb = await ensureSandbox()
-                return executeBash(sb, input as BashInput)
-              },
-            })
-          } else if (name === 'Fetch') {
-            activeTools.Fetch = tool({
-              description: 'Fetch URL content as markdown (truncated to 50k chars)',
-              inputSchema: fetchInputSchema,
-              execute: (input) => executeFetch(input as FetchInput),
-            })
-          } else if (name === 'Read') {
-            activeTools.Read = tool({
-              description: 'Read a file from the sandbox filesystem',
-              inputSchema: readInputSchema,
-              execute: async (input) => {
-                const sb = await ensureSandbox()
-                return executeRead(sb, input as ReadInput)
-              },
-            })
-          } else if (name === 'Write') {
-            activeTools.Write = tool({
-              description: 'Write content to a file (creates parent directories if needed)',
-              inputSchema: writeInputSchema,
-              execute: async (input) => {
-                const sb = await ensureSandbox()
-                return executeWrite(sb, input as WriteInput)
-              },
-            })
-          } else if (name === 'Glob') {
-            activeTools.Glob = tool({
-              description: 'Find files matching a glob pattern',
-              inputSchema: globInputSchema,
-              execute: async (input) => {
-                const sb = await ensureSandbox()
-                return executeGlob(sb, input as GlobInput)
-              },
-            })
-          } else if (name === 'Grep') {
-            activeTools.Grep = tool({
-              description: 'Search file contents with regex',
-              inputSchema: grepInputSchema,
-              execute: async (input) => {
-                const sb = await ensureSandbox()
-                return executeGrep(sb, input as GrepInput)
-              },
-            })
-          }
+      // Sandbox tools — fresh per request
+      const sandboxTools: Record<string, Tool> = {}
+      for (const name of sandboxToolNames_) {
+        if (name === 'Bash') {
+          sandboxTools.Bash = tool({
+            description: 'Execute a command in the sandbox shell',
+            inputSchema: bashInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeBash(sb, input as BashInput)
+            },
+          })
+        } else if (name === 'Read') {
+          sandboxTools.Read = tool({
+            description: 'Read a file from the sandbox filesystem',
+            inputSchema: readInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeRead(sb, input as ReadInput)
+            },
+          })
+        } else if (name === 'Write') {
+          sandboxTools.Write = tool({
+            description: 'Write content to a file (creates parent directories if needed)',
+            inputSchema: writeInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeWrite(sb, input as WriteInput)
+            },
+          })
+        } else if (name === 'Glob') {
+          sandboxTools.Glob = tool({
+            description: 'Find files matching a glob pattern',
+            inputSchema: globInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeGlob(sb, input as GlobInput)
+            },
+          })
+        } else if (name === 'Grep') {
+          sandboxTools.Grep = tool({
+            description: 'Search file contents with regex',
+            inputSchema: grepInputSchema,
+            execute: async (input) => {
+              const sb = await ensureSandbox()
+              return executeGrep(sb, input as GrepInput)
+            },
+          })
         }
       }
 
-      if (skills_.size > 0) {
-        activeTools.Skill = createSkillTool(skills_)
-      }
-      activeTools.Task = createTaskTool({ runAdapter })
-
-      const skillDescriptions = skills_.describe()
-      const instructions = skillDescriptions
-        ? `${agentCard.instructions}\n\n${skillDescriptions}`
-        : agentCard.instructions
-
       const loopAgent = new ToolLoopAgent({
         id: agentCard.name,
-        model,
-        instructions,
-        tools: activeTools as ToolSet,
+        model: model_,
+        instructions: instructions_,
+        tools: { ...staticTools_, ...sandboxTools } as ToolSet,
         stopWhen: stepCountIs(20),
         prepareStep: createPrepareStep(skills_, getBaseUrl),
         providerOptions: {
-          gateway: { models: fallbacks },
+          gateway: { models: fallbacks_ },
         },
       })
 
       return {
         loopAgent,
-        tier,
-        modelId,
+        tier: tier_,
+        modelId: modelId_,
         cleanupSandbox: async () => { if (sandbox) await stopSandbox(sandbox) },
       }
     }
@@ -254,7 +261,7 @@ export function createRuntime(): Runtime {
       await onStatus('Thinking...')
       const startTime = Date.now()
 
-      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution(prompt)
+      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution()
 
       const context = createContext({
         agentId: agentCard.name,
@@ -332,7 +339,7 @@ export function createRuntime(): Runtime {
       prompt: string,
       options?: StreamOptions,
     ): Promise<AgentStream> {
-      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution(prompt)
+      const { loopAgent, tier, modelId, cleanupSandbox } = prepareExecution()
 
       // Safety net: cleanup sandbox after 5 minutes even if stream is abandoned
       const cleanupTimeout = setTimeout(async () => {
