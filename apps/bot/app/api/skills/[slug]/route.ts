@@ -1,21 +1,25 @@
 import { NextResponse } from 'next/server'
+import { requireBypass } from '@/lib/bypass'
 import { skills } from '@/lib/registry'
 
-export const dynamic = 'force-static'
+export const revalidate = 3600
 export const dynamicParams = false
 
 export async function generateStaticParams() {
   const list = await skills.list()
-  return list.map(s => ({ slug: (s.metadata?.slug as string) || s.name }))
+  return list.map(s => ({ slug: s.slug }))
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const denied = requireBypass(request)
+  if (denied) return denied
+
   const { slug } = await params
 
-  const skill = await skills.read(slug)
+  const skill = await skills.get(slug)
   if (!skill) {
     return NextResponse.json({ error: 'Skill not found' }, { status: 404 })
   }

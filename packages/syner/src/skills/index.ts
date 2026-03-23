@@ -1,4 +1,4 @@
-import type { Skill } from './types'
+import type { SkillEntry } from './types'
 
 export interface CommandInfo {
   skillName: string
@@ -6,16 +6,15 @@ export interface CommandInfo {
   agent: string
 }
 
-export class SkillsMap extends Map<string, Skill> {
+export class SkillsMap extends Map<string, SkillEntry> {
   commands(): Map<string, CommandInfo> {
     const cmds = new Map<string, CommandInfo>()
-    for (const [name, skill] of this) {
-      const command = skill.metadata?.command as string | undefined
-      if (command) {
-        cmds.set(command, {
+    for (const [name, entry] of this) {
+      if (entry.command) {
+        cmds.set(entry.command, {
           skillName: name,
-          description: skill.description,
-          agent: (skill.metadata?.agent as string) || 'syner',
+          description: entry.description,
+          agent: entry.agent || 'syner',
         })
       }
     }
@@ -41,5 +40,5 @@ export class SkillsMap extends Map<string, Skill> {
   }
 }
 
-export type { Skill } from './types'
+export type { SkillEntry, SkillVisibility } from './types'
 export { groupByCategory } from './types'

@@ -5,8 +5,7 @@ export { resolveModel, MODEL_IDS, FALLBACK_MODELS, type ModelTier } from './agen
 
 // Skills
 export { SkillsMap, type CommandInfo } from './skills'
-export type { Skill } from './skills'
-
+export type { SkillEntry, SkillVisibility } from './skills'
 export { groupByCategory } from './skills'
 
 // Protocol

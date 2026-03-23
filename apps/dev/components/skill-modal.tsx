@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
-import type { Skill } from "syner/skills";
+import type { SkillEntry } from "@syner/sdk/skills";
 
 interface SkillModalProps {
-  skill: (Skill & { content?: string }) | null;
+  skill: SkillEntry | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   loading?: boolean;
@@ -28,7 +28,7 @@ export function SkillModal({
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
-    if (!skill?.content) return;
+    if (!skill) return;
     await navigator.clipboard.writeText(skill.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -49,7 +49,7 @@ export function SkillModal({
             )}
             {!loading && skill && (
               <span className="rounded bg-zinc-200 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-                {String(skill.metadata?.category || 'Other')}
+                {skill.category || 'Other'}
               </span>
             )}
           </div>

@@ -7,7 +7,7 @@ import {
   type GenerateResult,
   type GenerateOptions,
 } from 'syner/agents'
-import type { Skill } from 'syner/skills'
+import type { SkillEntry } from 'syner/skills'
 import {
   createContext,
   createAction,
@@ -100,7 +100,7 @@ export function createRuntime(): Runtime {
     ])
 
     agents_ = new Map((agentsData as AgentCard[]).map(a => [a.name, a]))
-    skills_ = new SkillsMap((skillsData as Skill[]).map(s => [s.name, s]))
+    skills_ = new SkillsMap((skillsData as SkillEntry[]).map(s => [s.name, s]))
   }
 
   /** Create an Agent that owns its card and generate lifecycle */
