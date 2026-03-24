@@ -119,10 +119,12 @@ Exception: skills that produce structured artifacts with a contract (frontmatter
 
 The `description` field should explain what the skill does and when it's useful — as a human sentence.
 
-Red flags:
+Red flags — trigger phrases that **replace** the value sentence:
 - **Regex trigger lists**: `Use when "crear pr", "create pr", "abrir pr"` — these are pattern-matching strings, not descriptions
 - **"Use when user says..."**: The description should describe value, not list activation phrases
 - **"Triggers on..."**: Same problem — keyword lists instead of meaning
+
+Acceptable: trigger phrases that **supplement** a clear value sentence. A description like "Create GitHub PRs using templates. Use when creating or submitting pull requests." is fine — the first sentence carries the value, the second adds discoverability.
 
 Good: "Save a URL as a markdown bookmark that connects to what you're building and thinking about."
 Bad: `Save URLs. Use when "save bookmark", "guardar link", "bookmark this".`
