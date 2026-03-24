@@ -4,7 +4,7 @@ description: Orchestrate the ideas system. Mine vaults for ideas, analyze maturi
 command: find-ideas
 metadata:
   author: syner
-  version: "0.3.0"
+  version: "0.3.1"
 tools: [Glob, Read]
 ---
 
@@ -64,15 +64,20 @@ Orchestrate the full ideas lifecycle:
 
 ## Process
 
-### 1. Discover Vaults
+### 1. Discover Context Sources
 
+In parallel:
 ```
-.syner/vaults/**/*.md
+.syner/vaults/**/*.md      # Personal notes (gitignored)
+.syner/bookmarks/*.md      # Curated external references (committed)
 ```
 
 ### 2. Read with Context
 
-For each folder, read `index.md` first to understand folder context.
+For vaults: read `index.md` first in each folder to understand folder context.
+For bookmarks: read frontmatter tags first, then load fully only those relevant to the focus area or current task.
+
+Bookmarks are external knowledge the user chose to save with personal annotations. Cross-referencing bookmark tags against vault themes surfaces ideas that only emerge from the intersection of internal thinking and external input.
 
 ### 3. Extract Idea Seeds
 
@@ -81,6 +86,7 @@ Look for:
 - **Expertise gaps** — What do they know that others don't?
 - **Community access** — What groups do they belong to?
 - **Workflow hacks** — What have they built for themselves?
+- **External references** — What bookmarks challenge or validate their current work?
 - **External links** — Follow llms.txt or docs for technical context
 
 ### 4. Cross-Reference
@@ -89,6 +95,7 @@ Match seeds against:
 - User's skills and interests
 - Available time and resources
 - Market gaps they've noted
+- Bookmark insights that intersect with vault themes
 
 ### 5. Generate Ideas
 
@@ -122,6 +129,8 @@ Analyze each idea and suggest based on signals:
 | Technical improvement to syner | Route to `dev` agent |
 | Component/UI idea | Route to `design` agent |
 | Integration/webhook idea | Route to `bot` agent |
+| Bookmark challenges current approach | Direct action item (create issue, investigate) |
+| Bookmark validates current direction | Strengthen existing idea with external evidence |
 | Mature with clear validation | Direct action item (create issue, build MVP) |
 | Early seed, unclear | "Let it simmer - revisit in 1 week" |
 
