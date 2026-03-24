@@ -1,6 +1,6 @@
 ---
 name: create-syner-skill
-description: Create syner skills. Use when creating new skills, or when user says "crear skill", "new skill", "add capability".
+description: Create skills for the syner ecosystem. Scaffolds the file, sets up symlinks, and iterates until the skill works when invoked.
 metadata:
   author: syner
   version: "0.1.0"
@@ -27,6 +27,18 @@ Get expected output FIRST, then compare actual vs expected.
 
 ### 3. Verify Output == Instructions
 When testing, check that the skill's actual behavior matches what the instructions say it should do. Discrepancies = bugs.
+
+### 4. Think, Don't Template
+Skills should describe **how to think**, not what fields to fill. A skill with fixed headers and bullet counts produces generic output regardless of context.
+
+The evolution (learned from save-bookmark):
+- **v1 (template):** Fixed structure, field extraction, regex triggers → output reads like a form
+- **v2 (template + context):** Same structure but with project references injected → still a form, just with better fill
+- **v3 (thinking process):** No fixed structure — skill describes questions to ask, connections to make, decisions to weigh → output matches what the content actually needs
+
+**The test:** If you swap the input and the body still makes sense, the skill wrote a template. If you remove the user's context and the body still reads fine, the skill didn't personalize. Both mean: rewrite the skill instructions.
+
+When scaffolding: prefer "## How to Think" over "## Output" with a fixed format. The output section should describe *qualities* (honest, connected to context, specific) not *structure* (3-5 bullets, H2 for Why, H2 for Takeaways).
 
 ## Critical Concept
 
@@ -81,65 +93,47 @@ Ask only if unclear: "Is this skill specific to an app or shared?"
 
 ### 3. Scaffold
 
-```markdown
+The frontmatter is fixed. Everything below it depends on what the skill needs.
+
+```yaml
 ---
 name: {name}
-description: {description}. Use when {triggers}.
+description: {what it does — in terms of value, not trigger phrases}
 metadata:
   author: syner
   version: "0.0.1"
-  agent: dev
+  agent: {app}
 allowed-tools:
-  - Read
-  - Glob
-  - Write
-  - Bash
+  - {tools the skill actually uses}
 ---
-
-# {Name}
-
-{Purpose - one line}
-
-## Process
-
-{Step by step instructions - imperative voice}
-
-### 1. {First Step}
-
-{Details}
-
-### 2. {Second Step}
-
-{Details}
-
-## Output
-
-{Exact format - be specific}
-
-## Testing
-
-To test this skill:
-1. {test case}
-
-Cleanup: {cleanup commands if needed}
-
-## Boundaries
-
-Validate against `/syner-boundaries`:
-- {relevant boundary}
-- {relevant boundary}
 ```
 
-### 4. Description Triggers
+Below the frontmatter, write what the skill needs. Some skills need step-by-step processes. Others need a thinking framework. Don't default to numbered steps if the skill is about judgment.
 
-The `description` field determines when the skill auto-triggers. Include:
-- What it does
-- Keywords that should trigger it
-- Natural phrases users might say
+**Always include:**
+- How the skill thinks (process or thinking framework)
+- Testing section (how to verify it works)
+- Boundaries (constraints)
+
+**Include only if the skill needs it:**
+- Output format (only if structure matters — e.g., a report, a file with frontmatter)
+- Edge cases (only if non-obvious)
+
+**Avoid:**
+- Fixed output templates with placeholder fields — these produce form-fill output
+- Numbered bullet counts ("3-5 bullets") — let content decide length
+- Headers that become mandatory structure ("## Why", "## Key Ideas") — the skill will fill them even when they add nothing
+
+### 4. Description
+
+The `description` field explains what the skill does and when it's useful. Write it as a sentence a human would say, not a list of trigger phrases.
 
 ```yaml
-# Good - specific triggers
-description: Create syner skills. Use when user says "crear skill", "new skill", "add capability".
+# Good - describes value and context
+description: Save a URL as a markdown bookmark that connects to what you're building and thinking about.
+
+# Bad - regex trigger list
+description: Save URLs. Use when "save bookmark", "guardar link", "bookmark this", "save this url".
 
 # Bad - vague
 description: Creates skills.
@@ -218,11 +212,13 @@ Normal flow:
 | Anti-Pattern | Fix |
 |--------------|-----|
 | First-person voice ("I will...") | Imperative ("Analyze the...") |
-| Vague description | Add trigger phrases |
+| Description as regex trigger list | Describe value in a human sentence |
+| Fixed output template with placeholders | Describe output qualities, not structure |
+| Numbered bullet counts ("3-5 bullets") | Let content decide length |
 | "ONLY return X" but returns extra | Add "No explanation, no commentary" |
 | Tools used but not declared | Add to frontmatter |
 | No testing section | Add test cases |
-| Headings like "What I Do" | Use "Process" or "Capabilities" |
+| Headings like "What I Do" | Use "Process" or "How to Think" |
 
 ## Performance: Parallel Tool Calls
 

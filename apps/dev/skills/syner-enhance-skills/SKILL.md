@@ -61,8 +61,9 @@ For each finding, determine the concrete change:
 | Path resolution (B2) | Anchor to project root |
 | Skill references (B3) | Use `/skill-name` format |
 | Missing input handling (B4) | Add default or AskUserQuestion |
-| Output structure (B5) | Add explicit template |
-| Missing delegation (B6) | Add subagent delegation |
+| Output structure (B5) | Describe output qualities, remove rigid placeholder templates |
+| Description quality (B6) | Replace trigger lists with value-describing sentences |
+| Missing delegation (B7) | Add execution contract for multi-step operations |
 
 ## Step 4: Confirm Changes
 

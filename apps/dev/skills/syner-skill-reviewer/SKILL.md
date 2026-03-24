@@ -1,6 +1,6 @@
 ---
 name: syner-skill-reviewer
-description: Review skills for quality, safety, and convention compliance. Use when auditing a skill's instructions, checking for prompt injection risks, first-person voice issues, or verifying best practices. Triggers on "review this skill", "audit skill", "check skill quality", "is this skill safe", or when evaluating skills before publishing.
+description: Review skills for quality, safety, and convention compliance. Dev's quality gate before skills go live — checks voice, injection risks, technical patterns, and ecosystem consistency.
 agent: dev
 allowed-tools: [Glob, Read, AskUserQuestion]
 context: fork
@@ -111,9 +111,25 @@ When a skill needs input but doesn't get any, it should either have a sensible d
 
 ### B5. Output Structure
 
-If a skill's output format is important (and it usually is for skills that produce reports or structured artifacts), define it with an explicit template. Vague descriptions like "output a summary" lead to inconsistent results across invocations.
+If a skill's output needs specific qualities (honest, contextual, actionable), describe those qualities. Avoid fixed templates with placeholder fields (`{3-5 bullets}`, `## Why`, `## Key Ideas`) — they produce form-fill output regardless of context. The model fills every field even when the content doesn't warrant it.
 
-### B6. Delegation
+Exception: skills that produce structured artifacts with a contract (frontmatter schemas, reports with defined sections) do need explicit structure. The distinction: is the structure serving the consumer, or just making the skill easier to write?
+
+### B6. Description Quality
+
+The `description` field should explain what the skill does and when it's useful — as a human sentence.
+
+Red flags — trigger phrases that **replace** the value sentence:
+- **Regex trigger lists**: `Use when "crear pr", "create pr", "abrir pr"` — these are pattern-matching strings, not descriptions
+- **"Use when user says..."**: The description should describe value, not list activation phrases
+- **"Triggers on..."**: Same problem — keyword lists instead of meaning
+
+Acceptable: trigger phrases that **supplement** a clear value sentence. A description like "Create GitHub PRs using templates. Use when creating or submitting pull requests." is fine — the first sentence carries the value, the second adds discoverability.
+
+Good: "Save a URL as a markdown bookmark that connects to what you're building and thinking about."
+Bad: `Save URLs. Use when "save bookmark", "guardar link", "bookmark this".`
+
+### B7. Delegation
 
 When a skill involves multiple file changes, verification loops, or iterative refinement, it should use Syner's execution contract (gather context → take action → verify → iterate) rather than handling the complexity inline without structure. A skill that tries to do everything without verification tends to get long and brittle.
 
