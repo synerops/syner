@@ -53,19 +53,22 @@ Determine how much context this request needs:
 |-------|------|--------|
 | **None** | Casual conversation, greetings | Respond directly |
 | **App** | Task within a single app | Load that app's vault: `.syner/vaults/{app}/**/*.md` |
-| **Targeted** | Question about specific thing | Use Glob/Grep/Read for that area only |
-| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="load-all")` |
+| **Targeted** | Question about specific thing | Use Glob/Grep/Read for that area only. Check bookmarks if topic matches. |
+| **Full** | Multi-domain synthesis, needs complete picture | Call `Skill(skill="load-all")`. Include relevant bookmarks. |
 
-### Vault Discovery
+### Context Sources
 
-Vaults exist at project and app levels. The filesystem IS the configuration:
+Vaults and bookmarks provide personal context. The filesystem IS the configuration:
 
 ```
-.syner/vaults/**/*.md           # All vaults (centralized)
+.syner/vaults/**/*.md           # All vaults (centralized, gitignored)
 .syner/vaults/{app}/**/*.md     # Single app's vaults
+.syner/bookmarks/*.md           # Saved URLs with personal context (committed)
 ```
 
-Local machine has more context than repo (vaults are gitignored by default).
+Vaults are gitignored (local > repo). Bookmarks are committed — they're curated external references with frontmatter tags.
+
+**When to load bookmarks:** When the task overlaps with bookmark tags or topics. Don't load all bookmarks by default — check tags in frontmatter first, load only relevant ones.
 
 ### How to Decide
 
