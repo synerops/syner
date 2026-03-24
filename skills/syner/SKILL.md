@@ -70,6 +70,12 @@ Vaults are gitignored (local > repo). Bookmarks are committed — they're curate
 
 **When to load bookmarks:** When the task overlaps with bookmark tags or topics. Don't load all bookmarks by default — check tags in frontmatter first, load only relevant ones.
 
+**How to check bookmarks:**
+1. `Glob(".syner/bookmarks/*.md")` to discover available bookmarks
+2. `Read` the first 10 lines of each (frontmatter with tags) — batch in parallel
+3. Match `tags` against the current task topic
+4. Load only the matched bookmarks fully
+
 ### How to Decide
 
 Ask yourself:

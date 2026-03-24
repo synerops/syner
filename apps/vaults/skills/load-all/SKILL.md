@@ -22,10 +22,11 @@ Build comprehensive understanding of the user's current state by reading all not
 
 ## Process
 
-### 1. Discover Vaults
+### 1. Discover Context Sources
 
 ```
-.syner/vaults/**/*.md    # All vaults (centralized)
+.syner/vaults/**/*.md      # All vaults (centralized, gitignored)
+.syner/bookmarks/*.md      # Curated external references (committed)
 ```
 
 This finds notes in:
@@ -34,6 +35,7 @@ This finds notes in:
 - `.syner/vaults/bot/` — bot context
 - `.syner/vaults/dev/` — development notes
 - Any other app with vaults under `.syner/vaults/{app}/`
+- `.syner/bookmarks/` — saved URLs with personal context and tags
 
 ### 2. Group by Level
 

@@ -130,8 +130,8 @@ Content is rendered via [Fumadocs](https://fumadocs.dev) headless — `source.co
 | None | Casual conversation | Respond directly |
 | Project | Syner-level context | `.syner/vaults/**/*.md` |
 | App | Task within one app | `.syner/vaults/{app}/**/*.md` |
-| Targeted | Specific file/topic | Glob/Grep for that area |
-| Full | Multi-domain synthesis | `.syner/vaults/**/*.md` via `/load-all` |
+| Targeted | Specific file/topic | Glob/Grep for that area + `.syner/bookmarks/*.md` if topic matches |
+| Full | Multi-domain synthesis | `.syner/vaults/**/*.md` + `.syner/bookmarks/*.md` via `/load-all` |
 
 ### When to Route Through /syner
 
