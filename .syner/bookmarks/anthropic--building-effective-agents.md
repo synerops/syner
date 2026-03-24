@@ -2,34 +2,18 @@
 url: "https://www.anthropic.com/engineering/building-effective-agents"
 title: "Building Effective Agents"
 source: "anthropic.com"
-author: "Erik Schluntz, Barry Zhang"
 date_saved: "2026-03-24"
-date_published: "2024-12-20"
-tags: [agents, orchestration, patterns, anthropic]
-fetchable: false
+tags: [orchestration, skills-architecture, agent-patterns]
 ---
 
 # Building Effective Agents
 
-> The argument for why your orchestrator should route to simple skills instead of building one massive agent — from the people who make the model.
+Anthropic's guide to agent architecture, and it reads like a post-mortem of the exact decisions you already made with syner.
 
-## Why This Matters to You
+The core argument: don't build an agent that does everything. Build augmented LLMs (model + tools + retrieval) and compose them. That's what syner calls skills. The article names five workflow patterns — prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer — and `/syner` already implements routing and orchestrator-workers natively.
 
-Syner already follows the core thesis of this article: skills over monoliths, orchestration over complexity. But the article gives you vocabulary and validation from Anthropic's side. The "workflows vs agents" distinction maps directly to how `/syner` routes — some tasks are predefined skill chains (workflows), others let the model decide the path (true agents). The tension is knowing when to use which, and syner's current design leans heavily toward workflows. This article is the reference for when to let go and let the agent drive.
+Where it gets interesting is the distinction between **workflows** (you define the path) and **agents** (the model defines the path). Right now syner is almost entirely workflows: the user invokes `/find-ideas`, the skill follows its steps, done. The article argues that for open-ended problems — the kind where you don't know the steps in advance — you need true agents: a loop where the model decides what to do next, uses tools, evaluates, and continues until done.
 
-## Key Takeaways
+That's the gap. Syner routes well but doesn't loop. Background agents (PHILOSOPHY.md's "trigger and forget") need that loop pattern to actually work autonomously.
 
-- **Augmented LLMs are the atomic unit** — retrieval + tools + memory compose into everything else. Syner's skills are exactly this: focused capabilities with tool access and vault context.
-- **Workflows vs agents is the key design decision** — Prompt chaining and routing are workflows (predictable). True agents loop until done (flexible). `/syner` currently acts as a router (workflow), but background agents need the loop pattern.
-- **Start simple, add complexity only when it fails** — Resist the urge to build orchestrator-workers when a single skill with good context would do. Every skill in `apps/*/skills/` should justify its existence.
-- **The orchestrator-workers pattern** — One LLM dispatches to specialized workers. This is literally `/syner` → `/find-ideas`, `/grow-note`, etc. Anthropic validates this architecture.
-- **Tools are the leverage point** — The quality of an agent depends on its tools, not its prompt sophistication. Syner's `@syner/vercel` (Bash, Fetch) and vault access are the tools that make skills useful.
-
-## Threads
-
-- Builds on: PHILOSOPHY.md's "Skills, not monoliths" — same thesis, different angle
-- Tension with: Syner's current routing is mostly deterministic (`/syner` picks the skill). The article suggests some problems need the model to decide its own path dynamically.
-
-## Links
-
-- [Original](https://www.anthropic.com/engineering/building-effective-agents)
+The other takeaway that stings: "the most successful implementations weren't using complex frameworks at all." Syner's markdown-as-primitive philosophy gets validation here — the simpler the orchestration, the more reliable the agent. Every time you're tempted to add abstraction, this article is the counterargument.
