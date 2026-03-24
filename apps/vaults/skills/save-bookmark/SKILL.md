@@ -3,7 +3,7 @@ name: save-bookmark
 description: Save a URL as a markdown bookmark that connects to what you're building and thinking about. Reads your vaults and conversation to write bookmarks that feel personal, not generated.
 metadata:
   author: syner
-  version: "0.2.0"
+  version: "0.0.1"
   agent: vaults
 allowed-tools:
   - Read
