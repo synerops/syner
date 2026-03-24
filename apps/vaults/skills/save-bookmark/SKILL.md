@@ -1,6 +1,6 @@
 ---
 name: save-bookmark
-description: Save URLs as contextual bookmarks that connect to what you're working on. Use when "save bookmark", "guardar link", "bookmark this", "save this url", "agregar bookmark", or when user shares a URL to save.
+description: Save a URL as a markdown bookmark that connects to what you're building and thinking about. Reads your vaults and conversation to write bookmarks that feel personal, not generated.
 metadata:
   author: syner
   version: "0.1.0"
