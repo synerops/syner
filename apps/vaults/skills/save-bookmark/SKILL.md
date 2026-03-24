@@ -1,6 +1,7 @@
 ---
 name: save-bookmark
 description: Save a URL as a markdown bookmark that connects to what you're building and thinking about. Reads your vaults and conversation to write bookmarks that feel personal, not generated.
+command: save-bookmark
 metadata:
   author: syner
   version: "0.0.1"
