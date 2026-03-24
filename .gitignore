@@ -38,6 +38,8 @@ SYNER.md
 !.syner/system/.gitkeep
 .syner/deprecated/*
 !.syner/deprecated/.gitkeep
+.syner/bookmarks/*
+!.syner/bookmarks/.gitkeep
 
 # === Vaults (contenido personal, centralizado en .syner/vaults/) ===
 .syner/vaults/
