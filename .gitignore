@@ -10,6 +10,9 @@ next-env.d.ts
 .tmp-*
 **/public/.well-known/agents/
 
+# === Local-only routes ===
+apps/*/app/api/chat/
+
 # === Local config ===
 .env
 .env.local

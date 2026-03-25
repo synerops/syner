@@ -8,7 +8,14 @@ interface ReviewIssue {
 }
 
 export async function POST(request: Request) {
-  const { skillPath, content } = await request.json()
+  let body: { skillPath?: string; content?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 })
+  }
+
+  const { skillPath, content } = body
 
   if (!content || typeof content !== 'string') {
     return NextResponse.json(

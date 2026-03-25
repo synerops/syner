@@ -1,3 +1,3 @@
-import { getAppManifest as GET } from 'syner/next'
-export { GET }
+import { getApp } from 'syner/next'
+export const GET = () => getApp('vaults')
 export const dynamic = 'force-static'

@@ -20,6 +20,7 @@ import {
 import { SkillsMap } from '@syner/sdk/skills/map'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
+import { createAgentTool } from '../tools/agent'
 import { VercelRunAdapter } from './adapter'
 import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
 import { createSystem } from './system'
@@ -170,6 +171,7 @@ export function createRuntime(): Runtime {
         Grep: () => createGrep(ensureSandbox),
         Bash: () => createBash(ensureSandbox),
         Fetch: () => createFetch(),
+        Agent: () => createAgentTool(runtimeRef),
       }
 
       for (const name of declaredTools_) {
@@ -331,10 +333,14 @@ export function createRuntime(): Runtime {
     return createAgent(card)
   }
 
-  return {
+  // Lazy reference for tools that need the runtime (e.g. Agent tool).
+  // Safe because tools execute after start(), when the runtime is fully initialized.
+  const runtimeRef: Runtime = {
     get agents() { return agents_ },
     get skills() { return skills_ },
     start,
     agent,
   }
+
+  return runtimeRef
 }

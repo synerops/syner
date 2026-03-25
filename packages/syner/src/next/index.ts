@@ -80,19 +80,22 @@ export async function generateAgentParams() {
 // AppManifest handler
 // ---------------------------------------------------------------------------
 
-/** GET /.well-known/app.json — app manifest for discovery */
-export async function getAppManifest(): Promise<Response> {
+/** GET /.well-known/app.json — per-app manifest for discovery */
+export async function getApp(appName: string): Promise<Response> {
   try {
     const agentList = await agents.list()
     const skillList = await skills.list()
 
-    // Build manifest from discovered agents and skills
+    const agent = agentList.find(a => a.name === appName)
+    const category = appName.charAt(0).toUpperCase() + appName.slice(1)
+    const appSkills = skillList.filter(s => (s.metadata?.category as string) === category)
+
     const manifest = {
-      name: agentList[0]?.name || 'syner',
+      name: appName,
       version: '0.1.1',
-      agents: agentList.map(a => a.name),
-      skills: skillList.map(s => (s.metadata?.slug as string) || s.name),
-      tools: [...new Set(agentList.flatMap(a => a.tools || []))],
+      agent: agent?.name,
+      skills: appSkills.map(s => (s.metadata?.slug as string) || s.name),
+      tools: agent?.tools || [],
       endpoints: {
         agents: '/api/agents',
         skills: '/api/skills',
