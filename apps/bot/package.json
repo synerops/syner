@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",
+    "syner": "workspace:*",
     "@syner/github": "workspace:*",
     "@syner/sdk": "workspace:*",
     "@syner/slack": "workspace:*",

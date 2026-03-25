@@ -31,16 +31,16 @@ export async function POST(request: Request) {
   try {
     const agent = runtime.agent(name)
     const result = await agent.spawn(prompt, {
-      onStatus: (status) => {
+      onStatus: (status: string) => {
         console.log(`[${requestId}] Status: ${status}`)
       },
-      onToolStart: (toolName) => {
+      onToolStart: (toolName: string) => {
         console.log(`[${requestId}] ┌ Tool: ${toolName}`)
       },
-      onToolFinish: (toolName, durationMs, success) => {
+      onToolFinish: (toolName: string, durationMs: number, success: boolean) => {
         console.log(`[${requestId}] └ Tool: ${toolName} — ${success ? '✓' : '✗'} (${durationMs}ms)`)
       },
-      onStepFinish: (stepNumber, toolNames) => {
+      onStepFinish: (stepNumber: number, toolNames: string[]) => {
         console.log(`[${requestId}] Step ${stepNumber}: [${toolNames.join(', ')}]`)
       },
     })
