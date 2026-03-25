@@ -130,5 +130,8 @@ export async function executeBookmarks(
       await deps.write(filePath, content)
       return JSON.stringify({ created: filePath })
     }
+
+    default:
+      return JSON.stringify({ error: `Unknown operation: ${input.op}` })
   }
 }
