@@ -23,7 +23,7 @@ export function createSkillTool(skills: SkillsMap) {
     inputSchema: z.object({
       name: z.string().describe('Skill name to load'),
     }),
-    execute: async () => true,
+    execute: async ({ name }) => `Skill "${name}" loaded. Instructions injected.`,
   })
 }
 

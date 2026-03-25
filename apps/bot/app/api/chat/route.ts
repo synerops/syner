@@ -3,7 +3,14 @@ import { runtime, ensureStarted } from 'syner/run'
 export const maxDuration = 60
 
 export async function POST(request: Request) {
-  const { prompt, agent: agentName } = await request.json() as { prompt?: string; agent?: string }
+  let body: { prompt?: string; agent?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return Response.json({ error: 'invalid JSON body' }, { status: 400 })
+  }
+
+  const { prompt, agent: agentName } = body
 
   if (!prompt) {
     return Response.json({ error: 'prompt required' }, { status: 400 })
