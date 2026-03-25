@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "syner": "workspace:*",
+    "zod": "catalog:ai",
     "@syner/ui": "workspace:*",
     "class-variance-authority": "catalog:ui",
     "clsx": "catalog:ui",

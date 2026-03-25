@@ -1,3 +1,4 @@
+/** @deprecated Use syner/registry — build moved to packages/syner in v0.1.1 */
 import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'

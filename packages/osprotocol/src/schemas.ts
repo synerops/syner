@@ -173,3 +173,16 @@ export type Cancel = z.infer<typeof CancelSchema>
 export type RunStatus = z.infer<typeof RunStatusSchema>
 export type RunActivity = z.infer<typeof RunActivitySchema>
 export type Run<T = unknown> = Omit<z.infer<typeof RunSchema>, 'results'> & { results: Result<T>[] }
+
+// --- AppManifest ---
+
+export const AppManifestSchema = z.object({
+  name: z.string(),
+  version: z.string(),
+  agent: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+  tools: z.array(z.string()).optional(),
+  endpoints: z.record(z.string(), z.string()).optional(),
+})
+
+export type AppManifest = z.infer<typeof AppManifestSchema>

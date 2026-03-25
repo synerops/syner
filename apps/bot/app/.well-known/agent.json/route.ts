@@ -1,4 +1,4 @@
-import { runtime, ensureStarted } from '@/lib/runtime'
+import { runtime, ensureStarted } from 'syner/run'
 
 export async function GET() {
   await ensureStarted()

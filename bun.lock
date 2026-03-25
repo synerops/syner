@@ -14,6 +14,7 @@
       "name": "bot",
       "version": "0.0.1",
       "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.27.0",
         "@syner/github": "workspace:*",
         "@syner/sdk": "workspace:*",
         "@syner/slack": "workspace:*",
@@ -116,6 +117,7 @@
         "radix-ui": "catalog:ui",
         "react": "catalog:react19",
         "react-dom": "catalog:react19",
+        "syner": "workspace:*",
         "tailwind-merge": "catalog:ui",
       },
       "devDependencies": {
@@ -225,7 +227,11 @@
       "dependencies": {
         "@ai-sdk/gateway": "catalog:ai",
         "@syner/osprotocol": "workspace:*",
+        "@syner/vercel": "workspace:*",
         "ai": "catalog:ai",
+        "glob": "^10.0.0",
+        "gray-matter": "^4.0.3",
+        "zod": "catalog:ai",
       },
       "devDependencies": {
         "@syner/eslint": "workspace:*",
@@ -267,10 +273,10 @@
       "version": "0.0.1",
       "dependencies": {
         "@syner/osprotocol": "workspace:*",
+        "@syner/sdk": "workspace:*",
         "@vercel/sandbox": "^1.8.0",
         "@workflow/ai": "^4.0.1-beta.56",
         "ai": "catalog:ai",
-        "syner": "workspace:*",
         "workflow": "^4.2.0-beta.70",
         "zod": "catalog:ai",
       },

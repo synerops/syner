@@ -23,6 +23,12 @@ export interface MentionContext {
   channel: string
   threadId: string
   userId: string
+  /** Chat SDK Thread — access messages, state, post replies */
+  thread: Thread
+  /** The triggering message */
+  message: Message
+  /** Recent messages from the thread (cached from webhook payload) */
+  recentMessages: Message[]
 }
 
 /**
@@ -55,6 +61,9 @@ export function createSlackChat(config: SlackChatConfig, handler: MentionHandler
       channel: channelId,
       threadId: thread.id,
       userId: message.author.userId,
+      thread,
+      message,
+      recentMessages: thread.recentMessages || [],
     }
 
     try {

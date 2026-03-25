@@ -1,7 +1,7 @@
 import { after } from 'next/server'
 import { createCommandHandler, type SlackSlashCommand, type SlackCommandResponse } from '@syner/slack'
 import type { CommandInfo } from '@syner/vercel'
-import { runtime, ensureStarted } from '@/lib/runtime'
+import { runtime, ensureStarted } from 'syner/run'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60

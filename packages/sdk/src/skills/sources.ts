@@ -1,3 +1,4 @@
+/** @deprecated Use syner/registry — sources moved to packages/syner in v0.1.1 */
 /** Directories where skills are discovered, relative to project root */
 export const SKILL_SOURCES = [
   'skills/syner',

@@ -1,5 +1,5 @@
-export { agents } from './loader'
-export type { AgentCard } from './loader'
+// Types — SDK is the canonical home for agent types
+export type { AgentCard, Agent, AgentCardOutput, AgentStream, GenerateResult, GenerateOptions, StreamOptions } from './types'
 export { resolveModel, MODEL_IDS, FALLBACK_MODELS } from './models'
 export type { ModelTier } from './models'
-export type { Agent, AgentCardOutput, GenerateResult, GenerateOptions } from './types'
+export { AgentsMap } from './map'

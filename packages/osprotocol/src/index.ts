@@ -13,6 +13,7 @@ export {
 
 export { type Skill } from './types/skill'
 export { type AgentCard } from './types/agent'
+export { type AppManifest } from './types/app'
 
 export {
   type Assertion,
@@ -75,6 +76,7 @@ export {
   ResultSchema,
   SkillSchema,
   AgentCardSchema,
+  AppManifestSchema,
   RunStatusSchema,
   RunActivitySchema,
   ProgressSchema,

@@ -1,3 +1,4 @@
+/** @deprecated Use syner/registry — resolver moved to packages/syner in v0.1.1 */
 import { skills } from './loader'
 import type { Skill } from '@syner/osprotocol'
 

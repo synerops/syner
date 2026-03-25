@@ -1,3 +1,4 @@
+/** @deprecated Use syner/registry — registry moved to packages/syner in v0.1.1 */
 import { getProjectRoot } from './root'
 
 export interface RegistryConfig<T> {

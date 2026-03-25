@@ -6,7 +6,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./tools": "./src/tools/index.ts"
+    "./tools": "./src/tools/index.ts",
+    "./tools/factories": "./src/tools/factories.ts",
+    "./run": "./src/run/index.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -14,10 +16,10 @@
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*",
+    "@syner/sdk": "workspace:*",
     "@vercel/sandbox": "^1.8.0",
     "@workflow/ai": "^4.0.1-beta.56",
     "ai": "catalog:ai",
-    "syner": "workspace:*",
     "workflow": "^4.2.0-beta.70",
     "zod": "catalog:ai"
   },

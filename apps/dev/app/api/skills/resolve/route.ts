@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { skills } from '@syner/sdk/skills'
+import { skills } from 'syner/registry'
 
 // Dynamic — POST handler requires runtime execution
 export const dynamic = 'force-dynamic'

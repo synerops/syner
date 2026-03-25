@@ -1,6 +1,5 @@
 import { ToolLoopAgent, stepCountIs, type ToolSet } from 'ai'
 import {
-  resolveModel,
   type AgentCard,
   type Agent,
   type AgentCardOutput,
@@ -8,42 +7,31 @@ import {
   type GenerateResult,
   type GenerateOptions,
   type StreamOptions,
-} from 'syner/agents'
-import type { Skill } from 'syner/skills'
+} from '@syner/sdk/agents/types'
+import { resolveModel } from '@syner/sdk/agents/models'
+import type { Skill } from '@syner/osprotocol'
 import {
   createContext,
   createAction,
   verify,
   createResult,
   type Result,
-} from 'syner/protocol'
-import { SkillsMap } from 'syner/skills'
+} from '@syner/osprotocol'
+import { SkillsMap } from '@syner/sdk/skills/map'
 import { createSkillTool, createPrepareStep } from '../tools/skill'
 import { createTaskTool } from '../tools/task'
 import { VercelRunAdapter } from './adapter'
 import { createSandbox, stopSandbox, type Sandbox } from './sandbox'
 import { createSystem } from './system'
+import { type Tool } from 'ai'
 import {
-  bashInputSchema,
-  type BashInput,
-  executeBash,
-  fetchInputSchema,
-  type FetchInput,
-  executeFetch,
-  readInputSchema,
-  type ReadInput,
-  executeRead,
-  writeInputSchema,
-  type WriteInput,
-  executeWrite,
-  globInputSchema,
-  type GlobInput,
-  executeGlob,
-  grepInputSchema,
-  type GrepInput,
-  executeGrep,
-} from '../tools'
-import { tool, type Tool } from 'ai'
+  Read as createRead,
+  Write as createWrite,
+  Glob as createGlob,
+  Grep as createGrep,
+  Bash as createBash,
+  Fetch as createFetch,
+} from '../tools/factories'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -140,24 +128,15 @@ export function createRuntime(): Runtime {
       ? `${agentCard.instructions}\n\n${skillDescriptions_}`
       : agentCard.instructions
 
-    // Static tools — no per-request state
+    // Static tools — always available
     const staticTools_: Record<string, Tool> = {}
-    if (agentCard.tools?.includes('Fetch')) {
-      staticTools_.Fetch = tool({
-        description: 'Fetch URL content as markdown (truncated to 50k chars)',
-        inputSchema: fetchInputSchema,
-        execute: (input) => executeFetch(input as FetchInput),
-      })
-    }
     if (skills_.size > 0) {
       staticTools_.Skill = createSkillTool(skills_)
     }
     staticTools_.Task = createTaskTool({ runAdapter })
 
-    // Which sandbox tools this agent needs
-    const sandboxToolNames_ = (agentCard.tools || []).filter(
-      n => ['Bash', 'Read', 'Write', 'Glob', 'Grep'].includes(n)
-    )
+    // Which tools this agent declares
+    const declaredTools_ = agentCard.tools || []
 
     function prepareExecution() {
       let sandbox: Sandbox | null = null
@@ -182,62 +161,27 @@ export function createRuntime(): Runtime {
         return initPromise
       }
 
-      // Sandbox tools — fresh per request
-      const sandboxTools: Record<string, Tool> = {}
-      for (const name of sandboxToolNames_) {
-        if (name === 'Bash') {
-          sandboxTools.Bash = tool({
-            description: 'Execute a command in the sandbox shell',
-            inputSchema: bashInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeBash(sb, input as BashInput)
-            },
-          })
-        } else if (name === 'Read') {
-          sandboxTools.Read = tool({
-            description: 'Read a file from the sandbox filesystem',
-            inputSchema: readInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeRead(sb, input as ReadInput)
-            },
-          })
-        } else if (name === 'Write') {
-          sandboxTools.Write = tool({
-            description: 'Write content to a file (creates parent directories if needed)',
-            inputSchema: writeInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeWrite(sb, input as WriteInput)
-            },
-          })
-        } else if (name === 'Glob') {
-          sandboxTools.Glob = tool({
-            description: 'Find files matching a glob pattern',
-            inputSchema: globInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeGlob(sb, input as GlobInput)
-            },
-          })
-        } else if (name === 'Grep') {
-          sandboxTools.Grep = tool({
-            description: 'Search file contents with regex',
-            inputSchema: grepInputSchema,
-            execute: async (input) => {
-              const sb = await ensureSandbox()
-              return executeGrep(sb, input as GrepInput)
-            },
-          })
-        }
+      // Build tools from agent's declared list — syner provides the factories
+      const agentTools: Record<string, Tool> = {}
+      const toolFactories: Record<string, () => Tool> = {
+        Read: () => createRead(ensureSandbox),
+        Write: () => createWrite(ensureSandbox),
+        Glob: () => createGlob(ensureSandbox),
+        Grep: () => createGrep(ensureSandbox),
+        Bash: () => createBash(ensureSandbox),
+        Fetch: () => createFetch(),
+      }
+
+      for (const name of declaredTools_) {
+        const factory = toolFactories[name]
+        if (factory) agentTools[name] = factory()
       }
 
       const loopAgent = new ToolLoopAgent({
         id: agentCard.name,
         model: model_,
         instructions: instructions_,
-        tools: { ...staticTools_, ...sandboxTools } as ToolSet,
+        tools: { ...staticTools_, ...agentTools } as ToolSet,
         stopWhen: stepCountIs(20),
         prepareStep: createPrepareStep(skills_, getBaseUrl),
         providerOptions: {
