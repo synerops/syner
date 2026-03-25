@@ -1,6 +1,6 @@
 import { Hero } from "@/components/hero";
 import { SkillsCatalog } from "@/components/skills-catalog";
-import { skills } from "@syner/sdk/skills";
+import { skills } from "syner/registry";
 
 // Force static generation - skills only update on deploy
 export const dynamic = "force-static";

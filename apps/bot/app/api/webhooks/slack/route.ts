@@ -1,6 +1,6 @@
 import { after } from 'next/server'
 import { createSlackChat } from '@syner/slack'
-import { runtime, ensureStarted } from '@/lib/runtime'
+import { runtime, ensureStarted } from 'syner/run'
 import { env } from '@/lib/env'
 
 export const maxDuration = 60
@@ -51,8 +51,20 @@ function getChat() {
             ].join('\n')
           }
 
+          // Build enriched prompt with thread context
           const instance = runtime.agent(agent.name)
-          const { fullStream } = await instance.stream(context.text)
+          let prompt = context.text
+
+          if (context.recentMessages.length > 1) {
+            const history = context.recentMessages
+              .slice(0, -1) // exclude the current message (already in context.text)
+              .map(m => `[${m.author.userId}]: ${m.text}`)
+              .join('\n')
+
+            prompt = `<thread-context>\n<channel>${context.channel}</channel>\n<user>${context.userId}</user>\n<history>\n${history}\n</history>\n</thread-context>\n\n${context.text}`
+          }
+
+          const { fullStream } = await instance.stream(prompt)
           return fullStream
         },
       },

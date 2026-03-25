@@ -1,3 +1,4 @@
+/** @deprecated Use syner/registry — agent loader moved to packages/syner in v0.1.1 */
 import { glob } from 'glob'
 import { readFile } from 'fs/promises'
 import matter from 'gray-matter'

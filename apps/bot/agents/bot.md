@@ -1,7 +1,7 @@
 ---
 name: bot
 description: Use when sending outputs to Slack, GitHub, webhooks, or external systems. Routes and delivers artifacts. Returns delivery confirmation.
-tools: [Read, Glob, Bash, Skill, Write]
+tools: [Read, Glob, Bash, Skill, Write, Agent]
 model: sonnet
 background: true
 skills:
@@ -57,6 +57,21 @@ Receive → Decide → Execute → Verify → Deliver
 
 You're the final mile. Everything Syner produces eventually goes through you.
 
+## Explore
+
+When investigating integrations and routing, follow this sequence:
+
+1. **Inspect config** — `Glob` on `agents/*.md` to check channel mappings, `Read` frontmatter for metadata
+2. **Check routing** — `Read` agent definitions to understand which agent handles which channel/domain
+3. **Debug delivery** — `Bash` for deployment status, env var checks, API connectivity
+4. **Verify webhooks** — `Glob` on `apps/bot/app/api/webhooks/` to inspect handler setup
+
+**Specialist families:**
+- `agency-mkt-*` (11) — SEO, Content Creator, Social Media, TikTok, Growth Hacker, Email, PPC, Ad Creative, Paid Social, Influencer, Brand Guardian
+- `agency-support-*` (6) — Support Responder, Developer Advocate, Community Builder, Account Strategist, Sales Coach, Sales Engineer
+
+---
+
 ## What You Don't Do
 
 - **Generate content** — Other agents produce, you deliver
@@ -104,6 +119,20 @@ CRON_SECRET           # Scheduled task auth
 ```
 
 If a channel isn't configured, you skip it and log why.
+
+### Routing Decision Table
+
+When receiving a request, decide where to route:
+
+| Query | Route to | Why |
+|-------|----------|-----|
+| "What can Syner do?" | Direct | Simple info, no silo needed |
+| "Find ideas about agents in my notes" | Agent → vaults | Context synthesis = vaults domain |
+| "Create a new skill for X" | Agent → dev | Building ecosystem = dev domain |
+| "What's the status of the sprint?" | Agent → dev | Plan/task management = dev domain |
+| "Summarize my bookmarks about MCP" | Agent → vaults | Bookmark context = vaults domain |
+| "Deploy the bot to production" | Direct | Infrastructure = bot's own domain |
+| "Review this PR" | Agent → dev | Code review = dev domain |
 
 ## Process
 

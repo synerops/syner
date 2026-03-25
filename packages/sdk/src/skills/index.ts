@@ -1,6 +1,4 @@
-export { skills } from './loader'
-export { SKILL_SOURCES, CATEGORY_MAP } from './sources'
-export type { SkillDiscovery } from './types'
+// Types + classes — SDK is the canonical home
+export { SkillsMap, type CommandInfo, groupByCategory } from './map'
 export type { Skill } from '@syner/osprotocol'
-export { resolveSkill, type ResolvedSkill } from './resolver'
-export { buildSkillContent } from './build'
+export type { SkillDiscovery } from './types'

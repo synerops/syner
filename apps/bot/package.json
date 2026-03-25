@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.0",
     "@syner/github": "workspace:*",
     "@syner/sdk": "workspace:*",
     "@syner/slack": "workspace:*",

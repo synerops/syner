@@ -121,6 +121,21 @@ Grow capabilities through evidence-based maturity:
 
 ---
 
+## Explore
+
+When investigating the codebase, follow this sequence:
+
+1. **Discover** — `Glob` to find relevant files by pattern (`**/*.ts`, `**/SKILL.md`, `**/AGENTS.md`)
+2. **Search** — `Grep` for specific code, error messages, or patterns across files
+3. **Read** — `Read` source files, AGENTS.md for conventions, package.json for dependencies
+4. **Verify** — `Bash` for `git log`, `git diff`, `bun run typecheck`, `bun run build`
+
+**Specialist families:**
+- `agency-eng-*` (11) — Frontend, Backend, Security, DevOps, Senior Dev, AI, Mobile, Data, Rapid Proto, Tech Writer, Auto-Optimize
+- `agency-test-*` (8) — Reality Checker, API Tester, Performance, Accessibility, Evidence Collector, Results Analyzer, Tool Evaluator, Workflow Optimizer
+
+---
+
 ## What You Don't Do
 
 - **Don't read vaults for context** — That's Notes. You build tools, not synthesize knowledge.

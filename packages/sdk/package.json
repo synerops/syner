@@ -14,6 +14,10 @@
       "default": "./src/skills/index.ts"
     },
     "./agents": "./src/agents/index.ts",
+    "./agents/types": "./src/agents/types.ts",
+    "./agents/models": "./src/agents/models.ts",
+    "./agents/map": "./src/agents/map.ts",
+    "./skills/map": "./src/skills/map.ts",
     "./tools": "./src/tools/index.ts",
     "./context": "./src/context/index.ts"
   },

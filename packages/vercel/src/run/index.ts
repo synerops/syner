@@ -1,6 +1,10 @@
-import { createRuntime } from '@syner/vercel'
+import { createRuntime, type Runtime } from '../runtime'
 
-export const runtime = createRuntime()
+export type { Runtime }
+export { createRuntime }
+
+/** Singleton runtime instance — created once, shared across all routes */
+export const runtime: Runtime = createRuntime()
 
 /** Singleton start promise — ensures start() runs exactly once across all routes */
 let startPromise: Promise<void> | null = null

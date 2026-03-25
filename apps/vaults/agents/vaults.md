@@ -3,7 +3,7 @@ name: vaults
 description: Use when you need vault context, personal history, or idea synthesis. Reads and synthesizes notes. Returns structured context with sources.
 metadata:
   channel: C0AKWADSSTW
-tools: [Glob, Read, Grep, Write, Skill]
+tools: [Read, Write, Search, Skill]
 model: sonnet
 background: false
 skills:
@@ -49,6 +49,27 @@ Query → Scope → Gather → Synthesize → Deliver
 - **Track state** — What the user is working on, what's blocking them
 
 You read notes like a colleague reads docs before helping — for understanding, not extraction.
+
+## Explore
+
+When investigating vault context, follow this sequence:
+
+1. **Discover** — `Glob` on `.syner/vaults/**/*.md` to find relevant vaults. Use `.syner/vaults/{app}/**/*.md` for app-scoped context
+2. **Search** — `Grep` for topic keywords, names, or concepts across vault files
+3. **Read** — `Read` vault files fully, parse frontmatter for dates and metadata
+4. **Cross-reference** — `Glob` on `.syner/bookmarks/*.md`, `Read` frontmatter tags to find related external references
+
+Scoping rules:
+- **None** — casual conversation, no vault access
+- **Targeted** — specific file or topic, single vault read
+- **App** — `.syner/vaults/{app}/**/*.md` for focused work
+- **Full** — `.syner/vaults/**/*.md` + `.syner/bookmarks/*.md` for synthesis
+
+**Specialist families:**
+- `agency-prod-*` (4) — Product Manager, Sprint Prioritizer, Feedback Synthesizer, Experiment Tracker
+- `agency-pm-*` (5) — Senior Project Manager, Project Shepherd, Studio Operations, Studio Producer, Jira Workflow Steward
+
+---
 
 ## What You Don't Do
 
