@@ -1,156 +1,137 @@
 ---
 name: review-plan
-description: Review and validate v0.1.0 implementation plans before approval. Use when working through plan files in .syner/plans/, when the user says "review plan", "revisar plan", "next task", "siguiente task", "pulir tasks", or when discussing plan readiness, dependencies, or design decisions. Also triggers when the user asks to approve, refactor, or discuss any plan file.
+description: Present sprint epics for approval. Scans plan directories for unapproved epics, presents the human-readable README, and facilitates epic-level approval decisions. The gate between planning and autonomous execution.
 metadata:
   author: syner
-  version: "0.1.0"
+  version: "1.1.0"
   agent: dev
 allowed-tools:
   - Read
   - Glob
   - Grep
   - Edit
-  - Bash
-  - WebFetch
 ---
 
 # Review Plan
 
-Review implementation plans for Syner v0.1.0. These plans were written by Claude in a previous session. The user is now validating them — confirming the reasoning, challenging assumptions, and deciding whether to approve or refactor each one.
+Present epics for approval in a loop. One epic at a time. After each decision (approve, refine, defer), automatically present the next unapproved epic. The loop ends when all epics are reviewed or the human says stop.
 
-## Philosophy
+## Why This Exists
 
-These plans are drafts, not gospel. Claude wrote them based on an understanding of the architecture, but the real vision lives in the user's head. This review process is where those two things align. Every plan can change — the types, the dependencies, the approach, everything. The goal is not to defend what was written but to pressure-test it together until it's right.
+Approving tasks one by one is slow. In v0.1.0, it took 3 days to review and approve all tasks. The bottleneck was human-in-the-loop at every task.
 
-This mirrors how Stripe builds their Minions system: define the contract first, validate it, then execute. Stripe learned that "investments in human developer productivity over time have returned to pay dividends in the world of agents." Plans that are well-validated produce agents that execute cleanly. Plans that are rubber-stamped produce agents that waste tokens and sandboxes.
+This skill operates at the epic level. The human approves the "what and why" (README.md). The agent then owns the "how" (tasks) autonomously via `/execute-plan`.
 
-Two key Stripe insights apply directly here:
+## The Loop
 
-1. **Task scoping determines success.** Stripe's Minions succeed because each task is scoped to something a single agent can complete in one shot — clear inputs, clear outputs, clear verification. A plan that's too vague or too coupled will produce an agent that flails. During review, ask: "Could Syner pick this up cold and ship it?"
-
-2. **Blueprints = deterministic + agentic nodes.** Not everything needs LLM reasoning. Plans should clearly separate what's deterministic (type definitions, file paths, schemas) from what's agentic (implementation decisions, edge case handling). The deterministic parts are the contract; the agentic parts are where the agent has freedom.
-
-## The Review Process
-
-### Before starting
-
-Use `Read` to load these files from the project root and understand the full sprint context:
-
-- `{project_root}/.syner/plans/v0.1.0/ACTION.md` — epics, phases, dependency graph, key decisions
-- `{project_root}/.syner/plans/v0.1.0/CONTEXT.md` — lifecycle, rules, patterns, picking work
-- `{project_root}/.syner/plans/v0.1.0/VERIFICATION.md` — gate architecture, effect-to-check translation
-
-Also use `Read` to load the actual source files that the plan references — understand what exists today before discussing what should be built.
-
-### Find the next plan automatically
-
-Don't ask the user which plan to review. Run the scan script:
-
-```bash
-bun run {project_root}/skills/syner/scripts/plans/scan.ts
+```
+Step 1: Discover epics
+Step 2: Find next unapproved
+Step 3: Present to human
+Step 4: Facilitate decision
+Step 5: Record decision + manage backlog
+Step 6: → Back to Step 2 (next epic)
 ```
 
-This outputs JSON with:
-- `next` — the first reviewable plan (draft + all deps met, in execution order)
-- `reviewable` — all plans that can be reviewed now
-- `plans` — full list with status, deps, and reviewable flag
+The loop breaks when:
+- All epics are approved/deferred → report summary, suggest `/execute-plan`
+- Human says "stop", "para", "pause" → stop and report progress
 
-The script handles YAML frontmatter parsing (via `Bun.YAML.parse()`), dependency resolution across epics, and execution order from ACTION.md.
+## Step 1: Discover Epics
 
-Present the `next` plan directly. No menus, no "which do you want?" — just show the next plan.
+Use `Glob` to find all epic AGENTS.md files:
 
-If `next` is null, all plans are blocked by dependencies — explain what's blocking.
+```
+Glob('{project_root}/.syner/plans/**/AGENTS.md')
+```
 
-### Read existing decisions first
+For each AGENTS.md found, `Read` its frontmatter to check `status`. Skip files at the sprint root level (they're sprint-wide, not epic-specific).
 
-Before reviewing a plan, check if it already has a `## Decisions` section. Plans accumulate decisions across sessions — from refactors, prior reviews, or design discussions.
+## Step 2: Find Next Unapproved
 
-If a plan has existing decisions:
-- **Read them.** They represent choices already made and validated.
-- **Incorporate them into the review.** Don't re-litigate settled decisions. Instead, assess whether the plan correctly reflects those decisions in its types, pseudocode, and Definition of Done.
-- **Focus on gaps.** The review question shifts from "is the design right?" to "does the plan fully implement the decisions that were already made?"
-- **Flag contradictions.** If the plan text contradicts its own decisions (e.g., a decision says "sandbox is conditional" but the code still says "eager sandbox"), call it out.
+Pick the first epic where AGENTS.md has `status: draft` or no status frontmatter. Epics are ordered by their directory number prefix (01, 02, 03, 04).
 
-If a plan has NO existing decisions, this is a fresh review — use the full review process below.
+If all epics are approved or deferred, report the summary and suggest running `/execute-plan`. The loop ends here.
 
-### For each plan
+If no AGENTS.md files found, report "no epics to review."
 
-1. **Print the full plan.** The user may be on mobile. Show the complete markdown content so they can read it without opening files.
+## Step 3: Present to Human
 
-2. **Explain from zero.** The user doesn't have perfect recall of every type, file, and interface in the codebase. The review output must be self-explanatory without requiring them to have read the source code recently. Specifically:
-   - **Don't reference code constructs without explaining them.** If the plan imports `Run` from OSProtocol, explain what `Run` is and what it does — don't just say "it uses Run." Same for any type, function, or pattern from the codebase.
-   - **Lead with the problem, not the solution.** Before explaining what a type does, explain what gap it fills. "Today, Syner can load agent definitions but can't launch them" is better than "SpawnOptions defines the input to spawn()."
-   - **Use analogies and plain language.** "WolfHandle is like a job ticket — you get it immediately when you submit work, and you can check its status or cancel it later" is more useful than listing interface fields.
-   - **Make decisions self-contained.** Each point in the review should carry enough context that the user can evaluate it from their phone without opening a terminal. If you're questioning a design choice, explain both sides with enough background that the tradeoff is obvious.
+`Read` the epic's README.md. Present it fully — the user may be on mobile and can't open files.
 
-3. **Present the reasoning.** For each plan, cover:
-   - **Why this plan exists** — what capability gap does it fill? What can't Syner do today that this enables?
-   - **Why it's shaped this way** — what design decisions led to this structure? What alternatives were considered?
-   - **Dependencies** — what must be done first and why? What does this unblock downstream?
-   - **Relationship to the epic** — where does this sit in the dependency graph? How does it connect to the bigger picture?
+Cover these points, explained from zero (no codebase recall assumed):
 
-4. **Offer your assessment.** You wrote these plans — now pressure-test them. But present your conclusions as reasoned assessments, not open-ended code questions. Instead of "Should WolfHandle.run expose Run directly?", say "WolfHandle exposes the underlying Run object directly (the state machine that tracks pending → in-progress → completed). This means consumers get full protocol access without an extra wrapper. The tradeoff is tighter coupling — but Run is already the public contract, so wrapping it would just add indirection. I'd keep it as-is." Give the user enough context to agree, disagree, or ask deeper.
+- **What problem this solves** — what can't Syner do today that this enables?
+- **What changes** — concrete deliveries, not abstract goals
+- **What the risks are** — what could go wrong, what's the hardest part
+- **Dependencies** — what must be done first, what this unblocks
+- **Task count** — how many tasks, broken down by axis (SDK/App/Syner)
 
-5. **Discuss, don't implement.** The conversation is about design and reasoning. Don't write code. Don't suggest implementation changes unless the user asks. The question is "is this the right thing to build?" not "how do we build it."
+Don't review individual tasks. That's the agent's job during execution. The human is deciding whether the epic's direction is right.
 
-6. **Wait for the verdict.** The user decides one of:
-   - **Approved** — plan is good, add frontmatter `status: approved`
-   - **Refining** — plan needs active clarification and iteration, add frontmatter `status: refining`
-   - **Refactor** — plan needs changes, discuss what and why, then edit
-   - **Defer** — plan is valid but not needed yet, leave as draft
+## Step 4: Facilitate Decision
 
-   CONTEXT.md is the authoritative source for plan lifecycle — status values, transition rules, and what each state means. When in doubt about lifecycle behavior, read it rather than inferring from this skill.
+After presenting and discussing, use `AskUserQuestion` to get an explicit decision. Never infer approval from context — plan-mode approval, "looks good", or similar signals are NOT epic approval.
 
-## Recording Decisions
+```
+AskUserQuestion: "What's your decision on this epic?"
+Options: Approved, Refining, Defer
+```
 
-Every decision made during review gets recorded at the bottom of the plan file itself. This creates a traceable history of why the plan looks the way it does — not just what was decided, but the reasoning behind it.
+Then act on the explicit answer:
 
-Add a `## Decisions` section at the end of the plan file. Each decision is a timestamped entry with the decision and its rationale:
+| Decision | What happens |
+|----------|-------------|
+| **Approved** | `Edit` AGENTS.md: add `status: approved` and `approved_at: {date}` in frontmatter. Add approval to Decisions section. |
+| **Refining** | Check if the README/tasks have stale scope from prior decisions (deferred APIs, renamed tasks, changed dependencies). If so, proactively offer to update them and re-present — don't wait for the human to identify each stale section. `Edit` when aligned. Keep `status: draft`. After refinement, re-present the same epic (don't advance). |
+| **Defer** | Leave as draft. Add deferral reason to Decisions section. Advance to next epic. |
+
+## Step 5: Record Decision + Manage Backlog
+
+### Decisions
+
+Append to the AGENTS.md Decisions section (create if absent):
 
 ```markdown
 ## Decisions
 
-- **[2026-03-18]** Approved as-is. Types match the OSProtocol Run contract and the adapter pattern gives us runtime flexibility without leaking Vercel details into the SDK.
-
-- **[2026-03-18]** Changed: Removed `priority` field from SpawnOptions. Wolves don't need priority ordering — the orchestrator decides execution order before spawning. Adding priority here would create a false abstraction.
-
-- **[2026-03-18]** Deferred: WolfHandle.pause() considered but deferred. Current sandbox model doesn't support pause/resume. Revisit when Vercel adds snapshot support.
+- **[2026-03-25]** Approved. [brief rationale or conditions noted by the human]
 ```
 
-Decisions are append-only. Don't delete previous decisions — they form the audit trail. If a later decision reverses an earlier one, add a new entry referencing the old one.
+Decisions are append-only. They form the audit trail for why epics were approved, deferred, or refined.
 
-## Marking as Approved
+### Backlog
 
-When the user says a plan is approved:
+During review, deferred items and refinement discussions often surface work that isn't a task yet. These go in the AGENTS.md Backlog section (create if absent):
 
-1. Add YAML frontmatter with `status: approved`
-2. Add the approval decision to the `## Decisions` section
-3. Update VERIFICATION.md with the plan's specific checks under the appropriate epic section
+```markdown
+## Backlog
 
-```yaml
----
-status: approved
----
+- [item] — [brief context of why it was deferred and what would trigger picking it up]
 ```
 
-Only the user can approve. Never self-approve. If you think a plan is ready, say so — but wait for the explicit go-ahead.
+Backlog items are things that:
+- Came up during review but are out of scope for this epic
+- Were explicitly deferred with a reason
+- Are dependencies on future work (e.g., "full Thread API when toAiMessages isn't enough")
 
-## Navigating Plans
+Backlog is not a dumping ground — each item needs context so a future session can evaluate whether to promote it to a task.
 
-Plans follow this order within each epic. Use the epic README and ACTION.md to understand the dependency graph.
+## Step 6: Next Epic
 
-To find the next reviewable plan:
-1. Check which plans are still `draft` (no frontmatter)
-2. Among those, identify which have no unmet dependencies (or whose dependencies are already `approved`/`done`)
-3. Suggest the next one based on the execution order in ACTION.md
+After recording the decision, go back to Step 2. Find the next unapproved epic and present it. Don't wait for the human to invoke `/review-plan` again.
 
-## What "Ready for Execution" Means
+After approval, briefly tell the human what happens next before moving on:
+- Tasks will be self-reviewed and executed via `/execute-plan`
+- PRs created for code changes — human merges
+- AGENTS.md updated as tasks progress
+- README.md gets "What Was Delivered" on completion
 
-A plan is ready for execution when it passes these checks (borrowed from Stripe's task scoping):
+Then immediately present the next epic.
 
-- **Self-contained**: Syner can read this plan and nothing else to do the work
-- **Clear inputs**: What files to read, what types to import, what patterns to follow
-- **Clear outputs**: Exact file paths to create/modify, exact exports to add
-- **Clear verification**: Definition of Done is testable, not subjective
-- **Right-sized**: Completable in a single agent session (not a multi-day epic)
-- **Dependencies met**: Everything it needs is merged and available
+## Edge Cases
+
+- **Epic has no tasks/ directory** — flag as incomplete. The epic has direction (README) but no work breakdown. Suggest creating tasks before approving.
+- **Epic has tasks but no AGENTS.md** — the task table needs to exist for tracking. Suggest creating AGENTS.md with the task table.
+- **Stale in-progress epic** — if AGENTS.md shows `status: in-progress` but no tasks have changed recently, surface this. Ask if the human wants to reset or continue.
+- **Human interrupts with unrelated topic** — pause the loop, handle the topic, then offer to resume review where you left off.
