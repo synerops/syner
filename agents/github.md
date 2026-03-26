@@ -1,6 +1,8 @@
 ---
 name: github
 description: Package lead for packages/github. Assign vision-2026 tickets for GitHub App auth, Octokit, comments, issues, and event handling. Works in ~/synerops/worktrees/github worktree.
+metadata:
+  channel: C0ANU5L6Y7P
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---

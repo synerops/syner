@@ -1,6 +1,8 @@
 ---
 name: ui
 description: Package lead for packages/ui. Assign vision-2026 tickets for shared components, branding, slides templates, fonts, and design tokens. Works in ~/synerops/worktrees/ui worktree.
+metadata:
+  channel: C0ANU5L6Y7P
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---

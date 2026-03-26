@@ -1,6 +1,8 @@
 ---
 name: osprotocol
 description: Package lead for packages/osprotocol. Assign vision-2026 tickets for protocol types, validators, Run/Result/Context primitives, and skill manifest parsing. Works in ~/synerops/worktrees/osprotocol worktree.
+metadata:
+  channel: C0ANU5L6Y7P
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---

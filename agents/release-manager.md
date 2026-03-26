@@ -1,6 +1,8 @@
 ---
 name: release-manager
 description: Handles npm releases, changesets, and versioning. Use when publishing packages, creating changesets, debugging release workflows, or setting up npm tokens.
+metadata:
+  channel: C0ANVHN1C8N
 tools: Read, Glob, Grep, Bash, Edit, Write
 memory: project
 model: sonnet

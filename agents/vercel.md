@@ -1,6 +1,8 @@
 ---
 name: vercel
 description: Package lead for packages/vercel. Assign vision-2026 tickets for skill execution, sandbox tools, and AI SDK integration. Works in ~/synerops/worktrees/vercel worktree.
+metadata:
+  channel: C0ANU5L6Y7P
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---

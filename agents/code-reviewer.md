@@ -1,6 +1,8 @@
 ---
 name: code-reviewer
 description: Reviews code for quality, security, and best practices. Detects code type and applies specialized reviews (React/Next.js, UI/accessibility) when applicable.
+metadata:
+  channel: C0ANVHN1C8N
 tools: Read, Glob, Grep, Bash, Skill
 memory: project
 model: sonnet

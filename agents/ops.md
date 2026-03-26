@@ -1,6 +1,8 @@
 ---
 name: ops
 description: Package lead for packages/ops. Assign vision-2026 tickets for friction analysis, self-development evaluation, supervisor decisions, and remote agent invocation. Works in ~/synerops/worktrees/ops worktree.
+metadata:
+  channel: C0ANXKG84TC
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---
