@@ -10,7 +10,7 @@ tools:
   - Bash
 model: sonnet
 metadata:
-  channel: C0ALD7U6ALB
+  channel: C0ANXKG84TC
 skills:
   - syner
   - syner-boundaries

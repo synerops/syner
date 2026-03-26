@@ -1,6 +1,8 @@
 ---
 name: syner-researcher
 description: Research any topic. Has web search for external topics, vault access for internal knowledge.
+metadata:
+  channel: C0ANVHN1C8N
 tools: WebSearch, WebFetch, Glob, Read, Grep, Write
 model: sonnet
 ---

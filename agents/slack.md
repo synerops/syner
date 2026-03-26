@@ -1,6 +1,8 @@
 ---
 name: slack
 description: Package lead for packages/slack — Slack API client, event handling, streaming replies, markdown conversion, and Chat SDK integration.
+metadata:
+  channel: C0ANU5L6Y7P
 tools: [Read, Glob, Grep, Bash, Edit, Write, Task]
 model: opus
 ---

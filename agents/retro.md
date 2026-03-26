@@ -1,6 +1,8 @@
 ---
 name: retro
 description: Leads agentic retrospectives by orchestrating specialists to analyze what agents did in a loop, extract patterns, and produce actionable improvements as GitHub issues. Posts findings to the triggering issue.
+metadata:
+  channel: C0ANXKG84TC
 tools: Read, Glob, Grep, Bash, Skill, Write, Edit
 memory: project
 model: opus
