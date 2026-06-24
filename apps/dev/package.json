@@ -25,7 +25,6 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "swr": "^2.4.1",
-    "@syner/sdk": "workspace:*",
     "syner": "workspace:*",
     "tailwind-merge": "catalog:ui"
   },

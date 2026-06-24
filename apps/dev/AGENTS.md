@@ -91,15 +91,15 @@ Returns this app's own SKILL.md parsed as an osprotocol manifest. Cached in-memo
 2. **Do not assume `/api/skills/resolve` POST is available in production.** It is `force-dynamic` and depends on monorepo filesystem at runtime. In Vercel serverless, the filesystem may not have the full monorepo. Use the static `/api/skills` endpoint for reliable discovery.
 3. **Do not POST to `/api/review/skill` without the `content` field.** `skillPath` is optional metadata. `content` (the raw SKILL.md string) is required.
 4. **Do not expect real-time skill updates.** The catalog is statically generated at build time. New skills appear only after a deploy.
-5. **Skill discovery depends on `@syner/sdk/skills`.** `getSkillsList` and `getSkillBySlug` are the only skill discovery functions. Do not attempt direct filesystem reads from the dev app routes.
+5. **Skill discovery depends on `syner/next`.** `listSkills` and `getSkill` are the route handlers for skill discovery. Do not attempt direct filesystem reads from the dev app routes.
 
 ### Dependencies
 
 | Package | Used for |
 |---------|----------|
-| `@syner/sdk` | `getSkillsList`, `getSkillBySlug`, `groupByCategory` |
+| `syner` | `listSkills`, `getSkill` (`syner/next`); `groupByCategory` (`syner/skills`) |
 | `@syner/osprotocol` | `parseSkillManifest` (review API + agent manifest) |
-| `@syner/ops` | Workspace dependency (not directly used in routes yet) |
+| `@syner/ops` | `evaluate` + self-dev types (`Proposal`, `Evaluation`, `Test`, …) in `lib/self-dev/` |
 
 ---
 

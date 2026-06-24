@@ -1,1 +1,0 @@
-../apps/bot/agents/bot.md
