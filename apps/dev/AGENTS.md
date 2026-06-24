@@ -99,7 +99,7 @@ Returns this app's own SKILL.md parsed as an osprotocol manifest. Cached in-memo
 |---------|----------|
 | `syner` | `listSkills`, `getSkill` (`syner/next`); `groupByCategory` (`syner/skills`) |
 | `@syner/osprotocol` | `parseSkillManifest` (review API + agent manifest) |
-| `@syner/ops` | Workspace dependency (not directly used in routes yet) |
+| `@syner/ops` | `evaluate` + self-dev types (`Proposal`, `Evaluation`, `Test`, …) in `lib/self-dev/` |
 
 ---
 
