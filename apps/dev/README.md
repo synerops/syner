@@ -28,7 +28,7 @@ You'll see the skills catalog on the homepage -- every skill in the monorepo, gr
 ```
 apps/*/skills/*/SKILL.md          (source of truth)
         |
-  @syner/sdk/skills               (getSkillsList, getSkillBySlug)
+  syner/next + syner/skills       (listSkills, getSkill, groupByCategory)
         |
   apps/dev/app/                   (Next.js routes)
         |
