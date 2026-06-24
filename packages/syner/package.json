@@ -14,9 +14,7 @@
     "./skills/types": "./src/skills/types.ts",
     "./protocol": "./src/protocol/index.ts",
     "./registry": "./src/registry/index.ts",
-    "./next": "./src/next/index.ts",
-    "./run": "./src/run/index.ts",
-    "./tools": "./src/tools/index.ts"
+    "./next": "./src/next/index.ts"
   },
   "files": [
     "src"
@@ -27,7 +25,6 @@
   },
   "dependencies": {
     "@syner/osprotocol": "workspace:*",
-    "@syner/vercel": "workspace:*",
     "@ai-sdk/gateway": "catalog:ai",
     "ai": "catalog:ai",
     "glob": "^10.0.0",
