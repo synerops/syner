@@ -192,7 +192,7 @@ Anything else will fail to resolve. Do not use bare `@syner/ui` — there is no 
 | Package | Why |
 |---------|-----|
 | `radix-ui` | Primitives for Separator, Slot (asChild pattern). Provides built-in WAI-ARIA attributes |
-| `lucide-react` | Icon primitives used by components |
+| `@phosphor-icons/react` | Icon set used by components. Import from `@phosphor-icons/react/ssr` (RSC-safe, no IconContext) |
 | `class-variance-authority` | Typed component variants |
 | `clsx` + `tailwind-merge` | Class name composition (`cn()`) |
 | `geist` | Geist font family (Sans, Mono, Pixel variants) |

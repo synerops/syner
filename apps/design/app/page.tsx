@@ -1,19 +1,29 @@
-import { Header } from "@/components/header";
+import { Header } from "@syner/ui/components/header";
+import { Footer } from "@syner/ui/components/footer";
 import { Hero } from "@/components/hero";
-import { Sections } from "@/components/sections";
 import { TechGrid } from "@/components/tech-grid";
-import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header domain="design" githubUrl="https://github.com/synerops/syner" />
       <main className="flex flex-1 flex-col">
         <Hero />
-        <Sections />
         <TechGrid />
       </main>
-      <Footer />
+      <Footer
+        domain="design"
+        tagline="Agentic design system — components that agents understand and generate."
+        columns={[
+          {
+            label: "Project",
+            links: [
+              { label: "GitHub", href: "https://github.com/synerops/syner" },
+              { label: "Docs", href: "https://syner.dev" },
+            ],
+          },
+        ]}
+      />
     </div>
   );
 }

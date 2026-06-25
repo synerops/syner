@@ -6,22 +6,21 @@
 export function GridBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
-      {/* Ultra-minimal diagonal texture */}
+      {/* Ultra-minimal diagonal texture — currentColor adapts per theme (light needs more alpha than dark) */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 text-foreground/[0.06] dark:text-foreground/[0.025]"
         style={{
           backgroundImage:
             "repeating-linear-gradient(315deg, currentColor 0, currentColor 1px, transparent 0, transparent 50%)",
           backgroundSize: "8px 8px",
           backgroundAttachment: "fixed",
-          color: "oklch(from var(--foreground) l c h / 0.02)",
         }}
       />
       {/* Corner markers - just hints */}
-      <div className="absolute left-8 top-8 h-3 w-3 border-l border-t border-foreground/10" />
-      <div className="absolute right-8 top-8 h-3 w-3 border-r border-t border-foreground/10" />
-      <div className="absolute bottom-8 left-8 h-3 w-3 border-b border-l border-foreground/10" />
-      <div className="absolute bottom-8 right-8 h-3 w-3 border-b border-r border-foreground/10" />
+      <div className="absolute left-8 top-8 h-3 w-3 border-l border-t border-foreground/20 dark:border-foreground/10" />
+      <div className="absolute right-8 top-8 h-3 w-3 border-r border-t border-foreground/20 dark:border-foreground/10" />
+      <div className="absolute bottom-8 left-8 h-3 w-3 border-b border-l border-foreground/20 dark:border-foreground/10" />
+      <div className="absolute bottom-8 right-8 h-3 w-3 border-b border-r border-foreground/20 dark:border-foreground/10" />
     </div>
   );
 }

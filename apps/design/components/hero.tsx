@@ -1,8 +1,6 @@
 import { Logo } from "@syner/ui/branding";
 import { Button } from "@syner/ui/components/button";
-import { Input } from "@syner/ui/components/input";
 import { geistPixelSquare } from "@syner/ui/fonts";
-import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   return (
@@ -36,19 +34,9 @@ export function Hero() {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="relative w-full max-w-xs">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
-                $
-              </span>
-              <Input
-                placeholder="explore..."
-                className="h-11 pl-8 font-mono text-sm"
-              />
-            </div>
-            <Button className="gap-2 font-mono text-sm">
-              get started
-              <ArrowRight className="h-4 w-4" />
+          <div className="flex items-center gap-3">
+            <Button disabled className="font-mono text-sm">
+              coming soon
             </Button>
           </div>
         </div>

@@ -26,8 +26,9 @@
     "class-variance-authority": "catalog:ui",
     "clsx": "catalog:ui",
     "geist": "^1.7.2",
-    "lucide-react": "catalog:ui",
-    "radix-ui": "catalog:ui",
+    "@base-ui/react": "catalog:ui",
+    "@phosphor-icons/react": "catalog:ui",
+    "next-themes": "catalog:ui",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "tailwind-merge": "catalog:ui"
