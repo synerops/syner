@@ -60,7 +60,7 @@ function Header({
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-xs font-medium tracking-widest uppercase text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.label}
                 </a>
