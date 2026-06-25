@@ -73,6 +73,7 @@
       "dependencies": {
         "@syner/ops": "workspace:*",
         "@syner/osprotocol": "workspace:*",
+        "@syner/ui": "workspace:*",
         "class-variance-authority": "catalog:ui",
         "clsx": "catalog:ui",
         "fumadocs-core": "^16.6.16",
