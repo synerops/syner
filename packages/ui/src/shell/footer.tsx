@@ -57,7 +57,7 @@ function Footer({
             <div className="flex gap-16">
               {columns.map((col) => (
                 <div key={col.label} className="space-y-3">
-                  <h4 className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+                  <h4 className="text-xs font-medium text-muted-foreground">
                     {col.label}
                   </h4>
                   <ul className="space-y-2">

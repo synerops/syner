@@ -9,6 +9,7 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
+    "./shell/*": "./src/shell/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./fonts": "./src/fonts/index.ts",
     "./fonts/satori": "./src/fonts/satori.ts",

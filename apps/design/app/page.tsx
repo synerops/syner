@@ -1,5 +1,5 @@
-import { Header } from "@syner/ui/components/header";
-import { Footer } from "@syner/ui/components/footer";
+import { Header } from "@syner/ui/shell/header";
+import { Footer } from "@syner/ui/shell/footer";
 import { Hero } from "@/components/hero";
 import { TechGrid } from "@/components/tech-grid";
 
