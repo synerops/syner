@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Berkeley Mono — licensed commercial font, provided locally, never redistributed.
+# Served at /fonts/ when present; falls back to Geist Mono when absent.
+/public/fonts/BerkeleyMono-*.woff2

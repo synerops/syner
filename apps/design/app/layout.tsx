@@ -5,6 +5,7 @@ import {
   geistPixelSquare,
 } from "@syner/ui/fonts";
 import "@syner/ui/globals.css";
+import { ThemeProvider } from "@syner/ui/components/theme-provider";
 import { GridBackground } from "@/components/grid-background";
 
 export const metadata: Metadata = {
@@ -41,11 +42,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable} dark`}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable}`}
     >
       <body className="relative font-sans antialiased">
-        <GridBackground />
-        <div className="relative z-10">{children}</div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GridBackground />
+          <div className="relative z-10">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   );

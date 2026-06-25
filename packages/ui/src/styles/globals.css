@@ -3,8 +3,19 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
-@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../../apps/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
+
+/* Berkeley Mono — syner's mono accent typeface (Regular only; bold synthesizes).
+   Licensed commercial font: NOT committed. Served at /fonts/ by the consuming
+   app when available; falls back to Geist Mono (see --font-mono) when absent. */
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("/fonts/BerkeleyMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   /* Light theme */
@@ -73,7 +84,7 @@
   --color-ring: var(--ring);
   /* Typography */
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: "Berkeley Mono", var(--font-geist-mono), ui-monospace, monospace;
   --font-pixel: var(--font-geist-pixel-square);
   /* Radius */
   --radius-sm: calc(var(--radius) * 0.6);
