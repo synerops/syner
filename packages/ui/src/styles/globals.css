@@ -83,7 +83,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   /* Typography */
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: "Berkeley Mono", var(--font-geist-mono), ui-monospace, monospace;
   --font-pixel: var(--font-geist-pixel-square);
   /* Radius */
@@ -124,4 +124,43 @@
   p, h1, h2, h3, h4, h5, h6, span, a, li, td, th, label, code, pre {
     @apply select-text;
   }
+}
+
+/* Tighter vertical rhythm for prose / long-form docs content. Higher specificity
+   than the typography layer's :where() rules, so it wins wherever a `.prose`
+   block is rendered (e.g. Fumadocs DocsBody) regardless of import order. */
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose :is(p, ul, ol, blockquote) {
+  margin-top: 0.7em;
+  margin-bottom: 0.7em;
+}
+.prose li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+.prose h2 {
+  margin-top: 1.4em;
+  margin-bottom: 0.4em;
+}
+.prose h3 {
+  margin-top: 1.1em;
+  margin-bottom: 0.35em;
+}
+.prose :is(pre, figure, table) {
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+}
+.prose hr {
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+}
+
+/* Flat callouts — drop the border and shadow (keep the fill + accent bar).
+   Targets the Fumadocs Callout via its inline `--callout-color` var, so code
+   blocks (which share border/shadow utilities but not the var) are untouched. */
+.prose [style*="--callout-color"] {
+  border: 0;
+  box-shadow: none;
 }
