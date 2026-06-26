@@ -5,7 +5,7 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-  transpilePackages: ['@syner/osprotocol'],
+  transpilePackages: ['@syner/osprotocol', '@syner/ui'],
   images: {
     formats: ['image/avif', 'image/webp'],
   },

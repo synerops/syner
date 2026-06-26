@@ -1,22 +1,89 @@
 ---
-title: syner.dev
-description: Developer portal for the Syner ecosystem
+title: Introduction
+description: Developer documentation for syner — the agent orchestrator that runs on markdown.
 ---
 
-# syner.dev
+syner is an agent orchestrator that understands your personal context through
+markdown notes. **syner.dev** is its developer portal. Because everything in
+syner is markdown, this page doubles as a tour of what renders here.
 
-Developer documentation, specs, and changelog for the Syner ecosystem.
+## The idea
 
-## What lives here
+A coding agent understands your code. A _context_ agent understands **you** —
+your projects, your decisions, the way you work. You write notes; syner reads
+them as context and orchestrates work on top.
 
-Official, graduated content — specs, guides, and decisions that have been promoted from thinking (vaults) to published documentation.
+<Callout title="No schema">
+Notes are read for understanding, not parsed for fields. Organize however you think.
+</Callout>
 
-## Content pipeline
+## Notes are just markdown
 
+A note can be a thought, a spec, or a running log. Inline you can use `code`,
+**bold**, _italic_, ~~strikethrough~~, and [links](https://syner.dev) — and
+bare URLs autolink, like https://github.com/rbadillap.
+
+### Lists
+
+What you're tracking, however you track it:
+
+- A loose idea
+- A decision, with its _why_
+  - Nested context
+  - And the alternative you rejected
+- A link to follow up
+
+Or a sequence, when order carries meaning:
+
+1. Capture the thought
+2. Let it converge
+3. Ship the artifact
+
+And progress, as a checklist:
+
+- [x] Consume the design system
+- [x] Fix the docs interior
+- [ ] Build Explore
+- [ ] Build the Workbench
+
+### Code
+
+Fenced blocks render in any language, with a title and a copy button:
+
+```md title="notes/today.md"
+# Focus
+Ship the docs. Defer the studio.
 ```
-.syner/vaults/ (thinking)
-  → /grow-note (graduation)
-    → apps/dev/content/ (published)
+
+```ts title="example.ts"
+const note = await read("notes/today.md");
+const plan = orchestrate(note); // context in, action out
 ```
 
-Vaults are private thinking. Content is official documentation.
+```bash title="Terminal"
+syner run triage --repo rbadillap/syner
+```
+
+### Tables
+
+| Surface   | Role                       | Status  |
+| --------- | -------------------------- | ------- |
+| Docs      | How the agentic OS works   | Live    |
+| Explore   | Discover & generate agents | Planned |
+| Workbench | Configure & run an agent   | Planned |
+
+### Callouts
+
+<Callout type="idea" title="Tip">
+Use a callout for the thing that saves someone an hour.
+</Callout>
+
+<Callout type="warn" title="Work in progress">
+These docs are being rebuilt as syner moves onto a new substrate — expect them to grow.
+</Callout>
+
+---
+
+That's the surface. Everything you just read started as a markdown note.[^1]
+
+[^1]: Including this one.

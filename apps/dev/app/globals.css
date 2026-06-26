@@ -1,4 +1,7 @@
 @import "@syner/ui/globals.css";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
 
-/* Scan this app's own files for class usage (design-system source is scanned by @syner/ui). */
+/* Scan this app's sources + Fumadocs UI for class usage. */
 @source "../**/*.{ts,tsx}";
+@source "../node_modules/fumadocs-ui/dist/**/*.js";

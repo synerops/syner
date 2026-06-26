@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { geistSans, geistMono, geistPixelSquare } from "@syner/ui/fonts";
+import { inter, geistMono, geistPixelSquare } from "@syner/ui/fonts";
 import { ThemeProvider } from "@syner/ui/components/theme-provider";
 import { Header } from "@syner/ui/components/header";
 import { Footer } from "@syner/ui/components/footer";
@@ -10,20 +10,12 @@ export const metadata: Metadata = {
   description: "The developer portal for syner.",
 };
 
-const nav = [
-  { label: "Explore", href: "/" },
-  { label: "Docs", href: "/docs" },
-  { label: "Studio", href: "/studio" },
-];
+const nav = [{ label: "Docs", href: "/docs" }];
 
 const footerColumns = [
   {
     label: "Portal",
-    links: [
-      { label: "Explore", href: "/" },
-      { label: "Docs", href: "/docs" },
-      { label: "Studio", href: "/studio" },
-    ],
+    links: [{ label: "Docs", href: "/docs" }],
   },
   {
     label: "Ecosystem",
@@ -44,15 +36,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable}`}
+      className={`${inter.variable} ${geistMono.variable} ${geistPixelSquare.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header
-            domain="dev"
-            nav={nav}
-            githubUrl="https://github.com/rbadillap"
-          />
+          <Header domain="dev" nav={nav} githubUrl="https://github.com/rbadillap" />
           <main className="flex-1">{children}</main>
           <Footer
             domain="dev"
