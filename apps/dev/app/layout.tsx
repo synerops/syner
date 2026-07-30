@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { inter, geistMono, geistPixelSquare } from "@syner/ui/fonts";
 import { ThemeProvider } from "@syner/ui/components/theme-provider";
-import { Header } from "@syner/ui/components/header";
-import { Footer } from "@syner/ui/components/footer";
+import { Header } from "@syner/ui/shell/header";
+import { Footer } from "@syner/ui/shell/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
