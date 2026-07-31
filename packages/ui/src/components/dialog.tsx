@@ -5,7 +5,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@syner/ui/lib/utils"
 import { Button } from "@syner/ui/components/button"
-import { X } from "@phosphor-icons/react/ssr"
+import { X } from "@phosphor-icons/react/dist/ssr/X"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
