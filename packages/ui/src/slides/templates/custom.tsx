@@ -67,7 +67,7 @@ const customTemplate: Template = {
           justifyContent: "center",
         }}
       >
-        {slide.heading && (
+        {slide.heading ? (
           <div
             style={{
               display: "flex",
@@ -78,8 +78,8 @@ const customTemplate: Template = {
           >
             {slide.heading}
           </div>
-        )}
-        {slide.subtitle && (
+        ) : null}
+        {slide.subtitle ? (
           <div
             style={{
               display: "flex",
@@ -90,7 +90,7 @@ const customTemplate: Template = {
           >
             {slide.subtitle}
           </div>
-        )}
+        ) : null}
         {renderContent()}
       </div>
     );

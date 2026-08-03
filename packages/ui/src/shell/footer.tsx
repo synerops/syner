@@ -22,10 +22,13 @@ interface FooterProps extends React.ComponentProps<"footer"> {
   columns?: FooterColumn[]
 }
 
+/** Stable default so callers omitting `columns` don't get a new array identity each render. */
+const EMPTY_COLUMNS: FooterColumn[] = []
+
 function Footer({
   domain,
   tagline,
-  columns = [],
+  columns = EMPTY_COLUMNS,
   className,
   ...props
 }: FooterProps) {

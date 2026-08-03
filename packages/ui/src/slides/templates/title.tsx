@@ -33,7 +33,7 @@ const titleTemplate: Template = {
           padding: style.padding,
         }}
       >
-        {slide.heading && (
+        {slide.heading ? (
           <div
             style={{
               display: "flex",
@@ -45,8 +45,8 @@ const titleTemplate: Template = {
           >
             {slide.heading}
           </div>
-        )}
-        {slide.subtitle && (
+        ) : null}
+        {slide.subtitle ? (
           <div
             style={{
               display: "flex",
@@ -58,7 +58,7 @@ const titleTemplate: Template = {
           >
             {slide.subtitle}
           </div>
-        )}
+        ) : null}
       </div>
     );
   },

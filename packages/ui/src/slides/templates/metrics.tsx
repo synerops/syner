@@ -38,7 +38,7 @@ const metricsTemplate: Template = {
           padding: style.padding,
         }}
       >
-        {slide.heading && (
+        {slide.heading ? (
           <div
             style={{
               display: "flex",
@@ -49,7 +49,7 @@ const metricsTemplate: Template = {
           >
             {slide.heading}
           </div>
-        )}
+        ) : null}
         <div
           style={{
             display: "flex",

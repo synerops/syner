@@ -35,7 +35,7 @@ const highlightsTemplate: Template = {
           padding: style.padding,
         }}
       >
-        {slide.heading && (
+        {slide.heading ? (
           <div
             style={{
               display: "flex",
@@ -46,7 +46,7 @@ const highlightsTemplate: Template = {
           >
             {slide.heading}
           </div>
-        )}
+        ) : null}
         <div
           style={{
             display: "flex",

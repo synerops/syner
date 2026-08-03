@@ -26,9 +26,12 @@ interface HeaderProps extends React.ComponentProps<"header"> {
   themeToggle?: boolean
 }
 
+/** Stable default so callers omitting `nav` don't get a new array identity each render. */
+const EMPTY_NAV: NavItem[] = []
+
 function Header({
   domain,
-  nav = [],
+  nav = EMPTY_NAV,
   githubUrl,
   actions,
   homeHref = "/",

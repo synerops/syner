@@ -35,7 +35,7 @@ const outlookTemplate: Template = {
           justifyContent: "center",
         }}
       >
-        {slide.heading && (
+        {slide.heading ? (
           <div
             style={{
               display: "flex",
@@ -46,8 +46,8 @@ const outlookTemplate: Template = {
           >
             {slide.heading}
           </div>
-        )}
-        {slide.subtitle && (
+        ) : null}
+        {slide.subtitle ? (
           <div
             style={{
               display: "flex",
@@ -58,8 +58,8 @@ const outlookTemplate: Template = {
           >
             {slide.subtitle}
           </div>
-        )}
-        {body && (
+        ) : null}
+        {body ? (
           <div
             style={{
               display: "flex",
@@ -70,7 +70,7 @@ const outlookTemplate: Template = {
           >
             {body}
           </div>
-        )}
+        ) : null}
       </div>
     );
   },

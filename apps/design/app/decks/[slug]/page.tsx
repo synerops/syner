@@ -15,9 +15,9 @@ export default async function DeckPage({
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-bold tracking-tight">{page.data.title}</h1>
-      {page.data.description && (
+      {page.data.description ? (
         <p className="mt-2 text-zinc-500">{page.data.description}</p>
-      )}
+      ) : null}
       <div className="prose mt-8 dark:prose-invert">
         <MDX />
       </div>
