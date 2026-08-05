@@ -1,6 +1,7 @@
 "use client"
 
-import { Moon, Sun } from "@phosphor-icons/react/ssr"
+import { Moon } from "@phosphor-icons/react/dist/ssr/Moon"
+import { Sun } from "@phosphor-icons/react/dist/ssr/Sun"
 import { useTheme } from "next-themes"
 
 import { Button } from "@syner/ui/components/button"
