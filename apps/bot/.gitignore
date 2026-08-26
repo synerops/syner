@@ -1,5 +1,0 @@
-.vercel
-.env*.local
-
-vaults/*
-!vaults/bot

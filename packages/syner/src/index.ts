@@ -1,17 +1,28 @@
-// Agents
-export { AgentsMap } from './agents'
-export type { AgentCard, Agent, AgentCardOutput, GenerateResult, GenerateOptions } from './agents'
-export { resolveModel, MODEL_IDS, FALLBACK_MODELS, type ModelTier } from './agents'
+/**
+ * Syner - The Orchestrator Agent of Syner OS
+ *
+ * Provides the Syner class and singleton for AI-powered orchestration.
+ */
 
-// Skills
-export { SkillsMap, type CommandInfo } from './skills'
-export type { Skill } from './skills'
-export { groupByCategory } from './skills'
-
-// Protocol
 export {
-  type ContextSource, type Context, createContext,
-  type Precondition, type Effect, type Action, createAction, checkPreconditions,
-  type Assertion, type Escalation, type Verification, verify, escalate,
-  type Result, createResult,
-} from './protocol'
+  // Main exports
+  syner,
+  Syner,
+  models,
+  // Types
+  type AgentCard,
+  type GenerateOptions,
+  type GenerateResponse,
+  type StreamOptions,
+  type StreamResponse,
+} from './brain'
+
+// Re-export prompts utilities
+export { instructions } from './prompts'
+
+// Intent classification
+export { classify, type Intent, type PlanSuggestion } from './intent'
+
+// Tools
+export { createMemoryTool, type MemoryInput } from './tools/memory'
+export { createPlanTool, type PlanInput, type Workflow } from './tools/plan'

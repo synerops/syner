@@ -1,9 +1,10 @@
 {
   "extends": "@syner/typescript/base",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
+    "incremental": false,
+    "baseUrl": ".",
+    "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "*.ts"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
 }

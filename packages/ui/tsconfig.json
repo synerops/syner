@@ -1,17 +1,11 @@
 {
-  "extends": "@syner/typescript/base",
+  "extends": "@syner/typescript/react",
   "compilerOptions": {
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
-    "noEmit": true,
-    "outDir": null,
-    "rootDir": null,
-    "declaration": false,
-    "declarationMap": false,
+    "baseUrl": ".",
     "paths": {
       "@syner/ui/*": ["./src/*"]
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

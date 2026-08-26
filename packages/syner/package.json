@@ -1,50 +1,57 @@
 {
   "name": "syner",
-  "prettier": "@syner/prettier",
-  "version": "0.0.1",
-  "description": "Lightweight runtime types and helpers for the Syner ecosystem",
-  "license": "MIT",
+  "version": "0.0.0-dev.1",
+  "description": "Syner - The Orchestrator Agent for Syner OS",
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agents": "./src/agents/index.ts",
-    "./agents/types": "./src/agents/types.ts",
-    "./agents/models": "./src/agents/models.ts",
-    "./skills": "./src/skills/index.ts",
-    "./skills/types": "./src/skills/types.ts",
-    "./protocol": "./src/protocol/index.ts",
-    "./registry": "./src/registry/index.ts",
-    "./next": "./src/next/index.ts"
+  "private": false,
+  "sideEffects": false,
+  "license": "MIT",
+  "prettier": "@syner/prettier",
+  "author": {
+    "name": "SynerOps, Inc",
+    "email": "info@synerops.com",
+    "url": "https://synerops.com"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "src"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "clean": "rm -rf dist .turbo",
+    "syner": "bun run cli.ts"
   },
   "dependencies": {
-    "@syner/osprotocol": "workspace:*",
-    "@ai-sdk/gateway": "catalog:ai",
-    "ai": "catalog:ai",
-    "glob": "^10.0.0",
-    "zod": "catalog:ai",
+    "ai": "catalog:aisdk",
     "gray-matter": "^4.0.3"
+  },
+  "peerDependencies": {
+    "zod": "catalog:aisdk"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
+    "@syner/github": "workspace:*",
+    "@syner/prettier": "workspace:*",
+    "@syner/sdk": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/bun": "*",
     "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tsup": "^8.5.0",
     "typescript": "catalog:"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/synerops/syner.git",
-    "directory": "packages/syner"
   }
 }

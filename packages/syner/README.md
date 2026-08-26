@@ -1,115 +1,78 @@
-# @syner/sdk
+# syner
 
-> Core runtime library for the Syner ecosystem: resolves intents to skills, loads vault context, discovers agents, and bridges execution.
+The orchestrator agent of Syner OS.
 
-## Quick Start
+## Install
 
-```jsonc
-// package.json (workspace dependency)
-"@syner/sdk": "workspace:*"
+```bash
+npm install syner
 ```
-
-```typescript
-import { execute } from '@syner/sdk'
-import { resolveSkill } from '@syner/sdk/skills'
-import { getAgentByName, getModel } from '@syner/sdk/agents'
-import { FileSystemVaultStore, resolveContext } from '@syner/sdk/context'
-```
-
-## Key Features
-
-- **Skill resolution** -- resolve natural language or `/slash-command` intents to skills with confidence scoring
-- **Vault context** -- load markdown notes from local filesystem or Vercel Blob, scoped by app or query
-- **Agent registry** -- discover agents from `agents/*.md` frontmatter, with model selection via AI Gateway
-- **Execution bridge** -- full pipeline from intent to skill execution with context injection
 
 ## Usage
 
-### Resolve a skill
-
 ```typescript
-import { resolveSkill } from '@syner/sdk/skills'
+import { syner } from 'syner'
 
-const match = await resolveSkill('/app/root', '/find-ideas')
-// => { slug: 'find-ideas', confidence: 1.0, skill: {...}, reason: 'Exact match: ...' }
-
-const fuzzy = await resolveSkill('/app/root', 'find ideas about orchestration')
-// => { slug: 'find-ideas', confidence: 0.8, skill: {...}, reason: 'Fuzzy match on ...' }
-```
-
-### Load vault context
-
-```typescript
-import { FileSystemVaultStore, resolveContext } from '@syner/sdk/context'
-
-const store = new FileSystemVaultStore('.syner/vaults')
-const brief = await resolveContext({ scope: 'app', app: 'vaults' }, store)
-// brief.content => assembled markdown
-// brief.sources => ['vaults/ideas.md', ...]
-```
-
-### Execute the full pipeline
-
-```typescript
-import { execute } from '@syner/sdk'
-import { executeSkill } from '@syner/vercel'
-
-const result = await execute({
-  intent: '/find-ideas',
-  task: 'Find ideas about orchestration',
-  executor: executeSkill,
-  executorOptions: { repoRoot, tools, model },
-  projectRoot,
-  vaultStore: new FileSystemVaultStore('.syner/vaults'),
-  contextScope: 'targeted',
+const { text } = await syner.generate({
+  prompt: 'Help me plan this migration',
 })
 ```
 
-### Agent model selection
+With extension instructions:
 
 ```typescript
-import { getAgentByName, getModel } from '@syner/sdk/agents'
+import { syner } from 'syner'
+import { synerMd } from '@syner/slack'
 
-const agent = await getAgentByName(projectRoot, 'syner')
-const model = getModel(agent)  // returns LanguageModel via @ai-sdk/gateway
+const { text } = await syner.generate({
+  prompt: event.text,
+  md: synerMd,
+  tools: { ... },
+})
 ```
 
-## Import Paths
+## CLI
 
-| Path | Contents |
-|------|----------|
-| `@syner/sdk` | Root barrel -- `execute`, `logger`, errors |
-| `@syner/sdk/skills` | Skill registry, resolver, types |
-| `@syner/sdk/agents` | Agent registry, model selection |
-| `@syner/sdk/context` | VaultStore, context resolution, Brief |
-| `@syner/sdk/logger` | Structured JSON logger |
-| `@syner/sdk/errors` | WebhookError, AuthError, ValidationError, ConfigError |
+From the monorepo root:
 
-Browser-safe: `@syner/sdk/skills` exports types and `groupByCategory` only (no Node.js dependencies).
+```bash
+# Interactive REPL
+bun syner
 
-## Dependencies
+# One-shot
+echo "Create a plan for OAuth" | bun syner
+```
 
-| Package | Why |
-|---------|-----|
-| `@syner/osprotocol` | `SkillManifest` type, `parseSkillManifest()` for SKILL.md parsing |
-| `ai` | `LanguageModel` type for `getModel()` return |
-| `@ai-sdk/anthropic` | Anthropic provider for model instantiation |
-| `@ai-sdk/gateway` | AI Gateway for model routing with fallbacks |
-| `glob` | Filesystem glob for skill and agent discovery |
-| `gray-matter` | YAML frontmatter parsing for skills and agents |
-| `picomatch` | Glob pattern matching in `BlobVaultStore` |
-| `@vercel/blob` (optional peer) | Required only if using `BlobVaultStore` |
+## API
 
-## Status
+### `syner.ask(prompt)`
 
-| Component | State | Notes |
-|-----------|-------|-------|
-| Skill loader/resolver | Production | Used in bot + dev apps in deployed E2E flows |
-| Vault context resolution | Production | Keyword filtering is functional but basic |
-| Agent card registry | Production | Powers Slack routing and model selection |
-| Execution bridge | Production | Ships in E2E Slack orchestration |
-| FileSystemVaultStore | Production | Local development and CI |
-| BlobVaultStore | Experimental | Interface stable, not yet deployed in serverless |
-| Fuzzy resolver | Functional | Token overlap only, no semantic matching |
+Main entry point with intent classification and orchestration:
 
-See [AGENTS.md](./AGENTS.md) for the full API reference, type definitions, and constraints.
+```typescript
+const { text } = await syner.ask('Create a plan for OAuth')
+```
+
+Persists sessions to `.syner/` in the git root.
+
+### `syner.generate(options)`
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `prompt` | `string` | User prompt |
+| `md` | `string?` | Extension instructions |
+| `tools` | `Record<string, Tool>?` | Additional tools |
+| `maxSteps` | `number?` | Max steps (default: 20) |
+| `model` | `string?` | Override model |
+
+### `syner.stream(options)`
+
+Same as generate, but returns `{ textStream }`. No tools support.
+
+### `syner.card`
+
+Agent metadata: `{ name, description, model, content }`
+
+## License
+
+MIT
