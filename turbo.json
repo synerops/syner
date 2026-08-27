@@ -1,25 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [
-    "ANTHROPIC_API_KEY",
-    "GITHUB_WEBHOOK_SECRET",
-    "GITHUB_APP_ID",
-    "GITHUB_APP_INSTALLATION_ID",
-    "GITHUB_APP_PRIVATE_KEY",
-    "SLACK_BOT_TOKEN",
-    "SLACK_SIGNING_SECRET",
-    "GITHUB_APP_PEM_PATH"
-  ],
+  "globalEnv": ["ANTHROPIC_API_KEY", "AI_GATEWAY_API_KEY"],
   "globalPassThroughEnv": [
     "SKIP_ENV_VALIDATION",
-    "VERCEL_PROJECT_PRODUCTION_URL",
-    "VERCEL_AUTOMATION_BYPASS_SECRET",
     "PORT",
-    "SYNER_BOT_URL",
     "VERCEL_URL",
-    "AI_GATEWAY_API_KEY",
-    "SANDBOX_REPO",
-    "SANDBOX_BRANCH"
+    "VERCEL_PROJECT_PRODUCTION_URL",
+    "VERCEL_AUTOMATION_BYPASS_SECRET"
   ],
   "tasks": {
     "dev": {
@@ -27,6 +14,7 @@
       "persistent": true
     },
     "build": {
+      "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "start": {

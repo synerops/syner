@@ -36,15 +36,14 @@
     "syner": "bun run cli.ts"
   },
   "dependencies": {
-    "ai": "catalog:aisdk",
+    "ai": "^6",
     "gray-matter": "^4.0.3"
   },
   "peerDependencies": {
-    "zod": "catalog:aisdk"
+    "zod": "^4"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
-    "@syner/github": "workspace:*",
     "@syner/prettier": "workspace:*",
     "@syner/sdk": "workspace:*",
     "@syner/typescript": "workspace:*",

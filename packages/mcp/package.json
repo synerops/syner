@@ -40,12 +40,11 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@syner/github": "workspace:*",
     "@syner/sdk": "workspace:*"
   },
   "peerDependencies": {
-    "ai": "catalog:aisdk",
-    "zod": "catalog:aisdk"
+    "ai": "^6",
+    "zod": "^4"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",

@@ -1,76 +1,64 @@
 # @syner/ui
 
-## What is @syner/ui?
-
-The UI package provides shared components and design system for all Syner OS applications. It ensures visual consistency across the ecosystem with a unified set of primitives built on Radix UI and Tailwind CSS.
-
-Components are designed to be accessible, themeable, and composable. The package exports everything needed to build Syner applications: components, styles, utilities, and branding assets.
-
-## Installation
-
-```bash
-bun add @syner/ui
-```
+Shared design system for Syner apps. Primitives come from
+[coss ui](https://coss.com/ui) — Base UI components styled with Tailwind v4 —
+installed as source through the shadcn CLI, plus Syner branding and fonts.
 
 ## Usage
 
-### 1. Import Global Styles
-
-In your app's root layout:
+Import the global styles once in the app's root layout, then import components
+by subpath.
 
 ```tsx
+// app/layout.tsx
+import { brand } from '@syner/ui/branding'
+import { fonts } from '@syner/ui/lib/fonts'
 import '@syner/ui/globals.css'
-```
 
-### 2. Use Components
+export const metadata = { title: brand.name, description: brand.tagline }
 
-```tsx
-import { Button } from '@syner/ui/components/button'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@syner/ui/components/tooltip'
-import { Toaster, toast } from '@syner/ui/components/sonner'
-
-// Wrap app with TooltipProvider
-function App() {
+export default function RootLayout({ children }) {
   return (
-    <TooltipProvider>
-      <Button onClick={() => toast.success('Hello!')}>
-        Click me
-      </Button>
-      <Toaster />
-    </TooltipProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={fonts}>{children}</body>
+    </html>
   )
 }
 ```
 
-### 3. Branding
-
 ```tsx
-import { Logo, Wordmark, Logomark } from '@syner/ui/branding/logo'
+import { Button } from '@syner/ui/components/button'
+import { Logo } from '@syner/ui/branding'
 
-<Logo />      // Full logo with wordmark
-<Wordmark />  // Text only
-<Logomark />  // Icon only
+<Button render={<a href="/docs" />}>
+  <Logo data-icon="inline-start" />
+  Docs
+</Button>
 ```
 
-## API
+## What's inside
 
-### Components
+| Export | Contents |
+|--------|----------|
+| `@syner/ui/globals.css` | Tailwind v4 entry and coss tokens (light and dark) |
+| `@syner/ui/components/*` | 54 coss primitives: button, dialog, sidebar, table, toast, … |
+| `@syner/ui/hooks/*` | `use-media-query` |
+| `@syner/ui/lib/utils` | `cn()` |
+| `@syner/ui/lib/fonts` | Roboto, Roboto Mono, Roboto Serif via `next/font/local` |
+| `@syner/ui/branding` | `brand`, `Logo`, `colors`, favicon and logo assets |
 
-| Component | Description |
-|-----------|-------------|
-| `Button` | Primary action button with variants |
-| `Tooltip` | Accessible tooltip with Radix |
-| `Toaster` | Toast notifications with Sonner |
+## Adding components
 
-### Utilities
+Run the CLI from an app. Its `components.json` points `ui`, `lib`, and `hooks`
+at this package, so the files are written here.
 
-| Export | Purpose |
-|--------|---------|
-| `cn()` | Merge Tailwind classes with clsx + tailwind-merge |
-| `globals.css` | Base styles, CSS variables, animations |
+```bash
+cd apps/web
+bunx --bun shadcn@latest add @coss/combobox
+```
 
 ## Related
 
-- [Design System](../../apps/design) - Interactive component documentation
-- [Radix UI](https://radix-ui.com) - Accessible primitives
-- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS
+- [coss ui](https://coss.com/ui) — component docs and examples
+- [Base UI](https://base-ui.com) — the unstyled primitives underneath
+- [shadcn CLI](https://ui.shadcn.com/docs/cli) — `add`, `view`, `--diff`

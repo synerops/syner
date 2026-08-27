@@ -55,23 +55,21 @@
     "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "clean": "rm -rf dist .turbo"
   },
-  "dependencies": {
-    "@osprotocol/schema": "catalog:osprotocol"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "ai": "catalog:aisdk",
-    "zod": "catalog:aisdk"
+    "ai": "^6",
+    "zod": "^4"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
     "@types/bun": "*",
-    "ai": "catalog:aisdk",
+    "ai": "^6",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:",
-    "zod": "catalog:aisdk"
+    "zod": "^4"
   }
 }

@@ -1,48 +1,63 @@
 # @syner/ui
 
-Shared UI components and design system for Syner OS applications.
+Design system for Syner apps. The primitives come from the coss registry
+(`@coss`, Base UI + Tailwind v4) and live here as source, not as a dependency.
 
 ## Exports
 
-```typescript
-// Styles (import in app layout)
-import '@syner/ui/globals.css'
-
-// Components
+```ts
+import '@syner/ui/globals.css'                    // once, in the root layout
 import { Button } from '@syner/ui/components/button'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@syner/ui/components/tooltip'
-import { Toaster, toast } from '@syner/ui/components/sonner'
-
-// Branding
-import { Logo, Wordmark, Logomark } from '@syner/ui/branding/logo'
-
-// Utilities
+import { useMediaQuery } from '@syner/ui/hooks/use-media-query'
 import { cn } from '@syner/ui/lib/utils'
+import { fonts } from '@syner/ui/lib/fonts'        // Roboto variable fonts, local
+import { brand, Logo, colors } from '@syner/ui/branding'
 ```
 
-## Key Files
+## Layout
 
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `src/styles/globals.css` | Base styles, CSS variables, Tailwind |
-| `src/components/button.tsx` | Button with variants (default, destructive, outline, ghost, link) |
-| `src/components/tooltip.tsx` | Radix tooltip wrapper |
-| `src/components/sonner.tsx` | Toast notifications |
-| `src/branding/logo.tsx` | Logo components |
-| `src/lib/utils.ts` | `cn()` classname utility |
+| `src/styles/globals.css` | Tailwind entry, coss tokens (`:root`, `.dark`, `@theme inline`), font mapping |
+| `src/components/*.tsx` | coss primitives, one file per component |
+| `src/hooks/*.ts` | coss hooks |
+| `src/lib/utils.ts` | `cn()` |
+| `src/lib/fonts.ts` | `next/font/local` for Roboto, Roboto Mono, Roboto Serif |
+| `src/branding/` | `brand` (name, tagline), `Logo`, `colors`, favicon and logo assets |
+| `components.json` | shadcn config: style `base-nova`, aliases `@syner/ui/*` |
+
+## Adding or updating components
+
+Run the shadcn CLI from an app, not from this package. The app's
+`components.json` aliases `ui`, `lib`, and `hooks` to `@syner/ui/*`, so files
+land in `src/` here and imports are rewritten to `@syner/ui/...`.
+
+```bash
+cd apps/web
+bunx --bun shadcn@latest add @coss/<component>
+bunx --bun shadcn@latest add @coss/<component> --diff   # preview an update
+```
 
 ## Rules
 
-**MUST:**
-- Import styles via `@syner/ui/globals.css` in app layout
-- Use `TooltipProvider` at app root for tooltips
-- Use subpath imports (`@syner/ui/components/button`)
+**MUST**
 
-**NEVER:**
-- Import from package root (`@syner/ui`)
-- Define component styles outside this package
-- Use raw Radix components directly (use wrappers)
+- Import styles once via `@syner/ui/globals.css` in the app root layout.
+- Use subpath imports (`@syner/ui/components/button`), never the package root.
+- Use the `render` prop for custom triggers (Base UI), not `asChild`.
+- Keep npm dependencies in the root `catalog`/`catalogs`; reference them as
+  `catalog:` or `catalog:ui` here.
 
-**SHOULD:**
-- Use `cn()` for conditional classnames
-- Follow existing variant patterns when adding components
+**NEVER**
+
+- Import `@base-ui/react` from an app; consume the wrappers in `src/components`.
+- Add a font package. Fonts are local files under `src/fonts`; the coss tokens
+  `--font-sans`, `--font-mono`, and `--font-heading` map to them in
+  `globals.css`.
+- Hand-edit the `@theme inline` color mappings; let the CLI merge them.
+
+**SHOULD**
+
+- Use `cn()` for conditional classes.
+- Use semantic tokens (`bg-background`, `text-muted-foreground`), not raw
+  colors.

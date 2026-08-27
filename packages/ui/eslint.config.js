@@ -1,6 +1,5 @@
-import baseConfig from "@syner/eslint-config/base";
-import reactConfig from "@syner/eslint-config/react";
-import a11yConfig from "@syner/eslint-config/a11y";
+import baseConfig from "@syner/eslint/base"
+import reactConfig from "@syner/eslint/react"
 
 /** @type {import('typescript-eslint').Config} */
 export default [
@@ -9,5 +8,4 @@ export default [
   },
   ...baseConfig,
   ...reactConfig,
-  ...a11yConfig,
-];
+]

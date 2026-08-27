@@ -1,5 +1,5 @@
 {
-  "extends": "@syner/typescript/react",
+  "extends": "@syner/typescript/nextjs",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
