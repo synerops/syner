@@ -15,10 +15,12 @@
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
+    "@phosphor-icons/react": "catalog:ui",
     "@syner/ui": "workspace:*",
     "next": "catalog:react19",
     "react": "catalog:react19",
-    "react-dom": "catalog:react19"
+    "react-dom": "catalog:react19",
+    "shadcn": "catalog:ui"
   },
   "devDependencies": {
     "@syner/eslint": "workspace:*",

@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "prettier": "@syner/prettier",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -14,10 +16,10 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:ui",
-    "@daypicker/react": "catalog:ui",
+    "@phosphor-icons/react": "catalog:ui",
     "class-variance-authority": "catalog:ui",
     "clsx": "catalog:ui",
-    "lucide-react": "catalog:ui",
+    "next-themes": "catalog:ui",
     "tailwind-merge": "catalog:ui",
     "tw-animate-css": "catalog:ui"
   },
@@ -30,7 +32,6 @@
     "@syner/eslint": "workspace:*",
     "@syner/prettier": "workspace:*",
     "@syner/typescript": "workspace:*",
-    "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
@@ -43,8 +44,6 @@
     "typescript": "catalog:"
   },
   "exports": {
-    "./globals.css": "./src/styles/globals.css",
-    "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
