@@ -1,52 +1,48 @@
 # src
 
-The business modules of Syner. Every folder is a node; every node carries
-`index.ts`, `README.md`, and `AGENTS.md`. Nothing lives outside a node.
+Spec first, code later. Every `.ts` file is empty; `index.ts` is the
+provisional marker of a route. Nothing here presents a placeholder as
+implemented.
 
-## Kinds of node
+## Layers
 
-- **module**: groups things (compute, storage, identity). `index` is the
-  public door of the module. Children are things and `ports`.
-- **thing**: something the cloud keeps (apps, versions, executions). Named
-  in the plural. `index` holds the schema. Children are verbs and owned
-  things.
-- **verb**: one use case on the parent thing (create, rollback, evaluate).
-  Named in the singular. `index` holds the use case.
-- **ports**: one per module. `index` declares the interfaces the module
-  needs from infrastructure.
+- `apps.ts`, `compute.ts`, `storage.ts`, `connections.ts`, `jobs.ts`: the
+  library entries of the five capabilities. Empty in this stage.
+- [api/](api/AGENTS.md): external entries the server recognizes by file-based
+  routing, over HTTP: `GET` reads, `POST` creates, `PUT` replaces, `PATCH`
+  changes part, `DELETE` removes, and cancel is `PATCH` on a `/cancel` route.
+  Only a folder with `index.ts` under `api/` is exposed. A folder in `lib/`,
+  a schema, or a Markdown file is never an endpoint by itself.
+- [lib/](lib/AGENTS.md): models, use cases, shared rules, and the interfaces
+  infrastructure implements. Capabilities and shared responsibilities sit as
+  siblings; their documents say which is which.
+- `utils/`: technical helpers with no business knowledge. Created only when
+  one is identified. Permissions, organizations, and usage never go there.
 
-When a module is a single thing, the module folder is the thing: apps,
-connections, jobs, organizations, permissions, ops, usage, activity,
-purpose.
+## Dependency direction
 
-## Verb vocabulary
+`api/` calls `lib/`. The five entries re-export `lib/`. `lib/` modules call
+each other through their models and use cases. Neither `lib/` nor the five
+entries import `api/`. The server process, `apps/api`, is the one place that
+loads the entries in `api/`; that mechanism is not implemented.
 
-One word, one meaning, everywhere: `create` brings a thing into existence;
-`get` reads one; `list` reads a page; `update` changes a definition;
-`remove` takes a thing away; `put` and `set` write whole values; `add` puts
-a member in; `start` and `cancel` begin and stop long-running things;
-`grant` and `revoke` give and take access; `authorize` decides; `record`
-appends a fact; `declare` and `evaluate` belong to purpose; `rollback`
-belongs to deployments.
+## Rules every use case obeys
 
-## Rules that hold in every verb
-
-- Authorization goes through [permissions/authorize](permissions/authorize/AGENTS.md),
+- Authorization goes through [lib/permissions](lib/permissions/AGENTS.md),
   deny by default. The acting principal comes from the request context.
-- Every mutation appends an [activity](activity/record/AGENTS.md) entry.
-- A verb that outlives its request returns an [operation](ops/AGENTS.md)
-  reference. Executions and job runs carry their own status instead.
-- Consumption is recorded in [usage](usage/record/AGENTS.md) by the use case
+- Every mutation appends an entry in [lib/activity](lib/activity/AGENTS.md).
+- Work that outlives a request returns a reference from
+  [lib/operations](lib/operations/AGENTS.md). Executions and job runs carry
+  their own status instead.
+- Consumption is recorded in [lib/usage](lib/usage/AGENTS.md) by the use case
   that caused it.
-- Schemas and types live in the thing's `index`; verbs import them, never
-  redefine them.
-- Modules import each other only through their `index`.
+- Schemas and types live with their owner. There is no central `contracts`
+  or `schemas` package.
 
-## Modules
+## Open decisions
 
-[apps](apps/AGENTS.md), [compute](compute/AGENTS.md),
-[storage](storage/AGENTS.md), [connections](connections/AGENTS.md),
-[jobs](jobs/AGENTS.md), [organizations](organizations/AGENTS.md),
-[identity](identity/AGENTS.md), [permissions](permissions/AGENTS.md),
-[ops](ops/AGENTS.md), [usage](usage/AGENTS.md),
-[activity](activity/AGENTS.md), [purpose](purpose/AGENTS.md).
+Decided: the API is HTTP with the methods above. Not to be chosen implicitly
+by scaffolding: handler names and signatures; discovery, loading, and
+validation of routes; transport of the organization context; publication or
+generation of schemas and SDK; framework, providers, database, queue, and
+authentication.

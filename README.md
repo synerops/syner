@@ -41,10 +41,12 @@ own, and an app can use all of them.
 
 Syner OS answers five questions about your apps: Is it working? What
 changed? What is it costing? Who has access? Is it fulfilling its
-purpose? The controls behind those answers apply across every
-capability: organizations, identity, permissions, operations, usage,
-activity, and purpose. When an agent acts for you, it does so with your
-identity and within your permissions, and the activity log says so.
+purpose? The controls behind the first four apply across every
+capability: organizations, identity, permissions, operations, usage, and
+activity. What an app is for is part of the app's own spec; how to measure
+whether it fulfills it is not decided yet. When an agent acts for you, it
+does so with your identity and within your permissions, and the activity
+log says so.
 
 ## Syner, the agent
 
@@ -76,7 +78,7 @@ package but `syner` lives under the `@syner` scope.
 | Path | What runs or lives there |
 |---|---|
 | `apps/api` | Administration API |
-| `apps/worker` | Durable platform work |
+| `jobs/worker` | Durable platform work |
 | `apps/app` | Syner OS, at syner.app |
 | `apps/bot` | Syner Bot, at syner.bot |
 | `apps/web` | Public site |

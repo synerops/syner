@@ -18,7 +18,7 @@ boundary, not a behavior.
 - packages/cloud (@syner/cloud) owns the business: the five capabilities,
   the shared controls, and the interfaces infrastructure implements.
 - packages/infrastructure implements persistence and provider interfaces.
-- apps/api exposes the one public administration contract. apps/worker
+- apps/api exposes the one public administration contract. jobs/worker
   executes durable work. These two processes are the only importers of
   cloud and infrastructure.
 - packages/sdk (@syner/sdk) is the typed mirror of the API. Every client
@@ -30,13 +30,16 @@ boundary, not a behavior.
 ## Naming
 
 Naming follows Vercel. The unscoped package is what people type: `syner`.
-Everything else lives under @syner/*. Commands read
-`syner <resource> <verb>`; the SDK reads `syner.<resource>.<verb>()`;
-resources are the same nouns as the folders in packages/cloud/src.
+Everything else lives under @syner/*. The public API is defined by the
+file-based routes under packages/cloud/src/api; a folder elsewhere, a schema,
+or a Markdown file is never an endpoint by itself. The CLI's agreed default
+is `syner apps` for the apps running in the selected context and
+`syner apps --all` for every app with its status.
 
 ## Open decisions
 
-The API protocol and schema publication, the database, the cloud
-providers, the queue, the authentication provider, and the agent framework
-are open. Scaffolding keeps them open: a placeholder that implies one of
+The API is HTTP, with file-based routes and the methods fixed in
+packages/cloud/src/api. Still open: schema publication, the database, the
+cloud providers, the queue, the authentication provider, and the agent
+framework. Scaffolding keeps them open: a placeholder that implies one of
 them is a bug.

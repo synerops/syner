@@ -13,7 +13,7 @@
 
 Implementations of the interfaces `@syner/cloud` defines. Vendor SDKs and
 credentials live here, on the server, behind those interfaces. Only `apps/api`
-and `apps/worker` import this package.
+and `jobs/worker` import this package.
 
 <!-- prettier-ignore -->
 > [!NOTE]

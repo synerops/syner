@@ -8,57 +8,58 @@
 <h1 align="center">src</h1>
 
 <p align="center">
-  <strong>The business of Syner, one folder per thing.</strong>
+  <strong>The business of Syner, spec first.</strong>
 </p>
 
-This is where the cloud is defined. Every folder is a node: a module, a
-thing, or a verb. A node's `index` is the node itself; its `README.md`
-tells you what it is and how to use it; its `AGENTS.md` fixes the contract
-a coding agent implements. Names carry the first meaning; the two documents
-finish it.
+Three layers, each with one job. The five files at the root are the library
+entries of the five capabilities. `api/` is the external contract over HTTP,
+one folder per route and one section per method. `lib/` is where things are
+modeled and decided: models, use cases, rules, and the interfaces
+infrastructure implements. Every `.ts` file here is empty on purpose: this is
+a spec, and the code comes later.
+
+## The five capabilities
+
+Each capability can be used on its own. The authentication and organization
+context is shared and exists without an app selected.
+
+| Capability | Library entry | Contract | Owner |
+|---|---|---|---|
+| apps | `apps.ts` | [api/apps](api/apps/README.md) | [lib/apps](lib/apps/README.md) |
+| compute | `compute.ts` | [api/compute](api/compute/README.md) | [lib/compute](lib/compute/README.md) |
+| storage | `storage.ts` | [api/storage](api/storage/README.md) | [lib/storage](lib/storage/README.md) |
+| connections | `connections.ts` | [api/connections](api/connections/README.md) | [lib/connections](lib/connections/README.md) |
+| jobs | `jobs.ts` | [api/jobs](api/jobs/README.md) | [lib/jobs](lib/jobs/README.md) |
+
+## Shared responsibilities
+
+They live in `lib/` next to the capabilities, without an intermediate folder.
+What tells them apart is what they do: they administer ownership and access,
+or they follow and measure, across every capability. Their public location
+is pending; see [api](api/README.md).
+
+| Responsibility | Owner | What it does |
+|---|---|---|
+| organizations | [lib/organizations](lib/organizations/README.md) | who owns everything, and who belongs |
+| identity | [lib/identity](lib/identity/README.md) | who acts, and who acts for whom |
+| permissions | [lib/permissions](lib/permissions/README.md) | who may do what, checked on every call |
+| operations | [lib/operations](lib/operations/README.md) | long-running administration actions you can follow |
+| usage | [lib/usage](lib/usage/README.md) | what was consumed, and budgets |
+| activity | [lib/activity](lib/activity/README.md) | who did what |
+
+## Purpose
+
+What an app is for is part of the app's spec, in
+[lib/apps/purpose](lib/apps/purpose/README.md). Measuring whether an app
+fulfills it is not agreed; that node says why.
 
 ## How to read a node
 
-- A **module** groups things: [compute](compute/README.md) holds
-  environments and executions. Its `index` is the door.
-- A **thing** is something the cloud keeps: [apps](apps/README.md),
-  [versions](apps/versions/README.md). Its `index` is the schema. Things are
-  plural.
-- A **verb** is what you do to a thing: [apps/create](apps/create/README.md).
-  Its `index` is the use case. Verbs are singular.
-- **ports** in every module lists what it needs from infrastructure.
+Every folder carries a `README.md` that explains it and an `AGENTS.md`
+that guides its implementation. In `api/`, a folder with `index.ts` is a
+route and its documents describe the external contract. In `lib/`, a folder
+is a module or a thing it owns; a noun file is its model, a verb file is one
+use case, and `ports.ts` lists what it needs from infrastructure.
 
-When a module is a single thing, the two coincide and the verbs hang from
-the module: [connections](connections/README.md), [jobs](jobs/README.md).
-
-## Capabilities
-
-What agents consume.
-
-| Capability | What it gives an agent |
-|---|---|
-| [apps](apps/README.md) | a product with an HTTP backend and an optional frontend, with versions and deployments |
-| [compute](compute/README.md) | environments to run code in, and each run of it |
-| [storage](storage/README.md) | stores holding documents and files |
-| [connections](connections/README.md) | access to external services, with the secret kept on the server |
-| [jobs](jobs/README.md) | durable work with triggers and runs |
-
-## Controls
-
-What makes it safe and visible for an agent to act for a human, and what
-Syner OS reads to answer its five questions.
-
-| Control | Answers | What it holds |
-|---|---|---|
-| [ops](ops/README.md) | Is it working? | long-running administration actions you can follow |
-| [activity](activity/README.md) | What changed? | who did what, with the delegation chain |
-| [usage](usage/README.md) | What is it costing? | consumption and budgets |
-| [identity](identity/README.md), [permissions](permissions/README.md), [organizations](organizations/README.md) | Who has access? | principals, delegations, permissions, members |
-| [purpose](purpose/README.md) | Is it fulfilling its purpose? | the declaration and its evaluations |
-
-## Three things that stay distinct
-
-An [execution](compute/executions/README.md) runs code. A
-[job run](jobs/runs/README.md) is one occurrence of a defined job. An
-[operation](ops/README.md) tracks a long-running administration action. They
-look alike from far away and are never the same thing.
+`utils/` does not exist yet: no technical helper without business knowledge
+has been identified.

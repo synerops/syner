@@ -12,24 +12,24 @@
 </p>
 
 The five capabilities agents consume (apps, compute, storage, connections,
-jobs) and the seven controls that make an agent's actions safe and visible
-(organizations, identity, permissions, ops, usage, activity, purpose).
-`apps/api` and `apps/worker` call it directly; everything else reaches
-it through the API.
+jobs) and the shared responsibilities that make an agent's actions safe and
+visible (organizations, identity, permissions, operations, usage,
+activity). `apps/api` and `jobs/worker` call it directly; everything else
+reaches it through the API.
 
 ## Layout
 
-Everything lives under [`src`](src/README.md), one folder per node. A
-module groups things, a thing holds a schema, a verb is one use case, and
-`ports` says what the module needs from infrastructure. Each node carries
-its own `README.md` and `AGENTS.md`, so you can start anywhere and follow
-the links.
+[`src`](src/README.md) has three layers: five library entries, one per
+capability; [`api`](src/api/README.md), the external contract as
+file-based routes; and [`lib`](src/lib/README.md), the models, use cases,
+rules, and interfaces. This is a spec: every `.ts` file is empty, and the
+documents say what is agreed and what is pending.
 
 ## Who touches it
 
-- [`apps/api`](../../apps/api/README.md) authenticates a request and calls
-  a verb with the actor and organization.
-- [`apps/worker`](../../apps/worker/README.md) executes the long-running
-  verbs and reports through ops.
+- [`apps/api`](../../apps/api/README.md) will serve the routes declared in
+  `src/api`. The mechanism is not implemented.
+- [`jobs/worker`](../../jobs/worker/README.md) executes the long-running use
+  cases and reports through operations.
 - [`@syner/infrastructure`](../infrastructure/README.md) implements every
-  interface listed in the `ports` nodes.
+  interface listed in the `ports.ts` files.

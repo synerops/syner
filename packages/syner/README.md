@@ -22,11 +22,14 @@ with one behavior in both places: it reaches the Syner cloud through
 ## Usage
 
 ```sh
-bunx syner apps create
+bunx syner apps
+bunx syner apps --all
+bunx syner api /apps/app_7c3a
 ```
 
-Commands read `syner <resource> <verb>`. Resources are the cloud's
-capabilities and controls: `apps`, `compute`, `storage`, `connections`,
-`jobs`, and the controls behind Syner OS. Every command returns a
-structured result and supports a non-interactive mode, so an agent can
-drive it as well as you can.
+Agreed today: `syner apps` shows the apps running in the selected context,
+`syner apps --all` shows every app with its status, and `syner api <route>`
+calls any route of the cloud directly, like `vercel api`. The rest of the
+command grammar is pending. Every command returns a structured result and
+supports a non-interactive mode, so an agent can drive it as well as you
+can.
