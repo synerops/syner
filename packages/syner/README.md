@@ -1,78 +1,32 @@
-# syner
+<p align="center">
+  <picture>
+    <source srcset="https://github.com/user-attachments/assets/70cee063-9701-479d-a61e-f1da868c0957" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="48"/>
+  </picture>
+</p>
 
-The orchestrator agent of Syner OS.
+<h1 align="center">syner</h1>
 
-## Install
+<p align="center">
+  <strong>The Syner agent, on your machine and in the cloud.</strong>
+</p>
 
-```bash
-npm install syner
-```
+It runs on your machine as the `syner` CLI and hosted as Syner Bot at syner.bot,
+with one behavior in both places: it reaches the Syner cloud through
+`@syner/sdk` with your identity, and it operates Syner OS for you.
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> This package is being rewritten. The commands below are the target.
 
 ## Usage
 
-```typescript
-import { syner } from 'syner'
-
-const { text } = await syner.generate({
-  prompt: 'Help me plan this migration',
-})
+```sh
+bunx syner apps create
 ```
 
-With extension instructions:
-
-```typescript
-import { syner } from 'syner'
-import { synerMd } from '@syner/slack'
-
-const { text } = await syner.generate({
-  prompt: event.text,
-  md: synerMd,
-  tools: { ... },
-})
-```
-
-## CLI
-
-From the monorepo root:
-
-```bash
-# Interactive REPL
-bun syner
-
-# One-shot
-echo "Create a plan for OAuth" | bun syner
-```
-
-## API
-
-### `syner.ask(prompt)`
-
-Main entry point with intent classification and orchestration:
-
-```typescript
-const { text } = await syner.ask('Create a plan for OAuth')
-```
-
-Persists sessions to `.syner/` in the git root.
-
-### `syner.generate(options)`
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `prompt` | `string` | User prompt |
-| `md` | `string?` | Extension instructions |
-| `tools` | `Record<string, Tool>?` | Additional tools |
-| `maxSteps` | `number?` | Max steps (default: 20) |
-| `model` | `string?` | Override model |
-
-### `syner.stream(options)`
-
-Same as generate, but returns `{ textStream }`. No tools support.
-
-### `syner.card`
-
-Agent metadata: `{ name, description, model, content }`
-
-## License
-
-MIT
+Commands read `syner <resource> <verb>`. Resources are the cloud's
+capabilities and controls: `apps`, `compute`, `storage`, `connections`,
+`jobs`, and the controls behind Syner OS. Every command returns a
+structured result and supports a non-interactive mode, so an agent can
+drive it as well as you can.

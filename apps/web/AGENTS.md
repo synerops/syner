@@ -7,3 +7,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Rewrite target
+
+The public site. It presents the Cloud for Agents and sends people to
+Syner OS at syner.app. It holds no business rules and reads nothing from
+the cloud beyond what is public. The console routes are legacy; the
+console belongs to apps/app.

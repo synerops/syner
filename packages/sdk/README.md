@@ -1,68 +1,33 @@
-# @syner/sdk
+<p align="center">
+  <picture>
+    <source srcset="https://github.com/user-attachments/assets/70cee063-9701-479d-a61e-f1da868c0957" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="48"/>
+  </picture>
+</p>
 
-## What is @syner/sdk?
+<h1 align="center">@syner/sdk</h1>
 
-The SDK is the TypeScript implementation of the [OS Protocol](https://github.com/synerops/osprotocol) specification. It provides the building blocks for creating AI agents that operate within a structured, predictable framework.
+<p align="center">
+  <strong>The typed client of the Syner API.</strong>
+</p>
 
-The SDK sits in the middle layer of the architecture: Protocol defines the contracts, SDK provides default implementations, and Extensions replace specific capabilities with vendor integrations.
+Every client of the cloud goes through it: Syner OS, Syner Bot, the CLI, the MCP
+server, and your own agents.
 
-## Installation
-
-```bash
-bun add @syner/sdk
-```
+<!-- prettier-ignore -->
+> [!NOTE]
+> This package is being rewritten. The shape below is the target.
 
 ## Usage
 
-```typescript
-import { Routing, env, createMemoryKv } from '@syner/sdk'
+```ts
+import { Syner } from '@syner/sdk'
 
-// Create in-memory KV store
-const kv = createMemoryKv({ maxSize: 100 })
-
-// Store and retrieve data
-await kv.set('user:123', { name: 'Alice' })
-const user = await kv.get('user:123')
-
-// Create a routing workflow
-const router = new Routing({
-  model: gateway('anthropic/claude-haiku'),
-  workflows: {
-    support: { workflow: supportWf, description: 'Technical support' },
-    billing: { workflow: billingWf, description: 'Billing inquiries' },
-  }
-})
-
-// Run the workflow
-const result = await router.run('I need help with my account')
+const syner = new Syner()
+const operation = await syner.apps.create({ name: 'billing' })
 ```
 
-## API
-
-### Workflows
-
-| Class | Purpose |
-|-------|---------|
-| `Routing` | Classify input and delegate to specialized workflows |
-| `OrchestratorWorkers` | Plan, delegate to workers, synthesize results |
-| `Parallelization` | Split into subtasks, run in parallel, merge |
-| `EvaluatorOptimizer` | Generate, evaluate, iteratively improve |
-
-### KV Store
-
-| Function | Purpose |
-|----------|---------|
-| `createMemoryKv()` | In-memory KV store with LRU eviction |
-
-### Environment
-
-| Function | Purpose |
-|----------|---------|
-| `env.getSandbox()` | Get current sandbox from environment |
-| `env.setSandbox()` | Set sandbox in environment |
-
-## Related
-
-- [OS Protocol](https://github.com/synerops/osprotocol) - The specification
-- [@syner/upstash](../../extensions/upstash) - Distributed KV implementation
-- [@syner/vercel](../../extensions/vercel) - Sandbox implementation
+The client exposes one namespace per API resource, mirroring the cloud:
+`syner.apps`, `syner.compute`, `syner.storage`, `syner.connections`,
+`syner.jobs`, and the shared controls. Results and errors are typed, and
+long-running calls return an operation you can follow.

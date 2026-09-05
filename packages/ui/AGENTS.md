@@ -61,3 +61,9 @@ bunx --bun shadcn@latest add @coss/<component> --diff   # preview an update
 - Use `cn()` for conditional classes.
 - Use semantic tokens (`bg-background`, `text-muted-foreground`), not raw
   colors.
+
+## Rewrite target
+
+Shared visual components for Syner OS, Syner Bot, and the public site.
+Business rules, API credentials, and infrastructure dependencies stay
+outside this package.

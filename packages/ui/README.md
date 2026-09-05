@@ -1,6 +1,17 @@
-# @syner/ui
+<p align="center">
+  <picture>
+    <source srcset="https://github.com/user-attachments/assets/70cee063-9701-479d-a61e-f1da868c0957" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="48"/>
+  </picture>
+</p>
 
-Shared design system for Syner apps. Primitives come from
+<h1 align="center">@syner/ui</h1>
+
+<p align="center">
+  <strong>Shared design system for Syner apps.</strong>
+</p>
+
+Primitives come from
 [coss ui](https://coss.com/ui) — Base UI components styled with Tailwind v4 —
 installed as source through the shadcn CLI, plus Syner branding and fonts.
 
