@@ -35,8 +35,9 @@ See its history with [runs/list](runs/README.md).
   "organizationId": "org_3f9k",
   "appId": "app_7c3a",
   "name": "close-month",
-  "action": {
+  "target": {
     "kind": "app",
+    "appId": "app_7c3a",
     "path": "/tasks/close-month"
   },
   "triggers": [
@@ -48,6 +49,13 @@ See its history with [runs/list](runs/README.md).
       "kind": "manual"
     }
   ],
+  "delivery": {
+    "maxAttempts": 5,
+    "backoff": "exponential",
+    "timeoutSeconds": 30,
+    "concurrency": 1,
+    "signingSecretRef": "sec_9q2z"
+  },
   "enabled": true,
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",
@@ -81,12 +89,13 @@ syner api /jobs/job_6t8y
 
 ### PATCH /jobs/:id
 
-Applies to future runs. Running runs finish under the old definition.
+Applies to future deliveries. Runs in flight finish under the policy they
+started with.
 
 **Request.** Path: `:id` becomes `id`. Headers: `Authorization: Bearer
 <token>`. Body:
 
-- `name, action, triggers, enabled`: any subset.
+- `name, target, triggers, delivery, enabled`: any subset.
 
 **Response.** `200 OK`. The job after the change.
 
@@ -96,8 +105,9 @@ Applies to future runs. Running runs finish under the old definition.
   "organizationId": "org_3f9k",
   "appId": "app_7c3a",
   "name": "close-month",
-  "action": {
+  "target": {
     "kind": "app",
+    "appId": "app_7c3a",
     "path": "/tasks/close-month"
   },
   "triggers": [
@@ -109,6 +119,13 @@ Applies to future runs. Running runs finish under the old definition.
       "kind": "manual"
     }
   ],
+  "delivery": {
+    "maxAttempts": 5,
+    "backoff": "exponential",
+    "timeoutSeconds": 30,
+    "concurrency": 1,
+    "signingSecretRef": "sec_9q2z"
+  },
   "enabled": false,
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",
@@ -121,7 +138,7 @@ job, checked through
 [permissions/authorize](../../../lib/permissions/README.md).
 
 **Errors.** `404` job not found, `403` not authorized, `409` name taken, `422`
-invalid trigger, `422` invalid action.
+invalid trigger, `422` invalid target.
 
 **Use case.** `update.ts` in [lib/jobs](../../../lib/jobs/README.md).
 

@@ -8,24 +8,30 @@ Owns job definitions and, through runs, each occurrence of them.
 - `organizationId`: the owner.
 - `appId`: optional.
 - `name`: unique in the organization.
-- `action`: `kind` (`execution` or `app`) with `command` and `runtime`, or
-  `appId` and `path`.
+- `target`: `kind` (`app` or `url`) with `appId` and `path`, or `url` (HTTPS
+  only).
 - `triggers[]`: each `kind` (`schedule`, `event`, `manual`) with `cron` or
   `event` name.
+- `delivery`: `maxAttempts`, `backoff` (`none`, `linear`, `exponential`),
+  `timeoutSeconds`, `concurrency`, `signingSecretRef`.
 - `enabled`: boolean.
 - `createdBy, createdAt, updatedAt`: principal and timestamps.
 
 ## Rules
 
 - A job is a definition; it never carries the status of a run.
-- Disabling a job stops its triggers and leaves running runs to finish.
+- Every delivery is signed with the job's secret and carries an idempotency
+  key derived from the trigger event; the receiver treats the same key as the
+  same event.
+- Delivery is at-least-once: a call may be repeated; it is never lost while
+  attempts remain.
+- Disabling a job stops its triggers and lets runs in flight finish their
+  attempts.
 - Removing a job cancels its active runs; finished runs stay readable.
-- A run started by a trigger records which trigger; a manual run records who
-  started it.
 
 ## Owns
 
-- [runs](runs/AGENTS.md): each occurrence of the job, with its status and
+- [runs](runs/AGENTS.md): each delivery of the job, with its attempts and
   events.
 
 ## Use cases
@@ -34,10 +40,12 @@ Owns job definitions and, through runs, each occurrence of them.
 
 Creates a job definition with its triggers.
 
-- Validation: an `app` action names an app the principal can read; a
-  `schedule` trigger has a valid cron.
 - Side effect: one [activity](../activity/AGENTS.md) entry with the actor, the
   job, and the outcome.
+- Validation: an `app` target names an app the principal can read and a path
+  on it; a `url` target is HTTPS; a `schedule` trigger has a valid cron.
+- A signing secret is created for the job and stored through the secrets
+  vault; the response carries its reference, never the material.
 
 ### `get.ts`
 
@@ -64,7 +72,7 @@ Removes a job definition and cancels its active runs.
 - Side effect: one [activity](../activity/AGENTS.md) entry with the actor, the
   job and the runs cancelled, and the outcome.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected
@@ -78,8 +86,9 @@ Persistence:
 
 Providers:
 
-- `scheduler`: register and unregister schedules and event subscriptions for a
-  job; fire a run start when one triggers.
+- `delivery`: fire schedules and events into run starts; deliver a signed HTTP
+  call to a target with timeout, retries, and backoff; report every attempt;
+  hold undelivered runs durably while the target is down.
 
 ## Exposure
 

@@ -4,8 +4,9 @@ The control panel at syner.app. It answers five questions for the humans
 of an organization about their apps, each backed by controls in
 @syner/cloud:
 
-- Is it working? Deployments say what is live; operations say how
-  administration is progressing. Runtime health has no evidence source yet.
+- Is it working? Each environment says which deployment it selected and
+  whether it is available; operations say how administration is progressing.
+  Runtime health has no evidence source yet.
 - What changed? Activity and versions.
 - What is it costing? Usage and budgets.
 - Who has access? Identity, permissions, members, and connection grants.

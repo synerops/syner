@@ -14,7 +14,8 @@
 A version is what an app looked like at one moment: its code, taken from a git
 reference or an upload, and the backend and frontend definition in force when
 it was captured. Versions are numbered per app and never change. Deployments
-point at versions; a rollback is a deployment of an older one.
+point at versions; every environment of the app deploys from the same
+versions.
 
 ## What a version looks like
 
@@ -41,6 +42,7 @@ Exposed through `POST /apps/:id/versions`, `GET
 
 ## How it relates to the rest
 
-[deployments](../deployments/README.md) put a version into service. The app's
-current definition lives in [apps](../README.md); a version freezes a copy of
-it.
+[deployments](../deployments/README.md) put a version to work inside an
+[environment](../environments/README.md). The app's current definition lives
+in [apps](../README.md); a version freezes a copy of it. Rolling back is
+promoting an earlier deployment in the environment, not a new version.

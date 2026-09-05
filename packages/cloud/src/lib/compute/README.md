@@ -47,7 +47,6 @@ Exposed through
 
 Compute is for agents that need to run code. Whether an app's backend runs
 here or on a provider is decided per deployment in
-[apps/deployments](../apps/deployments/README.md). A [job
-run](../jobs/runs/README.md) can start an execution, and remains a different
-thing. Executions carry their own status and are never
-[operations](../operations/README.md).
+[apps/deployments](../apps/deployments/README.md). A [job](../jobs/README.md)
+reaches compute through the app endpoint it delivers to. Executions carry
+their own status and are never [operations](../operations/README.md).

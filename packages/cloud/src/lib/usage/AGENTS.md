@@ -8,11 +8,12 @@ Owns usage records and, through budgets, the limits on them.
 - `metric`: a name from the fixed list of metrics.
 - `quantity`: number, in the metric's unit.
 - `organizationId`: required.
-- `appId`: optional.
 - `principalId`: optional.
 - `resource`: `kind` and `id`.
 - `period`: hour bucket, UTC.
 - `recordedAt`: timestamp.
+- `appId, environmentId`: optional; consumption caused inside an environment
+  names it.
 
 ## Rules
 
@@ -46,7 +47,7 @@ Aggregates usage records over a period.
 - Cost is computed on read through the pricing provider; absent pricing, rows
   carry quantity only.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected

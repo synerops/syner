@@ -32,4 +32,4 @@ documents say what is agreed and what is pending.
 - [`jobs/worker`](../../jobs/worker/README.md) executes the long-running use
   cases and reports through operations.
 - [`@syner/infrastructure`](../infrastructure/README.md) implements every
-  interface listed in the `ports.ts` files.
+  interface listed in the `infrastructure.ts` files.

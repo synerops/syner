@@ -23,8 +23,9 @@ resolves the acting principal from the bearer token, and calls one use case in
 
 - `POST /jobs` calls `create.ts` in [lib/jobs](../../lib/jobs/AGENTS.md).
 - Input: `organizationId` the owner.; `appId` optional.; `name` unique.;
-  `action` required.; `triggers` at least one.; `enabled` optional; true by
-  default.
+  `target` required: an app path or an HTTPS URL.; `triggers` at least one.;
+  `delivery` optional; the cloud's defaults apply.; `enabled` optional; true
+  by default.
 - Success: `201`. The job.
 - Authorization: the principal needs `jobs:create` on the organization, or the
   app when given, checked through
@@ -35,7 +36,7 @@ resolves the acting principal from the bearer token, and calls one use case in
   [operation](../../lib/operations/AGENTS.md).
 - The acting principal comes from the request context, never from the input.
 - Errors: `404` organization not found, `404` app not found, `403` not
-  authorized, `409` name taken, `422` invalid trigger, `422` invalid action.
+  authorized, `409` name taken, `422` invalid trigger, `422` invalid target.
 
 ## Pending
 

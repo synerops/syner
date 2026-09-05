@@ -25,7 +25,7 @@ context is shared and exists without an app selected.
 
 | Capability | Library entry | Contract | Owner |
 |---|---|---|---|
-| apps | `apps.ts` | [api/apps](api/apps/README.md) | [lib/apps](lib/apps/README.md) |
+| apps | `apps.ts` | [api/apps](api/apps/README.md) | [lib/apps](lib/apps/README.md): versions, environments, deployments, purpose |
 | compute | `compute.ts` | [api/compute](api/compute/README.md) | [lib/compute](lib/compute/README.md) |
 | storage | `storage.ts` | [api/storage](api/storage/README.md) | [lib/storage](lib/storage/README.md) |
 | connections | `connections.ts` | [api/connections](api/connections/README.md) | [lib/connections](lib/connections/README.md) |
@@ -59,7 +59,7 @@ Every folder carries a `README.md` that explains it and an `AGENTS.md`
 that guides its implementation. In `api/`, a folder with `index.ts` is a
 route and its documents describe the external contract. In `lib/`, a folder
 is a module or a thing it owns; a noun file is its model, a verb file is one
-use case, and `ports.ts` lists what it needs from infrastructure.
+use case, and `infrastructure.ts` lists what it needs from infrastructure.
 
 `utils/` does not exist yet: no technical helper without business knowledge
 has been identified.

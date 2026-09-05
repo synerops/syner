@@ -36,5 +36,5 @@ Exposed through `PUT /connections/:id/credentials`. Contracts:
 ## How it relates to the rest
 
 Belongs to a [connection](../README.md). Stored through the secrets vault
-named in [ports](../README.md). Setting it shows in
+named in [infrastructure.ts](../infrastructure.ts). Setting it shows in
 [activity](../../activity/README.md) as a fact, without the material.

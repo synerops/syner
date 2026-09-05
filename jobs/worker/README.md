@@ -8,14 +8,16 @@
 <h1 align="center">worker</h1>
 
 <p align="center">
-  <strong>Syner's job for durable work.</strong>
+  <strong>Syner's receiver for durable work.</strong>
 </p>
 
-Executes deployments, long operations, and the runs of your jobs, and
-records progress as operations, so whatever you started from the API or
-Syner OS can be followed to its outcome. It is a job on Syner in the same
-sense as yours: defined with triggers, run when they fire.
+Receives the cloud's own webhooks: administration operations such as
+deploying, rolling back, removing, and provisioning, and the runs of your
+jobs when their triggers fire. Administrative work is followed as an
+operation; your job's run is followed through its attempts and events. The
+worker is a job on Syner in the same sense as yours: a target that receives
+signed, idempotent deliveries, retried until they land.
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> This job is a scaffold. The queue provider isn't decided yet.
+> This job is a scaffold. The delivery provider isn't decided yet.

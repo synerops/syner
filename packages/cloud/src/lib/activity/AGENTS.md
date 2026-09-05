@@ -34,7 +34,7 @@ Appends one activity entry.
 
 Lists activity entries of an organization, paged.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected

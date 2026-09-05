@@ -5,10 +5,13 @@ Where the business is modeled and decided. Nothing here is a route.
 ## Shape of a module
 
 - A noun file holds the model: schema and types (`app.ts`, `run.ts`).
-- A verb file holds one use case (`create.ts`, `rollback.ts`). It receives
-  the ports it needs by injection from `apps/api` or `jobs/worker`.
-- `ports.ts` declares the persistence and provider interfaces the module
-  requires. Implemented in `packages/infrastructure`, never here.
+- A verb file holds one use case (`create.ts`, `select.ts`). It receives
+  what it needs from infrastructure by injection from `apps/api` or
+  `jobs/worker`.
+- `infrastructure.ts` is the module's list of what it asks infrastructure
+  for: how its things are persisted and which outside capabilities it
+  calls. Interfaces only. Implemented in `packages/infrastructure`, never
+  here.
 - A subfolder is a thing the module owns with its own lifecycle. It has the
   same shape.
 - Not every technical file needs a folder. The structure inside a module

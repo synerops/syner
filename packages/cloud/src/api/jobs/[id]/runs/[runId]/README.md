@@ -20,7 +20,7 @@ GET. Path parameters: `:id`, `:runId`.
 
 ### GET /jobs/:id/runs/:runId
 
-Returns the run with its events and reference.
+Returns the run with its attempts and events.
 
 **Request.** Path: `:id` becomes `jobId`, `:runId` becomes `id`. Headers:
 `Authorization: Bearer <token>`. No body.
@@ -34,25 +34,28 @@ Returns the run with its events and reference.
   "startedBy": {
     "principal": "prn_ana"
   },
+  "idempotencyKey": "job_6t8y:manual:2026-09-04T18:24:30Z",
   "status": "succeeded",
+  "attempts": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "statusCode": 200,
+      "durationMs": 840,
+      "error": null
+    }
+  ],
   "events": [
     {
       "at": "2026-09-04T18:24:30Z",
       "kind": "started",
-      "message": "calling /tasks/close-month"
+      "message": "delivering to /tasks/close-month"
     },
     {
       "at": "2026-09-04T18:24:30Z",
       "kind": "finished",
-      "message": "200 OK"
+      "message": "200 OK on attempt 1"
     }
   ],
-  "reference": {
-    "appCall": {
-      "path": "/tasks/close-month",
-      "statusCode": 200
-    }
-  },
   "createdAt": "2026-09-04T18:24:30Z",
   "finishedAt": "2026-09-04T18:24:30Z"
 }

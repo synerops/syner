@@ -7,20 +7,24 @@ Owns runs: each occurrence of a job, with status, events, and what it invoked.
 - `id`: stable.
 - `jobId`: the job.
 - `startedBy`: `trigger` (which one) or `principal` (who).
-- `status`: `queued`, `running`, `succeeded`, `failed`, `cancelled`.
+- `idempotencyKey`: string; unique per event, repeated on every attempt.
+- `status`: `queued`, `delivering`, `succeeded`, `failed`, `cancelled`.
+- `attempts[]`: each `at`, `statusCode`, `durationMs`, `error`.
 - `events[]`: each `at`, `kind` (`started`, `progress`, `finished`, `error`),
   `message`.
-- `reference`: optional: `executionId` or `appCall` (path, status code).
 - `createdAt, finishedAt`: timestamps.
 
 ## Rules
 
-- Events are appended, never edited.
-- Transitions: `queued` to `running`; `running` to `succeeded`, `failed`, or
-  `cancelled`.
+- An attempt succeeds on any 2xx; it is retried on a timeout or a 5xx per the
+  job's policy; a 4xx ends the run as failed at once.
+- Attempts and events are appended, never edited.
+- Transitions: `queued` to `delivering`; `delivering` to `succeeded`,
+  `failed`, or `cancelled`.
 - A run keeps the job definition it started with, even if the job changes
   meanwhile.
-- Cancelling a run cancels the execution it started, when it started one.
+- Cancelling stops further attempts; an attempt already in flight is not
+  interrupted.
 
 ## Use cases
 
@@ -34,7 +38,7 @@ Starts one run of a job.
 
 ### `cancel.ts`
 
-Cancels a run.
+Cancels a run: no further attempts are made.
 
 - Cancelling a finished run changes nothing.
 - Side effect: one [activity](../../activity/AGENTS.md) entry with the actor,

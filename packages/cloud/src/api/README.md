@@ -40,6 +40,7 @@ api/
 | Change part | `PATCH` | `200` |
 | Remove | `DELETE` | `204`, or `202` when the work outlives the request |
 | Cancel | `PATCH` on an explicit `/cancel` route | `200` with the thing's status |
+| Promote a deployment to an environment's domain | `POST` on `/promote/:deploymentId` | `202` with an operation; the domain switches when it completes |
 
 No `/update` or `/remove` routes: the method on the resource says it.
 Cancellation follows Vercel, `PATCH /v12/deployments/{id}/cancel`: it asks the
@@ -61,6 +62,12 @@ to `404` not found, `403` not authorized, `409` conflict, `422` invalid input,
 | `GET` | `/apps/:id/versions` | [list](apps/[id]/versions/README.md) | 200 |
 | `POST` | `/apps/:id/versions` | [create](apps/[id]/versions/README.md) | 201 |
 | `GET` | `/apps/:id/versions/:versionId` | [get](apps/[id]/versions/[versionId]/README.md) | 200 |
+| `GET` | `/apps/:id/environments` | [list](apps/[id]/environments/README.md) | 200 |
+| `POST` | `/apps/:id/environments` | [create](apps/[id]/environments/README.md) | 201 |
+| `GET` | `/apps/:id/environments/:environmentId` | [get](apps/[id]/environments/[environmentId]/README.md) | 200 |
+| `PATCH` | `/apps/:id/environments/:environmentId` | [update](apps/[id]/environments/[environmentId]/README.md) | 200 |
+| `DELETE` | `/apps/:id/environments/:environmentId` | [remove](apps/[id]/environments/[environmentId]/README.md) | 202 |
+| `POST` | `/apps/:id/environments/:environmentId/promote/:deploymentId` | [promote](apps/[id]/environments/[environmentId]/promote/[deploymentId]/README.md) | 202 |
 | `GET` | `/apps/:id/deployments` | [list](apps/[id]/deployments/README.md) | 200 |
 | `POST` | `/apps/:id/deployments` | [create](apps/[id]/deployments/README.md) | 202 |
 | `GET` | `/apps/:id/deployments/:deploymentId` | [get](apps/[id]/deployments/[deploymentId]/README.md) | 200 |
@@ -101,15 +108,10 @@ to `404` not found, `403` not authorized, `409` conflict, `422` invalid input,
 | `GET` | `/jobs/:id/runs/:runId` | [get](jobs/[id]/runs/[runId]/README.md) | 200 |
 | `PATCH` | `/jobs/:id/runs/:runId/cancel` | [cancel](jobs/[id]/runs/[runId]/cancel/README.md) | 200 |
 
-## Proposed (not agreed)
-
-| Method | Route | Use case | Success |
-|---|---|---|---|
-| `POST` | `/apps/:id/rollback/:deploymentId` | [rollback](apps/[id]/rollback/[deploymentId]/README.md) | 202 |
-
-Rollback mirrors Vercel, `POST
-/v1/projects/{projectId}/rollback/{deploymentId}`. Its folder carries the
-documents and no `index.ts`.
+Rollback is not a route: it is `POST
+/apps/:id/environments/:environmentId/promote/:deploymentId` with an earlier
+available deployment, the intent Vercel expresses as `POST
+/v1/projects/{projectId}/rollback/{deploymentId}`. Nothing is rebuilt.
 
 ## Not here yet
 
@@ -153,9 +155,11 @@ syner apps          Apps running in the selected context
 syner apps --all    Every app, with its status
 ```
 
-Running means the app's current deployment is `live`, an administrative state,
-not a health check. This default belongs to the CLI and does not shape the
-API.
+The intent stands. An app now has several environments, each with a promoted
+deployment or none; how `syner apps` summarizes them, which environment it
+reads to say running, and how a person selects another are pending. No
+environment is a default, and `GET /apps` has no `running` filter until this
+is decided.
 
 ## Pending
 
@@ -166,7 +170,10 @@ API.
   agreed it is an explicit `organizationId` field in query or body.
 - Public location of the shared responsibilities, including the operations
   route a `202` would point to.
-- The rollback proposal above.
+- Promotion of a deployment made before a configuration change: allowed as is,
+  or deploy again. No default is specified.
+- Whether an app gets a default environment at creation, and how `syner apps`
+  summarizes several environments.
 - Capture of multi-segment keys and paths in `[key]` and `[path]`; streaming
   mechanics for files.
 - The `syner api` flag syntax, proposed after `vercel api`.

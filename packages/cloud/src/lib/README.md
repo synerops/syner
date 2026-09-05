@@ -12,7 +12,7 @@
 </p>
 
 One folder per module. Inside, a noun file is the model (`app.ts`), a verb
-file is one use case (`create.ts`), `ports.ts` lists the interfaces the
+file is one use case (`create.ts`), `infrastructure.ts` lists what the
 module needs from infrastructure, and a subfolder is a thing the module owns
 with a lifecycle of its own (`apps/versions`). Each folder explains itself
 in `README.md` and guides its implementation in `AGENTS.md`.
@@ -21,7 +21,7 @@ in `README.md` and guides its implementation in `AGENTS.md`.
 
 | Module | Owns |
 |---|---|
-| [apps](apps/README.md) | an app, its versions, its deployments, and its purpose |
+| [apps](apps/README.md) | an app, its versions, its environments, its deployments, and its purpose |
 | [compute](compute/README.md) | environments and executions |
 | [storage](storage/README.md) | stores, documents, and files |
 | [connections](connections/README.md) | connections, their credentials, and their grants |

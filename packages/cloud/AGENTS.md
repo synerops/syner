@@ -10,6 +10,6 @@ Spec first, code later: every `.ts` file is empty, and `index.ts` under
 convention, and the rules every use case obeys are in
 [src/AGENTS.md](src/AGENTS.md). Each node below it carries its own guide.
 
-Business authorization happens inside use cases, so every entry point
-behaves the same. Interfaces are declared in each module's `ports.ts` and
+Business authorization happens inside use cases, so every entry point behaves
+the same. Interfaces are declared in each module's `infrastructure.ts` and
 implemented in `packages/infrastructure`.

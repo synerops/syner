@@ -54,6 +54,6 @@ chosen.
 - Handler names and signatures; route discovery, loading, and validation.
 - Transport of the organization context.
 - Public location of the shared responsibilities and of the operations route.
-- The rollback proposal; the `syner api` flag syntax; multi-segment `[key]`
-  and `[path]`; streaming for files.
+- Default environment and the CLI summary of several environments; the `syner
+  api` flag syntax; multi-segment `[key]` and `[path]`; streaming for files.
 - Schema and SDK publication or generation.

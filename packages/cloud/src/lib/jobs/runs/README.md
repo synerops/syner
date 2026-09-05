@@ -8,29 +8,32 @@
 <h1 align="center">runs</h1>
 
 <p align="center">
-  <strong>One occurrence of a job.</strong>
+  <strong>One delivery of one event to the job's target, with its attempts.</strong>
 </p>
 
-A run starts when a trigger fires or when someone asks. It does what the job's
-action says, appends events as it goes, and ends succeeded, failed, or
-cancelled. It references the execution or the app call it made; it is never an
-environment itself.
+A run starts when a trigger fires or when someone asks. The cloud calls the
+target with a signed payload and the run's idempotency key. A 2xx ends the run
+as succeeded; a timeout or a 5xx is retried per the job's policy; when
+attempts run out the run fails and stays readable. Cancelling stops further
+attempts. The run is the receipt of the delivery, never the work itself.
 
 ## What a run looks like
 
 - **Job.** the definition it came from.
 - **Started by.** the trigger that fired, or the principal who asked.
-- **Status.** queued, running, succeeded, failed, or cancelled.
-- **Events.** what happened, in order: started, progress, finished, with
-  times.
-- **Reference.** the execution or the app call the run made.
+- **Idempotency key.** one per event; the same key means the same event on
+  every attempt.
+- **Status.** queued, delivering, succeeded, failed, or cancelled.
+- **Attempts.** each call made: when, the status code, how long, the error if
+  any.
+- **Events.** what happened, in order, with times.
 - **Started at, finished at.** when.
 
 ## Use cases
 
 | File | What it does |
 |---|---|
-| `start.ts` | Start a run now. |
+| `start.ts` | Deliver now. |
 | `cancel.ts` | Stop a run. |
 | `get.ts` | Read one run. |
 | `list.ts` | List the runs of a job. |
@@ -45,6 +48,6 @@ Exposed through `POST /jobs/:id/runs`, `PATCH /jobs/:id/runs/:runId/cancel`,
 
 ## How it relates to the rest
 
-A run may hold a [compute execution](../../compute/executions/README.md). Its
-events feed [activity](../../activity/README.md). It is distinct from an
+A run delivers to the target defined in [jobs](../README.md). Its events feed
+[activity](../../activity/README.md). It is distinct from an
 [operation](../../operations/README.md).

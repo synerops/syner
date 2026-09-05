@@ -8,14 +8,16 @@ calls.
 - `principalId`: who.
 - `action`: `<module>:<verb>` or `<thing>:<verb>` names, as used in every
   verb's contract.
-- `resource`: `kind` and `id`; `kind` is `organization`, `app`, `store`,
-  `connection`, `job`, `environment`.
+- `resource`: `kind` and `id`; `kind` is `organization`, `app`, `environment`
+  (an app's), `compute-environment`, `store`, `connection`, `job`.
 - `source`: `role:<name>` or `grant`.
 - `grantedBy, grantedAt`: principal and timestamp.
 
 ## Rules
 
 - Deny by default: an action with no matching permission is refused.
+- Permissions on an app apply to its environments; permissions on an
+  environment apply to it and its deployments.
 - Permissions on an organization apply to every resource inside it;
   permissions on a resource apply to it and what it owns.
 - Role permissions are derived, never stored as grants; removing the role
@@ -64,7 +66,7 @@ Answers allowed or denied for a principal, an action, and a resource.
 - Denials are recorded in [activity](../activity/AGENTS.md); allowed decisions
   are not, the action itself is.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected

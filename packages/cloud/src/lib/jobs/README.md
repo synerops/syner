@@ -8,35 +8,40 @@
 <h1 align="center">jobs</h1>
 
 <p align="center">
-  <strong>Durable work: a definition with triggers, and each run of it.</strong>
+  <strong>Durable work as a webhook: an HTTP target, what triggers it, and a delivery you can trust.</strong>
 </p>
 
-A job is work you want to happen without watching it: on a schedule, when an
-event arrives, or when someone asks. The job is the definition: what to do and
-what starts it. A run is one occurrence. A run can start an execution in
-compute or call an app; it is never an environment itself.
+A job is a webhook you own. You give the cloud an HTTP target, say what starts
+it, a schedule, a named event, or a manual start, and the cloud delivers a
+signed call every time, with retries and backoff, a timeout, a concurrency
+limit, and an idempotency key so your endpoint can be called more than once
+without doing the work twice. The job is the definition. A run is one
+delivery, with its attempts.
 
 ## What a job looks like
 
 - **Name.** unique in the organization.
-- **Organization, app.** the owner, and optionally the app the job belongs to.
-- **Action.** what a run does: start an execution with a command, or call an
-  app endpoint.
-- **Triggers.** what starts a run: a schedule, a named event, or a manual
+- **Organization, app.** the owner, and optionally the app the target belongs
+  to.
+- **Target.** the HTTP endpoint that receives the call: a path on one of your
+  apps, or an absolute HTTPS URL.
+- **Triggers.** what starts a delivery: a schedule, a named event, or a manual
   start.
+- **Delivery policy.** attempts and backoff, timeout, concurrency, and the
+  secret that signs each call.
 - **Enabled.** whether triggers are live.
 - **Created by, at.** who and when.
 
 ## What it owns
 
-- [runs](runs/README.md): each occurrence of the job, with its status and
+- [runs](runs/README.md): each delivery of the job, with its attempts and
   events.
 
 ## Use cases
 
 | File | What it does |
 |---|---|
-| `create.ts` | Define a job and what starts it. |
+| `create.ts` | Define a webhook: target, triggers, delivery policy. |
 | `get.ts` | Read one job. |
 | `list.ts` | List the jobs of an organization. |
 | `update.ts` | Change a job's action, triggers, or enabled flag. |
@@ -54,14 +59,16 @@ Exposed through `POST /jobs`, `GET /jobs/:id`, `GET /jobs`, `PATCH /jobs/:id`,
   organization, app, and enabled, mark removed.
 - **runs.** save, load, list by job with filters, append events, update
   status.
-- **scheduler** (provider). register and unregister schedules and event
-  subscriptions for a job; fire a run start when one triggers.
+- **delivery** (provider). fire schedules and events into run starts; deliver
+  a signed HTTP call to a target with timeout, retries, and backoff; report
+  every attempt; hold undelivered runs durably while the target is down.
 
 ## How it relates to the rest
 
-A run may start a [compute execution](../compute/executions/README.md) or call
-an [app](../apps/README.md). Runs and their outcomes appear in
-[activity](../activity/README.md); their consumption in
-[usage](../usage/README.md). A run is not an
-[operation](../operations/README.md): operations track administration, runs
-track the customer's work.
+A target is usually an endpoint of one of your [apps](../apps/README.md); an
+app that needs [compute](../compute/README.md) calls it from that endpoint.
+Runs and their outcomes appear in [activity](../activity/README.md);
+deliveries are metered in [usage](../usage/README.md). A run is not an
+[operation](../operations/README.md): operations track the cloud's
+administration, runs track your work. Syner's own worker is a receiver of this
+kind: its jobs deliver administrative work to it.

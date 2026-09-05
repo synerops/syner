@@ -10,13 +10,11 @@ resolves the acting principal from the bearer token, and calls one use case in
 
 - `GET /apps` calls `list.ts` in [lib/apps](../../lib/apps/AGENTS.md).
 - Input: `organizationId` required; taken from the shared context when the
-  request carries one.; `running` optional. `true` returns only apps whose
-  current deployment is `live`, an administrative state, not a health check.
-  This is what `syner apps` asks; `syner apps --all` omits it.; `cursor,
-  limit` paging; limit defaults to the cloud's page size.
-- Success: `200`. A page: `items[]` and `next`. Each item is the app with
-  `currentDeployment` (`id`, `status`, `url`) when it has one, so a caller can
-  tell running from stopped.
+  request carries one.; `cursor, limit` paging; limit defaults to the cloud's
+  page size.
+- Success: `200`. A page: `items[]` and `next`. Each item is the app with its
+  `environments` summary. How a list summarizes several environments for
+  `syner apps` is pending.
 - Authorization: the principal needs `apps:read` on the organization, checked
   through [permissions/authorize](../../lib/permissions/AGENTS.md).
 - Runs in-request. It returns a page, not an
@@ -30,7 +28,7 @@ resolves the acting principal from the bearer token, and calls one use case in
 - Input: `organizationId` the owner.; `name` unique within the organization.;
   `backend` `runtime`, `entry`, `env[]`.; `frontend` optional.; `purpose`
   optional; the app's purpose as described in purpose/.
-- Success: `201`. The app as stored, with `currentDeploymentId` empty.
+- Success: `201`. The app as stored, with no environment yet.
 - Authorization: the principal needs `apps:create` on the organization,
   checked through [permissions/authorize](../../lib/permissions/AGENTS.md).
 - When the principal is an agent acting under a delegation, the check applies

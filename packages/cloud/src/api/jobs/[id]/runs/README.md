@@ -37,27 +37,36 @@ paging. No body.
       "startedBy": {
         "principal": "prn_ana"
       },
-      "status": "failed",
+      "idempotencyKey": "job_6t8y:manual:2026-09-04T18:24:30Z",
+      "status": "delivering",
+      "attempts": [
+        {
+          "at": "2026-09-04T18:24:30Z",
+          "statusCode": 502,
+          "durationMs": 120,
+          "error": "Bad Gateway"
+        },
+        {
+          "at": "2026-09-04T18:25:30Z",
+          "statusCode": 502,
+          "durationMs": 130,
+          "error": "Bad Gateway"
+        }
+      ],
       "events": [
         {
           "at": "2026-09-04T18:24:30Z",
           "kind": "started",
-          "message": "calling /tasks/close-month"
+          "message": "delivering to /tasks/close-month"
         },
         {
-          "at": "2026-09-04T18:24:30Z",
+          "at": "2026-09-04T18:25:30Z",
           "kind": "error",
-          "message": "502 Bad Gateway"
+          "message": "attempt 2 of 5 failed; next in 2m"
         }
       ],
-      "reference": {
-        "appCall": {
-          "path": "/tasks/close-month",
-          "statusCode": 502
-        }
-      },
       "createdAt": "2026-09-04T18:24:30Z",
-      "finishedAt": "2026-09-04T18:24:30Z"
+      "finishedAt": null
     }
   ],
   "next": null
@@ -92,16 +101,17 @@ syner api "/jobs/job_6t8y/runs?status=failed"
 
 ### POST /jobs/:id/runs
 
-Runs the job's action once, outside its schedule.
+Delivers one event to the job's target now, outside its schedule, with a fresh
+idempotency key.
 
 Read it with [get]([runId]/README.md) until the status is final.
 
 **Request.** Path: `:id` becomes `jobId`. Headers: `Authorization: Bearer
 <token>`. Body:
 
-- `input`: optional: parameters the action accepts.
+- `payload`: optional: data the target receives in the body.
 
-**Response.** `201 Created`. The run with status `queued` or `running`.
+**Response.** `201 Created`. The run with status `queued` or `delivering`.
 
 ```json
 {
@@ -110,20 +120,16 @@ Read it with [get]([runId]/README.md) until the status is final.
   "startedBy": {
     "principal": "prn_ana"
   },
-  "status": "running",
+  "idempotencyKey": "job_6t8y:manual:2026-09-04T18:24:30Z",
+  "status": "delivering",
+  "attempts": [],
   "events": [
     {
       "at": "2026-09-04T18:24:30Z",
       "kind": "started",
-      "message": "calling /tasks/close-month"
+      "message": "delivering to /tasks/close-month"
     }
   ],
-  "reference": {
-    "appCall": {
-      "path": "/tasks/close-month",
-      "statusCode": null
-    }
-  },
   "createdAt": "2026-09-04T18:24:30Z",
   "finishedAt": null
 }

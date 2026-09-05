@@ -17,7 +17,7 @@ Owns stores and what they hold: documents and files.
   schema here is engine-neutral.
 - Removing a store removes its contents; it is long-running.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Persistence:
 

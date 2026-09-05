@@ -18,7 +18,7 @@ Owns environments and executions: where code runs and each run of it.
 - Consumption of environments and executions is recorded in
   [usage](../usage/AGENTS.md).
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Persistence:
 

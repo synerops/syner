@@ -16,7 +16,8 @@ GET. Path parameters: `:id`, `:deploymentId`.
 
 ### GET /apps/:id/deployments/:deploymentId
 
-Returns a deployment with its status, URL, and the operation behind it.
+Returns a deployment with its process, availability, address, whether it is
+promoted, and the operation behind it.
 
 **Request.** Path: `:id` becomes `appId`, `:deploymentId` becomes `id`.
 Headers: `Authorization: Bearer <token>`. No body.
@@ -27,13 +28,17 @@ Headers: `Authorization: Bearer <token>`. No body.
 {
   "id": "dep_2b7q",
   "appId": "app_7c3a",
+  "environmentId": "aenv_5r8t",
   "versionId": "ver_9b21",
-  "status": "live",
-  "url": "https://billing.acme.syner.app",
+  "process": "ready",
+  "availability": "available",
+  "promoted": true,
+  "url": "https://dep-2b7q-billing.acme.syner.app",
   "target": {
     "kind": "provider",
     "ref": "prv_east1"
   },
+  "configCapturedAt": "2026-09-04T18:20:00Z",
   "operationId": "op_4x1m",
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",

@@ -9,22 +9,25 @@ deployments.
 - `name`: unique within the organization; may change through update.
 - `organizationId`: the owner.
 - `backend`: `runtime`, `entry`, `env[]` (names of variables the backend
-  expects; values live elsewhere).
+  expects; values live in environments).
 - `frontend`: optional: `kind` (`static` or `server`) and `entry`.
-- `currentDeploymentId`: optional: the live deployment.
-- `createdBy`: principal. `createdAt`, `updatedAt`: timestamps.
 - `purpose`: optional: `statement`, `criteria[]`, `declaredBy`, `since`.
   Described in purpose/.
-- `currentDeployment`: read model: `id`, `status`, `url` of the live
-  deployment; derived, never stored twice.
+- `environments`: read model: for each environment its `id`, `name`, `url`,
+  and `promotedDeploymentId`. Derived from environments; never stored on the
+  app.
+- `createdBy`: principal. `createdAt`, `updatedAt`: timestamps.
 
 ## Rules
 
 - `name` is unique within the organization at all times.
-- `id` never changes; renaming keeps every version, deployment, and activity
-  entry attached.
-- An app with no version and no deployment is a valid app.
-- Removing an app tears down its deployments and releases its name; its
+- `id` never changes; renaming keeps every version, environment, deployment,
+  and activity entry attached.
+- An app with no version, no environment, and no deployment is a valid app.
+- There is no single current deployment of an app. What serves traffic is
+  decided per environment, by its promoted deployment; the app only summarizes
+  it.
+- Removing an app removes its environments and retires their deployments; its
   versions and activity stay readable by the organization.
 - An app belongs to exactly one organization and never moves.
 
@@ -32,8 +35,10 @@ deployments.
 
 - [versions](versions/AGENTS.md): immutable snapshots of the app's code and
   configuration.
-- [deployments](deployments/AGENTS.md): a version put into service, with its
-  status and URL.
+- [environments](environments/AGENTS.md): contexts to run in: configuration,
+  resources, access, a stable domain, and a promoted deployment.
+- [deployments](deployments/AGENTS.md): a version put to work inside an
+  environment.
 
 ## Declares
 
@@ -75,14 +80,16 @@ Applies a partial change to an app's definition.
 
 ### `remove.ts`
 
-Removes an app: retires its live deployment and releases its name.
+Removes an app: removes its environments, retires their deployments, and
+releases its name.
 
-- The live deployment is retired first; versions and activity remain readable.
+- Environments are removed and their deployments retired first; versions and
+  activity remain readable.
 - A removed app accepts no further versions or deployments.
 - Side effect: one [activity](../activity/AGENTS.md) entry with the actor, the
   app, and the outcome.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected
@@ -93,12 +100,17 @@ Persistence:
 - `apps`: save, load by id or by organization and name, list by organization,
   mark removed.
 - `versions`: save, load by app and number, list by app; append-only.
-- `deployments`: save, load, list by app and status, update status.
+- `environments`: save, load by app and name, list by app with filters, update
+  definition, set the promoted deployment once confirmed, mark removed.
+- `deployments`: save, load, list by app and environment with filters, update
+  process and availability.
 
 Providers:
 
-- `deployment target`: put a version into service at a target and report its
-  URL; retire a deployment; report status.
+- `deployment target`: run a version with an environment's captured
+  configuration at a deployment address; report process; retire a deployment.
+- `domain routing`: bind an environment's stable domain to a deployment's
+  address and confirm when the domain answers with it; release a domain.
 - `artifacts`: store a version's captured code and hand it back to the
   deployment target.
 

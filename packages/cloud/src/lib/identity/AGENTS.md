@@ -17,7 +17,7 @@ Owns principals and delegations: who acts, and who acts for whom.
 - An agent acting under a delegation never exceeds the delegating human's
   permissions.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Persistence:
 

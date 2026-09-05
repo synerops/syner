@@ -26,8 +26,9 @@ resolves the acting principal from the bearer token, and calls one use case in
 - `POST /jobs/:id/runs` calls `start.ts` in
   [lib/jobs/runs](../../../../lib/jobs/runs/AGENTS.md).
 - Path to arguments: `:id` is passed as `jobId`.
-- Input: `jobId` the job.; `input` optional: parameters the action accepts.
-- Success: `201`. The run with status `queued` or `running`.
+- Input: `jobId` the job.; `payload` optional: data the target receives in the
+  body.
+- Success: `201`. The run with status `queued` or `delivering`.
 - Authorization: the principal needs `runs:start` on the job, checked through
   [permissions/authorize](../../../../lib/permissions/AGENTS.md).
 - When the principal is an agent acting under a delegation, the check applies

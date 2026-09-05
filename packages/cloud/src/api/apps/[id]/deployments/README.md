@@ -20,10 +20,12 @@ GET, POST. Path parameters: `:id`.
 
 ### GET /apps/:id/deployments
 
-Returns the app's deployments, newest first, in pages.
+Returns the app's deployments, newest first, in pages. Filter by environment
+to see one context.
 
 **Request.** Path: `:id` becomes `appId`. Headers: `Authorization: Bearer
-<token>`. Query: `status` optional filter.; `cursor, limit` paging. No body.
+<token>`. Query: `environmentId` optional filter.; `process, availability`
+optional filters.; `cursor, limit` paging. No body.
 
 **Response.** `200 OK`. A page of deployments.
 
@@ -33,13 +35,17 @@ Returns the app's deployments, newest first, in pages.
     {
       "id": "dep_2b7q",
       "appId": "app_7c3a",
+      "environmentId": "aenv_5r8t",
       "versionId": "ver_9b21",
-      "status": "live",
-      "url": "https://billing.acme.syner.app",
+      "process": "ready",
+      "availability": "available",
+      "promoted": true,
+      "url": "https://dep-2b7q-billing.acme.syner.app",
       "target": {
         "kind": "provider",
         "ref": "prv_east1"
       },
+      "configCapturedAt": "2026-09-04T18:20:00Z",
       "operationId": "op_4x1m",
       "createdBy": "prn_ana",
       "createdAt": "2026-09-04T18:20:00Z",
@@ -62,7 +68,7 @@ the app, checked through
 **From the SDK.**
 
 ```ts
-const page = await syner.apps.deployments.list({ app: 'billing' })
+const page = await syner.apps.deployments.list({ app: 'billing', environment: envId })
 ```
 
 **Raw, from the CLI.** Flags follow `vercel api` and are a proposal: `-X`
@@ -70,27 +76,31 @@ selects the method (GET by default), `-F` adds a field, `--input` reads a body
 from a file or `-` for stdin, `-H` adds a header.
 
 ```bash
-syner api /apps/app_7c3a/deployments
+syner api "/apps/app_7c3a/deployments?environmentId=aenv_5r8t"
 ```
 
 ### POST /apps/:id/deployments
 
-Deploying starts the work of building, provisioning, and switching traffic.
-You get an operation back immediately; when it completes, the deployment is
-live and it is the app's current one.
+Deploying runs a version inside an environment: build, provision, and bring
+the deployment to ready at its own address. You get an operation back
+immediately. When it completes, the deployment is available. It answers at the
+environment's stable domain only after you promote it.
 
 Follow the operation in [operations](../../../../lib/operations/README.md).
-Once live, [apps/get](../README.md) shows it as the current deployment.
+Then
+[promote](../environments/[environmentId]/promote/[deploymentId]/README.md) it
+to the environment's domain.
 
 **Request.** Path: `:id` becomes `appId`. Headers: `Authorization: Bearer
 <token>`. Body:
 
+- `environmentId`: required.
 - `versionId or number`: the version.
 - `target`: optional; the cloud's default target when omitted.
 
 **Response.** `202 Accepted`. An operation reference; its result is the
-deployment, live or failed. The `Location` header will point to the operation
-once the operations route is agreed.
+deployment, ready and available, or failed. The `Location` header will point
+to the operation once the operations route is agreed.
 
 ```json
 {
@@ -116,15 +126,15 @@ once the operations route is agreed.
 ```
 
 **Authorization.** Authorization: the principal needs `deployments:create` on
-the app, checked through
+the environment, checked through
 [permissions/authorize](../../../../lib/permissions/README.md).
 
 **Operation tracking.** Long-running. It returns an
 [operation](../../../../lib/operations/README.md) reference at once; the
 deployment arrives through it.
 
-**Errors.** `404` app not found, `404` version not found, `403` not
-authorized, `409` deployment in progress, `503` target unavailable.
+**Errors.** `404` app not found, `404` environment not found, `404` version
+not found, `403` not authorized, `503` target unavailable.
 
 **Use case.** `create.ts` in
 [lib/apps/deployments](../../../../lib/apps/deployments/README.md).
@@ -134,6 +144,7 @@ authorized, `409` deployment in progress, `503` target unavailable.
 ```ts
 const op = await syner.apps.deployments.create({
   app: 'billing',
+  environment: envId,
   version: 3,
 })
 
@@ -145,5 +156,13 @@ selects the method (GET by default), `-F` adds a field, `--input` reads a body
 from a file or `-` for stdin, `-H` adds a header.
 
 ```bash
-syner api /apps/app_7c3a/deployments -X POST -F versionId=ver_9b21
+syner api /apps/app_7c3a/deployments -X POST \
+  -F environmentId=aenv_5r8t \
+  -F versionId=ver_9b21
 ```
+
+## Pending on this route
+
+- One collection for the app; `environmentId` is required on `POST` and a
+  filter on `GET`. Nesting deployments under environments would duplicate
+  these operations.

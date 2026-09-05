@@ -78,7 +78,7 @@ selects the method (GET by default), `-F` adds a field, `--input` reads a body
 from a file or `-` for stdin, `-H` adds a header.
 
 ```bash
-syner api "/compute/executions?environmentId=env_8k2p"
+syner api "/compute/executions?environmentId=aenv_5r8t"
 ```
 
 ### POST /compute/executions
@@ -149,7 +149,7 @@ from a file or `-` for stdin, `-H` adds a header.
 ```bash
 syner api /compute/executions -X POST --input - <<'JSON'
 {
-  "environmentId": "env_8k2p",
+  "environmentId": "aenv_5r8t",
   "command": [
     "bun",
     "test"

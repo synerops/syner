@@ -44,7 +44,8 @@ Exposed through `POST /compute/executions`, `PATCH
 
 ## How it relates to the rest
 
-Runs inside an [environment](../environments/README.md). A [job
-run](../../jobs/runs/README.md) may start one. Output and artifacts can be
-kept in [storage](../../storage/README.md). Time and resources are metered in
+Runs inside an [environment](../environments/README.md). A
+[job](../../jobs/README.md) that needs compute delivers to an app endpoint
+that starts one. Output and artifacts can be kept in
+[storage](../../storage/README.md). Time and resources are metered in
 [usage](../../usage/README.md).

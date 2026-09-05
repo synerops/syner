@@ -16,7 +16,8 @@ PATCH. Path parameters: `:id`, `:runId`.
 
 ### PATCH /jobs/:id/runs/:runId/cancel
 
-Stops a queued or running run and whatever it started.
+Stops further attempts of a queued or delivering run. An attempt already in
+flight is not interrupted.
 
 Cancellation asks the work to stop. It keeps the record, and it does not
 promise an immediate stop: the status becomes `cancelled` when the runtime
@@ -37,25 +38,34 @@ status if it had already ended.
   "startedBy": {
     "principal": "prn_ana"
   },
+  "idempotencyKey": "job_6t8y:manual:2026-09-04T18:24:30Z",
   "status": "cancelled",
+  "attempts": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "statusCode": 502,
+      "durationMs": 120,
+      "error": "Bad Gateway"
+    },
+    {
+      "at": "2026-09-04T18:25:30Z",
+      "statusCode": 502,
+      "durationMs": 130,
+      "error": "Bad Gateway"
+    }
+  ],
   "events": [
     {
       "at": "2026-09-04T18:24:30Z",
       "kind": "started",
-      "message": "calling /tasks/close-month"
+      "message": "delivering to /tasks/close-month"
     },
     {
       "at": "2026-09-04T18:24:30Z",
       "kind": "finished",
-      "message": "cancelled by prn_ana"
+      "message": "cancelled by prn_ana; no further attempts"
     }
   ],
-  "reference": {
-    "appCall": {
-      "path": "/tasks/close-month",
-      "statusCode": null
-    }
-  },
   "createdAt": "2026-09-04T18:24:30Z",
   "finishedAt": "2026-09-04T18:24:30Z"
 }

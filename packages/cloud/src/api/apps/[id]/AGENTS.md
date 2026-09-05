@@ -12,8 +12,8 @@ resolves the acting principal from the bearer token, and calls one use case in
 - Path to arguments: `:id` is passed as `id`.
 - Input: `id` the app id, or; `organizationId + name` the pair that identifies
   it.
-- Success: `200`. The app, with `currentDeployment` (`id`, `status`, `url`)
-  when it has one.
+- Success: `200`. The app, with its `environments` summary: each environment's
+  `id`, `name`, `url`, and `promotedDeploymentId`.
 - Authorization: the principal needs `apps:read` on the app, checked through
   [permissions/authorize](../../../lib/permissions/AGENTS.md).
 - Runs in-request. It returns the app, not an

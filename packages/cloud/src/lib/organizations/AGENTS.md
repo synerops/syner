@@ -51,7 +51,7 @@ Removes an organization and all its resources.
 - Side effect: one [activity](../activity/AGENTS.md) entry with the actor, the
   organization, and the outcome.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected

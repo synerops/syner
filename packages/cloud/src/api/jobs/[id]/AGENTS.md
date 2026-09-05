@@ -24,7 +24,8 @@ resolves the acting principal from the bearer token, and calls one use case in
 - `PATCH /jobs/:id` calls `update.ts` in
   [lib/jobs](../../../lib/jobs/AGENTS.md).
 - Path to arguments: `:id` is passed as `id`.
-- Input: `id` the job.; `name, action, triggers, enabled` any subset.
+- Input: `id` the job.; `name, target, triggers, delivery, enabled` any
+  subset.
 - Success: `200`. The job after the change.
 - Authorization: the principal needs `jobs:update` on the job, checked through
   [permissions/authorize](../../../lib/permissions/AGENTS.md).
@@ -32,7 +33,7 @@ resolves the acting principal from the bearer token, and calls one use case in
   [operation](../../../lib/operations/AGENTS.md).
 - The acting principal comes from the request context, never from the input.
 - Errors: `404` job not found, `403` not authorized, `409` name taken, `422`
-  invalid trigger, `422` invalid action.
+  invalid trigger, `422` invalid target.
 
 ### DELETE
 

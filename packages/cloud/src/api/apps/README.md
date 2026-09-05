@@ -25,12 +25,11 @@ syner apps          Apps running in the selected context
 syner apps --all    Every app, with its status
 ```
 
-Running means the app's current deployment is `live`: an administrative state,
-meaning it was put into service and not retired, not a check that the app
-answers right now. `syner apps` asks `GET /apps?running=true`; `--all` asks
-without the filter and shows each app's `currentDeployment.status`. This
-default belongs to the CLI. It does not oblige the route to hide stopped apps,
-and it says nothing about the internal structure.
+The intent stands. How a list summarizes an app with several environments,
+which environment `syner apps` reads to say running, and how a person selects
+another one are pending. No environment is a default. Until decided, `GET
+/apps` returns every app with its `environments` summary and no `running`
+filter.
 
 ### GET /apps
 
@@ -41,14 +40,11 @@ read the following page.
 
 **Request.** Headers: `Authorization: Bearer <token>`. Query: `organizationId`
 required; taken from the shared context when the request carries one.;
-`running` optional. `true` returns only apps whose current deployment is
-`live`, an administrative state, not a health check. This is what `syner apps`
-asks; `syner apps --all` omits it.; `cursor, limit` paging; limit defaults to
-the cloud's page size. No body.
+`cursor, limit` paging; limit defaults to the cloud's page size. No body.
 
 **Response.** `200 OK`. A page: `items[]` and `next`. Each item is the app
-with `currentDeployment` (`id`, `status`, `url`) when it has one, so a caller
-can tell running from stopped.
+with its `environments` summary. How a list summarizes several environments
+for `syner apps` is pending.
 
 ```json
 {
@@ -61,16 +57,25 @@ can tell running from stopped.
         "runtime": "node",
         "entry": "src/server.ts",
         "env": [
-          "STRIPE_KEY"
+          "STRIPE_KEY",
+          "LOG_LEVEL"
         ]
       },
       "frontend": null,
-      "currentDeploymentId": "dep_2b7q",
-      "currentDeployment": {
-        "id": "dep_2b7q",
-        "status": "live",
-        "url": "https://billing.acme.syner.app"
-      },
+      "environments": [
+        {
+          "id": "aenv_5r8t",
+          "name": "production",
+          "url": "https://billing.acme.syner.app",
+          "promotedDeploymentId": "dep_2b7q"
+        },
+        {
+          "id": "aenv_7p1q",
+          "name": "pr-42",
+          "url": "https://pr-42-billing.acme.syner.app",
+          "promotedDeploymentId": null
+        }
+      ],
       "createdBy": "prn_ana",
       "createdAt": "2026-09-04T18:20:00Z",
       "updatedAt": "2026-09-04T18:24:30Z"
@@ -99,7 +104,7 @@ selects the method (GET by default), `-F` adds a field, `--input` reads a body
 from a file or `-` for stdin, `-H` adds a header.
 
 ```bash
-syner api "/apps?organizationId=org_3f9k&running=true"
+syner api "/apps?organizationId=org_3f9k"
 ```
 
 ### POST /apps
@@ -120,8 +125,7 @@ You get the app back with no deployment. Next:
 - `frontend`: optional.
 - `purpose`: optional; the app's purpose as described in purpose/.
 
-**Response.** `201 Created`. The app as stored, with `currentDeploymentId`
-empty.
+**Response.** `201 Created`. The app as stored, with no environment yet.
 
 ```json
 {
@@ -132,12 +136,12 @@ empty.
     "runtime": "node",
     "entry": "src/server.ts",
     "env": [
-      "STRIPE_KEY"
+      "STRIPE_KEY",
+      "LOG_LEVEL"
     ]
   },
   "frontend": null,
-  "currentDeploymentId": null,
-  "currentDeployment": null,
+  "environments": [],
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",
   "updatedAt": "2026-09-04T18:20:00Z"

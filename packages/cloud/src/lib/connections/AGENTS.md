@@ -77,7 +77,7 @@ Removes a grant of use from a connection.
 - Side effect: one [activity](../activity/AGENTS.md) entry with the actor, the
   connection and the former grantee, and the outcome.
 
-## Ports (`ports.ts`)
+## Infrastructure (`infrastructure.ts`)
 
 Interfaces this module requires. Implemented in
 [infrastructure](../../../../infrastructure/AGENTS.md), never here; injected

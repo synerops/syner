@@ -18,7 +18,7 @@ Owns the versions of an app: immutable, numbered snapshots.
 - Numbers strictly increase per app and are never reused.
 - Creating a version deploys nothing.
 - The code itself lives in the artifact store declared in
-  [ports](../AGENTS.md); the version holds the reference.
+  [infrastructure.ts](../infrastructure.ts); the version holds the reference.
 
 ## Use cases
 

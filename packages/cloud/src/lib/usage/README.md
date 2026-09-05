@@ -22,8 +22,8 @@ Syner OS.
 - **Metric.** what was consumed: compute seconds, storage bytes, document
   writes, file bytes, connection calls, runs.
 - **Quantity.** how much.
-- **Attribution.** organization, app when there is one, principal, and the
-  resource.
+- **Attribution.** organization, app and environment when there are,
+  principal, and the resource.
 - **Period.** the hour it falls in.
 
 ## What it owns
@@ -57,4 +57,5 @@ own use cases, never exposed.
 [Compute](../compute/README.md), [storage](../storage/README.md),
 [connections](../connections/README.md), and [jobs](../jobs/README.md) record
 here. [Budgets](budgets/README.md) read it. Turning quantities into money is a
-pricing decision made in infrastructure, through [ports](README.md).
+pricing decision made in infrastructure, through
+[infrastructure.ts](infrastructure.ts).

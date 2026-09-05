@@ -17,6 +17,7 @@ GET, PATCH, DELETE. Path parameters: `:id`.
 ## Below this route
 
 - [`/apps/:id/deployments`](deployments/README.md)
+- [`/apps/:id/environments`](environments/README.md)
 - [`/apps/:id/versions`](versions/README.md)
 
 ### GET /apps/:id
@@ -30,8 +31,8 @@ To see its history use [versions/list](versions/README.md) and
 **Request.** Path: `:id` becomes `id`. Headers: `Authorization: Bearer
 <token>`. No body.
 
-**Response.** `200 OK`. The app, with `currentDeployment` (`id`, `status`,
-`url`) when it has one.
+**Response.** `200 OK`. The app, with its `environments` summary: each
+environment's `id`, `name`, `url`, and `promotedDeploymentId`.
 
 ```json
 {
@@ -42,16 +43,25 @@ To see its history use [versions/list](versions/README.md) and
     "runtime": "node",
     "entry": "src/server.ts",
     "env": [
-      "STRIPE_KEY"
+      "STRIPE_KEY",
+      "LOG_LEVEL"
     ]
   },
   "frontend": null,
-  "currentDeploymentId": "dep_2b7q",
-  "currentDeployment": {
-    "id": "dep_2b7q",
-    "status": "live",
-    "url": "https://billing.acme.syner.app"
-  },
+  "environments": [
+    {
+      "id": "aenv_5r8t",
+      "name": "production",
+      "url": "https://billing.acme.syner.app",
+      "promotedDeploymentId": "dep_2b7q"
+    },
+    {
+      "id": "aenv_7p1q",
+      "name": "pr-42",
+      "url": "https://pr-42-billing.acme.syner.app",
+      "promotedDeploymentId": null
+    }
+  ],
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",
   "updatedAt": "2026-09-04T18:24:30Z"
@@ -106,16 +116,24 @@ deployment keeps serving the version it was given.
     "entry": "src/main.ts",
     "env": [
       "STRIPE_KEY",
-      "SENTRY_DSN"
+      "LOG_LEVEL"
     ]
   },
   "frontend": null,
-  "currentDeploymentId": "dep_2b7q",
-  "currentDeployment": {
-    "id": "dep_2b7q",
-    "status": "live",
-    "url": "https://billing.acme.syner.app"
-  },
+  "environments": [
+    {
+      "id": "aenv_5r8t",
+      "name": "production",
+      "url": "https://billing.acme.syner.app",
+      "promotedDeploymentId": "dep_2b7q"
+    },
+    {
+      "id": "aenv_7p1q",
+      "name": "pr-42",
+      "url": "https://pr-42-billing.acme.syner.app",
+      "promotedDeploymentId": null
+    }
+  ],
   "createdBy": "prn_ana",
   "createdAt": "2026-09-04T18:20:00Z",
   "updatedAt": "2026-09-04T18:24:30Z"
@@ -165,9 +183,9 @@ JSON
 
 ### DELETE /apps/:id
 
-Removing an app tears down whatever is serving it and frees the name for
-reuse. Its versions and its history stay readable, so the organization can
-still answer what the app did while it existed.
+Removing an app removes its environments, retires their deployments, and frees
+the name for reuse. Its versions and its history stay readable, so the
+organization can still answer what the app did while it existed.
 
 Follow the operation in [operations](../../../lib/operations/README.md). When
 it completes, the name is free and the app answers only to [get](README.md) as
@@ -193,7 +211,7 @@ operations route is agreed.
   "progress": {
     "current": 0,
     "total": 3,
-    "message": "retiring live deployment"
+    "message": "retiring deployments"
   },
   "result": null,
   "error": null,
