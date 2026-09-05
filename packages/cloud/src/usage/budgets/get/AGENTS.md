@@ -22,4 +22,7 @@ The budget, `current` consumption, and `remaining`.
 
 ## Errors
 
-`organization not found`, `app not found`, `budget not set`, `not authorized`.
+- `organization not found`
+- `app not found`
+- `budget not set`
+- `not authorized`

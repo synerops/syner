@@ -13,14 +13,42 @@
 
 Returns the body and version under a key.
 
-## Example
+## From the SDK
 
 ```ts
-const doc = await syner.storage.documents.get({ store: 'invoices', key: '2026/03/inv-1042' })
+const doc = await syner.storage.documents.get({
+  store: 'invoices',
+  key: '2026/03/inv-1042',
+})
 ```
 
-In the CLI: `syner storage documents get invoices 2026/03/inv-1042`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage documents get invoices 2026/03/inv-1042
+```
 
-Keep the version if you plan a conditional put.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/documents/get '{
+  "store": "invoices",
+  "key": "2026/03/inv-1042"
+}'
+```
+
+## Response
+
+```json
+{
+  "storeId": "sto_1a2b",
+  "key": "2026/03/inv-1042",
+  "body": {
+    "total": 120
+  },
+  "version": 4,
+  "updatedBy": "prn_bot",
+  "updatedAt": "2026-09-04T18:24:30Z"
+}
+```

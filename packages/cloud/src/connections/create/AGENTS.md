@@ -30,4 +30,8 @@ The connection with `credentialSetAt` empty and no grants.
 
 ## Errors
 
-`organization not found`, `not authorized`, `name taken`, `unknown service`, `secret in config`.
+- `organization not found`
+- `not authorized`
+- `name taken`
+- `unknown service`
+- `secret in config`

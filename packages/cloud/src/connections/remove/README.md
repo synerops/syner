@@ -13,15 +13,29 @@
 
 Revokes every grant, destroys the credential, and removes the connection.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.connections.remove({ id })
 ```
 
-In the CLI: `syner connections remove stripe`.
+## From the CLI
 
-## What happens next
+```bash
+syner connections remove stripe
+```
 
-Apps that used it fail on their next call to the service; their activity shows
-why.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api connections/remove '{"id": "con_5e7r"}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

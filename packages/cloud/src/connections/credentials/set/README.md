@@ -14,15 +14,28 @@
 Send the secret once. The cloud keeps it in the vault and the connection
 records that it is set.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.connections.credentials.set({ connection: id, material: process.env.STRIPE_KEY })
+await syner.connections.credentials.set({
+  connection: id,
+  material: process.env.STRIPE_KEY,
+})
 ```
 
-In the CLI: `syner connections credentials set stripe` reads the material from
-stdin.
+## From the CLI
 
-## What happens next
+```bash
+syner connections credentials set stripe
+```
 
-Grant the connection to whoever needs it; they use it without seeing this.
+## Response
+
+```json
+{
+  "connectionId": "con_5e7r",
+  "setBy": "prn_ana",
+  "setAt": "2026-09-04T18:24:30Z",
+  "fingerprint": "sha256:1c9e…"
+}
+```

@@ -20,4 +20,5 @@ The run.
 
 ## Errors
 
-`run not found`, `not authorized`.
+- `run not found`
+- `not authorized`

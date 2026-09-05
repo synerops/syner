@@ -13,15 +13,44 @@
 
 Streams bytes to a path in a store.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.storage.files.put({ store: 'invoices', path: 'pdf/inv-1042.pdf', body: stream, contentType: 'application/pdf' })
+await syner.storage.files.put({
+  store: 'invoices',
+  path: 'pdf/inv-1042.pdf',
+  body: stream,
+  contentType: 'application/pdf',
+})
 ```
 
-In the CLI: `syner storage files put invoices pdf/inv-1042.pdf
-./inv-1042.pdf`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage files put invoices pdf/inv-1042.pdf ./inv-1042.pdf
+```
 
-Get returns a way to read it back.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/files/put '{
+  "store": "invoices",
+  "path": "pdf/inv-1042.pdf",
+  "contentType": "application/pdf"
+}'
+```
+
+## Response
+
+```json
+{
+  "storeId": "sto_1a2b",
+  "path": "pdf/inv-1042.pdf",
+  "contentType": "application/pdf",
+  "size": 48213,
+  "etag": "9f3c…",
+  "updatedBy": "prn_bot",
+  "updatedAt": "2026-09-04T18:24:30Z"
+}
+```

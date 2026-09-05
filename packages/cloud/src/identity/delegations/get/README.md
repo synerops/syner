@@ -13,14 +13,40 @@
 
 Returns the delegation with its status.
 
-## Example
+## From the SDK
 
 ```ts
 const d = await syner.identity.delegations.get({ id })
 ```
 
-In the CLI: `syner identity delegations get <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner identity delegations get <id>
+```
 
-Check `expiresAt` and `limits` to know what the agent may still do.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api identity/delegations/get '{"id": "del_2m4n"}'
+```
+
+## Response
+
+```json
+{
+  "id": "del_2m4n",
+  "fromPrincipalId": "prn_ana",
+  "toPrincipalId": "prn_bot",
+  "scope": {
+    "organizationId": "org_3f9k",
+    "appId": "app_7c3a"
+  },
+  "limits": "all",
+  "expiresAt": "2026-12-31T00:00:00Z",
+  "status": "active",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "revokedAt": null
+}
+```

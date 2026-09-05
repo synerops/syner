@@ -13,14 +13,75 @@
 
 Returns the declaration with its latest evaluation.
 
-## Example
+## From the SDK
 
 ```ts
 const p = await syner.purpose.get({ app: 'billing' })
 ```
 
-In the CLI: `syner purpose get billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner purpose get billing
+```
 
-Ask for `history: true` to get every evaluation, newest first.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api purpose/get '{"app": "billing"}'
+```
+
+## Response
+
+```json
+{
+  "appId": "app_7c3a",
+  "statement": "Issue every customer's invoice for the month and collect it through Stripe before the 5th.",
+  "criteria": [
+    {
+      "name": "invoices-on-time",
+      "target": "100% of invoices issued before the 3rd",
+      "source": "activity"
+    },
+    {
+      "name": "failed-charges",
+      "target": "fewer than 2% of charges fail",
+      "source": "activity"
+    },
+    {
+      "name": "monthly-cost",
+      "target": "usage under $40 per month",
+      "source": "usage"
+    }
+  ],
+  "declaredBy": "prn_ana",
+  "since": "2026-09-04T18:20:00Z",
+  "evaluations": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "result": "partial",
+      "evidence": [
+        {
+          "criterion": "invoices-on-time",
+          "met": true,
+          "measured": "100% before the 3rd",
+          "source": "activity"
+        },
+        {
+          "criterion": "failed-charges",
+          "met": false,
+          "measured": "3.1% failed",
+          "source": "activity"
+        },
+        {
+          "criterion": "monthly-cost",
+          "met": true,
+          "measured": "$12.60",
+          "source": "usage"
+        }
+      ]
+    }
+  ]
+}
+```

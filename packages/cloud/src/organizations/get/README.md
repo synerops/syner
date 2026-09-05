@@ -13,14 +13,37 @@
 
 Returns the organization and a count of its members.
 
-## Example
+List who belongs with [members/list](../members/list/README.md).
+
+## From the SDK
 
 ```ts
 const org = await syner.organizations.get({ slug: 'acme' })
 ```
 
-In the CLI: `syner organizations get acme`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations get acme
+```
 
-List who belongs with [members/list](../members/list/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/get '{"slug": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "id": "org_3f9k",
+  "slug": "acme",
+  "name": "Acme Inc.",
+  "status": "active",
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "members": 7
+}
+```

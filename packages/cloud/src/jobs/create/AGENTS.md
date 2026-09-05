@@ -32,4 +32,9 @@ The job.
 
 ## Errors
 
-`organization not found`, `app not found`, `not authorized`, `name taken`, `invalid trigger`, `invalid action`.
+- `organization not found`
+- `app not found`
+- `not authorized`
+- `name taken`
+- `invalid trigger`
+- `invalid action`

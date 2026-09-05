@@ -22,4 +22,5 @@ A page of connections.
 
 ## Errors
 
-`organization not found`, `not authorized`.
+- `organization not found`
+- `not authorized`

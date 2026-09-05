@@ -21,4 +21,5 @@ The store.
 
 ## Errors
 
-`store not found`, `not authorized`.
+- `store not found`
+- `not authorized`

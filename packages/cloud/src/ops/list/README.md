@@ -13,14 +13,54 @@
 
 Returns operations of an organization or a resource, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.ops.list({ organization: 'acme', status: 'running' })
+const page = await syner.ops.list({
+  organization: 'acme',
+  status: 'running',
+})
 ```
 
-In the CLI: `syner ops list --status running`.
+## From the CLI
 
-## What happens next
+```bash
+syner ops list --status running
+```
 
-This is the live view of what the cloud is doing for you right now.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api ops/list '{"organization": "acme", "status": "running"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "op_4x1m",
+      "organizationId": "org_3f9k",
+      "kind": "apps/deployments/create",
+      "resource": {
+        "kind": "deployment",
+        "id": "dep_2b7q"
+      },
+      "status": "running",
+      "progress": {
+        "current": 2,
+        "total": 3,
+        "message": "provisioning"
+      },
+      "result": null,
+      "error": null,
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z",
+      "finishedAt": null
+    }
+  ],
+  "next": null
+}
+```

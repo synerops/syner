@@ -27,4 +27,7 @@ The version with its number and the captured definition.
 
 ## Errors
 
-`app not found`, `not authorized`, `invalid source`, `source unreachable`.
+- `app not found`
+- `not authorized`
+- `invalid source`
+- `source unreachable`

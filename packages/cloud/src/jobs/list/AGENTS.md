@@ -21,4 +21,5 @@ A page of jobs.
 
 ## Errors
 
-`organization not found`, `not authorized`.
+- `organization not found`
+- `not authorized`

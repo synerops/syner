@@ -21,4 +21,6 @@ The document.
 
 ## Errors
 
-`store not found`, `document not found`, `not authorized`.
+- `store not found`
+- `document not found`
+- `not authorized`

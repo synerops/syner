@@ -13,14 +13,38 @@
 
 Called by the cloud when something is consumed. Clients never call it.
 
-## Example
+## From inside the cloud
 
 ```ts
 // inside a cloud use case, after an execution ends
-await usage.record({ metric: 'compute.seconds', quantity: 42, organizationId, appId, principalId, resource: { kind: 'execution', id } })
+await usage.record({
+  metric: 'compute.seconds',
+  quantity: 42,
+  organizationId,
+  appId,
+  principalId,
+  resource: {
+    kind: 'execution',
+    id,
+  },
+})
 ```
 
-## What happens next
+## Response
 
-Budgets are re-evaluated for the organization and app; a reached budget takes
-its configured action.
+```json
+{
+  "id": "use_7q1w",
+  "metric": "compute.seconds",
+  "quantity": 42,
+  "organizationId": "org_3f9k",
+  "appId": "app_7c3a",
+  "principalId": "prn_bot",
+  "resource": {
+    "kind": "execution",
+    "id": "exe_c41d"
+  },
+  "period": "2026-09-04T18:00:00Z",
+  "recordedAt": "2026-09-04T18:24:30Z"
+}
+```

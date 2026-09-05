@@ -13,14 +13,35 @@
 
 Returns a principal by id.
 
-## Example
+## From the SDK
 
 ```ts
 const p = await syner.identity.principals.get({ id })
 ```
 
-In the CLI: `syner identity principals get <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner identity principals get <id>
+```
 
-See its memberships in each organization's members list.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api identity/principals/get '{"id": "prn_ana"}'
+```
+
+## Response
+
+```json
+{
+  "id": "prn_ana",
+  "kind": "human",
+  "name": "Ana",
+  "subject": "auth|ana@acme.com",
+  "status": "active",
+  "firstSeenAt": "2026-09-04T18:20:00Z",
+  "lastSeenAt": "2026-09-04T18:24:30Z"
+}
+```

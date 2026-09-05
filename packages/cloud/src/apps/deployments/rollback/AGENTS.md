@@ -29,4 +29,7 @@ migrations are not reversed.
 
 ## Errors
 
-`app not found`, `nothing to roll back to`, `not authorized`, `deployment in progress`.
+- `app not found`
+- `nothing to roll back to`
+- `not authorized`
+- `deployment in progress`

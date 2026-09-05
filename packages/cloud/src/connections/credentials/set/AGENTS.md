@@ -31,4 +31,6 @@ The credential status: `setAt` and `fingerprint`.
 
 ## Errors
 
-`connection not found`, `not authorized`, `invalid material`.
+- `connection not found`
+- `not authorized`
+- `invalid material`

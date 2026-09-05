@@ -13,14 +13,43 @@
 
 Returns principals, filtered by kind, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.identity.principals.list({ organization: 'acme', kind: 'agent' })
+const page = await syner.identity.principals.list({
+  organization: 'acme',
+  kind: 'agent',
+})
 ```
 
-In the CLI: `syner identity principals list --kind agent`.
+## From the CLI
 
-## What happens next
+```bash
+syner identity principals list --kind agent
+```
 
-Pair with delegations/list to see which agents act for whom.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api identity/principals/list '{"organization": "acme", "kind": "agent"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "prn_bot",
+      "kind": "agent",
+      "name": "Syner Bot",
+      "subject": "auth|syner-bot",
+      "status": "active",
+      "firstSeenAt": "2026-09-04T18:20:00Z",
+      "lastSeenAt": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "next": null
+}
+```

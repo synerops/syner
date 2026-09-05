@@ -13,14 +13,54 @@
 
 Stops a queued or running run and whatever it started.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.jobs.runs.cancel({ id })
 ```
 
-In the CLI: `syner jobs runs cancel <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs runs cancel <id>
+```
 
-The run's events end with a cancellation entry.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/runs/cancel '{"id": "run_3h9j"}'
+```
+
+## Response
+
+```json
+{
+  "id": "run_3h9j",
+  "jobId": "job_6t8y",
+  "startedBy": {
+    "principal": "prn_ana"
+  },
+  "status": "cancelled",
+  "events": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "kind": "started",
+      "message": "calling /tasks/close-month"
+    },
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "kind": "finished",
+      "message": "cancelled by prn_ana"
+    }
+  ],
+  "reference": {
+    "appCall": {
+      "path": "/tasks/close-month",
+      "statusCode": null
+    }
+  },
+  "createdAt": "2026-09-04T18:24:30Z",
+  "finishedAt": "2026-09-04T18:24:30Z"
+}
+```

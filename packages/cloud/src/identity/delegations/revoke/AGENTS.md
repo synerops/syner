@@ -22,4 +22,6 @@ The delegation with status `revoked`.
 
 ## Errors
 
-`delegation not found`, `not authorized`, `already ended`.
+- `delegation not found`
+- `not authorized`
+- `already ended`

@@ -13,14 +13,46 @@
 
 Deletes the documents and files, then the store. Long-running.
 
-## Example
+## From the SDK
 
 ```ts
 const op = await syner.storage.stores.remove({ id })
 ```
 
-In the CLI: `syner storage stores remove invoices`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage stores remove invoices
+```
 
-Follow the operation. The name is released when it completes.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/stores/remove '{"id": "sto_1a2b"}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "storage/stores/remove",
+  "resource": {
+    "kind": "store",
+    "id": "sto_1a2b"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 3,
+    "message": "removing contents"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

@@ -27,4 +27,5 @@ already ended.
 
 ## Errors
 
-`operation not found`, `not authorized`.
+- `operation not found`
+- `not authorized`

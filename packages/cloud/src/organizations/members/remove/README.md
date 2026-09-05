@@ -14,14 +14,35 @@
 Takes a principal out of the organization and revokes what came with the
 membership.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.organizations.members.remove({ organization: 'acme', principal: anaId })
+await syner.organizations.members.remove({
+  organization: 'acme',
+  principal: anaId,
+})
 ```
 
-In the CLI: `syner organizations members remove acme ana@acme.com`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations members remove acme ana@acme.com
+```
 
-Their delegations and permissions in this organization are gone.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/members/remove '{
+  "organization": "acme",
+  "principal": "prn_ana"
+}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

@@ -27,4 +27,7 @@ Nothing but confirmation.
 
 ## Errors
 
-`organization not found`, `member not found`, `not authorized`, `last owner`.
+- `organization not found`
+- `member not found`
+- `not authorized`
+- `last owner`

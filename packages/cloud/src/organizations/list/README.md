@@ -13,14 +13,39 @@
 
 Returns the organizations where the acting principal is a member.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.organizations.list()
 ```
 
-In the CLI: `syner organizations list`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations list
+```
 
-Pick one; most commands take it as context.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/list '{}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "org_3f9k",
+      "slug": "acme",
+      "name": "Acme Inc.",
+      "status": "active",
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

@@ -13,14 +13,48 @@
 
 Returns the connection: config, credential status, grants. Never the secret.
 
-## Example
+## From the SDK
 
 ```ts
-const c = await syner.connections.get({ organization: 'acme', name: 'stripe' })
+const connection = await syner.connections.get({
+  organization: 'acme',
+  name: 'stripe',
+})
 ```
 
-In the CLI: `syner connections get stripe`.
+## From the CLI
 
-## What happens next
+```bash
+syner connections get stripe
+```
 
-Grants tell you who can use it right now.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api connections/get '{"organization": "acme", "name": "stripe"}'
+```
+
+## Response
+
+```json
+{
+  "id": "con_5e7r",
+  "organizationId": "org_3f9k",
+  "name": "stripe",
+  "service": "stripe",
+  "config": {
+    "account": "acct_123"
+  },
+  "credentialSetAt": "2026-09-04T18:24:30Z",
+  "grants": [
+    {
+      "appId": "app_7c3a",
+      "grantedBy": "prn_ana",
+      "at": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

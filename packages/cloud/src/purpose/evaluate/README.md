@@ -16,16 +16,63 @@ criterion against it. The result is met, partial, or unmet, with the evidence
 per criterion. It runs on demand from Syner OS or Syner Bot, or on a schedule
 as a job.
 
-## Example
+The evaluation is appended to the purpose; [get](../get/README.md) returns it
+as the latest. An unmet result is what Syner OS shows in red.
+
+## From the SDK
 
 ```ts
-const op = await syner.purpose.evaluate({ app: 'billing', window: { since: '2026-03-01', until: '2026-04-01' } })
+const op = await syner.purpose.evaluate({
+  app: 'billing',
+  window: {
+    since: '2026-03-01',
+    until: '2026-04-01',
+  },
+})
+
 const evaluation = await op.result()
 ```
 
-In the CLI: `syner purpose evaluate billing --since 2026-03-01`.
+## From the CLI
 
-## What happens next
+```bash
+syner purpose evaluate billing --since 2026-03-01
+```
 
-The evaluation is appended to the purpose; [get](../get/README.md) returns it
-as the latest. An unmet result is what Syner OS shows in red.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api purpose/evaluate '{
+  "app": "billing",
+  "window": {
+    "since": "2026-03-01",
+    "until": "2026-04-01"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "purpose/evaluate",
+  "resource": {
+    "kind": "purpose",
+    "id": "app_7c3a"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 3,
+    "message": "reading activity"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

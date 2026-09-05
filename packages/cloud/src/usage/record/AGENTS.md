@@ -26,4 +26,6 @@ The record.
 
 ## Errors
 
-`unknown metric`, `invalid quantity`, `organization not found`.
+- `unknown metric`
+- `invalid quantity`
+- `organization not found`

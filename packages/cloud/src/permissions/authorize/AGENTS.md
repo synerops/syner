@@ -33,4 +33,6 @@ Answers allowed or denied for a principal, an action, and a resource.
 
 ## Errors
 
-`principal not found`, `resource not found`, `unknown action`.
+- `principal not found`
+- `resource not found`
+- `unknown action`

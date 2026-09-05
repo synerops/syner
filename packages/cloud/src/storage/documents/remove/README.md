@@ -13,14 +13,35 @@
 
 Removes the key. Optionally conditional on version.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.storage.documents.remove({ store: 'invoices', key: '2026/03/inv-1042' })
+await syner.storage.documents.remove({
+  store: 'invoices',
+  key: '2026/03/inv-1042',
+})
 ```
 
-In the CLI: `syner storage documents remove invoices 2026/03/inv-1042`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage documents remove invoices 2026/03/inv-1042
+```
 
-A later get answers not found.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/documents/remove '{
+  "store": "invoices",
+  "key": "2026/03/inv-1042"
+}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

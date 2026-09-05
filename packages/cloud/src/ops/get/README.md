@@ -14,16 +14,53 @@
 Returns the operation with its status, progress, and, when finished, its
 result or error.
 
-## Example
+## From the SDK
 
 ```ts
 const op = await syner.ops.get({ id })
-if (op.status === 'succeeded') console.log(op.result)
+
+if (op.status === 'succeeded') {
+  console.log(op.result)
+}
 ```
 
-In the CLI: `syner ops get <id>`, or `syner ops get <id> --wait` to block
-until it ends.
+## From the CLI
 
-## What happens next
+```bash
+syner ops get <id>
+```
 
-Waiting is the client's job: poll, or let the SDK's `op.result()` do it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api ops/get '{"id": "op_4x1m"}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "apps/deployments/create",
+  "resource": {
+    "kind": "deployment",
+    "id": "dep_2b7q"
+  },
+  "status": "succeeded",
+  "progress": {
+    "current": 3,
+    "total": 3,
+    "message": "live"
+  },
+  "result": {
+    "deploymentId": "dep_2b7q",
+    "url": "https://billing.acme.syner.app"
+  },
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": "2026-09-04T18:24:30Z"
+}
+```

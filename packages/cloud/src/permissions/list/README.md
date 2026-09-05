@@ -13,14 +13,47 @@
 
 Answers who can do what on a resource, or what a principal can do.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.permissions.list({ resource: { kind: 'app', id: appId } })
+const page = await syner.permissions.list({
+  resource: {
+    kind: 'app',
+    id: appId,
+  },
+})
 ```
 
-In the CLI: `syner permissions list --app billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner permissions list --app billing
+```
 
-Each item says whether it comes from a role or a grant.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api permissions/list '{"resource": {"kind": "app", "id": "app_7c3a"}}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "principalId": "prn_ana",
+      "action": "deployments:rollback",
+      "resource": {
+        "kind": "app",
+        "id": "app_7c3a"
+      },
+      "source": "role:admin",
+      "grantedBy": "prn_ana",
+      "grantedAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

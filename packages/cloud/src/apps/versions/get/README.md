@@ -13,14 +13,52 @@
 
 Returns a version by number.
 
-## Example
+To see where it ran, list [deployments](../../deployments/list/README.md).
+
+## From the SDK
 
 ```ts
-const v = await syner.apps.versions.get({ app: 'billing', number: 3 })
+const version = await syner.apps.versions.get({
+  app: 'billing',
+  number: 3,
+})
 ```
 
-In the CLI: `syner apps versions get billing 3`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps versions get billing 3
+```
 
-To see where it ran, list [deployments](../../deployments/list/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/versions/get '{"app": "billing", "number": 3}'
+```
+
+## Response
+
+```json
+{
+  "id": "ver_9b21",
+  "appId": "app_7c3a",
+  "number": 3,
+  "source": {
+    "kind": "git",
+    "ref": "main",
+    "commit": "4e1f0c9",
+    "artifactId": "art_5d8e"
+  },
+  "backend": {
+    "runtime": "node",
+    "entry": "src/server.ts",
+    "env": [
+      "STRIPE_KEY"
+    ]
+  },
+  "frontend": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

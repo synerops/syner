@@ -25,4 +25,5 @@ Nothing but confirmation.
 
 ## Errors
 
-`connection not found`, `not authorized`.
+- `connection not found`
+- `not authorized`

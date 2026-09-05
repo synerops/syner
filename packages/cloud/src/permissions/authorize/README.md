@@ -16,15 +16,42 @@ the principal's roles, explicit grants, and, when the principal is an agent,
 the delegation it acts under. The answer is allowed or denied, with the
 reason.
 
-## Example
+## From the SDK
 
 ```ts
-const decision = await syner.permissions.authorize({ action: 'apps:create', resource: { kind: 'organization', id: orgId } })
+const decision = await syner.permissions.authorize({
+  action: 'apps:create',
+  resource: {
+    kind: 'organization',
+    id: orgId,
+  },
+})
 ```
 
-In the CLI: `syner permissions authorize apps:create --organization acme`.
+## From the CLI
 
-## What happens next
+```bash
+syner permissions authorize apps:create --organization acme
+```
 
-A denied decision carries the reason: no permission, disabled principal,
-delegation expired, outside delegation scope.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api permissions/authorize '{
+  "action": "apps:create",
+  "resource": {
+    "kind": "organization",
+    "id": "org_3f9k"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "allowed": false,
+  "reason": "delegation del_2m4n is scoped to app_7c3a"
+}
+```

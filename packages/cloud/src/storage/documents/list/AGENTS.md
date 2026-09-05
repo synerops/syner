@@ -23,4 +23,5 @@ A page of keys and versions, with bodies when requested.
 
 ## Errors
 
-`store not found`, `not authorized`.
+- `store not found`
+- `not authorized`

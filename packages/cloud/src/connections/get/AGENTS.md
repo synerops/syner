@@ -22,4 +22,5 @@ The connection.
 
 ## Errors
 
-`connection not found`, `not authorized`.
+- `connection not found`
+- `not authorized`

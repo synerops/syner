@@ -15,21 +15,53 @@ Name the service and give the non-secret settings. The credential comes
 separately, through [credentials/set](../credentials/set/README.md), so the
 secret never travels with the configuration.
 
-## Example
+## From the SDK
 
 ```ts
-const c = await syner.connections.create({
+const connection = await syner.connections.create({
   organization: 'acme',
   name: 'stripe',
   service: 'stripe',
-  config: { account: 'acct_123' },
+  config: {
+    account: 'acct_123',
+  },
 })
 ```
 
-In the CLI: `syner connections create stripe --service stripe --config
-account=acct_123`.
+## From the CLI
 
-## What happens next
+```bash
+syner connections create stripe --service stripe --config account=acct_123
+```
 
-Set the credential, then grant the connection to the app or agent that needs
-it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api connections/create '{
+  "organization": "acme",
+  "name": "stripe",
+  "service": "stripe",
+  "config": {
+    "account": "acct_123"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "con_5e7r",
+  "organizationId": "org_3f9k",
+  "name": "stripe",
+  "service": "stripe",
+  "config": {
+    "account": "acct_123"
+  },
+  "credentialSetAt": null,
+  "grants": [],
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

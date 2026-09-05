@@ -14,15 +14,43 @@
 Removes a grant. Role-implied permissions are unaffected; change the role for
 those.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.permissions.revoke({ principal: anaId, action: 'deployments:rollback', resource: { kind: 'app', id: appId } })
+await syner.permissions.revoke({
+  principal: anaId,
+  action: 'deployments:rollback',
+  resource: {
+    kind: 'app',
+    id: appId,
+  },
+})
 ```
 
-In the CLI: `syner permissions revoke ana@acme.com deployments:rollback --app
-billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner permissions revoke ana@acme.com deployments:rollback --app billing
+```
 
-If the role still implies the action, authorize still says allowed.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api permissions/revoke '{
+  "principal": "prn_ana",
+  "action": "deployments:rollback",
+  "resource": {
+    "kind": "app",
+    "id": "app_7c3a"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

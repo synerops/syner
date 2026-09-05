@@ -21,4 +21,5 @@ A page: `items[]` and `next` (a cursor, or empty).
 
 ## Errors
 
-`organization not found`, `not authorized`.
+- `organization not found`
+- `not authorized`

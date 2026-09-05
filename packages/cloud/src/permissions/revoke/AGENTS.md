@@ -25,4 +25,5 @@ Nothing but confirmation.
 
 ## Errors
 
-`permission not found`, `not authorized`.
+- `permission not found`
+- `not authorized`

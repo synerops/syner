@@ -22,4 +22,6 @@ is set.
 
 ## Errors
 
-`app not found`, `purpose not declared`, `not authorized`.
+- `app not found`
+- `purpose not declared`
+- `not authorized`

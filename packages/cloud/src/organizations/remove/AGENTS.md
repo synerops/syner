@@ -27,4 +27,7 @@ An operation reference; its result is the removed organization.
 
 ## Errors
 
-`organization not found`, `not authorized`, `confirmation mismatch`, `removal in progress`.
+- `organization not found`
+- `not authorized`
+- `confirmation mismatch`
+- `removal in progress`

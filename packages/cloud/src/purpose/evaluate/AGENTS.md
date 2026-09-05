@@ -30,4 +30,7 @@ An operation reference; its result is the evaluation: `at`, `result`,
 
 ## Errors
 
-`app not found`, `purpose not declared`, `not authorized`, `invalid window`.
+- `app not found`
+- `purpose not declared`
+- `not authorized`
+- `invalid window`

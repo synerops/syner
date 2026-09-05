@@ -13,14 +13,62 @@
 
 Returns runs, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.jobs.runs.list({ job: id, status: 'failed' })
+const page = await syner.jobs.runs.list({
+  job: id,
+  status: 'failed',
+})
 ```
 
-In the CLI: `syner jobs runs list close-month --status failed`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs runs list close-month --status failed
+```
 
-Filter by `status` or a time window.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/runs/list '{"job": "job_6t8y", "status": "failed"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "run_3h9j",
+      "jobId": "job_6t8y",
+      "startedBy": {
+        "principal": "prn_ana"
+      },
+      "status": "failed",
+      "events": [
+        {
+          "at": "2026-09-04T18:24:30Z",
+          "kind": "started",
+          "message": "calling /tasks/close-month"
+        },
+        {
+          "at": "2026-09-04T18:24:30Z",
+          "kind": "error",
+          "message": "502 Bad Gateway"
+        }
+      ],
+      "reference": {
+        "appCall": {
+          "path": "/tasks/close-month",
+          "statusCode": 502
+        }
+      },
+      "createdAt": "2026-09-04T18:24:30Z",
+      "finishedAt": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "next": null
+}
+```

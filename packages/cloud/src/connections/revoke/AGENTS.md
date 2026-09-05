@@ -26,4 +26,5 @@ The connection with its remaining grants.
 
 ## Errors
 
-`connection not found`, `not authorized`.
+- `connection not found`
+- `not authorized`

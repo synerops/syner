@@ -24,4 +24,6 @@ An operation reference; its result is the stopped environment.
 
 ## Errors
 
-`environment not found`, `not authorized`, `already stopped`.
+- `environment not found`
+- `not authorized`
+- `already stopped`

@@ -25,4 +25,7 @@ The app as stored after the change.
 
 ## Errors
 
-`app not found`, `not authorized`, `name taken`, `invalid backend`.
+- `app not found`
+- `not authorized`
+- `name taken`
+- `invalid backend`

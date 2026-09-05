@@ -13,14 +13,54 @@
 
 Returns the definition and a summary of its latest run.
 
-## Example
+See its history with [runs/list](../runs/list/README.md).
+
+## From the SDK
 
 ```ts
-const job = await syner.jobs.get({ organization: 'acme', name: 'close-month' })
+const job = await syner.jobs.get({
+  organization: 'acme',
+  name: 'close-month',
+})
 ```
 
-In the CLI: `syner jobs get close-month`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs get close-month
+```
 
-See its history with [runs/list](../runs/list/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/get '{"organization": "acme", "name": "close-month"}'
+```
+
+## Response
+
+```json
+{
+  "id": "job_6t8y",
+  "organizationId": "org_3f9k",
+  "appId": "app_7c3a",
+  "name": "close-month",
+  "action": {
+    "kind": "app",
+    "path": "/tasks/close-month"
+  },
+  "triggers": [
+    {
+      "kind": "schedule",
+      "cron": "0 2 1 * *"
+    },
+    {
+      "kind": "manual"
+    }
+  ],
+  "enabled": true,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "updatedAt": "2026-09-04T18:20:00Z"
+}
+```

@@ -13,15 +13,51 @@
 
 Returns the organization's apps, newest first, in pages.
 
-## Example
+Each item is the same shape [get](../get/README.md) returns. Follow `next` to
+read the following page.
+
+## From the SDK
 
 ```ts
 const page = await syner.apps.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner apps list`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps list
+```
 
-Each item is the same shape [get](../get/README.md) returns. Follow `next` to
-read the following page.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "app_7c3a",
+      "name": "billing",
+      "organizationId": "org_3f9k",
+      "backend": {
+        "runtime": "node",
+        "entry": "src/server.ts",
+        "env": [
+          "STRIPE_KEY"
+        ]
+      },
+      "frontend": null,
+      "currentDeploymentId": "dep_2b7q",
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z",
+      "updatedAt": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "next": null
+}
+```

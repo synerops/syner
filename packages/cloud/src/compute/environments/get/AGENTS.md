@@ -21,4 +21,5 @@ The environment.
 
 ## Errors
 
-`environment not found`, `not authorized`.
+- `environment not found`
+- `not authorized`

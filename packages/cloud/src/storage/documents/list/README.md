@@ -13,14 +13,42 @@
 
 Walks the keys of a store, optionally under a prefix, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.storage.documents.list({ store: 'invoices', prefix: '2026/03/' })
+const page = await syner.storage.documents.list({
+  store: 'invoices',
+  prefix: '2026/03/',
+})
 ```
 
-In the CLI: `syner storage documents list invoices --prefix 2026/03/`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage documents list invoices --prefix 2026/03/
+```
 
-Ask for bodies with `includeBodies` when the page is small enough.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/documents/list '{"store": "invoices", "prefix": "2026/03/"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "key": "2026/03/inv-1041",
+      "version": 2
+    },
+    {
+      "key": "2026/03/inv-1042",
+      "version": 4
+    }
+  ],
+  "next": null
+}
+```

@@ -21,4 +21,6 @@ A page of permissions with their source.
 
 ## Errors
 
-`principal not found`, `resource not found`, `not authorized`.
+- `principal not found`
+- `resource not found`
+- `not authorized`

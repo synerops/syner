@@ -24,4 +24,6 @@ The file's metadata with its new etag.
 
 ## Errors
 
-`store not found`, `not authorized`, `file too large`.
+- `store not found`
+- `not authorized`
+- `file too large`

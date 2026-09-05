@@ -13,14 +13,38 @@
 
 Returns members with their roles, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.organizations.members.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner organizations members list acme`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations members list acme
+```
 
-Filter by `role` or by `kind` of principal to see humans or agents only.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/members/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "organizationId": "org_3f9k",
+      "principalId": "prn_ana",
+      "role": "owner",
+      "addedBy": "prn_ana",
+      "addedAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

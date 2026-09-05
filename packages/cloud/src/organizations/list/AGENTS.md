@@ -19,4 +19,4 @@ A page of organizations.
 
 ## Errors
 
-`not authorized`.
+- `not authorized`

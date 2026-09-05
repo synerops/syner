@@ -21,4 +21,6 @@ Nothing but confirmation.
 
 ## Errors
 
-`store not found`, `file not found`, `not authorized`.
+- `store not found`
+- `file not found`
+- `not authorized`

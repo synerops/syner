@@ -26,4 +26,6 @@ The entry.
 
 ## Errors
 
-`organization not found`, `unknown action`, `secret in details`.
+- `organization not found`
+- `unknown action`
+- `secret in details`

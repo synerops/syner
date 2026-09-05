@@ -13,14 +13,41 @@
 
 Adds a principal with a role, or changes the role of an existing member.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.organizations.members.add({ organization: 'acme', principal: anaId, role: 'admin' })
+await syner.organizations.members.add({
+  organization: 'acme',
+  principal: anaId,
+  role: 'admin',
+})
 ```
 
-In the CLI: `syner organizations members add acme ana@acme.com --role admin`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations members add acme ana@acme.com --role admin
+```
 
-The member's permissions follow the role at once.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/members/add '{
+  "organization": "acme",
+  "principal": "prn_ana",
+  "role": "admin"
+}'
+```
+
+## Response
+
+```json
+{
+  "organizationId": "org_3f9k",
+  "principalId": "prn_ana",
+  "role": "admin",
+  "addedBy": "prn_ana",
+  "addedAt": "2026-09-04T18:24:30Z"
+}
+```

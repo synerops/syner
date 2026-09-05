@@ -14,14 +14,66 @@
 Returns entries newest first, filtered by resource, actor, action, outcome, or
 time window, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.activity.list({ organization: 'acme', resource: { kind: 'app', id: appId }, since: '2026-03-01' })
+const page = await syner.activity.list({
+  organization: 'acme',
+  resource: {
+    kind: 'app',
+    id: appId,
+  },
+  since: '2026-03-01',
+})
 ```
 
-In the CLI: `syner activity list --app billing --since 2026-03-01`.
+## From the CLI
 
-## What happens next
+```bash
+syner activity list --app billing --since 2026-03-01
+```
 
-Filter by `outcome: denied` to see who tried what and was refused.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api activity/list '{
+  "organization": "acme",
+  "resource": {
+    "kind": "app",
+    "id": "app_7c3a"
+  },
+  "since": "2026-03-01"
+}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "act_5c8v",
+      "organizationId": "org_3f9k",
+      "actor": {
+        "principalId": "prn_bot",
+        "delegationId": "del_2m4n",
+        "onBehalfOf": "prn_ana"
+      },
+      "action": "apps/create",
+      "resource": {
+        "kind": "app",
+        "id": "app_7c3a"
+      },
+      "outcome": "succeeded",
+      "details": {
+        "after": {
+          "name": "billing"
+        }
+      },
+      "at": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "next": null
+}
+```

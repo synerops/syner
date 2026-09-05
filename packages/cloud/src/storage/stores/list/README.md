@@ -13,14 +13,40 @@
 
 Returns stores, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.storage.stores.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner storage stores list`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage stores list
+```
 
-Filter by `app` to see one app's stores.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/stores/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "sto_1a2b",
+      "organizationId": "org_3f9k",
+      "appId": "app_7c3a",
+      "name": "invoices",
+      "status": "ready",
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

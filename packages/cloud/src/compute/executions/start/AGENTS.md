@@ -31,4 +31,7 @@ The execution with status `queued` or `running`.
 
 ## Errors
 
-`environment not found`, `environment stopped`, `not authorized`, `unknown runtime`.
+- `environment not found`
+- `environment stopped`
+- `not authorized`
+- `unknown runtime`

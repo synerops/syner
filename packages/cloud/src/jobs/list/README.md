@@ -13,14 +13,54 @@
 
 Returns jobs, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.jobs.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner jobs list`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs list
+```
 
-Filter by `app` or `enabled`.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "job_6t8y",
+      "organizationId": "org_3f9k",
+      "appId": "app_7c3a",
+      "name": "close-month",
+      "action": {
+        "kind": "app",
+        "path": "/tasks/close-month"
+      },
+      "triggers": [
+        {
+          "kind": "schedule",
+          "cron": "0 2 1 * *"
+        },
+        {
+          "kind": "manual"
+        }
+      ],
+      "enabled": true,
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z",
+      "updatedAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

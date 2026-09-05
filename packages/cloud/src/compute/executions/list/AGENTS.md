@@ -23,4 +23,6 @@ A page of executions.
 
 ## Errors
 
-`environment not found`, `organization not found`, `not authorized`.
+- `environment not found`
+- `organization not found`
+- `not authorized`

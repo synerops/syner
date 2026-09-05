@@ -28,4 +28,6 @@ The purpose as stored, with `declaredBy` and `since` filled in and
 
 ## Errors
 
-`app not found`, `not authorized`, `invalid criterion source`.
+- `app not found`
+- `not authorized`
+- `invalid criterion source`

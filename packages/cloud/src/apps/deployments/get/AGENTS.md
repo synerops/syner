@@ -21,4 +21,6 @@ The deployment.
 
 ## Errors
 
-`app not found`, `deployment not found`, `not authorized`.
+- `app not found`
+- `deployment not found`
+- `not authorized`

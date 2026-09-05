@@ -13,14 +13,54 @@
 
 Returns the run with its events and reference.
 
-## Example
+## From the SDK
 
 ```ts
 const run = await syner.jobs.runs.get({ id })
 ```
 
-In the CLI: `syner jobs runs get <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs runs get <id>
+```
 
-Follow the reference to the execution or app call for details.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/runs/get '{"id": "run_3h9j"}'
+```
+
+## Response
+
+```json
+{
+  "id": "run_3h9j",
+  "jobId": "job_6t8y",
+  "startedBy": {
+    "principal": "prn_ana"
+  },
+  "status": "succeeded",
+  "events": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "kind": "started",
+      "message": "calling /tasks/close-month"
+    },
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "kind": "finished",
+      "message": "200 OK"
+    }
+  ],
+  "reference": {
+    "appCall": {
+      "path": "/tasks/close-month",
+      "statusCode": 200
+    }
+  },
+  "createdAt": "2026-09-04T18:24:30Z",
+  "finishedAt": "2026-09-04T18:24:30Z"
+}
+```

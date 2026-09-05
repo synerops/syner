@@ -13,14 +13,42 @@
 
 Removes one grant. The holder's next call through the connection fails.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.connections.revoke({ id, app: 'billing' })
+await syner.connections.revoke({
+  id,
+  app: 'billing',
+})
 ```
 
-In the CLI: `syner connections revoke stripe --app billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner connections revoke stripe --app billing
+```
 
-Activity records the revocation with who did it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api connections/revoke '{"id": "con_5e7r", "app": "billing"}'
+```
+
+## Response
+
+```json
+{
+  "id": "con_5e7r",
+  "organizationId": "org_3f9k",
+  "name": "stripe",
+  "service": "stripe",
+  "config": {
+    "account": "acct_123"
+  },
+  "credentialSetAt": "2026-09-04T18:24:30Z",
+  "grants": [],
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

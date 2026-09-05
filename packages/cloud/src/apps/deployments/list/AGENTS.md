@@ -22,4 +22,5 @@ A page of deployments.
 
 ## Errors
 
-`app not found`, `not authorized`.
+- `app not found`
+- `not authorized`

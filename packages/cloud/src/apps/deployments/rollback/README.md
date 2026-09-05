@@ -15,15 +15,46 @@ A rollback deploys an earlier version, by default the one that was live before
 the current deployment. It is a new deployment, so the history stays intact.
 What the app wrote to its data since then is not undone.
 
-## Example
+## From the SDK
 
 ```ts
 const op = await syner.apps.deployments.rollback({ app: 'billing' })
 ```
 
-In the CLI: `syner apps deployments rollback billing`, or add `--version 2`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps deployments rollback billing
+```
 
-Follow the operation. Its result names the version now live and reminds you
-that data migrations were not reversed.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/deployments/rollback '{"app": "billing"}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "apps/deployments/rollback",
+  "resource": {
+    "kind": "deployment",
+    "id": "dep_8n3c"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 3,
+    "message": "deploying version 2"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

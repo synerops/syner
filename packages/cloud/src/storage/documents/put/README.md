@@ -13,15 +13,42 @@
 
 Writes a JSON body under a key. Same key, new version.
 
-## Example
+Read it back with [get](../get/README.md).
+
+## From the SDK
 
 ```ts
-await syner.storage.documents.put({ store: 'invoices', key: '2026/03/inv-1042', body: { total: 120 } })
+await syner.storage.documents.put({
+  store: 'invoices',
+  key: '2026/03/inv-1042',
+  body: { total: 120 },
+})
 ```
 
-In the CLI: `syner storage documents put invoices 2026/03/inv-1042 --body
-@inv.json`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage documents put invoices 2026/03/inv-1042 --body @inv.json
+```
 
-Read it back with [get](../get/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/documents/put '{
+  "store": "invoices",
+  "key": "2026/03/inv-1042",
+  "body": {
+    "total": 120
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "key": "2026/03/inv-1042",
+  "version": 4
+}
+```

@@ -26,4 +26,6 @@ The run with status `queued` or `running`.
 
 ## Errors
 
-`job not found`, `not authorized`, `job removed`.
+- `job not found`
+- `not authorized`
+- `job removed`

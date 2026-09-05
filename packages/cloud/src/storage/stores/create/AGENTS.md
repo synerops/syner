@@ -27,4 +27,7 @@ An operation reference; its result is the store, ready.
 
 ## Errors
 
-`organization not found`, `app not found`, `not authorized`, `name taken`.
+- `organization not found`
+- `app not found`
+- `not authorized`
+- `name taken`

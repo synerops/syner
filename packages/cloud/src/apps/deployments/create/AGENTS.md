@@ -27,4 +27,8 @@ An operation reference; its result is the deployment, live or failed.
 
 ## Errors
 
-`app not found`, `version not found`, `not authorized`, `deployment in progress`, `target unavailable`.
+- `app not found`
+- `version not found`
+- `not authorized`
+- `deployment in progress`
+- `target unavailable`

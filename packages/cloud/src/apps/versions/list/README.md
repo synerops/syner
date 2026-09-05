@@ -13,14 +13,52 @@
 
 Returns the app's versions, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.apps.versions.list({ app: 'billing' })
 ```
 
-In the CLI: `syner apps versions list billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps versions list billing
+```
 
-Follow `next` for older versions.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/versions/list '{"app": "billing"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "ver_9b21",
+      "appId": "app_7c3a",
+      "number": 3,
+      "source": {
+        "kind": "git",
+        "ref": "main",
+        "commit": "4e1f0c9",
+        "artifactId": "art_5d8e"
+      },
+      "backend": {
+        "runtime": "node",
+        "entry": "src/server.ts",
+        "env": [
+          "STRIPE_KEY"
+        ]
+      },
+      "frontend": null,
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

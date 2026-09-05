@@ -13,15 +13,51 @@
 
 Adds one explicit permission on top of what the role already implies.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.permissions.grant({ principal: anaId, action: 'deployments:rollback', resource: { kind: 'app', id: appId } })
+await syner.permissions.grant({
+  principal: anaId,
+  action: 'deployments:rollback',
+  resource: {
+    kind: 'app',
+    id: appId,
+  },
+})
 ```
 
-In the CLI: `syner permissions grant ana@acme.com deployments:rollback --app
-billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner permissions grant ana@acme.com deployments:rollback --app billing
+```
 
-The next authorize for that triple says allowed.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api permissions/grant '{
+  "principal": "prn_ana",
+  "action": "deployments:rollback",
+  "resource": {
+    "kind": "app",
+    "id": "app_7c3a"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "principalId": "prn_ana",
+  "action": "deployments:rollback",
+  "resource": {
+    "kind": "app",
+    "id": "app_7c3a"
+  },
+  "source": "grant",
+  "grantedBy": "prn_ana",
+  "grantedAt": "2026-09-04T18:24:30Z"
+}
+```

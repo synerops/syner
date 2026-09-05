@@ -26,4 +26,7 @@ Rows of `key`, `quantity`, and `cost` when pricing is configured.
 
 ## Errors
 
-`organization not found`, `app not found`, `not authorized`, `invalid window`.
+- `organization not found`
+- `app not found`
+- `not authorized`
+- `invalid window`

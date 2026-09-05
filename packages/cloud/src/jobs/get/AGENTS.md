@@ -21,4 +21,5 @@ The job with its latest run summary.
 
 ## Errors
 
-`job not found`, `not authorized`.
+- `job not found`
+- `not authorized`

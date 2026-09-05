@@ -13,14 +13,45 @@
 
 Returns environments, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.compute.environments.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner compute environments list`.
+## From the CLI
 
-## What happens next
+```bash
+syner compute environments list
+```
 
-Filter by `status` to find what is still alive.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api compute/environments/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "env_8k2p",
+      "organizationId": "org_3f9k",
+      "runtime": "node",
+      "resources": {
+        "cpu": 1,
+        "memory": "1GB"
+      },
+      "status": "ready",
+      "lifetime": "kept",
+      "createdBy": "prn_bot",
+      "createdAt": "2026-09-04T18:20:00Z",
+      "stoppedAt": null
+    }
+  ],
+  "next": null
+}
+```

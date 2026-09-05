@@ -28,4 +28,7 @@ An operation reference; its result is the environment, ready or failed.
 
 ## Errors
 
-`organization not found`, `not authorized`, `unknown runtime`, `resources unavailable`.
+- `organization not found`
+- `not authorized`
+- `unknown runtime`
+- `resources unavailable`

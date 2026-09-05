@@ -14,20 +14,80 @@
 Name the job, say what a run does, and list its triggers. Nothing runs until a
 trigger fires or someone starts a run.
 
-## Example
+Start one by hand with [runs/start](../runs/start/README.md) to try it.
+
+## From the SDK
 
 ```ts
 const job = await syner.jobs.create({
   organization: 'acme',
   app: 'billing',
   name: 'close-month',
-  action: { kind: 'app', path: '/tasks/close-month' },
-  triggers: [{ kind: 'schedule', cron: '0 2 1 * *' }, { kind: 'manual' }],
+  action: {
+    kind: 'app',
+    path: '/tasks/close-month',
+  },
+  triggers: [
+    { kind: 'schedule', cron: '0 2 1 * *' },
+    { kind: 'manual' },
+  ],
 })
 ```
 
-In the CLI: `syner jobs create close-month --app billing --cron '0 2 1 * *'`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs create close-month --app billing --cron '0 2 1 * *'
+```
 
-Start one by hand with [runs/start](../runs/start/README.md) to try it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/create '{
+  "organization": "acme",
+  "app": "billing",
+  "name": "close-month",
+  "action": {
+    "kind": "app",
+    "path": "/tasks/close-month"
+  },
+  "triggers": [
+    {
+      "kind": "schedule",
+      "cron": "0 2 1 * *"
+    },
+    {
+      "kind": "manual"
+    }
+  ]
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "job_6t8y",
+  "organizationId": "org_3f9k",
+  "appId": "app_7c3a",
+  "name": "close-month",
+  "action": {
+    "kind": "app",
+    "path": "/tasks/close-month"
+  },
+  "triggers": [
+    {
+      "kind": "schedule",
+      "cron": "0 2 1 * *"
+    },
+    {
+      "kind": "manual"
+    }
+  ],
+  "enabled": true,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "updatedAt": "2026-09-04T18:20:00Z"
+}
+```

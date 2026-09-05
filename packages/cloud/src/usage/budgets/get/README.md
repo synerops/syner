@@ -13,14 +13,45 @@
 
 Returns the budget of a scope and how much of it is used so far.
 
-## Example
+## From the SDK
 
 ```ts
-const b = await syner.usage.budgets.get({ organization: 'acme', app: 'billing' })
+const budget = await syner.usage.budgets.get({
+  organization: 'acme',
+  app: 'billing',
+})
 ```
 
-In the CLI: `syner usage budgets get --app billing`.
+## From the CLI
 
-## What happens next
+```bash
+syner usage budgets get --app billing
+```
 
-Syner OS shows this as the answer to what is it costing.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api usage/budgets/get '{"organization": "acme", "app": "billing"}'
+```
+
+## Response
+
+```json
+{
+  "scope": {
+    "organizationId": "org_3f9k",
+    "appId": "app_7c3a"
+  },
+  "limit": {
+    "cost": 40,
+    "currency": "USD"
+  },
+  "period": "month",
+  "action": "notify",
+  "current": 12.6,
+  "remaining": 27.4,
+  "setBy": "prn_ana",
+  "setAt": "2026-09-04T18:24:30Z"
+}
+```

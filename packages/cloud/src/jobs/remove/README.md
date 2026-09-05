@@ -13,14 +13,29 @@
 
 Cancels active runs and removes the definition. Finished runs stay readable.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.jobs.remove({ id })
 ```
 
-In the CLI: `syner jobs remove close-month`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs remove close-month
+```
 
-The name is free; run history answers to runs/list by job id.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/remove '{"id": "job_6t8y"}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

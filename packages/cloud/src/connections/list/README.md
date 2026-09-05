@@ -13,14 +13,50 @@
 
 Returns connections, newest first, in pages.
 
-## Example
+## From the SDK
 
 ```ts
 const page = await syner.connections.list({ organization: 'acme' })
 ```
 
-In the CLI: `syner connections list`.
+## From the CLI
 
-## What happens next
+```bash
+syner connections list
+```
 
-Filter by `service` to find every connection of one kind.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api connections/list '{"organization": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "id": "con_5e7r",
+      "organizationId": "org_3f9k",
+      "name": "stripe",
+      "service": "stripe",
+      "config": {
+        "account": "acct_123"
+      },
+      "credentialSetAt": "2026-09-04T18:24:30Z",
+      "grants": [
+        {
+          "appId": "app_7c3a",
+          "grantedBy": "prn_ana",
+          "at": "2026-09-04T18:24:30Z"
+        }
+      ],
+      "createdBy": "prn_ana",
+      "createdAt": "2026-09-04T18:20:00Z"
+    }
+  ],
+  "next": null
+}
+```

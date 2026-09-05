@@ -25,4 +25,5 @@ already ended.
 
 ## Errors
 
-`execution not found`, `not authorized`.
+- `execution not found`
+- `not authorized`

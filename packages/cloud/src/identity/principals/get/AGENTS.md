@@ -21,4 +21,5 @@ The principal.
 
 ## Errors
 
-`principal not found`, `not authorized`.
+- `principal not found`
+- `not authorized`

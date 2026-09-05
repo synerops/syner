@@ -21,4 +21,5 @@ The app, with a summary of its current deployment when it has one.
 
 ## Errors
 
-`app not found`, `not authorized`.
+- `app not found`
+- `not authorized`

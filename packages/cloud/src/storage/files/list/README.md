@@ -13,14 +13,43 @@
 
 Walks the paths of a store, optionally under a prefix, in pages.
 
-## Example
+## From the SDK
 
 ```ts
-const page = await syner.storage.files.list({ store: 'invoices', prefix: 'pdf/' })
+const page = await syner.storage.files.list({
+  store: 'invoices',
+  prefix: 'pdf/',
+})
 ```
 
-In the CLI: `syner storage files list invoices --prefix pdf/`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage files list invoices --prefix pdf/
+```
 
-Each item carries size and content type; bytes come from get.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/files/list '{"store": "invoices", "prefix": "pdf/"}'
+```
+
+## Response
+
+```json
+{
+  "items": [
+    {
+      "storeId": "sto_1a2b",
+      "path": "pdf/inv-1042.pdf",
+      "contentType": "application/pdf",
+      "size": 48213,
+      "etag": "9f3c…",
+      "updatedBy": "prn_bot",
+      "updatedAt": "2026-09-04T18:24:30Z"
+    }
+  ],
+  "next": null
+}
+```

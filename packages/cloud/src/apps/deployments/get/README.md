@@ -13,14 +13,44 @@
 
 Returns a deployment with its status, URL, and the operation behind it.
 
-## Example
+## From the SDK
 
 ```ts
-const d = await syner.apps.deployments.get({ app: 'billing', id: deploymentId })
+const deployment = await syner.apps.deployments.get({
+  app: 'billing',
+  id: deploymentId,
+})
 ```
 
-In the CLI: `syner apps deployments get billing <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps deployments get billing <id>
+```
 
-While pending, the operation carries the progress.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/deployments/get '{"app": "billing", "id": "dep_2b7q"}'
+```
+
+## Response
+
+```json
+{
+  "id": "dep_2b7q",
+  "appId": "app_7c3a",
+  "versionId": "ver_9b21",
+  "status": "live",
+  "url": "https://billing.acme.syner.app",
+  "target": {
+    "kind": "provider",
+    "ref": "prv_east1"
+  },
+  "operationId": "op_4x1m",
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": "2026-09-04T18:24:30Z"
+}
+```

@@ -26,4 +26,7 @@ The membership.
 
 ## Errors
 
-`organization not found`, `principal not found`, `not authorized`, `invalid role`.
+- `organization not found`
+- `principal not found`
+- `not authorized`
+- `invalid role`

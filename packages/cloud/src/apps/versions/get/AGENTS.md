@@ -21,4 +21,6 @@ The version.
 
 ## Errors
 
-`app not found`, `version not found`, `not authorized`.
+- `app not found`
+- `version not found`
+- `not authorized`

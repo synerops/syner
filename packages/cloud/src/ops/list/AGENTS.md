@@ -22,4 +22,6 @@ A page of operations.
 
 ## Errors
 
-`organization not found`, `resource not found`, `not authorized`.
+- `organization not found`
+- `resource not found`
+- `not authorized`

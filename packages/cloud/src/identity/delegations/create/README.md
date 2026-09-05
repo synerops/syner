@@ -13,20 +13,57 @@
 
 Let an agent act as you, in an organization or one app, until a date.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.identity.delegations.create({
   to: synerBotId,
-  scope: { organization: 'acme', app: 'billing' },
+  scope: {
+    organization: 'acme',
+    app: 'billing',
+  },
   limits: 'all',
   expiresAt: '2026-12-31T00:00:00Z',
 })
 ```
 
-In the CLI: `syner identity delegations create --to syner-bot --app billing
---until 2026-12-31`.
+## From the CLI
 
-## What happens next
+```bash
+syner identity delegations create \
+  --to syner-bot --app billing --until 2026-12-31
+```
 
-The agent's calls now carry your identity and stay inside the scope.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api identity/delegations/create '{
+  "to": "prn_bot",
+  "scope": {
+    "organization": "acme",
+    "app": "billing"
+  },
+  "limits": "all",
+  "expiresAt": "2026-12-31T00:00:00Z"
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "del_2m4n",
+  "fromPrincipalId": "prn_ana",
+  "toPrincipalId": "prn_bot",
+  "scope": {
+    "organizationId": "org_3f9k",
+    "appId": "app_7c3a"
+  },
+  "limits": "all",
+  "expiresAt": "2026-12-31T00:00:00Z",
+  "status": "active",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "revokedAt": null
+}
+```

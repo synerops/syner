@@ -13,15 +13,41 @@
 
 Returns a store by id, or by organization and name.
 
-## Example
-
-```ts
-const store = await syner.storage.stores.get({ organization: 'acme', name: 'invoices' })
-```
-
-In the CLI: `syner storage stores get invoices`.
-
-## What happens next
-
 List its contents with [documents/list](../../documents/list/README.md) or
 [files/list](../../files/list/README.md).
+
+## From the SDK
+
+```ts
+const store = await syner.storage.stores.get({
+  organization: 'acme',
+  name: 'invoices',
+})
+```
+
+## From the CLI
+
+```bash
+syner storage stores get invoices
+```
+
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/stores/get '{"organization": "acme", "name": "invoices"}'
+```
+
+## Response
+
+```json
+{
+  "id": "sto_1a2b",
+  "organizationId": "org_3f9k",
+  "appId": "app_7c3a",
+  "name": "invoices",
+  "status": "ready",
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

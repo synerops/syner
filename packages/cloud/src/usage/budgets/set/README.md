@@ -14,15 +14,60 @@
 Set a limit for an organization or an app, and choose what happens when it is
 reached.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.usage.budgets.set({ organization: 'acme', app: 'billing', limit: { cost: 40, currency: 'USD' }, period: 'month', action: 'notify' })
+await syner.usage.budgets.set({
+  organization: 'acme',
+  app: 'billing',
+  limit: {
+    cost: 40,
+    currency: 'USD',
+  },
+  period: 'month',
+  action: 'notify',
+})
 ```
 
-In the CLI: `syner usage budgets set --app billing --cost 40 --period month
---action notify`.
+## From the CLI
 
-## What happens next
+```bash
+syner usage budgets set --app billing --cost 40 --period month --action notify
+```
 
-Usage records from now on are checked against it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api usage/budgets/set '{
+  "organization": "acme",
+  "app": "billing",
+  "limit": {
+    "cost": 40,
+    "currency": "USD"
+  },
+  "period": "month",
+  "action": "notify"
+}'
+```
+
+## Response
+
+```json
+{
+  "scope": {
+    "organizationId": "org_3f9k",
+    "appId": "app_7c3a"
+  },
+  "limit": {
+    "cost": 40,
+    "currency": "USD"
+  },
+  "period": "month",
+  "action": "notify",
+  "current": 12.6,
+  "remaining": 27.4,
+  "setBy": "prn_ana",
+  "setAt": "2026-09-04T18:24:30Z"
+}
+```

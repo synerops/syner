@@ -14,14 +14,58 @@
 Sums usage by metric, app, or principal for a window, with cost when pricing
 is available.
 
-## Example
+## From the SDK
 
 ```ts
-const u = await syner.usage.get({ organization: 'acme', app: 'billing', since: '2026-03-01', until: '2026-04-01', by: 'metric' })
+const usage = await syner.usage.get({
+  organization: 'acme',
+  app: 'billing',
+  since: '2026-03-01',
+  until: '2026-04-01',
+  by: 'metric',
+})
 ```
 
-In the CLI: `syner usage get --app billing --since 2026-03-01`.
+## From the CLI
 
-## What happens next
+```bash
+syner usage get --app billing --since 2026-03-01
+```
 
-Compare with the budget to see how close you are.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api usage/get '{
+  "organization": "acme",
+  "app": "billing",
+  "since": "2026-03-01",
+  "until": "2026-04-01",
+  "by": "metric"
+}'
+```
+
+## Response
+
+```json
+{
+  "rows": [
+    {
+      "key": "compute.seconds",
+      "quantity": 18420,
+      "cost": 7.4
+    },
+    {
+      "key": "storage.bytes",
+      "quantity": 2147483648,
+      "cost": 4.2
+    },
+    {
+      "key": "connections.calls",
+      "quantity": 1180,
+      "cost": 1.0
+    }
+  ],
+  "currency": "USD"
+}
+```

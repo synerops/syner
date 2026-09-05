@@ -24,4 +24,6 @@ The organization.
 
 ## Errors
 
-`not authorized`, `slug taken`, `invalid slug`.
+- `not authorized`
+- `slug taken`
+- `invalid slug`

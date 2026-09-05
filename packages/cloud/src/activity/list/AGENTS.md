@@ -22,4 +22,6 @@ A page of entries.
 
 ## Errors
 
-`organization not found`, `resource not found`, `not authorized`.
+- `organization not found`
+- `resource not found`
+- `not authorized`

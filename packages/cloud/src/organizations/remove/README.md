@@ -13,14 +13,46 @@
 
 Tears down apps, stores, jobs, connections, and memberships. Irreversible.
 
-## Example
+## From the SDK
 
 ```ts
 const op = await syner.organizations.remove({ id })
 ```
 
-In the CLI: `syner organizations remove acme`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations remove acme
+```
 
-Follow the operation. The slug is never reused.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/remove '{"id": "org_3f9k", "confirm": "acme"}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "organizations/remove",
+  "resource": {
+    "kind": "organization",
+    "id": "org_3f9k"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 6,
+    "message": "removing apps"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

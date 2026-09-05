@@ -13,14 +13,40 @@
 
 The agent's next call under it is refused.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.identity.delegations.revoke({ id })
 ```
 
-In the CLI: `syner identity delegations revoke <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner identity delegations revoke <id>
+```
 
-Activity shows the revocation and who did it.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api identity/delegations/revoke '{"id": "del_2m4n"}'
+```
+
+## Response
+
+```json
+{
+  "id": "del_2m4n",
+  "fromPrincipalId": "prn_ana",
+  "toPrincipalId": "prn_bot",
+  "scope": {
+    "organizationId": "org_3f9k",
+    "appId": "app_7c3a"
+  },
+  "limits": "all",
+  "expiresAt": "2026-12-31T00:00:00Z",
+  "status": "revoked",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "revokedAt": "2026-09-04T18:24:30Z"
+}
+```

@@ -23,4 +23,5 @@ A page of memberships with the principal summary.
 
 ## Errors
 
-`organization not found`, `not authorized`.
+- `organization not found`
+- `not authorized`

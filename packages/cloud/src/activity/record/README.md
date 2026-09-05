@@ -13,13 +13,47 @@
 
 Called by every use case after it acts, and by authorize when it denies.
 
-## Example
+## From inside the cloud
 
 ```ts
 // inside a cloud use case
-await activity.record({ organizationId, actor, action: 'apps/create', resource: { kind: 'app', id }, outcome: 'succeeded', details: { after: { name } } })
+await activity.record({
+  organizationId,
+  actor,
+  action: 'apps/create',
+  resource: {
+    kind: 'app',
+    id,
+  },
+  outcome: 'succeeded',
+  details: {
+    after: { name },
+  },
+})
 ```
 
-## What happens next
+## Response
 
-Nothing else. The entry is readable through list at once.
+```json
+{
+  "id": "act_5c8v",
+  "organizationId": "org_3f9k",
+  "actor": {
+    "principalId": "prn_bot",
+    "delegationId": "del_2m4n",
+    "onBehalfOf": "prn_ana"
+  },
+  "action": "apps/create",
+  "resource": {
+    "kind": "app",
+    "id": "app_7c3a"
+  },
+  "outcome": "succeeded",
+  "details": {
+    "after": {
+      "name": "billing"
+    }
+  },
+  "at": "2026-09-04T18:24:30Z"
+}
+```

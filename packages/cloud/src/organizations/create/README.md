@@ -13,14 +13,39 @@
 
 The creating human becomes its first owner.
 
-## Example
+Add people and agents with [members/add](../members/add/README.md).
+
+## From the SDK
 
 ```ts
-const org = await syner.organizations.create({ slug: 'acme', name: 'Acme Inc.' })
+const org = await syner.organizations.create({
+  slug: 'acme',
+  name: 'Acme Inc.',
+})
 ```
 
-In the CLI: `syner organizations create acme --name 'Acme Inc.'`.
+## From the CLI
 
-## What happens next
+```bash
+syner organizations create acme --name 'Acme Inc.'
+```
 
-Add people and agents with [members/add](../members/add/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api organizations/create '{"slug": "acme", "name": "Acme Inc."}'
+```
+
+## Response
+
+```json
+{
+  "id": "org_3f9k",
+  "slug": "acme",
+  "name": "Acme Inc.",
+  "status": "active",
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

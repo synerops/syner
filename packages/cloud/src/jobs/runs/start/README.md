@@ -13,14 +13,51 @@
 
 Runs the job's action once, outside its schedule.
 
-## Example
+Read it with [get](../get/README.md) until the status is final.
+
+## From the SDK
 
 ```ts
 const run = await syner.jobs.runs.start({ job: id })
 ```
 
-In the CLI: `syner jobs runs start close-month`.
+## From the CLI
 
-## What happens next
+```bash
+syner jobs runs start close-month
+```
 
-Read it with [get](../get/README.md) until the status is final.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api jobs/runs/start '{"job": "job_6t8y"}'
+```
+
+## Response
+
+```json
+{
+  "id": "run_3h9j",
+  "jobId": "job_6t8y",
+  "startedBy": {
+    "principal": "prn_ana"
+  },
+  "status": "running",
+  "events": [
+    {
+      "at": "2026-09-04T18:24:30Z",
+      "kind": "started",
+      "message": "calling /tasks/close-month"
+    }
+  ],
+  "reference": {
+    "appCall": {
+      "path": "/tasks/close-month",
+      "statusCode": null
+    }
+  },
+  "createdAt": "2026-09-04T18:24:30Z",
+  "finishedAt": null
+}
+```

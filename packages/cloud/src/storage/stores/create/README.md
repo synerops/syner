@@ -14,15 +14,57 @@
 Creates a named container. Provisioning may take a moment, so you get an
 operation.
 
-## Example
-
-```ts
-const op = await syner.storage.stores.create({ organization: 'acme', name: 'invoices', app: 'billing' })
-```
-
-In the CLI: `syner storage stores create invoices --app billing`.
-
-## What happens next
-
 When ready, put [documents](../../documents/put/README.md) or
 [files](../../files/put/README.md) into it.
+
+## From the SDK
+
+```ts
+const op = await syner.storage.stores.create({
+  organization: 'acme',
+  name: 'invoices',
+  app: 'billing',
+})
+```
+
+## From the CLI
+
+```bash
+syner storage stores create invoices --app billing
+```
+
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/stores/create '{
+  "organization": "acme",
+  "name": "invoices",
+  "app": "billing"
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "storage/stores/create",
+  "resource": {
+    "kind": "store",
+    "id": "sto_1a2b"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 3,
+    "message": "provisioning"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

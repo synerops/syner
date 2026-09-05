@@ -24,4 +24,6 @@ An operation reference; its result is the app marked removed.
 
 ## Errors
 
-`app not found`, `not authorized`, `removal in progress`.
+- `app not found`
+- `not authorized`
+- `removal in progress`

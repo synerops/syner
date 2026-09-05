@@ -27,4 +27,7 @@ The connection with its grants.
 
 ## Errors
 
-`connection not found`, `app not found`, `principal not found`, `not authorized`.
+- `connection not found`
+- `app not found`
+- `principal not found`
+- `not authorized`

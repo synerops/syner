@@ -28,4 +28,8 @@ The budget with its current consumption.
 
 ## Errors
 
-`organization not found`, `app not found`, `not authorized`, `pricing unavailable`, `invalid limit`.
+- `organization not found`
+- `app not found`
+- `not authorized`
+- `pricing unavailable`
+- `invalid limit`

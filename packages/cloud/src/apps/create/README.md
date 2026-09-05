@@ -15,20 +15,65 @@ This is the first verb of the cloud. It gives the app an identity: a name
 inside your organization and a definition of its backend. Nothing runs yet.
 The app becomes reachable when a version is created and deployed.
 
-## Example
+You get the app back with no deployment. Next:
+[versions/create](../versions/create/README.md) to capture its code, then
+[deployments/create](../deployments/create/README.md) to put it into service.
+
+## From the SDK
 
 ```ts
 const app = await syner.apps.create({
   organization: 'acme',
   name: 'billing',
-  backend: { runtime: 'node', entry: 'src/server.ts', env: ['STRIPE_KEY'] },
+  backend: {
+    runtime: 'node',
+    entry: 'src/server.ts',
+    env: ['STRIPE_KEY'],
+  },
 })
 ```
 
-The same call exists as `syner apps create billing` in the CLI.
+## From the CLI
 
-## What happens next
+```bash
+syner apps create billing
+```
 
-You get the app back with no deployment. Next:
-[versions/create](../versions/create/README.md) to capture its code, then
-[deployments/create](../deployments/create/README.md) to put it into service.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/create '{
+  "organization": "acme",
+  "name": "billing",
+  "backend": {
+    "runtime": "node",
+    "entry": "src/server.ts",
+    "env": [
+      "STRIPE_KEY"
+    ]
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "app_7c3a",
+  "name": "billing",
+  "organizationId": "org_3f9k",
+  "backend": {
+    "runtime": "node",
+    "entry": "src/server.ts",
+    "env": [
+      "STRIPE_KEY"
+    ]
+  },
+  "frontend": null,
+  "currentDeploymentId": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "updatedAt": "2026-09-04T18:20:00Z"
+}
+```

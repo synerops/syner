@@ -21,4 +21,5 @@ The operation.
 
 ## Errors
 
-`operation not found`, `not authorized`.
+- `operation not found`
+- `not authorized`

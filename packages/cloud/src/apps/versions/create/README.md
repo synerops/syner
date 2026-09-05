@@ -14,7 +14,9 @@
 Point Syner at a git reference or upload a bundle. The version gets the next
 number and freezes the app's current backend and frontend definition with it.
 
-## Example
+Deploy it with [deployments/create](../../deployments/create/README.md).
+
+## From the SDK
 
 ```ts
 const version = await syner.apps.versions.create({
@@ -23,8 +25,47 @@ const version = await syner.apps.versions.create({
 })
 ```
 
-In the CLI: `syner apps versions create billing --ref main`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps versions create billing --ref main
+```
 
-Deploy it with [deployments/create](../../deployments/create/README.md).
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/versions/create '{
+  "app": "billing",
+  "source": {
+    "kind": "git",
+    "ref": "main"
+  }
+}'
+```
+
+## Response
+
+```json
+{
+  "id": "ver_9b21",
+  "appId": "app_7c3a",
+  "number": 3,
+  "source": {
+    "kind": "git",
+    "ref": "main",
+    "commit": "4e1f0c9",
+    "artifactId": "art_5d8e"
+  },
+  "backend": {
+    "runtime": "node",
+    "entry": "src/server.ts",
+    "env": [
+      "STRIPE_KEY"
+    ]
+  },
+  "frontend": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z"
+}
+```

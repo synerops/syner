@@ -25,4 +25,7 @@ The document's key and new version.
 
 ## Errors
 
-`store not found`, `not authorized`, `version mismatch`, `body too large`.
+- `store not found`
+- `not authorized`
+- `version mismatch`
+- `body too large`

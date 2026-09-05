@@ -20,4 +20,5 @@ The delegation.
 
 ## Errors
 
-`delegation not found`, `not authorized`.
+- `delegation not found`
+- `not authorized`

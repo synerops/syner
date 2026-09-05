@@ -24,4 +24,6 @@ An operation reference; its result is the removed store.
 
 ## Errors
 
-`store not found`, `not authorized`, `removal in progress`.
+- `store not found`
+- `not authorized`
+- `removal in progress`

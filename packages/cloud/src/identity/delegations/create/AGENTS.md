@@ -26,4 +26,8 @@ The delegation.
 
 ## Errors
 
-`principal not found`, `not an agent`, `not authorized`, `invalid scope`, `invalid limits`.
+- `principal not found`
+- `not an agent`
+- `not authorized`
+- `invalid scope`
+- `invalid limits`

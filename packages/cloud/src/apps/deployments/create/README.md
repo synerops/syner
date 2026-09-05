@@ -15,16 +15,54 @@ Deploying starts the work of building, provisioning, and switching traffic.
 You get an operation back immediately; when it completes, the deployment is
 live and it is the app's current one.
 
-## Example
+Follow the operation in [ops](../../../ops/README.md). Once live,
+[apps/get](../../get/README.md) shows it as the current deployment.
+
+## From the SDK
 
 ```ts
-const op = await syner.apps.deployments.create({ app: 'billing', version: 3 })
+const op = await syner.apps.deployments.create({
+  app: 'billing',
+  version: 3,
+})
+
 const deployment = await op.result()
 ```
 
-In the CLI: `syner apps deployments create billing --version 3`.
+## From the CLI
 
-## What happens next
+```bash
+syner apps deployments create billing --version 3
+```
 
-Follow the operation in [ops](../../../ops/README.md). Once live,
-[apps/get](../../get/README.md) shows it as the current deployment.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api apps/deployments/create '{"app": "billing", "version": 3}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "apps/deployments/create",
+  "resource": {
+    "kind": "deployment",
+    "id": "dep_2b7q"
+  },
+  "status": "pending",
+  "progress": {
+    "current": 0,
+    "total": 3,
+    "message": "building version 3"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": null
+}
+```

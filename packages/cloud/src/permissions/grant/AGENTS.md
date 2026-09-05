@@ -26,4 +26,7 @@ The permission.
 
 ## Errors
 
-`principal not found`, `resource not found`, `unknown action`, `not authorized`.
+- `principal not found`
+- `resource not found`
+- `unknown action`
+- `not authorized`

@@ -14,15 +14,46 @@
 Cancellation is a request: the operation stops at its next safe point and
 reports cancelled.
 
-## Example
+## From the SDK
 
 ```ts
 await syner.ops.cancel({ id })
 ```
 
-In the CLI: `syner ops cancel <id>`.
+## From the CLI
 
-## What happens next
+```bash
+syner ops cancel <id>
+```
 
-Read the operation: its result says what was done before the stop and what was
-rolled back.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api ops/cancel '{"id": "op_4x1m"}'
+```
+
+## Response
+
+```json
+{
+  "id": "op_4x1m",
+  "organizationId": "org_3f9k",
+  "kind": "apps/deployments/create",
+  "resource": {
+    "kind": "deployment",
+    "id": "dep_2b7q"
+  },
+  "status": "cancelled",
+  "progress": {
+    "current": 2,
+    "total": 3,
+    "message": "stopped before switching traffic"
+  },
+  "result": null,
+  "error": null,
+  "createdBy": "prn_ana",
+  "createdAt": "2026-09-04T18:20:00Z",
+  "finishedAt": "2026-09-04T18:24:30Z"
+}
+```

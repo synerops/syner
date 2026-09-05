@@ -21,4 +21,6 @@ The file's metadata and a read handle or short-lived URL.
 
 ## Errors
 
-`store not found`, `file not found`, `not authorized`.
+- `store not found`
+- `file not found`
+- `not authorized`

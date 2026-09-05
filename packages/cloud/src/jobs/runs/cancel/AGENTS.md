@@ -24,4 +24,5 @@ ended.
 
 ## Errors
 
-`run not found`, `not authorized`.
+- `run not found`
+- `not authorized`

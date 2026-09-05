@@ -31,4 +31,7 @@ The app as stored, with `currentDeploymentId` empty.
 
 ## Errors
 
-`organization not found`, `not authorized`, `name taken`, `invalid backend`.
+- `organization not found`
+- `not authorized`
+- `name taken`
+- `invalid backend`

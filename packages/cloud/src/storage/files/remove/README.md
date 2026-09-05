@@ -13,14 +13,35 @@
 
 Removes the path from the store.
 
-## Example
+## From the SDK
 
 ```ts
-await syner.storage.files.remove({ store: 'invoices', path: 'pdf/inv-1042.pdf' })
+await syner.storage.files.remove({
+  store: 'invoices',
+  path: 'pdf/inv-1042.pdf',
+})
 ```
 
-In the CLI: `syner storage files remove invoices pdf/inv-1042.pdf`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage files remove invoices pdf/inv-1042.pdf
+```
 
-A later get answers not found.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/files/remove '{
+  "store": "invoices",
+  "path": "pdf/inv-1042.pdf"
+}'
+```
+
+## Response
+
+```json
+{
+  "ok": true
+}
+```

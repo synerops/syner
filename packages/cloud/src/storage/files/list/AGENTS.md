@@ -22,4 +22,5 @@ A page of file metadata.
 
 ## Errors
 
-`store not found`, `not authorized`.
+- `store not found`
+- `not authorized`

@@ -15,24 +15,95 @@ You declare a purpose when the app is created, or when its reason to exist
 changes. Declaring again replaces the whole declaration; the old one stays in
 the app's history.
 
-## Example
+Nothing runs yet. The first result appears when
+[evaluate](../evaluate/README.md) runs, on a schedule or on demand.
+
+## From the SDK
 
 ```ts
 await syner.purpose.declare({
   app: 'billing',
   statement:
-    "Issue every customer's invoice for the month and collect it through Stripe before the 5th.",
+    "Issue every customer's invoice for the month " +
+    "and collect it through Stripe before the 5th.",
   criteria: [
-    { name: 'invoices-on-time', target: '100% of invoices issued before the 3rd', source: 'activity' },
-    { name: 'failed-charges', target: 'fewer than 2% of charges fail', source: 'activity' },
-    { name: 'monthly-cost', target: 'usage under $40 per month', source: 'usage' },
+    {
+      name: 'invoices-on-time',
+      target: '100% of invoices issued before the 3rd',
+      source: 'activity',
+    },
+    {
+      name: 'failed-charges',
+      target: 'fewer than 2% of charges fail',
+      source: 'activity',
+    },
+    {
+      name: 'monthly-cost',
+      target: 'usage under $40 per month',
+      source: 'usage',
+    },
   ],
 })
 ```
 
-The same call exists as `syner purpose declare` in the CLI.
+## From the CLI
 
-## What happens next
+```bash
+syner purpose declare billing --from purpose.json
+```
 
-Nothing runs yet. The first result appears when
-[evaluate](../evaluate/README.md) runs, on a schedule or on demand.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api purpose/declare '{
+  "app": "billing",
+  "statement": "Issue every customer's invoice for the month and collect it through Stripe before the 5th.",
+  "criteria": [
+    {
+      "name": "invoices-on-time",
+      "target": "100% of invoices issued before the 3rd",
+      "source": "activity"
+    },
+    {
+      "name": "failed-charges",
+      "target": "fewer than 2% of charges fail",
+      "source": "activity"
+    },
+    {
+      "name": "monthly-cost",
+      "target": "usage under $40 per month",
+      "source": "usage"
+    }
+  ]
+}'
+```
+
+## Response
+
+```json
+{
+  "appId": "app_7c3a",
+  "statement": "Issue every customer's invoice for the month and collect it through Stripe before the 5th.",
+  "criteria": [
+    {
+      "name": "invoices-on-time",
+      "target": "100% of invoices issued before the 3rd",
+      "source": "activity"
+    },
+    {
+      "name": "failed-charges",
+      "target": "fewer than 2% of charges fail",
+      "source": "activity"
+    },
+    {
+      "name": "monthly-cost",
+      "target": "usage under $40 per month",
+      "source": "usage"
+    }
+  ],
+  "declaredBy": "prn_ana",
+  "since": "2026-09-04T18:20:00Z",
+  "evaluations": []
+}
+```

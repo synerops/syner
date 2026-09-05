@@ -13,14 +13,45 @@
 
 Returns metadata and a read handle for the bytes.
 
-## Example
+## From the SDK
 
 ```ts
-const file = await syner.storage.files.get({ store: 'invoices', path: 'pdf/inv-1042.pdf' })
+const file = await syner.storage.files.get({
+  store: 'invoices',
+  path: 'pdf/inv-1042.pdf',
+})
 ```
 
-In the CLI: `syner storage files get invoices pdf/inv-1042.pdf ./out.pdf`.
+## From the CLI
 
-## What happens next
+```bash
+syner storage files get invoices pdf/inv-1042.pdf ./out.pdf
+```
 
-Read the handle as a stream; it expires.
+The same call through the raw API. The path is the node; the body is the
+input.
+
+```bash
+syner api storage/files/get '{
+  "store": "invoices",
+  "path": "pdf/inv-1042.pdf"
+}'
+```
+
+## Response
+
+```json
+{
+  "storeId": "sto_1a2b",
+  "path": "pdf/inv-1042.pdf",
+  "contentType": "application/pdf",
+  "size": 48213,
+  "etag": "9f3c…",
+  "updatedBy": "prn_bot",
+  "updatedAt": "2026-09-04T18:24:30Z",
+  "read": {
+    "url": "https://files.syner.app/…",
+    "expiresAt": "2026-09-04T18:35:00Z"
+  }
+}
+```

@@ -24,4 +24,5 @@ Nothing but confirmation.
 
 ## Errors
 
-`job not found`, `not authorized`.
+- `job not found`
+- `not authorized`

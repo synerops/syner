@@ -24,4 +24,8 @@ The job after the change.
 
 ## Errors
 
-`job not found`, `not authorized`, `name taken`, `invalid trigger`, `invalid action`.
+- `job not found`
+- `not authorized`
+- `name taken`
+- `invalid trigger`
+- `invalid action`

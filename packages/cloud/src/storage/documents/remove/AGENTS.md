@@ -22,4 +22,7 @@ Nothing but confirmation.
 
 ## Errors
 
-`store not found`, `document not found`, `not authorized`, `version mismatch`.
+- `store not found`
+- `document not found`
+- `not authorized`
+- `version mismatch`
