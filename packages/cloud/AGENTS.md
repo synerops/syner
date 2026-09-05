@@ -1,12 +1,14 @@
 # @syner/cloud
 
-The business of Syner. src/ holds the five capabilities, the shared
-controls, and the persistence and provider interfaces they require.
-apps/api and apps/worker call these use cases; clients reach them through
-the API.
+The business of Syner. `src/` holds the five capabilities, the seven
+controls, and, in each module's `ports`, the interfaces infrastructure
+implements. `apps/api` and `apps/worker` call these use cases; clients reach
+them through the API.
 
-Enforce business authorization inside use cases, so every entry point
-behaves the same. Define required interfaces here and leave
-implementations to packages/infrastructure. Keep input and output schemas
-and internal types with the concept that owns them. src/index.ts exports
-only intentional public interfaces.
+The hierarchy, the verb vocabulary, and the rules every verb obeys are in
+[src/AGENTS.md](src/AGENTS.md). Each node below it carries its own contract.
+
+Business authorization happens inside use cases, so every entry point
+behaves the same. Interfaces are declared here and implemented in
+`packages/infrastructure`. `src/index.ts` exports only intentional public
+interfaces.

@@ -11,21 +11,25 @@
   <strong>The business of Syner.</strong>
 </p>
 
-The five capabilities agents consume (apps, compute, storage, connections, jobs)
-and the shared controls that make an agent's actions safe and visible
-(organizations, identity, permissions, operations, usage, activity, purpose).
-`apps/api` and `apps/worker` call it directly; everything else reaches it
-through the API.
-
-<!-- prettier-ignore -->
-> [!NOTE]
-> This package is a scaffold: module boundaries with empty files.
+The five capabilities agents consume (apps, compute, storage, connections,
+jobs) and the seven controls that make an agent's actions safe and visible
+(organizations, identity, permissions, ops, usage, activity, purpose).
+`apps/api` and `apps/worker` call it directly; everything else reaches
+it through the API.
 
 ## Layout
 
-Each folder under `src/` is one module. A noun file holds a concept and
-its schema (`apps/app.ts`), a verb file is one use case
-(`apps/create.ts`), and a subfolder is a concept the parent owns with a
-lifecycle of its own (`apps/deployments/`). The package defines the
-persistence and provider interfaces it needs, and `@syner/infrastructure`
-implements them.
+Everything lives under [`src`](src/README.md), one folder per node. A
+module groups things, a thing holds a schema, a verb is one use case, and
+`ports` says what the module needs from infrastructure. Each node carries
+its own `README.md` and `AGENTS.md`, so you can start anywhere and follow
+the links.
+
+## Who touches it
+
+- [`apps/api`](../../apps/api/README.md) authenticates a request and calls
+  a verb with the actor and organization.
+- [`apps/worker`](../../apps/worker/README.md) executes the long-running
+  verbs and reports through ops.
+- [`@syner/infrastructure`](../infrastructure/README.md) implements every
+  interface listed in the `ports` nodes.

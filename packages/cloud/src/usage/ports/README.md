@@ -1,0 +1,37 @@
+<p align="center">
+  <picture>
+    <source srcset="https://github.com/user-attachments/assets/70cee063-9701-479d-a61e-f1da868c0957" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/4859e8b3-58ab-4649-bf39-a2fb1b7ea6b7" alt="Syner" height="48"/>
+  </picture>
+</p>
+
+<h1 align="center">ports</h1>
+
+<p align="center">
+  <strong>What usage needs from infrastructure.</strong>
+</p>
+
+Usage decides; infrastructure does. This node lists the interfaces usage calls
+to persist its things and to reach the outside world. Nothing here names a
+database or a vendor: that choice belongs to
+[infrastructure](../../../../infrastructure/README.md), which implements every
+interface listed here, one adapter per interface.
+
+## Persistence
+
+- **records.** append, aggregate by metric, app, principal, and time window;
+  fast enough for per-call budget checks.
+- **budgets.** save, load by scope, list by organization.
+
+## Providers
+
+- **pricing.** map a metric and quantity to cost in a currency; report whether
+  pricing is configured.
+
+## Who implements it
+
+[infrastructure](../../../../infrastructure/README.md): its persistence folder
+for the persistence interfaces, its providers folder for the provider
+interfaces. [api](../../../../../apps/api/README.md) and
+[worker](../../../../../apps/worker/README.md) wire the adapters in; usage
+never imports them.
